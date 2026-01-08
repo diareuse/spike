@@ -1,0 +1,21 @@
+[versions]
+google-dagger = "2.57.2"
+google-ksp = "2.3.4"
+kotlin = "2.2.21"
+agp = "8.13.0"
+kotlinpoet = "2.2.0"
+
+[libraries]
+google-dagger = { module = "com.google.dagger:dagger", version.ref = "google-dagger" }
+google-dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "google-dagger" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
+google-ksp-api = {module = "com.google.devtools.ksp:symbol-processing-api", version.ref="google-ksp"}
+squareup-kotlinpoet = {module="com.squareup:kotlinpoet", version.ref="kotlinpoet"}
+squareup-kotlinpoet-ksp = {module="com.squareup:kotlinpoet-ksp", version.ref="kotlinpoet"}
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+google-ksp = { id = "com.google.devtools.ksp", version.ref = "google-ksp" }
