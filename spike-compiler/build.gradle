@@ -20,4 +20,5 @@ dependencies {
     implementation libs.google.ksp.api
     api libs.kotlin.reflect
     testImplementation libs.kotlin.test
+    testImplementation gradleTestKit()
 }
