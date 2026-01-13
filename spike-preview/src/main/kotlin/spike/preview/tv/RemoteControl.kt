@@ -7,7 +7,9 @@ import spike.Provider
 @Include
 @Bind(Remote::class)
 class RemoteControl(
-    private val televisionProvider: Provider<Television>
+    private val televisionProvider: Provider<Television>,
+    @Suppress("unused")
+    private val batteries: List<Battery>
 ) : Remote {
 
     private var television: Television? = null

@@ -5,6 +5,7 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.MemberName.Companion.member
 import com.squareup.kotlinpoet.ksp.writeTo
 import spike.graph.*
+import spike.graph.TypeFactory.Companion.contains
 import java.util.Locale.getDefault
 
 fun SymbolProcessorEnvironment.generateDependencyContainer(graph: DependencyGraph): DependencyContainer {
@@ -13,10 +14,23 @@ fun SymbolProcessorEnvironment.generateDependencyContainer(graph: DependencyGrap
         .addModifiers(KModifier.INTERNAL)
     val typeLut = mutableMapOf<Type, String>()
     fun getPropName(type: Type) =
-        typeLut.getOrPut(type) { type.toClassName().simpleName.replaceFirstChar { it.lowercase(getDefault()) } }
+        typeLut.getOrPut(type) { type.toTypeName().fullName.replaceFirstChar { it.lowercase(getDefault()) } }
+
+    val constructor = FunSpec.constructorBuilder().apply {
+        for (p in graph.entry.factory?.method?.parameters.orEmpty()) {
+            addParameter(p.name, p.type.toTypeName())
+            val name = getPropName(p.type)
+            val ps = PropertySpec
+                .builder(name, p.type.toTypeName()).initializer(p.name)
+                .addModifiers(if (p.type in graph.properties) KModifier.PUBLIC else KModifier.PRIVATE)
+            type.addProperty(ps.build())
+        }
+    }
+    type.primaryConstructor(constructor.build())
     for (factory in graph) {
+        if (factory is TypeFactory.Property) continue
         val propertyName = getPropName(factory.type)
-        val prop = PropertySpec.builder(propertyName, factory.type.toClassName())
+        val prop = PropertySpec.builder(propertyName, factory.type.toTypeName())
         if (!graph.entry.isRootProperty(factory.type))
             prop.addModifiers(KModifier.PRIVATE)
         when (factory) {
@@ -27,7 +41,7 @@ fun SymbolProcessorEnvironment.generateDependencyContainer(graph: DependencyGrap
                         .addStatement(
                             "return %N as %T",
                             className.member(getPropName(factory.source.type)),
-                            factory.type.toClassName()
+                            factory.type.toTypeName()
                         )
                         .build()
                 )
@@ -52,6 +66,8 @@ fun SymbolProcessorEnvironment.generateDependencyContainer(graph: DependencyGrap
             is TypeFactory.Provides -> {
                 prop.getter(FunSpec.getterBuilder().addStatement("%M()", MemberName("kotlin", "TODO")).build())
             }
+
+            is TypeFactory.Property -> error("This is a compiler error, this will never be called")
         }
 
         prop
@@ -68,11 +84,21 @@ fun SymbolProcessorEnvironment.generateDependencyContainer(graph: DependencyGrap
     )
 }
 
+val TypeName.fullName: String
+    get() = when (this) {
+        is ClassName -> simpleName
+        Dynamic -> error("No support for dynamic types")
+        is LambdaTypeName -> error("No support for lambdas")
+        is ParameterizedTypeName -> rawType.simpleName + typeArguments.joinToString("") { it.fullName }
+        is TypeVariableName -> name
+        is WildcardTypeName -> error("No support for wildcards")
+    }
+
 fun generateInvocation(factory: TypeFactory.Class, lut: (Type) -> String): CodeBlock {
     val block = CodeBlock.builder()
     if (factory.singleton) block.beginControlFlow("%M {", MemberName("kotlin", "lazy"))
     else block.add("return ")
-    block.add("%T(", factory.type.toClassName())
+    block.add("%T(", factory.type.toTypeName())
     var added = false
     for (param in factory.invocation.parameters) {
         if (added) block.add(", ")

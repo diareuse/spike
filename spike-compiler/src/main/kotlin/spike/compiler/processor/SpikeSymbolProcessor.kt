@@ -1,24 +1,13 @@
 package spike.compiler.processor
 
-import com.google.devtools.ksp.KspExperimental
-import com.google.devtools.ksp.getConstructors
-import com.google.devtools.ksp.isAbstract
-import com.google.devtools.ksp.isAnnotationPresent
+import com.google.devtools.ksp.*
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.*
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.ksp.writeTo
 import spike.*
 import spike.compiler.generator.generateEntryPoint
-import spike.graph.DependencyGraph
-import spike.graph.GraphEntryPoint
-import spike.graph.Invocation
-import spike.graph.Member
-import spike.graph.Parameter
-import spike.graph.Type
+import spike.graph.*
 import kotlin.reflect.KClass
 
 @OptIn(KspExperimental::class)
@@ -81,8 +70,34 @@ class SpikeSymbolProcessor(
                 check(it is KSClassDeclaration && it.classKind == ClassKind.INTERFACE) {
                     "Entry point must be an interface"
                 }
+                val factoryClass = resolver.getSymbolsWithAnnotation(EntryPoint.Factory::class.qualifiedName!!)
+                    .filterIsInstance<KSClassDeclaration>()
+                    .filter { it.classKind == ClassKind.INTERFACE }
+                    .singleOrNull { inner ->
+                        inner.getDeclaredFunctions().singleOrNull()?.returnType?.toType() == it.toType()
+                    }
+                val factory = if (factoryClass != null) {
+                    environment.logger.warn("Creating factory")
+                    val func = checkNotNull(factoryClass.getDeclaredFunctions().singleOrNull()) {
+                        "Entry point factory must have a single abstract function"
+                    }
+                    val params = func.parameters.map {
+                        Parameter(it.name!!.asString(), it.type.toType(), it.type.resolve().isMarkedNullable)
+                    }
+                    GraphEntryPoint.Factory(
+                        type = factoryClass.toType(),
+                        method = Member.Method(
+                            packageName = factoryClass.packageName.asString(),
+                            name = func.simpleName.asString(),
+                            returns = func.returnType!!.toType(),
+                            parent = factoryClass.toType(),
+                            parameters = params
+                        )
+                    )
+                } else null
                 GraphEntryPoint(
                     type = it.toType(),
+                    factory = factory,
                     properties = it.getAllProperties().filter { it.isAbstract() }.map {
                         Member.Property(
                             packageName = it.packageName.asString(),
@@ -94,7 +109,12 @@ class SpikeSymbolProcessor(
                         check(it.parameters.isEmpty()) {
                             "Entry point methods must not have parameters, prefer properties for concise syntax. Found ${it.simpleName.asString()} in ${it.parentDeclaration?.qualifiedName?.asString()} (${it.parameters.joinToString { "${it.name?.asString()}: ${it.type.resolve().declaration.qualifiedName?.asString()}" }})"
                         }
-                        Member.Method(it.packageName.asString(), it.simpleName.asString(), it.returnType!!.toType(), it.parentDeclaration?.toType())
+                        Member.Method(
+                            it.packageName.asString(),
+                            it.simpleName.asString(),
+                            it.returnType!!.toType(),
+                            it.parentDeclaration?.toType()
+                        )
                     }.toList()
                 )
             }
@@ -133,10 +153,14 @@ fun KSFunctionDeclaration.toInvocation() = Invocation(
     }
 )
 
-fun KSDeclaration.toType(): Type = Type.Simple(
-    packageName = packageName.asString(),
-    simpleName = simpleName.asString()
-)
+fun KSDeclaration.toType(): Type {
+    val pd = parentDeclaration
+    if (pd != null) return Type.Inner(pd.toType(), simpleName.asString())
+    return Type.Simple(
+        packageName = packageName.asString(),
+        simpleName = simpleName.asString()
+    )
+}
 
 fun KSTypeReference.toType(): Type {
     return resolve().toType()

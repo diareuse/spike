@@ -42,6 +42,10 @@ class DependencyGraph(
 
         fun build(entry: GraphEntryPoint): DependencyGraph {
             val holder = TypeFactoryHolder()
+            val factory = entry.factory
+            if (factory != null) for (p in factory.method.parameters) {
+                holder.insert(p.type, TypeFactory.Property(p.type, p.name))
+            }
             val methods = entry.methods.map {
                 holder.getOrPut(it.returns) { createTypeFactory(it, this, Tail(it)) }
             }
@@ -95,7 +99,7 @@ class DependencyGraph(
             }
 
             if (type is Type.Parametrized) {
-                if(type.envelope == LazyType) {
+                if (type.envelope == LazyType) {
                     val actualType = type.typeArguments.single()
                     return createTypeFactory(actualType, holder, tail)
                 }

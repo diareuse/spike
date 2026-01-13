@@ -2,6 +2,7 @@ package spike.graph
 
 data class GraphEntryPoint(
     val type: Type,
+    val factory: Factory?,
     val properties: List<Member.Property>,
     val methods: List<Member.Method>
 ) {
@@ -23,4 +24,9 @@ data class GraphEntryPoint(
     fun isRootProperty(type: Type): Boolean {
         return properties.any { it.returns == type } || methods.any { it.returns == type }
     }
+
+    data class Factory(
+        val type: Type,
+        val method: Member.Method
+    )
 }

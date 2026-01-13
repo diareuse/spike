@@ -66,4 +66,16 @@ sealed class TypeFactory {
             return out
         }
     }
+
+    data class Property(
+        override val type: Type,
+        val name: String,
+    ) : TypeFactory() {
+        override val dependencies: List<TypeFactory>
+            get() = emptyList()
+    }
+
+    companion object {
+        operator fun List<TypeFactory>.contains(type: Type) = any { it.type == type }
+    }
 }
