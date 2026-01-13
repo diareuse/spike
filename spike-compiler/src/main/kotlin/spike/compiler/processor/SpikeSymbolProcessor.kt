@@ -70,6 +70,9 @@ class SpikeSymbolProcessor(
                 check(it is KSClassDeclaration && it.classKind == ClassKind.INTERFACE) {
                     "Entry point must be an interface"
                 }
+                check(it.declarations.any { it is KSClassDeclaration && it.isCompanionObject }) {
+                    "Entry point must have a companion object"
+                }
                 val factoryClass = resolver.getSymbolsWithAnnotation(EntryPoint.Factory::class.qualifiedName!!)
                     .filterIsInstance<KSClassDeclaration>()
                     .filter { it.classKind == ClassKind.INTERFACE }
@@ -129,11 +132,6 @@ class SpikeSymbolProcessor(
     }
 
     fun DependencyGraph.materialize() {
-        environment.logger.warn("==== START ====")
-        environment.logger.warn("Entry point: \n$entry")
-        environment.logger.warn("Properties: ${properties.joinToString("\n", prefix = "\n") { it.toString() }}")
-        environment.logger.warn("Methods: ${methods.joinToString("\n", prefix = "\n") { it.toString() }}")
-        environment.logger.warn("==== END ====")
         environment.generateEntryPoint(this)
     }
 
