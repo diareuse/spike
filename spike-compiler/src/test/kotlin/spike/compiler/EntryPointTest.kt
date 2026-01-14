@@ -27,6 +27,6 @@ class EntryPointTest : TestHarness() {
     fun `binds interfaces to concrete classes`() = test("bind")
 
     @Test
-    fun `EntryPoint generates providers`() = test("provider").also { TODO("This test is broken, generates 'TODO'") }
+    fun `EntryPoint generates providers`() = test("provider")
 
 }

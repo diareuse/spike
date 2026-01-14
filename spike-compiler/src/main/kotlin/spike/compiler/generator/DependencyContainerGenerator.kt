@@ -29,6 +29,9 @@ fun SymbolProcessorEnvironment.generateDependencyContainer(graph: DependencyGrap
     type.primaryConstructor(constructor.build())
     for (factory in graph) {
         if (factory is TypeFactory.Property) continue
+        var factory = factory
+        while (factory is TypeFactory.Provides)
+            factory = factory.factory
         val propertyName = getPropName(factory.type)
         val prop = PropertySpec.builder(propertyName, factory.type.toTypeName())
         if (!graph.entry.isRootProperty(factory.type))
@@ -63,10 +66,7 @@ fun SymbolProcessorEnvironment.generateDependencyContainer(graph: DependencyGrap
                 )
             }
 
-            is TypeFactory.Provides -> {
-                prop.getter(FunSpec.getterBuilder().addStatement("%M()", MemberName("kotlin", "TODO")).build())
-            }
-
+            is TypeFactory.Provides,
             is TypeFactory.Property -> error("This is a compiler error, this will never be called")
         }
 
