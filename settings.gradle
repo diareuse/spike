@@ -29,5 +29,4 @@ dependencyResolutionManagement {
 rootProject.name = 'spike'
 include ":spike-core"
 include ":spike-compiler"
-include ":spike-preview"
 include ":spike-graph"
