@@ -84,19 +84,6 @@ fun SymbolProcessorEnvironment.generateDependencyContainer(graph: DependencyGrap
     )
 }
 
-val Type.descriptor: String
-    get() = when (this) {
-        is Type.Inner -> parent.descriptor + "__" + simpleName
-        is Type.Parametrized -> envelope.descriptor + typeArguments.joinToString("", "_", "_") { it.descriptor }
-        is Type.Qualified -> qualifiers.joinToString("") {
-            it.type.descriptor + it.arguments.joinToString {
-                it.name.replaceFirstChar { it.uppercase() } + it.value.toString().replaceFirstChar { it.uppercase() }
-            }
-        } + type.descriptor
-
-        is Type.Simple -> simpleName
-    }
-
 fun generateInvocation(factory: TypeFactory.Class, lut: (Type) -> String): CodeBlock {
     val block = CodeBlock.builder()
     if (factory.singleton) block.beginControlFlow("%M {", MemberName("kotlin", "lazy"))
@@ -124,20 +111,4 @@ fun generateInvocation(factory: TypeFactory.Class, lut: (Type) -> String): CodeB
         block.endControlFlow()
     }
     return block.build()
-}
-
-fun Member.Method.toMemberName() = when (val p = parent) {
-    null -> MemberName(packageName, name)
-    else -> MemberName(p.toClassName(), name)
-}
-
-class DependencyContainer(
-    val className: ClassName,
-    val lut: Map<Type, String>
-) {
-
-    operator fun get(type: Type): String {
-        return lut[type]!!
-    }
-
 }
