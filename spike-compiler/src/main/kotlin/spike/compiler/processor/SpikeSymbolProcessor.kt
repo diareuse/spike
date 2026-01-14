@@ -149,9 +149,9 @@ fun KSFunctionDeclaration.toInvocation() = Invocation(
             nullable = it.type.resolve().isMarkedNullable
         )
     },
-    singleton = (this.parentDeclaration as KSClassDeclaration).run {
+    singleton = (this.parentDeclaration as? KSClassDeclaration)?.run {
         classKind == ClassKind.OBJECT
-    }
+    } == true
 )
 
 fun KSDeclaration.toType(): Type {
