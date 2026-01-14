@@ -19,8 +19,16 @@ class SpikeSymbolProcessor(
         val builder = DependencyGraph.Builder(environment.logger::warn)
 
         resolver.getSymbolsWithAnnotation(Include::class.qualifiedName!!).forEach {
+            it.getAnnotationsByType(Include::class).single()
+            val bindAs = it.getKSAnnotationByType(Include::class).single().arguments.first { it.name?.asString() == Include::bindAs.name }.value as KSType
             when (it) {
                 is KSClassDeclaration -> {
+                    check(bindAs.isAssignableFrom(it.asStarProjectedType())) {
+                        "Bind target (${it.qualifiedName?.asString()}) must be assignable from the '${Include::bindAs.name}' class (${bindAs.declaration.qualifiedName?.asString()})"
+                    }
+                    if(bindAs.toType() != AnyType) {
+                        builder.addBinder(it.toType(), bindAs.toType())
+                    }
                     val constructors = it.getConstructors().toList()
                     val constructor = when {
                         constructors.size > 1 -> checkNotNull(constructors.firstOrNull { it.isAnnotationPresent(Inject::class) }) {
@@ -37,6 +45,12 @@ class SpikeSymbolProcessor(
                 }
 
                 is KSFunctionDeclaration -> {
+                    check(bindAs.isAssignableFrom(it.returnType!!.resolve())) {
+                        "Bind target (${it.qualifiedName?.asString()}:${it.returnType?.toType()}) must be assignable from the '${Include::bindAs.name}' function (${bindAs.declaration.qualifiedName?.asString()})"
+                    }
+                    if(bindAs.toType() != AnyType) {
+                        builder.addBinder(it.toType(), bindAs.toType())
+                    }
                     builder.addFactory(
                         type = it.returnType!!.toType(),
                         member = Member.Method(
@@ -52,16 +66,6 @@ class SpikeSymbolProcessor(
 
                 else -> error("Include annotation can only be used on classes and functions")
             }
-        }
-
-        resolver.getSymbolsWithAnnotation(Bind::class.qualifiedName!!).forEach {
-            check(it is KSClassDeclaration) { "Bind annotation can only be used on classes" }
-            val bind = it.getKSAnnotationByType(Bind::class).single()
-            val target = bind.arguments.first { it.name!!.asString() == Bind::target.name }.value as KSType
-            check(target.isAssignableFrom(it.asStarProjectedType())) {
-                "Bind target (${it.qualifiedName?.asString()}) must be assignable from the annotated class (${target.declaration.qualifiedName?.asString()})"
-            }
-            builder.addBinder(it.toType(), target.toType())
         }
 
         resolver

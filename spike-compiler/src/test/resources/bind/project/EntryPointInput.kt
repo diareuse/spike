@@ -7,6 +7,5 @@ interface PropertyEntryPoint {
 
 interface Cat
 
-@spike.Include
-@spike.Bind(Cat::class)
+@spike.Include(bindAs = Cat::class)
 class Sphynx : Cat

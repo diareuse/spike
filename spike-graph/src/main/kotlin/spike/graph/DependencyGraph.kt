@@ -165,3 +165,4 @@ class DependencyGraph(
 
 val ProviderType = Type.Simple("spike", "Provider")
 val LazyType = Type.Simple("kotlin", "Lazy")
+val AnyType = Type.Simple(packageName = "kotlin", simpleName = "Any")
