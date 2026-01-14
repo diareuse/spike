@@ -14,7 +14,7 @@ fun SymbolProcessorEnvironment.generateDependencyContainer(graph: DependencyGrap
         .addModifiers(KModifier.INTERNAL)
     val typeLut = mutableMapOf<Type, String>()
     fun getPropName(type: Type) =
-        typeLut.getOrPut(type) { type.toTypeName().fullName.replaceFirstChar { it.lowercase(getDefault()) } }
+        typeLut.getOrPut(type) { type.descriptor.replaceFirstChar { it.lowercase(getDefault()) } }
 
     val constructor = FunSpec.constructorBuilder().apply {
         for (p in graph.entry.factory?.method?.parameters.orEmpty()) {
@@ -84,14 +84,17 @@ fun SymbolProcessorEnvironment.generateDependencyContainer(graph: DependencyGrap
     )
 }
 
-val TypeName.fullName: String
+val Type.descriptor: String
     get() = when (this) {
-        is ClassName -> simpleName
-        Dynamic -> error("No support for dynamic types")
-        is LambdaTypeName -> error("No support for lambdas")
-        is ParameterizedTypeName -> rawType.simpleName + typeArguments.joinToString("") { it.fullName }
-        is TypeVariableName -> name
-        is WildcardTypeName -> error("No support for wildcards")
+        is Type.Inner -> parent.descriptor + "__" + simpleName
+        is Type.Parametrized -> envelope.descriptor + typeArguments.joinToString("", "_", "_") { it.descriptor }
+        is Type.Qualified -> qualifiers.joinToString("") {
+            it.type.descriptor + it.arguments.joinToString {
+                it.name.replaceFirstChar { it.uppercase() } + it.value.toString().replaceFirstChar { it.uppercase() }
+            }
+        } + type.descriptor
+
+        is Type.Simple -> simpleName
     }
 
 fun generateInvocation(factory: TypeFactory.Class, lut: (Type) -> String): CodeBlock {

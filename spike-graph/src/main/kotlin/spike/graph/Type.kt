@@ -41,14 +41,18 @@ sealed class Type {
         }
     }
 
-    data class Qualified(val qualifier: String, val type: Type) : Type() {
+    data class Qualified(val type: Type, val qualifiers: List<Qualifier>) : Type() {
+        init {
+            check(qualifiers.isNotEmpty()) { "At least one qualifier is required for type $type" }
+        }
+
         override val packageName: String
             get() = type.packageName
         override val simpleName: String
             get() = type.simpleName
 
         override fun toString(): String {
-            return "@$qualifier $type"
+            return "${qualifiers.joinToString(" ")} $type"
         }
     }
 }

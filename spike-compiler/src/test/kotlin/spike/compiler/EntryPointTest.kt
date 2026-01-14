@@ -29,4 +29,7 @@ class EntryPointTest : TestHarness() {
     @Test
     fun `EntryPoint generates providers`() = test("provider")
 
+    @Test
+    fun `entries with qualifiers resolve`() = test("qualifier")
+
 }

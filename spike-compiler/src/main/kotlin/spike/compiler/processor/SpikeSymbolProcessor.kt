@@ -8,6 +8,7 @@ import com.google.devtools.ksp.symbol.*
 import spike.*
 import spike.compiler.generator.generateEntryPoint
 import spike.graph.*
+import spike.graph.Qualifier
 import kotlin.reflect.KClass
 
 @OptIn(KspExperimental::class)
@@ -19,7 +20,6 @@ class SpikeSymbolProcessor(
         val builder = DependencyGraph.Builder(environment.logger::warn)
 
         resolver.getSymbolsWithAnnotation(Include::class.qualifiedName!!).forEach {
-            it.getAnnotationsByType(Include::class).single()
             val bindAs = it.getKSAnnotationByType(Include::class).single().arguments.first { it.name?.asString() == Include::bindAs.name }.value as KSType
             when (it) {
                 is KSClassDeclaration -> {
@@ -27,7 +27,10 @@ class SpikeSymbolProcessor(
                         "Bind target (${it.qualifiedName?.asString()}) must be assignable from the '${Include::bindAs.name}' class (${bindAs.declaration.qualifiedName?.asString()})"
                     }
                     if(bindAs.toType() != AnyType) {
-                        builder.addBinder(it.toType(), bindAs.toType())
+                        builder.addBinder(
+                            from = it.toType().qualifiedBy(it.findQualifiers()),
+                            to = bindAs.toType().qualifiedBy(it.findQualifiers())
+                        )
                     }
                     val constructors = it.getConstructors().toList()
                     val constructor = when {
@@ -38,7 +41,7 @@ class SpikeSymbolProcessor(
                         else -> constructors.single()
                     }
                     builder.addConstructor(
-                        type = it.toType(),
+                        type = it.toType().qualifiedBy(it.findQualifiers()),
                         invocation = constructor.toInvocation(),
                         singleton = it.isAnnotationPresent(Singleton::class)
                     )
@@ -49,15 +52,18 @@ class SpikeSymbolProcessor(
                         "Bind target (${it.qualifiedName?.asString()}:${it.returnType?.toType()}) must be assignable from the '${Include::bindAs.name}' function (${bindAs.declaration.qualifiedName?.asString()})"
                     }
                     if(bindAs.toType() != AnyType) {
-                        builder.addBinder(it.toType(), bindAs.toType())
+                        builder.addBinder(
+                            from = it.returnType!!.toType().qualifiedBy(it.findQualifiers()),
+                            to = bindAs.toType().qualifiedBy(it.findQualifiers())
+                        )
                     }
                     builder.addFactory(
-                        type = it.returnType!!.toType(),
+                        type = it.returnType!!.toType().qualifiedBy(it.findQualifiers()),
                         member = Member.Method(
                             packageName = it.packageName.asString(),
                             name = it.simpleName.asString(),
-                            returns = it.returnType!!.toType(),
-                            parent = it.parentDeclaration?.toType()
+                            returns = it.returnType!!.toType().qualifiedBy(it.findQualifiers()),
+                            parent = it.parentDeclaration?.toType()?.qualifiedBy(it.findQualifiers())
                         ),
                         invocation = it.toInvocation(),
                         singleton = it.isAnnotationPresent(Singleton::class)
@@ -88,7 +94,11 @@ class SpikeSymbolProcessor(
                         "Entry point factory must have a single abstract function"
                     }
                     val params = func.parameters.map {
-                        Parameter(it.name!!.asString(), it.type.toType(), it.type.resolve().isMarkedNullable)
+                        Parameter(
+                            it.name!!.asString(),
+                            it.type.toType().qualifiedBy(it.findQualifiers()),
+                            it.type.resolve().isMarkedNullable
+                        )
                     }
                     GraphEntryPoint.Factory(
                         type = factoryClass.toType(),
@@ -108,7 +118,7 @@ class SpikeSymbolProcessor(
                         Member.Property(
                             packageName = it.packageName.asString(),
                             name = it.simpleName.asString(),
-                            returns = it.type.toType()
+                            returns = it.type.toType().qualifiedBy(it.findQualifiers())
                         )
                     }.toList(),
                     methods = it.getAllFunctions().filter { it.isAbstract }.map {
@@ -118,7 +128,7 @@ class SpikeSymbolProcessor(
                         Member.Method(
                             it.packageName.asString(),
                             it.simpleName.asString(),
-                            it.returnType!!.toType(),
+                            it.returnType!!.toType().qualifiedBy(it.findQualifiers()),
                             it.parentDeclaration?.toType()
                         )
                     }.toList()
@@ -139,6 +149,23 @@ class SpikeSymbolProcessor(
     }
 
 }
+
+@OptIn(KspExperimental::class)
+fun KSAnnotated.findQualifiers() =
+    annotations.filter { it.annotationType.resolve().declaration.isAnnotationPresent(spike.Qualifier::class) }.map {
+        Qualifier(
+            it.annotationType.toType(),
+            it.arguments.map {
+                val value = when (val v = it.value) {
+                    is KSType -> v.toType()
+                    is KSClassDeclaration -> v.toType()
+                    is KSAnnotation -> v.annotationType.toType()
+                    else -> v
+                }
+                Qualifier.Argument(it.name!!.asString(), value)
+            }
+        )
+    }.sorted().toList()
 
 @OptIn(KspExperimental::class)
 fun KSFunctionDeclaration.toInvocation() = Invocation(
@@ -165,6 +192,11 @@ fun KSDeclaration.toType(): Type {
 
 fun KSTypeReference.toType(): Type {
     return resolve().toType()
+}
+
+fun Type.qualifiedBy(qualifiers: List<Qualifier>): Type {
+    if (qualifiers.isEmpty()) return this
+    return Type.Qualified(this, qualifiers)
 }
 
 fun KSType.toType(): Type {
