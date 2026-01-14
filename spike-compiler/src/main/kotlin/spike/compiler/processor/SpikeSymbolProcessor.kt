@@ -84,7 +84,6 @@ class SpikeSymbolProcessor(
                         inner.getDeclaredFunctions().singleOrNull()?.returnType?.toType() == it.toType()
                     }
                 val factory = if (factoryClass != null) {
-                    environment.logger.warn("Creating factory")
                     val func = checkNotNull(factoryClass.getDeclaredFunctions().singleOrNull()) {
                         "Entry point factory must have a single abstract function"
                     }
