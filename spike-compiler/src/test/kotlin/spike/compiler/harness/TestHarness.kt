@@ -13,6 +13,7 @@ abstract class TestHarness {
         testcase = testcase,
         verify = { result, files ->
             assertEquals(TaskOutcome.SUCCESS, result.outcome)
+            check(files.count() > 0) { "No output files found" }
             val url = TestHarness::class.java.classLoader.getResource("$testcase/fixtures")
             check(url?.protocol == "file") { "Testcase $testcase fixtures could not be found" }
             val file = File(url.toURI().path)
