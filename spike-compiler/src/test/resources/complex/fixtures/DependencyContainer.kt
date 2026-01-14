@@ -4,7 +4,7 @@ import kotlin.lazy
 internal class DependencyContainer(
   batteries: List<Battery>,
 ) {
-  private val listBattery: List<Battery> = batteries
+  private val list_Battery_: List<Battery> = batteries
 
   public inline val television: Television
     get() = samsungTelevision as Television
@@ -17,7 +17,7 @@ internal class DependencyContainer(
       }
 
   private inline val remoteControl: RemoteControl
-    get() = RemoteControl(televisionProvider = ::television, batteries = listBattery)
+    get() = RemoteControl(televisionProvider = ::television, batteries = list_Battery_)
 
   private inline val soundSystem: SoundSystem
     get() = amazonFireSoundBar as SoundSystem
