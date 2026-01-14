@@ -17,7 +17,6 @@ Spike is a Kotlin Multiplatform dependency injection framework that ensures comp
 Spike uses annotations to define your dependency graph. The core annotations are:
 
 *   `@Inject`: Marks a constructor for dependency injection.
-*   `@Bind`: Binds an implementation to an interface.
 *   `@Include`: Includes a class in the dependency graph.
 *   `@Singleton`: Marks a class as a singleton.
 *   `@EntryPoint`: Defines an entry point for the dependency graph.
@@ -35,8 +34,7 @@ interface Heater {
 }
 
 // In ElectricHeater.kt
-@Include
-@Bind(Heater::class)
+@Include(bindAs = Heater::class)
 class ElectricHeater(
     private val logger: CoffeeLogger
 ) : Heater {
