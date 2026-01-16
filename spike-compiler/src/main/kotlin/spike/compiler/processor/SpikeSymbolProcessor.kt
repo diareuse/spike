@@ -5,10 +5,13 @@ import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.*
-import spike.*
-import spike.compiler.generator.generateEntryPoint
+import com.squareup.kotlinpoet.ksp.writeTo
+import spike.EntryPoint
+import spike.Include
+import spike.Inject
+import spike.Singleton
+import spike.compiler.generator.*
 import spike.graph.*
-import spike.graph.Qualifier
 import kotlin.reflect.KClass
 
 @OptIn(KspExperimental::class)
@@ -20,13 +23,14 @@ class SpikeSymbolProcessor(
         val builder = DependencyGraph.Builder(environment.logger::warn)
 
         resolver.getSymbolsWithAnnotation(Include::class.qualifiedName!!).forEach {
-            val bindAs = it.getKSAnnotationByType(Include::class).single().arguments.first { it.name?.asString() == Include::bindAs.name }.value as KSType
+            val bindAs = it.getKSAnnotationByType(Include::class)
+                .single().arguments.first { it.name?.asString() == Include::bindAs.name }.value as KSType
             when (it) {
                 is KSClassDeclaration -> {
                     check(bindAs.isAssignableFrom(it.asStarProjectedType())) {
                         "Bind target (${it.qualifiedName?.asString()}) must be assignable from the '${Include::bindAs.name}' class (${bindAs.declaration.qualifiedName?.asString()})"
                     }
-                    if(bindAs.toType() != AnyType) {
+                    if (bindAs.toType() != AnyType) {
                         builder.addBinder(
                             from = it.toType().qualifiedBy(it.findQualifiers()),
                             to = bindAs.toType().qualifiedBy(it.findQualifiers())
@@ -51,7 +55,7 @@ class SpikeSymbolProcessor(
                     check(bindAs.isAssignableFrom(it.returnType!!.resolve())) {
                         "Bind target (${it.qualifiedName?.asString()}:${it.returnType?.toType()}) must be assignable from the '${Include::bindAs.name}' function (${bindAs.declaration.qualifiedName?.asString()})"
                     }
-                    if(bindAs.toType() != AnyType) {
+                    if (bindAs.toType() != AnyType) {
                         builder.addBinder(
                             from = it.returnType!!.toType().qualifiedBy(it.findQualifiers()),
                             to = bindAs.toType().qualifiedBy(it.findQualifiers())
@@ -145,6 +149,23 @@ class SpikeSymbolProcessor(
     }
 
     fun DependencyGraph.materialize() {
+        val resolver = TypeResolver()
+        val dependencyContainerType = DependencyContainerTypeChain(
+            subject = this,
+            generators = listOf(
+                DependencyContainerConstructor(),
+                DependencyContainerFactory()
+            ),
+            resolver = resolver
+        )
+        val dependencyContainerFile = DependencyContainerFileChain(
+            subject = this,
+            generators = listOf(
+                DependencyContainerType(dependencyContainerType)
+            ),
+            resolver = resolver
+        )
+        dependencyContainerFile.proceed().build().writeTo(environment.codeGenerator, false)
         environment.generateEntryPoint(this)
     }
 

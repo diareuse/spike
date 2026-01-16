@@ -6,10 +6,10 @@ sealed class TypeFactory {
 
     data class Class(
         override val type: Type,
-        val invocation: Invocation,
-        val singleton: Boolean,
+        override val invocation: Invocation,
+        override val singleton: Boolean,
         override val dependencies: List<TypeFactory>
-    ) : TypeFactory() {
+    ) : TypeFactory(), Callable {
         override fun toString(): String {
             var out = ""
             out += "$type("
@@ -35,10 +35,10 @@ sealed class TypeFactory {
     data class Method(
         override val type: Type,
         val member: Member.Method,
-        val invocation: Invocation,
-        val singleton: Boolean,
+        override val invocation: Invocation,
+        override val singleton: Boolean,
         override val dependencies: List<TypeFactory>
-    ) : TypeFactory()
+    ) : TypeFactory(), Callable
 
     data class Binds(
         override val type: Type,
@@ -73,6 +73,12 @@ sealed class TypeFactory {
     ) : TypeFactory() {
         override val dependencies: List<TypeFactory>
             get() = emptyList()
+    }
+
+    interface Callable {
+        val type: Type
+        val invocation: Invocation
+        val singleton: Boolean
     }
 
     companion object {

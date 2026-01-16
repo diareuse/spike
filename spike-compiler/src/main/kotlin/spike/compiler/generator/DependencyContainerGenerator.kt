@@ -8,6 +8,7 @@ import spike.graph.*
 import spike.graph.TypeFactory.Companion.contains
 import java.util.Locale.getDefault
 
+@Deprecated("Use DependencyContainerFileChain instead")
 fun SymbolProcessorEnvironment.generateDependencyContainer(graph: DependencyGraph): DependencyContainer {
     val className = graph.entry.type.toClassName().peerClass { "DependencyContainer" }
     val type = TypeSpec.classBuilder(className)
