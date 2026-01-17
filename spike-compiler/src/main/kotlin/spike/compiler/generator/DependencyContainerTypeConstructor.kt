@@ -10,11 +10,11 @@ class DependencyContainerTypeConstructor : TypeGenerator<DependencyGraph> {
         if (factoryParameters != null) {
             val constructor = FunSpec.constructorBuilder().apply {
                 for (p in factoryParameters) {
-                    addParameter(p.name, chain.resolver.getTypeName(p.type))
                     val name = chain.resolver.getFieldName(p.type)
+                    addParameter(name, chain.resolver.getTypeName(p.type))
                     val ps = PropertySpec
-                        .builder(name, p.type.toTypeName()).initializer(p.name)
-                        .addModifiers(if (p.type in chain.subject.properties) KModifier.PUBLIC else KModifier.PRIVATE)
+                        .builder(name, chain.resolver.getTypeName(p.type)).initializer(name)
+                        .addModifiers(KModifier.PUBLIC)
                     chain.spec.addProperty(ps.build())
                 }
             }

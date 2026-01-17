@@ -20,11 +20,7 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
 
             val propertyName = chain.resolver.getFieldName(factory.type)
             val propertyTypeName = chain.resolver.getTypeName(factory.type)
-            val propertySpec = PropertySpec.Companion.builder(propertyName, propertyTypeName)
-
-            // We don't need to expose internal properties
-            if (!chain.subject.entry.isRootProperty(factory.type))
-                propertySpec.addModifiers(KModifier.PRIVATE)
+            val propertySpec = PropertySpec.builder(propertyName, propertyTypeName)
 
             when (factory) {
                 is TypeFactory.Binds -> propertySpec.binds(factory, chain.resolver)
@@ -40,15 +36,15 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
     }
 
     private fun PropertySpec.Builder.binds(factory: TypeFactory.Binds, resolver: TypeResolver) {
-        val spec = FunSpec.Companion.getterBuilder()
-            .addModifiers(KModifier.INLINE)
+        val spec = FunSpec.getterBuilder()
             .addStatement(
                 "return %N as %T",
                 resolver.getFieldName(factory.source.type),
                 resolver.getTypeName(factory.type)
             )
-            .build()
-        getter(spec)
+        if (factory.canInline)
+            spec.addModifiers(KModifier.INLINE)
+        getter(spec.build())
     }
 
     private fun PropertySpec.Builder.classFactory(factory: TypeFactory.Class, resolver: TypeResolver) {
@@ -64,7 +60,12 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
         val codeBlock = chain.proceed().build()
         when (factory.singleton) {
             true -> delegate(codeBlock)
-            else -> getter(FunSpec.Companion.getterBuilder().addModifiers(KModifier.INLINE).addCode(codeBlock).build())
+            else -> {
+                val spec = FunSpec.getterBuilder().addCode(codeBlock)
+                if (factory.canInline)
+                    spec.addModifiers(KModifier.INLINE)
+                getter(spec.build())
+            }
         }
     }
 
@@ -81,7 +82,12 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
         val codeBlock = chain.proceed().build()
         when (factory.singleton) {
             true -> delegate(codeBlock)
-            else -> getter(FunSpec.Companion.getterBuilder().addModifiers(KModifier.INLINE).addCode(codeBlock).build())
+            else -> {
+                val spec = FunSpec.getterBuilder().addCode(codeBlock)
+                if (factory.canInline)
+                    spec.addModifiers(KModifier.INLINE)
+                getter(spec.build())
+            }
         }
     }
 }

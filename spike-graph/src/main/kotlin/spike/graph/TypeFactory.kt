@@ -3,6 +3,7 @@ package spike.graph
 sealed class TypeFactory {
     abstract val type: Type
     abstract val dependencies: List<TypeFactory>
+    abstract val canInline: Boolean
 
     data class Class(
         override val type: Type,
@@ -10,6 +11,7 @@ sealed class TypeFactory {
         override val singleton: Boolean,
         override val dependencies: List<TypeFactory>
     ) : TypeFactory(), Callable {
+        override val canInline: Boolean get() = dependencies.all { it.canInline }
         override fun toString(): String {
             var out = ""
             out += "$type("
@@ -38,7 +40,9 @@ sealed class TypeFactory {
         override val invocation: Invocation,
         override val singleton: Boolean,
         override val dependencies: List<TypeFactory>
-    ) : TypeFactory(), Callable
+    ) : TypeFactory(), Callable {
+        override val canInline: Boolean get() = dependencies.all { it.canInline }
+    }
 
     data class Binds(
         override val type: Type,
@@ -46,6 +50,8 @@ sealed class TypeFactory {
     ) : TypeFactory() {
         override val dependencies: List<TypeFactory>
             get() = listOf(source)
+        override val canInline: Boolean
+            get() = source.canInline
 
         override fun toString(): String {
             return "$source as $type"
@@ -58,6 +64,7 @@ sealed class TypeFactory {
     ) : TypeFactory() {
         override val dependencies: List<TypeFactory>
             get() = factory.dependencies
+        override val canInline: Boolean get() = factory.canInline
 
         override fun toString(): String {
             var out = "Provider {\n"
@@ -71,6 +78,7 @@ sealed class TypeFactory {
         override val type: Type,
         val name: String,
     ) : TypeFactory() {
+        override val canInline: Boolean get() = true
         override val dependencies: List<TypeFactory>
             get() = emptyList()
     }
