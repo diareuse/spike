@@ -166,7 +166,45 @@ class SpikeSymbolProcessor(
             resolver = resolver
         )
         dependencyContainerFile.proceed().build().writeTo(environment.codeGenerator, false)
-        environment.generateEntryPoint(this)
+
+        val entryPointFactoryType = EntryPointFactoryTypeChain(
+            subject = entry.factory,
+            generators = listOf(
+                EntryPointFactoryTypeSuperinterface(),
+                EntryPointFactoryTypeInternal(),
+                EntryPointFactoryTypeMethod()
+            ),
+            resolver = resolver
+        )
+        val entryPointFactoryFile = EntryPointFactoryFileChain(
+            subject = entry.factory,
+            generators = listOf(
+                EntryPointFactoryFileWithType(entryPointFactoryType)
+            ),
+            resolver = resolver
+        )
+        entryPointFactoryFile.proceed().build().writeTo(environment.codeGenerator, false)
+
+        val entryPointType = EntryPointTypeChain(
+            subject = entry,
+            generators = listOf(
+                EntryPointTypeInternal(),
+                EntryPointTypeSuperinterface(),
+                EntryPointTypeConstructor(),
+                EntryPointTypeProperties(),
+                EntryPointTypeFunctions()
+            ),
+            resolver = resolver
+        )
+        val entryPointFile = EntryPointFileChain(
+            subject = entry,
+            generators = listOf(
+                EntryPointFileWithType(entryPointType),
+                EntryPointFileInitializer()
+            ),
+            resolver = resolver
+        )
+        entryPointFile.proceed().build().writeTo(environment.codeGenerator, false)
     }
 
 }

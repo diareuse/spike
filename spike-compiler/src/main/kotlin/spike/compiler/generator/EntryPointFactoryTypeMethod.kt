@@ -1,0 +1,31 @@
+package spike.compiler.generator
+
+import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.TypeSpec
+import spike.graph.GraphEntryPoint
+
+class EntryPointFactoryTypeMethod : TypeGenerator<GraphEntryPoint.Factory> {
+    override fun generate(chain: TypeGeneratorChain<GraphEntryPoint.Factory>): TypeSpec.Builder {
+        val method = chain.subject.method
+        val factoryMethod = FunSpec.Companion.builder(method.name)
+            .addModifiers(KModifier.OVERRIDE)
+            .returns(chain.resolver.getTypeName(method.returns))
+        val body = CodeBlock.Companion.builder()
+            .add(
+                "return %T(%T(",
+                chain.resolver.transformClassName(method.returns),
+                chain.resolver.getDependencyContainerClassName(method.returns)
+            )
+        for ((index, param) in method.parameters.withIndex()) {
+            if (index > 0) body.add(", ")
+            body.add("%N", param.name)
+            factoryMethod.addParameter(param.name, chain.resolver.getTypeName(param.type))
+        }
+        body.add("))")
+        factoryMethod.addCode(body.build())
+        chain.spec.addFunction(factoryMethod.build())
+        return chain.proceed()
+    }
+}

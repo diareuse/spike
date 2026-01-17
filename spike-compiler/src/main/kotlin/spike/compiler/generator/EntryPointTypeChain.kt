@@ -1,16 +1,15 @@
 package spike.compiler.generator
 
 import com.squareup.kotlinpoet.TypeSpec
-import spike.graph.DependencyGraph
 import spike.graph.GraphEntryPoint
 
-data class DependencyContainerTypeChain(
-    override val subject: DependencyGraph,
-    private val generators: List<TypeGenerator<DependencyGraph>>,
+data class EntryPointTypeChain(
+    override val subject: GraphEntryPoint,
+    private val generators: List<TypeGenerator<GraphEntryPoint>>,
     override val resolver: TypeResolver,
-    override val spec: TypeSpec.Builder = subject.entry.asTypeSpecBuilder(resolver),
+    override val spec: TypeSpec.Builder = subject.asTypeSpecBuilder(resolver),
     private val index: Int = 0
-) : TypeGeneratorChain<DependencyGraph> {
+) : TypeGeneratorChain<GraphEntryPoint> {
     override fun proceed(): TypeSpec.Builder {
         if (index == generators.size) return spec
         return generators[index].generate(copy(index = index + 1))
@@ -18,6 +17,6 @@ data class DependencyContainerTypeChain(
 
     private companion object {
         fun GraphEntryPoint.asTypeSpecBuilder(resolver: TypeResolver) = TypeSpec
-            .classBuilder(resolver.getDependencyContainerClassName(type))
+            .classBuilder(resolver.transformClassName(type))
     }
 }

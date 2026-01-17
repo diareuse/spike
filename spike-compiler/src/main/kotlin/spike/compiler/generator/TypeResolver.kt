@@ -18,14 +18,14 @@ class TypeResolver {
 
     private val className = mutableMapOf<Type, ClassName>()
 
-    fun getClassName(type: Type) = className.getOrPut(type) {
+    fun transformClassName(type: Type) = className.getOrPut(type) {
         type.toClassName()
             .peerClass { "Spike${it.simpleNames.joinToString("")}" }
             .asRootClass()
     }
 
     fun getDependencyContainerClassName(entryPoint: Type) =
-        getClassName(Type.Simple(entryPoint.packageName, "Spike${entryPoint.simpleName}DependencyContainer"))
+        transformClassName(Type.Simple(entryPoint.packageName, "DependencyContainer"))
 
     // ---
 

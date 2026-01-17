@@ -1,8 +1,8 @@
 package spike.graph
 
-data class GraphEntryPoint(
+data class GraphEntryPoint private constructor(
     val type: Type,
-    val factory: Factory?,
+    val factory: Factory,
     val properties: List<Member.Property>,
     val methods: List<Member.Method>
 ) {
@@ -29,4 +29,33 @@ data class GraphEntryPoint(
         val type: Type,
         val method: Member.Method
     )
+
+    companion object {
+
+        @JvmName("invokeWithNull")
+        operator fun invoke(
+            type: Type,
+            factory: Factory?,
+            properties: List<Member.Property>,
+            methods: List<Member.Method>
+        ) = GraphEntryPoint(
+            type = type,
+            factory = factory ?: type.defaultFactory(),
+            properties = properties,
+            methods = methods
+        )
+
+        private fun Type.defaultFactory(): Factory {
+            val factoryType = Type.Simple(packageName, "${simpleName}Factory")
+            return Factory(
+                type = factoryType,
+                method = Member.Method(
+                    packageName = packageName,
+                    name = "create",
+                    returns = this,
+                    parent = factoryType
+                )
+            )
+        }
+    }
 }
