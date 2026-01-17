@@ -43,7 +43,7 @@ class DependencyGraph(
         fun build(entry: GraphEntryPoint): DependencyGraph {
             val holder = TypeFactoryHolder()
             val factory = entry.factory
-            if (factory != null) for (p in factory.method.parameters) {
+            for (p in factory.method.parameters) {
                 holder.insert(p.type, TypeFactory.Property(p.type, p.name))
             }
             val methods = entry.methods.map {
@@ -75,7 +75,8 @@ class DependencyGraph(
                     singleton = constructor.singleton,
                     dependencies = constructor.invocation.parameters.map {
                         holder.getOrPut(it.type) { createTypeFactory(it, this, tail.then(it)) }
-                    }
+                    },
+                    isPublic = tail.isStart
                 )
             }
             val factory = findFactory(type)
@@ -87,14 +88,16 @@ class DependencyGraph(
                     singleton = factory.singleton,
                     dependencies = factory.invocation.parameters.map {
                         holder.getOrPut(it.type) { createTypeFactory(it, this, tail.then(it)) }
-                    }
+                    },
+                    isPublic = tail.isStart
                 )
             }
             val binder = findBinders(type)
             if (binder != null) {
                 return TypeFactory.Binds(
                     type = type,
-                    source = holder.getOrPut(binder.source) { createTypeFactory(it, this, tail.then(it)) }
+                    source = holder.getOrPut(binder.source) { createTypeFactory(it, this, tail.then(it)) },
+                    isPublic = tail.isStart
                 )
             }
 
@@ -107,7 +110,7 @@ class DependencyGraph(
                     error("Parameterized type $type cannot be resolved to type factory. If this is a provider, use spike.Provider<your.type.Here>")
                 val actualType = type.typeArguments.single()
                 val tf = createTypeFactory(actualType, holder, tail)
-                return TypeFactory.Provides(actualType, tf)
+                return TypeFactory.Provides(actualType, tf, tail.isStart)
             }
 
             error("Cannot find factory for $type")

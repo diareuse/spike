@@ -1,26 +1,26 @@
 package spike.compiler.generator
 
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeSpec
 import spike.graph.DependencyGraph
-import spike.graph.TypeFactory.Companion.contains
 
 class DependencyContainerTypeConstructor : TypeGenerator<DependencyGraph> {
     override fun generate(chain: TypeGeneratorChain<DependencyGraph>): TypeSpec.Builder {
-        val factoryParameters = chain.subject.entry.factory?.method?.parameters
-        if (factoryParameters != null) {
-            val constructor = FunSpec.constructorBuilder().apply {
-                for (p in factoryParameters) {
-                    val name = chain.resolver.getFieldName(p.type)
-                    addParameter(name, chain.resolver.getTypeName(p.type))
-                    val ps = PropertySpec
-                        .builder(name, chain.resolver.getTypeName(p.type)).initializer(name)
-                        .addModifiers(KModifier.PUBLIC)
-                    chain.spec.addProperty(ps.build())
-                }
-            }
-            chain.spec.primaryConstructor(constructor.build())
+        val factoryParameters = chain.subject.entry.factory.method.parameters
+        val constructor = FunSpec.constructorBuilder()
+        for (p in factoryParameters) {
+            val parameterType = chain.resolver.getTypeName(p.type)
+            val parameterName = chain.resolver.getFieldName(p.type)
+            val parameterModifier = if(chain.subject.entry.isRootProperty(p.type)) KModifier.PUBLIC else KModifier.PRIVATE
+            val ps = PropertySpec.builder(parameterName, parameterType)
+                .initializer(parameterName)
+                .addModifiers(parameterModifier)
+            chain.spec.addProperty(ps.build())
+            constructor.addParameter(parameterName, parameterType)
         }
+        chain.spec.primaryConstructor(constructor.build())
         return chain.proceed()
     }
 }
-

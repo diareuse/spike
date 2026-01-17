@@ -21,6 +21,7 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
             val propertyName = chain.resolver.getFieldName(factory.type)
             val propertyTypeName = chain.resolver.getTypeName(factory.type)
             val propertySpec = PropertySpec.builder(propertyName, propertyTypeName)
+                .addModifiers(if (factory.isPublic) KModifier.PUBLIC else KModifier.PRIVATE)
 
             when (factory) {
                 is TypeFactory.Binds -> propertySpec.binds(factory, chain.resolver)

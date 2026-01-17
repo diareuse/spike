@@ -154,7 +154,8 @@ class SpikeSymbolProcessor(
             subject = this,
             generators = listOf(
                 DependencyContainerTypeConstructor(),
-                DependencyContainerTypeFactory()
+                DependencyContainerTypeFactory(),
+                DependencyContainerTypeInternal()
             ),
             resolver = resolver
         )

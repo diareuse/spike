@@ -3,15 +3,21 @@ package spike.graph
 sealed class TypeFactory {
     abstract val type: Type
     abstract val dependencies: List<TypeFactory>
-    abstract val canInline: Boolean
+    abstract val isPublic: Boolean
+
+    open val canInline: Boolean
+        get() = !isPublic// && dependencies.all { isPublic == it.isPublic }
 
     data class Class(
         override val type: Type,
         override val invocation: Invocation,
         override val singleton: Boolean,
-        override val dependencies: List<TypeFactory>
+        override val dependencies: List<TypeFactory>,
+        override val isPublic: Boolean
     ) : TypeFactory(), Callable {
-        override val canInline: Boolean get() = dependencies.all { it.canInline }
+        override val canInline: Boolean
+            get() = !singleton && super.canInline
+
         override fun toString(): String {
             var out = ""
             out += "$type("
@@ -20,12 +26,13 @@ sealed class TypeFactory {
                 if (!first) out += ","
                 out += "\n"
                 val parametrized = parameter.type as? Type.Parametrized
-                val targetType = if(parametrized?.envelope == ProviderType || parametrized?.envelope == LazyType) {
+                val targetType = if (parametrized?.envelope == ProviderType || parametrized?.envelope == LazyType) {
                     parameter.type.typeArguments.single()
                 } else {
                     parameter.type
                 }
-                out += dependencies.firstOrNull { dit -> dit.type == targetType }?.toString()?.prependIndent() ?: error("${parameter.type} cannot be resolved to factory")
+                out += dependencies.firstOrNull { dit -> dit.type == targetType }?.toString()?.prependIndent()
+                    ?: error("${parameter.type} cannot be resolved to factory")
                 first = false
             }
             if (!first) out += "\n"
@@ -39,19 +46,22 @@ sealed class TypeFactory {
         val member: Member.Method,
         override val invocation: Invocation,
         override val singleton: Boolean,
-        override val dependencies: List<TypeFactory>
+        override val dependencies: List<TypeFactory>,
+        override val isPublic: Boolean
     ) : TypeFactory(), Callable {
-        override val canInline: Boolean get() = dependencies.all { it.canInline }
+        override val canInline: Boolean
+            get() = !singleton && super.canInline
     }
 
     data class Binds(
         override val type: Type,
-        val source: TypeFactory
+        val source: TypeFactory,
+        override val isPublic: Boolean
     ) : TypeFactory() {
         override val dependencies: List<TypeFactory>
             get() = listOf(source)
         override val canInline: Boolean
-            get() = source.canInline
+            get() = !isPublic && super.canInline
 
         override fun toString(): String {
             return "$source as $type"
@@ -60,11 +70,11 @@ sealed class TypeFactory {
 
     data class Provides(
         override val type: Type,
-        val factory: TypeFactory
+        val factory: TypeFactory,
+        override val isPublic: Boolean
     ) : TypeFactory() {
         override val dependencies: List<TypeFactory>
             get() = factory.dependencies
-        override val canInline: Boolean get() = factory.canInline
 
         override fun toString(): String {
             var out = "Provider {\n"
@@ -78,7 +88,8 @@ sealed class TypeFactory {
         override val type: Type,
         val name: String,
     ) : TypeFactory() {
-        override val canInline: Boolean get() = true
+        override val isPublic: Boolean
+            get() = true
         override val dependencies: List<TypeFactory>
             get() = emptyList()
     }
