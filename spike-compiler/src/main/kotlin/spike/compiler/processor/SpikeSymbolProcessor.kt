@@ -153,15 +153,15 @@ class SpikeSymbolProcessor(
         val dependencyContainerType = DependencyContainerTypeChain(
             subject = this,
             generators = listOf(
-                DependencyContainerConstructor(),
-                DependencyContainerFactory()
+                DependencyContainerTypeConstructor(),
+                DependencyContainerTypeFactory()
             ),
             resolver = resolver
         )
         val dependencyContainerFile = DependencyContainerFileChain(
             subject = this,
             generators = listOf(
-                DependencyContainerType(dependencyContainerType)
+                DependencyContainerFileWithType(dependencyContainerType)
             ),
             resolver = resolver
         )

@@ -4,7 +4,7 @@ import com.squareup.kotlinpoet.*
 import spike.graph.DependencyGraph
 import spike.graph.TypeFactory.Companion.contains
 
-class DependencyContainerConstructor : TypeGenerator<DependencyGraph> {
+class DependencyContainerTypeConstructor : TypeGenerator<DependencyGraph> {
     override fun generate(chain: TypeGeneratorChain<DependencyGraph>): TypeSpec.Builder {
         val factoryParameters = chain.subject.entry.factory?.method?.parameters
         if (factoryParameters != null) {

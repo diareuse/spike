@@ -7,7 +7,7 @@ import com.squareup.kotlinpoet.TypeSpec
 import spike.graph.DependencyGraph
 import spike.graph.TypeFactory
 
-class DependencyContainerFactory : TypeGenerator<DependencyGraph> {
+class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
     override fun generate(chain: TypeGeneratorChain<DependencyGraph>): TypeSpec.Builder {
         for (factory in chain.subject) {
             // Properties are a type of factory statically declared via constructor; i.e., parameter
