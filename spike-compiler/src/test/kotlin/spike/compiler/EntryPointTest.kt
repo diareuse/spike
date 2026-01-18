@@ -32,4 +32,10 @@ class EntryPointTest : TestHarness() {
     @Test
     fun `entries with qualifiers resolve`() = test("qualifier")
 
+    @Test
+    fun `multiple constructors must be marked`() = testFail("no_marked_constructors")
+
+    @Test
+    fun `multiple constructors are marked`() = test("marked_constructors")
+
 }

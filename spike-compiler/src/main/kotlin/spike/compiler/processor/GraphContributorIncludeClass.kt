@@ -22,7 +22,7 @@ class GraphContributorIncludeClass(
             val constructors = cls.getConstructors().toList()
             val constructor = when {
                 constructors.size > 1 -> checkNotNull(constructors.firstOrNull { it.isAnnotationPresent(Inject::class) }) {
-                    "Include class must have a constructor annotated with @spike.Inject if it has more than one constructor"
+                    "Include class (${cls.qualifiedName?.asString()}) must have a constructor annotated with @spike.Inject if it has more than one constructor"
                 }
 
                 else -> constructors.single()
