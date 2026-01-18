@@ -1,6 +1,6 @@
 package spike.compiler.generator.entrypoint
 
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.FileSpec
 import spike.compiler.generator.FileGenerator
 import spike.compiler.generator.FileGeneratorChain
 import spike.compiler.generator.TypeResolver

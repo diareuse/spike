@@ -4,14 +4,10 @@ import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
-import spike.compiler.generator.invocation.InvocationChain
-import spike.compiler.generator.invocation.InvocationGeneratorCaller
-import spike.compiler.generator.invocation.InvocationGeneratorConstructor
-import spike.compiler.generator.invocation.InvocationGeneratorMethod
-import spike.compiler.generator.invocation.InvocationGeneratorParameters
 import spike.compiler.generator.TypeGenerator
 import spike.compiler.generator.TypeGeneratorChain
 import spike.compiler.generator.TypeResolver
+import spike.compiler.generator.invocation.*
 import spike.graph.DependencyGraph
 import spike.graph.TypeFactory
 

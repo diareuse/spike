@@ -11,11 +11,11 @@ import spike.graph.GraphEntryPoint
 class EntryPointFactoryTypeMethod : TypeGenerator<GraphEntryPoint.Factory> {
     override fun generate(chain: TypeGeneratorChain<GraphEntryPoint.Factory>): TypeSpec.Builder {
         val method = chain.subject.method
-        val factoryMethod = FunSpec.Companion.builder(method.name)
+        val factoryMethod = FunSpec.builder(method.name)
             .returns(chain.resolver.getTypeName(method.returns))
         if (!chain.subject.isVirtual)
             factoryMethod.addModifiers(KModifier.OVERRIDE)
-        val body = CodeBlock.Companion.builder()
+        val body = CodeBlock.builder()
             .add(
                 "return %T(%T(",
                 chain.resolver.transformClassName(method.returns),

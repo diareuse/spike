@@ -15,7 +15,8 @@ class DependencyContainerTypeConstructor : TypeGenerator<DependencyGraph> {
         for (p in factoryParameters) {
             val parameterType = chain.resolver.getTypeName(p.type)
             val parameterName = chain.resolver.getFieldName(p.type)
-            val parameterModifier = if(chain.subject.entry.isRootProperty(p.type)) KModifier.PUBLIC else KModifier.PRIVATE
+            val parameterModifier =
+                if (chain.subject.entry.isRootProperty(p.type)) KModifier.PUBLIC else KModifier.PRIVATE
             val ps = PropertySpec.builder(parameterName, parameterType)
                 .initializer(parameterName)
                 .addModifiers(parameterModifier)

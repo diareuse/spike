@@ -1,11 +1,6 @@
 package spike.compiler.processor
 
-import com.google.devtools.ksp.KspExperimental
-import com.google.devtools.ksp.getDeclaredFunctions
-import com.google.devtools.ksp.isAbstract
-import com.google.devtools.ksp.isAnnotationPresent
-import com.google.devtools.ksp.isInternal
-import com.google.devtools.ksp.isPublic
+import com.google.devtools.ksp.*
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSClassDeclaration
@@ -93,6 +88,7 @@ class GraphContributorEntryPoint(
             )
         }.toList()
     }
+
     private fun findMethods(entryPoint: KSClassDeclaration): List<Member.Method> {
         return entryPoint.getAllFunctions().filter { it.isAbstract }.map {
             check(it.parameters.isEmpty()) {

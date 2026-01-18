@@ -2,29 +2,10 @@ package spike.compiler.generator
 
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.squareup.kotlinpoet.ksp.writeTo
-import spike.compiler.generator.container.DependencyContainerFileChain
-import spike.compiler.generator.container.DependencyContainerFileWithType
-import spike.compiler.generator.container.DependencyContainerTypeChain
-import spike.compiler.generator.container.DependencyContainerTypeConstructor
-import spike.compiler.generator.container.DependencyContainerTypeFactory
-import spike.compiler.generator.container.DependencyContainerTypeInternal
-import spike.compiler.generator.entrypoint.EntryPointFileChain
-import spike.compiler.generator.entrypoint.EntryPointFileInitializer
-import spike.compiler.generator.entrypoint.EntryPointFileWithType
-import spike.compiler.generator.entrypoint.EntryPointTypeChain
-import spike.compiler.generator.entrypoint.EntryPointTypeConstructor
-import spike.compiler.generator.entrypoint.EntryPointTypeFunctions
-import spike.compiler.generator.entrypoint.EntryPointTypeInternal
-import spike.compiler.generator.entrypoint.EntryPointTypeProperties
-import spike.compiler.generator.entrypoint.EntryPointTypeSuperinterface
-import spike.compiler.generator.entrypoint.factory.EntryPointFactoryFileChain
-import spike.compiler.generator.entrypoint.factory.EntryPointFactoryFileWithType
-import spike.compiler.generator.entrypoint.factory.EntryPointFactoryTypeChain
-import spike.compiler.generator.entrypoint.factory.EntryPointFactoryTypeInternal
-import spike.compiler.generator.entrypoint.factory.EntryPointFactoryTypeMethod
-import spike.compiler.generator.entrypoint.factory.EntryPointFactoryTypeSuperinterface
+import spike.compiler.generator.container.*
+import spike.compiler.generator.entrypoint.*
+import spike.compiler.generator.entrypoint.factory.*
 import spike.graph.DependencyGraph
-import java.util.Map.entry
 
 class DependencyGraphGenerator(
     private val environment: SymbolProcessorEnvironment

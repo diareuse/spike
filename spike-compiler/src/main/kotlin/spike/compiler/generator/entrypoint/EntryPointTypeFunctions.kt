@@ -10,7 +10,7 @@ import spike.graph.GraphEntryPoint
 class EntryPointTypeFunctions : TypeGenerator<GraphEntryPoint> {
     override fun generate(chain: TypeGeneratorChain<GraphEntryPoint>): TypeSpec.Builder {
         for (method in chain.subject.methods) {
-            val spec = FunSpec.Companion.builder(method.name)
+            val spec = FunSpec.builder(method.name)
                 .returns(chain.resolver.getTypeName(method.returns))
                 .addModifiers(KModifier.OVERRIDE)
                 .addStatement("return container.%N", chain.resolver.getFieldName(method.returns))

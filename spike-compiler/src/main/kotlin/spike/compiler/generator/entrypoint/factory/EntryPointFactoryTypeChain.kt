@@ -19,7 +19,7 @@ data class EntryPointFactoryTypeChain(
     }
 
     private companion object {
-        fun GraphEntryPoint.Factory.asTypeSpecBuilder(resolver: TypeResolver) = TypeSpec.Companion
+        fun GraphEntryPoint.Factory.asTypeSpecBuilder(resolver: TypeResolver) = TypeSpec
             .classBuilder(resolver.transformClassName(type))
     }
 }

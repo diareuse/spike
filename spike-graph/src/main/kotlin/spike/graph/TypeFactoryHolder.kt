@@ -17,7 +17,10 @@ class TypeFactoryHolder {
 
     companion object {
 
-        inline fun TypeFactoryHolder.getOrPut(type: Type, factory: TypeFactoryHolder.(Type) -> TypeFactory): TypeFactory {
+        inline fun TypeFactoryHolder.getOrPut(
+            type: Type,
+            factory: TypeFactoryHolder.(Type) -> TypeFactory
+        ): TypeFactory {
             return get(type) ?: factory(type).also { insert(type, it) }
         }
 

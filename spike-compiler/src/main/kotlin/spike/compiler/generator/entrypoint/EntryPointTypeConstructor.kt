@@ -11,10 +11,10 @@ import spike.graph.GraphEntryPoint
 class EntryPointTypeConstructor : TypeGenerator<GraphEntryPoint> {
     override fun generate(chain: TypeGeneratorChain<GraphEntryPoint>): TypeSpec.Builder {
         val containerClassName = chain.resolver.getDependencyContainerClassName(chain.subject.type)
-        val constructor = FunSpec.Companion.constructorBuilder()
+        val constructor = FunSpec.constructorBuilder()
             .addParameter("container", containerClassName)
         chain.spec.primaryConstructor(constructor.build())
-        val property = PropertySpec.Companion.builder("container", containerClassName)
+        val property = PropertySpec.builder("container", containerClassName)
             .addModifiers(KModifier.PRIVATE)
             .initializer("container")
         chain.spec.addProperty(property.build())

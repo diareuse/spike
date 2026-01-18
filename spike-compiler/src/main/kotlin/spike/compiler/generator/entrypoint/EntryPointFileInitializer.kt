@@ -1,10 +1,6 @@
 package spike.compiler.generator.entrypoint
 
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.CodeBlock
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.*
 import spike.compiler.generator.FileGenerator
 import spike.compiler.generator.FileGeneratorChain
 import spike.graph.GraphEntryPoint
@@ -13,11 +9,11 @@ class EntryPointFileInitializer : FileGenerator<GraphEntryPoint> {
     override fun generate(chain: FileGeneratorChain<GraphEntryPoint>): FileSpec.Builder {
         val entryPointClass = chain.resolver.getTypeName(chain.subject.type) as ClassName
         val entryPointCompanion = entryPointClass.nestedClass("Companion")
-        val initializer = FunSpec.Companion.builder("invoke")
+        val initializer = FunSpec.builder("invoke")
             .addModifiers(KModifier.OPERATOR)
             .receiver(entryPointCompanion)
             .returns(entryPointClass)
-        val body = CodeBlock.Companion.builder()
+        val body = CodeBlock.builder()
             .add(
                 "return %T().%N(",
                 chain.resolver.transformClassName(chain.subject.factory.type),

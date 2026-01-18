@@ -19,7 +19,7 @@ data class EntryPointFactoryFileChain(
     }
 
     private companion object {
-        fun GraphEntryPoint.Factory.asFileSpecBuilder(resolver: TypeResolver) = FileSpec.Companion
+        fun GraphEntryPoint.Factory.asFileSpecBuilder(resolver: TypeResolver) = FileSpec
             .builder(resolver.transformClassName(type))
     }
 }
