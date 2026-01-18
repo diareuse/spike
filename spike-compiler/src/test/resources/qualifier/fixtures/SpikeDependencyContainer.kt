@@ -1,8 +1,8 @@
-internal class DependencyContainer() {
-  public inline val kindNameSphynxCat: Cat
+internal class SpikeDependencyContainer() {
+  public val kindNameSphynxCat: Cat
     get() = kindNameSphynxSphynx as Cat
 
-  public inline val cat: Cat
+  public val cat: Cat
     get() = someCat as Cat
 
   private inline val kindNameSphynxSphynx: Sphynx

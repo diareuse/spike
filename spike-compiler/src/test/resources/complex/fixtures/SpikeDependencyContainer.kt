@@ -1,15 +1,13 @@
 import kotlin.collections.List
 import kotlin.lazy
 
-internal class DependencyContainer(
-  batteries: List<Battery>,
+internal class SpikeDependencyContainer(
+  private val listOfBattery: List<Battery>,
 ) {
-  private val list_Battery_: List<Battery> = batteries
-
-  public inline val television: Television
+  public val television: Television
     get() = samsungTelevision as Television
 
-  public inline val remote: Remote
+  public val remote: Remote
     get() = remoteControl as Remote
 
   private val samsungTelevision: SamsungTelevision by lazy {
@@ -17,7 +15,7 @@ internal class DependencyContainer(
       }
 
   private inline val remoteControl: RemoteControl
-    get() = RemoteControl(televisionProvider = ::television, batteries = list_Battery_)
+    get() = RemoteControl(televisionProvider = ::television, batteries = listOfBattery)
 
   private inline val soundSystem: SoundSystem
     get() = amazonFireSoundBar as SoundSystem

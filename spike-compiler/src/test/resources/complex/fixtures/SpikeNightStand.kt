@@ -1,7 +1,7 @@
 import kotlin.collections.List
 
-internal class SpikeNightStandEntryPoint(
-  private val container: DependencyContainer,
+internal class SpikeNightStand(
+  private val container: SpikeDependencyContainer,
 ) : NightStand {
   override val television: Television
     get() = container.television

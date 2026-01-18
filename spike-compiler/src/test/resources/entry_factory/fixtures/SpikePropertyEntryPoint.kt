@@ -1,5 +1,5 @@
-internal class SpikePropertyEntryPointEntryPoint(
-  private val container: DependencyContainer,
+internal class SpikePropertyEntryPoint(
+  private val container: SpikeDependencyContainer,
 ) : PropertyEntryPoint {
   override val cat: Cat
     get() = container.cat
