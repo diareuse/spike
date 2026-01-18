@@ -93,13 +93,18 @@ abstract class TestHarness {
         prepare(projectRoot)
         val runner = GradleRunner.create()
             .withProjectDir(projectRoot)
-            .withArguments("kspKotlin", "--stacktrace")
+            .withArguments("kspKotlin", "compileKotlin", "--stacktrace")
             .forwardOutput()
         val result = build(runner)
 
         verify(
             result.task(":kspKotlin")!!,
             projectRoot.resolve("build/generated/ksp/main/kotlin").walk().filter { it.isFile }
+        )
+        assertEquals(
+            TaskOutcome.SUCCESS,
+            build(runner).task(":compileKotlin")!!.outcome,
+            "Verification succeeded, but compilation failed:"
         )
     }
 
