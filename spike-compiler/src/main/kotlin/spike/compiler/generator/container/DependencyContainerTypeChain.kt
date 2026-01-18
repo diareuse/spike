@@ -1,4 +1,4 @@
-package spike.compiler.generator
+package spike.compiler.generator.container
 
 import com.squareup.kotlinpoet.TypeSpec
 import spike.graph.DependencyGraph

@@ -1,6 +1,8 @@
-package spike.compiler.generator
+package spike.compiler.generator.entrypoint.factory
 
 import com.squareup.kotlinpoet.FileSpec
+import spike.compiler.generator.FileGenerator
+import spike.compiler.generator.FileGeneratorChain
 import spike.graph.GraphEntryPoint
 
 class EntryPointFactoryFileWithType(

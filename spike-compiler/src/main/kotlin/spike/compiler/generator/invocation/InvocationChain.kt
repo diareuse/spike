@@ -1,6 +1,9 @@
-package spike.compiler.generator
+package spike.compiler.generator.invocation
 
 import com.squareup.kotlinpoet.CodeBlock
+import spike.compiler.generator.CodeBlockGenerator
+import spike.compiler.generator.CodeBlockGeneratorChain
+import spike.compiler.generator.TypeResolver
 import spike.graph.TypeFactory
 
 data class InvocationChain(

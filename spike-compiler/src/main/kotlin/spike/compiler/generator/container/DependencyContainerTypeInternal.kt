@@ -1,7 +1,9 @@
-package spike.compiler.generator
+package spike.compiler.generator.container
 
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.TypeSpec
+import spike.compiler.generator.TypeGenerator
+import spike.compiler.generator.TypeGeneratorChain
 import spike.graph.DependencyGraph
 
 class DependencyContainerTypeInternal : TypeGenerator<DependencyGraph> {
