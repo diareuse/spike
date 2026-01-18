@@ -6,7 +6,7 @@ sealed class TypeFactory {
     abstract val isPublic: Boolean
 
     open val canInline: Boolean
-        get() = !isPublic// && dependencies.all { isPublic == it.isPublic }
+        get() = true
 
     data class Class(
         override val type: Type,

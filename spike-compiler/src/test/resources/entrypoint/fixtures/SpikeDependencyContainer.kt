@@ -1,4 +1,4 @@
 internal class SpikeDependencyContainer() {
-  public val injectable: Injectable
+  public inline val injectable: Injectable
     get() = Injectable()
 }
