@@ -29,7 +29,7 @@ class GraphContributorEntryPoint(
             val factory = findFactory(entryPoint)
             val properties = findProperties(entryPoint)
             val methods = findMethods(entryPoint)
-            val entry = GraphEntryPoint.Companion(
+            val entry = GraphEntryPoint(
                 type = entryPoint.toType(),
                 factory = factory,
                 properties = properties,

@@ -27,7 +27,8 @@ data class GraphEntryPoint private constructor(
 
     data class Factory(
         val type: Type,
-        val method: Member.Method
+        val method: Member.Method,
+        val isVirtual: Boolean = false
     )
 
     companion object {
@@ -54,7 +55,8 @@ data class GraphEntryPoint private constructor(
                     name = "create",
                     returns = this,
                     parent = factoryType
-                )
+                ),
+                isVirtual = true
             )
         }
     }
