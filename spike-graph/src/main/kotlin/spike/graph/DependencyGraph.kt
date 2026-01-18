@@ -22,7 +22,7 @@ class DependencyGraph(
         }
     }
 
-    class Builder(private val logger: Logger) {
+    class Builder {
 
         private val constructors = mutableSetOf<Constructor>()
         private val factories = mutableSetOf<Factory>()
