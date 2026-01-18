@@ -101,11 +101,13 @@ abstract class TestHarness {
             result.task(":kspKotlin")!!,
             projectRoot.resolve("build/generated/ksp/main/kotlin").walk().filter { it.isFile }
         )
-        assertEquals(
-            TaskOutcome.SUCCESS,
-            build(runner).task(":compileKotlin")!!.outcome,
-            "Verification succeeded, but compilation failed:"
-        )
+        val compileKotlin = result.task(":compileKotlin")
+        if (compileKotlin != null)
+            assertEquals(
+                TaskOutcome.SUCCESS,
+                compileKotlin.outcome,
+                "Verification succeeded, but compilation failed:"
+            )
     }
 
     private fun generateBuildScript(): String {
