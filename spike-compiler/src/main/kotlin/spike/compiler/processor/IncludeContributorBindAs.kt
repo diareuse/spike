@@ -1,14 +1,17 @@
 package spike.compiler.processor
 
-import com.google.devtools.ksp.symbol.*
+import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSDeclaration
+import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import com.google.devtools.ksp.symbol.KSType
 import spike.Include
-import spike.graph.AnyType
-import kotlin.reflect.KProperty1
+import spike.compiler.processor.util.getAnnotationParameter
+import spike.graph.BuiltInTypes
 
-class IncludeBindAsContributorImpl : IncludeBindAsContributor {
+class IncludeContributorBindAs : IncludeContributor {
     override fun contribute(context: GraphContext, annotated: KSClassDeclaration) {
         val bindAs: KSType = annotated.getAnnotationParameter(Include::bindAs)
-        if (bindAs.toType() == AnyType) return
+        if (bindAs.toType() == BuiltInTypes.Any) return
         check(bindAs.isAssignableFrom(annotated.asStarProjectedType())) {
             errorMessage(annotated, bindAs)
         }
@@ -20,7 +23,7 @@ class IncludeBindAsContributorImpl : IncludeBindAsContributor {
 
     override fun contribute(context: GraphContext, annotated: KSFunctionDeclaration) {
         val bindAs: KSType = annotated.getAnnotationParameter(Include::bindAs)
-        if (bindAs.toType() == AnyType) return
+        if (bindAs.toType() == BuiltInTypes.Any) return
         check(bindAs.isAssignableFrom(annotated.returnType!!.resolve())) {
             errorMessage(annotated, bindAs)
         }
@@ -28,15 +31,6 @@ class IncludeBindAsContributorImpl : IncludeBindAsContributor {
         val targetType = bindAs.toType().qualifiedBy(qualifiers)
         val sourceType = annotated.returnType!!.toType().qualifiedBy(qualifiers)
         context.builder.addBinder(from = sourceType, to = targetType)
-    }
-
-    // ---
-
-    private inline fun <reified A, reified P> KSAnnotated.getAnnotationParameter(parameter: KProperty1<A, Any?>): P {
-        val annotation = annotations.single {
-            it.annotationType.resolve().declaration.qualifiedName?.asString() == A::class.qualifiedName
-        }
-        return annotation.arguments.single { it.name?.asString() == parameter.name }.value as P
     }
 
     // ---

@@ -38,4 +38,7 @@ class EntryPointTest : TestHarness() {
     @Test
     fun `multiple constructors are marked`() = test("marked_constructors")
 
+    @Test
+    fun `multi binds are possible`() = test("multibinding")
+
 }

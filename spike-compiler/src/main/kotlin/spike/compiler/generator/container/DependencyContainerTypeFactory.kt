@@ -33,6 +33,8 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
                 is TypeFactory.Method -> propertySpec.methodFactory(factory, chain.resolver)
                 is TypeFactory.Property,
                 is TypeFactory.Provides -> error("Compiler error, this should never be called")
+                is TypeFactory.MultibindsCollection -> TODO()
+                is TypeFactory.MultibindsMap -> TODO()
             }
 
             chain.spec.addProperty(propertySpec.build())

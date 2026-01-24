@@ -13,5 +13,6 @@ kotlin {
 }
 
 dependencies {
+    implementation project(":spike-core")
     testImplementation libs.kotlin.test
 }

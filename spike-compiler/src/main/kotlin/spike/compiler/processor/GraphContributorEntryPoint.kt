@@ -6,6 +6,7 @@ import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import spike.EntryPoint
 import spike.compiler.generator.DependencyGraphGenerator
+import spike.graph.DependencyGraph
 import spike.graph.GraphEntryPoint
 import spike.graph.Member
 import spike.graph.Parameter
@@ -30,7 +31,10 @@ class GraphContributorEntryPoint(
                 properties = properties,
                 methods = methods
             )
-            val graph = context.builder.build(entry)
+            val graph = DependencyGraph.Builder()
+                .addRootGraph(context.builder.build())
+                .addMultibindGraph(context.multibind.build())
+                .build(entry)
             generator.generate(graph)
         }
     }

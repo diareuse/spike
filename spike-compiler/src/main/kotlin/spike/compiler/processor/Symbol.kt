@@ -4,6 +4,7 @@ import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.symbol.*
 import spike.graph.Invocation
+import spike.graph.Key
 import spike.graph.Parameter
 import spike.graph.Qualifier
 import spike.graph.Type
@@ -27,6 +28,27 @@ fun KSAnnotated.findQualifiers() = annotations
     }
     .sorted()
     .toList()
+
+@OptIn(KspExperimental::class)
+fun KSAnnotated.findKey() = annotations
+    .filter { it.annotationType.resolve().declaration.isAnnotationPresent(spike.Key::class) }
+    .map {
+        val argument = it.arguments.singleOrNull()
+        checkNotNull(argument) {
+            val klass = when(val k = this@findKey) {
+                is KSDeclaration -> k.toType().toString()
+                else -> k.toString()
+            }
+                "spike.Key annotation must have a single argument, but found none or too many $klass"
+        }
+        val value = when (val v = argument.value) {
+            is KSType -> v.toType()
+            is KSClassDeclaration -> v.toType()
+            else -> v
+        }
+        Key(it.annotationType.toType(), value)
+    }
+    .singleOrNull() ?: error("spike.Key inheritor must be defined in $this")
 
 @OptIn(KspExperimental::class)
 fun KSFunctionDeclaration.toInvocation() = Invocation(

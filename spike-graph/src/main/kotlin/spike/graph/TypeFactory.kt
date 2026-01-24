@@ -26,7 +26,10 @@ sealed class TypeFactory {
                 if (!first) out += ","
                 out += "\n"
                 val parametrized = parameter.type as? Type.Parametrized
-                val targetType = if (parametrized?.envelope == ProviderType || parametrized?.envelope == LazyType) {
+                val targetType = if (
+                    parametrized?.envelope == BuiltInTypes.Provider ||
+                    parametrized?.envelope == BuiltInTypes.Lazy
+                ) {
                     parameter.type.typeArguments.single()
                 } else {
                     parameter.type
@@ -92,6 +95,44 @@ sealed class TypeFactory {
             get() = true
         override val dependencies: List<TypeFactory>
             get() = emptyList()
+    }
+
+    data class MultibindsCollection(
+        override val type: spike.graph.Type,
+        override val dependencies: List<TypeFactory>,
+        override val isPublic: Boolean,
+        val collectionType: Type
+    ): TypeFactory() {
+        enum class Type {
+            Set, List
+        }
+
+        override fun toString(): String {
+            var out = collectionType.name + " {"
+            for (dependency in dependencies) {
+                out += "\n"
+                out += dependency.toString().prependIndent()
+            }
+            out += "\n}"
+            return out
+        }
+    }
+
+    data class MultibindsMap(
+        override val type: Type,
+        val keyValues: Map<Any?, TypeFactory>,
+        override val isPublic: Boolean
+    ): TypeFactory() {
+        override val dependencies get() = keyValues.values.toList()
+        override fun toString(): String {
+            var out = "Map {"
+            for ((key, value) in keyValues) {
+                out += "\n"
+                out += "$key -> $value"
+            }
+            out += "\n}"
+            return out
+        }
     }
 
     interface Callable {

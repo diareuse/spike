@@ -9,7 +9,7 @@ import spike.Singleton
 import spike.graph.Member
 
 class GraphContributorIncludeFunction(
-    private val bindAs: IncludeBindAsContributor
+    private val bindAs: IncludeContributor
 ) : GraphContributor {
     @OptIn(KspExperimental::class)
     override fun contribute(context: GraphContext, resolver: Resolver) {
@@ -18,20 +18,6 @@ class GraphContributorIncludeFunction(
             .filterIsInstance<KSFunctionDeclaration>()
         for (func in functions) {
             bindAs.contribute(context, func)
-            val qualifiers = func.findQualifiers()
-            val returnType = func.returnType!!.toType().qualifiedBy(qualifiers)
-            val parentType = func.parentDeclaration?.toType()?.qualifiedBy(qualifiers)
-            context.builder.addFactory(
-                type = returnType,
-                member = Member.Method(
-                    packageName = func.packageName.asString(),
-                    name = func.simpleName.asString(),
-                    returns = returnType,
-                    parent = parentType
-                ),
-                invocation = func.toInvocation(),
-                singleton = func.isAnnotationPresent(Singleton::class)
-            )
         }
     }
 }

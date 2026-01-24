@@ -1,5 +1,7 @@
 package spike.graph
 
+import kotlin.reflect.KClass
+
 sealed class Type {
     abstract val packageName: String
     abstract val simpleName: String
@@ -54,5 +56,9 @@ sealed class Type {
         override fun toString(): String {
             return "${qualifiers.joinToString(" ")} $type"
         }
+    }
+
+    companion object {
+        operator fun invoke(klass: KClass<*>) = Simple(klass.qualifiedName!!.substringBefore(".${klass.simpleName!!}"), klass.simpleName!!)
     }
 }

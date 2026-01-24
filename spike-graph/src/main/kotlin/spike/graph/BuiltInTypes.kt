@@ -1,10 +1,14 @@
 package spike.graph
 
+@Suppress("RemoveRedundantQualifierName")
 object BuiltInTypes {
 
-    val Provider = Type.Simple(packageName = "spike", simpleName = "Provider")
-    val Lazy = Type.Simple(packageName = "kotlin", simpleName = "Lazy")
-    val Any = Type.Simple(packageName = "kotlin", simpleName = "Any")
+    val Provider = Type(spike.Provider::class)
+    val Lazy = Type(kotlin.Lazy::class)
+    val Any = Type(kotlin.Any::class)
+    val Map = Type(kotlin.collections.Map::class)
+    val List = Type(kotlin.collections.List::class)
+    val Set = Type(kotlin.collections.Set::class)
 
 }
 
