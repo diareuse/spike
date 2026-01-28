@@ -11,8 +11,7 @@ internal class SpikeDependencyContainer(
     get() = remoteControl as Remote
 
   private val samsungTelevision: SamsungTelevision by lazy {
-        SamsungTelevision(soundSystem = lazy(::soundSystem))
-      }
+        SamsungTelevision(soundSystem = lazy(::soundSystem))}
 
   private inline val remoteControl: RemoteControl
     get() = RemoteControl(televisionProvider = ::television, batteries = listOfBattery)

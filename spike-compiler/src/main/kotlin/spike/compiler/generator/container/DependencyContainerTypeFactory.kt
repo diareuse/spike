@@ -4,7 +4,10 @@ import com.squareup.kotlinpoet.*
 import spike.compiler.generator.TypeGenerator
 import spike.compiler.generator.TypeGeneratorChain
 import spike.compiler.generator.TypeResolver
-import spike.compiler.generator.invocation.*
+import spike.compiler.generator.invocation.InvocationChain
+import spike.compiler.generator.invocation.InvocationGeneratorConstructor
+import spike.compiler.generator.invocation.InvocationGeneratorMethod
+import spike.compiler.generator.invocation.InvocationGeneratorParameters
 import spike.graph.DependencyGraph
 import spike.graph.TypeFactory
 import kotlin.reflect.KClass
@@ -73,7 +76,7 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
     private fun PropertySpec.Builder.callableFactory(factory: TypeFactory.Callable, resolver: TypeResolver) {
         val codeBlock = CodeBlock.builder()
         when (factory.singleton) {
-            true -> codeBlock.beginControlFlow("by %M {", resolver.builtInMember { lazy })
+            true -> codeBlock.beginControlFlow("%M {", resolver.builtInMember { lazy })
             else -> codeBlock.add("return ")
         }
         codeBlock.add(constructCallable(factory, resolver))
@@ -83,7 +86,12 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
                 delegate(codeBlock.build())
             }
 
-            else -> getter(FunSpec.getterBuilder().addCode(codeBlock.build()).build())
+            else -> {
+                val spec = FunSpec.getterBuilder().addCode(codeBlock.build())
+                if (factory.canInline)
+                    spec.addModifiers(KModifier.INLINE)
+                getter(spec.build())
+            }
         }
     }
 
@@ -114,7 +122,7 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
         codeBlock.withIndent {
             var index = 0
             for ((key, item) in factory.keyValues) {
-                if(index++ > 0) codeBlock.add(", ")
+                if (index++ > 0) codeBlock.add(", ")
                 val keyLiteral = when (key) {
                     is String -> "\"$key\""
                     is KClass<*> -> "${key.qualifiedName}::class"
