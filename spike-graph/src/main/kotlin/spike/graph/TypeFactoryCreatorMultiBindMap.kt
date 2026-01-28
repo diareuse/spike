@@ -1,6 +1,6 @@
 package spike.graph
 
-import kotlin.collections.iterator
+import spike.graph.GraphStore.Companion.asGraphStore
 
 class TypeFactoryCreatorMultiBindMap(
     private val multibinding: MultiBindingStore
@@ -19,21 +19,21 @@ class TypeFactoryCreatorMultiBindMap(
             for ((k, v) in instances) {
                 var factory: TypeFactory? = null
                 if (v.factories.isNotEmpty()) {
-                    val factoryDefinition = v.factories.singleOrNull()
+                    val definition = v.factories.singleOrNull()
                         ?: error("Multiple factories found for the same type $type. You must define only one per key ($k).")
-                    factory = mint(factoryDefinition.type, clone(store = v + store))
+                    factory = mint(definition.type, clone(store = definition.asGraphStore() + store))
                 }
                 if (v.constructors.isNotEmpty()) {
                     if (factory != null) error("You cannot assign multiple contributors for the same key ($k) for the same type $type.")
-                    val constructorDefinition = v.constructors.singleOrNull()
+                    val definition = v.constructors.singleOrNull()
                         ?: error("Multiple classes found for the same $type. You must define only one per key ($k).")
-                    factory = mint(constructorDefinition.type, clone(store = v + store))
+                    factory = mint(definition.type, clone(store = definition.asGraphStore() + store))
                 }
                 if (v.binders.isNotEmpty()) {
                     if (factory != null) error("You cannot assign multiple contributors for the same key ($k) for the same type $type.")
-                    val binderDefinition = v.binders.singleOrNull()
+                    val definition = v.binders.singleOrNull()
                         ?: error("Multiple bindings found for the same type $type. You must define only one per key ($k).")
-                    factory = mint(binderDefinition.type, clone(store = v + store))
+                    factory = mint(definition.type, clone(store = definition.asGraphStore() + store))
                 }
                 if (factory == null)
                     error("No definition found for $type whilst being multi-bound, this is however most likely a spike inference error.")

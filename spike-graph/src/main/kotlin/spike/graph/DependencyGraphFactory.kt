@@ -1,12 +1,9 @@
 package spike.graph
 
-import spike.graph.TypeFactory.MultibindsCollection.Type.List
-import spike.graph.TypeFactory.MultibindsCollection.Type.Set
-
 class DependencyGraphFactory(
     private val entry: GraphEntryPoint,
     private val root: GraphStore,
-    private val multibinding: MultiBindingStore,
+    private val multibinding: MultiBindingStore
 ) {
 
     fun create(): DependencyGraph {
@@ -19,8 +16,8 @@ class DependencyGraphFactory(
             TypeFactoryCreatorLazy(),
             TypeFactoryCreatorProvider(),
             TypeFactoryCreatorMultiBindMap(multibinding),
-            TypeFactoryCreatorMultiBindCollection(multibinding, Set),
-            TypeFactoryCreatorMultiBindCollection(multibinding, List),
+            TypeFactoryCreatorMultiBindCollection(multibinding, BuiltInTypes.Set),
+            TypeFactoryCreatorMultiBindCollection(multibinding, BuiltInTypes.List),
         )
         val factory = entry.factory
         for (p in factory.method.parameters) {

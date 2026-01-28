@@ -98,17 +98,24 @@ sealed class TypeFactory {
     }
 
     data class MultibindsCollection(
-        override val type: spike.graph.Type,
-        override val dependencies: List<TypeFactory>,
+        override val type: Type,
+        val entries: List<TypeFactory>,
         override val isPublic: Boolean,
         val collectionType: Type
-    ): TypeFactory() {
-        enum class Type {
-            Set, List
-        }
+    ) : TypeFactory() {
+        // the values must be constructed locally as there can be a one binding and multibinding allows
+        // one type bound multiple times
+        override val dependencies: List<TypeFactory> = entries.flatMap { it.dependencies }
+
+        val collectionMemberFactory
+            get() = when (collectionType) {
+                BuiltInTypes.List -> BuiltInMembers.listOf
+                BuiltInTypes.Set -> BuiltInMembers.setOf
+                else -> error("Unsupported collection type: $collectionType")
+            }
 
         override fun toString(): String {
-            var out = collectionType.name + " {"
+            var out = "$collectionType {"
             for (dependency in dependencies) {
                 out += "\n"
                 out += dependency.toString().prependIndent()
@@ -122,8 +129,10 @@ sealed class TypeFactory {
         override val type: Type,
         val keyValues: Map<Any?, TypeFactory>,
         override val isPublic: Boolean
-    ): TypeFactory() {
-        override val dependencies get() = keyValues.values.toList()
+    ) : TypeFactory() {
+        // the values must be constructed locally as there can be a one binding and multibinding allows
+        // one type bound multiple times
+        override val dependencies get() = keyValues.values.flatMap { it.dependencies }.toList()
         override fun toString(): String {
             var out = "Map {"
             for ((key, value) in keyValues) {
@@ -135,10 +144,11 @@ sealed class TypeFactory {
         }
     }
 
-    interface Callable {
+    sealed interface Callable {
         val type: Type
         val invocation: Invocation
         val singleton: Boolean
+        val canInline: Boolean
     }
 
     companion object {

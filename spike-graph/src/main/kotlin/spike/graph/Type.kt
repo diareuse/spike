@@ -6,7 +6,10 @@ sealed class Type {
     abstract val packageName: String
     abstract val simpleName: String
 
-    data class Simple(override val packageName: String, override val simpleName: String) : Type() {
+    data class Simple(
+        override val packageName: String,
+        override val simpleName: String
+    ) : Type() {
         override fun toString(): String {
             return "$packageName.$simpleName"
         }
@@ -32,7 +35,10 @@ sealed class Type {
         }
     }
 
-    data class Parametrized(val envelope: Type, val typeArguments: List<Type>) : Type() {
+    data class Parametrized(
+        val envelope: Type,
+        val typeArguments: List<Type>
+    ) : Type() {
         override val packageName: String
             get() = envelope.packageName
         override val simpleName: String
@@ -43,7 +49,10 @@ sealed class Type {
         }
     }
 
-    data class Qualified(val type: Type, val qualifiers: List<Qualifier>) : Type() {
+    data class Qualified(
+        val type: Type,
+        val qualifiers: List<Qualifier>
+    ) : Type() {
         init {
             check(qualifiers.isNotEmpty()) { "At least one qualifier is required for type $type" }
         }

@@ -1,21 +1,20 @@
 package spike.graph
 
+import spike.graph.GraphStore.Companion.asGraphStore
+
 class TypeFactoryCreatorMultiBindCollection(
     multibinding: MultiBindingStore,
-    private val collectionType: TypeFactory.MultibindsCollection.Type
+    private val collectionType: Type
 ) : TypeFactoryCreator {
-    private val envelope = when (collectionType) {
-        TypeFactory.MultibindsCollection.Type.Set -> BuiltInTypes.Set
-        TypeFactory.MultibindsCollection.Type.List -> BuiltInTypes.List
-    }
     private val multibinding = when (collectionType) {
-        TypeFactory.MultibindsCollection.Type.Set -> multibinding.set
-        TypeFactory.MultibindsCollection.Type.List -> multibinding.list
+        BuiltInTypes.Set -> multibinding.set
+        BuiltInTypes.List -> multibinding.list
+        else -> error("Unsupported collection type: $collectionType")
     }
 
     override fun TypeFactoryCreator.Context.create(): TypeFactory {
         val type = type
-        if (!(type is Type.Parametrized && type.envelope == envelope)) {
+        if (!(type is Type.Parametrized && type.envelope == collectionType)) {
             return pass()
         }
         val valueType = type.typeArguments.single()
@@ -23,10 +22,10 @@ class TypeFactoryCreatorMultiBindCollection(
             ?: error("Cannot find multibinding for $type, you must use spike.Include(bindTo = spike.BindTarget.List/Set) to use multibindings. Otherwise this type could not be found in graph.")
         return TypeFactory.MultibindsCollection(
             type = type,
-            dependencies = buildList {
-                addAll(instances.constructors.map { mint(it.type, clone(store = instances + store)) })
-                addAll(instances.factories.map { mint(it.type, clone(store = instances + store)) })
-                addAll(instances.binders.map { mint(it.type, clone(store = instances + store)) })
+            entries = buildList {
+                addAll(instances.constructors.map { mint(it.type, clone(store = it.asGraphStore() + store)) })
+                addAll(instances.factories.map { mint(it.type, clone(store = it.asGraphStore() + store)) })
+                addAll(instances.binders.map { mint(it.type, clone(store = it.asGraphStore() + store)) })
             },
             isPublic = isTopLevel,
             collectionType = collectionType

@@ -1,6 +1,6 @@
 package spike.graph
 
-class Factory(
+data class Factory(
     val type: Type,
     val member: Member.Method,
     val invocation: Invocation,

@@ -8,6 +8,7 @@ import spike.graph.Key
 import spike.graph.Parameter
 import spike.graph.Qualifier
 import spike.graph.Type
+import kotlin.reflect.KClass
 
 @OptIn(KspExperimental::class)
 fun KSAnnotated.findQualifiers() = annotations
@@ -42,11 +43,12 @@ fun KSAnnotated.findKey() = annotations
                 "spike.Key annotation must have a single argument, but found none or too many $klass"
         }
         val value = when (val v = argument.value) {
+            null -> error("spike.Key annotation argument must not be null")
             is KSType -> v.toType()
             is KSClassDeclaration -> v.toType()
             else -> v
         }
-        Key(it.annotationType.toType(), value)
+        Key(value::class.toType(), value)
     }
     .singleOrNull() ?: error("spike.Key inheritor must be defined in $this")
 
@@ -63,6 +65,8 @@ fun KSFunctionDeclaration.toInvocation() = Invocation(
         classKind == ClassKind.OBJECT
     } == true
 )
+
+fun KClass<*>.toType() = Type.Simple(packageName = qualifiedName!!.substringBefore("."+simpleName!!), simpleName = simpleName!!)
 
 fun KSDeclaration.toType(): Type {
     val pd = parentDeclaration

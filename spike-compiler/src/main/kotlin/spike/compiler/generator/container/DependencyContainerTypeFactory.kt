@@ -1,15 +1,13 @@
 package spike.compiler.generator.container
 
-import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.PropertySpec
-import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.*
 import spike.compiler.generator.TypeGenerator
 import spike.compiler.generator.TypeGeneratorChain
 import spike.compiler.generator.TypeResolver
 import spike.compiler.generator.invocation.*
 import spike.graph.DependencyGraph
 import spike.graph.TypeFactory
+import kotlin.reflect.KClass
 
 class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
     override fun generate(chain: TypeGeneratorChain<DependencyGraph>): TypeSpec.Builder {
@@ -29,18 +27,36 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
 
             when (factory) {
                 is TypeFactory.Binds -> propertySpec.binds(factory, chain.resolver)
-                is TypeFactory.Class -> propertySpec.classFactory(factory, chain.resolver)
-                is TypeFactory.Method -> propertySpec.methodFactory(factory, chain.resolver)
+                is TypeFactory.Class -> propertySpec.callableFactory(factory, chain.resolver)
+                is TypeFactory.Method -> propertySpec.callableFactory(factory, chain.resolver)
                 is TypeFactory.Property,
                 is TypeFactory.Provides -> error("Compiler error, this should never be called")
-                is TypeFactory.MultibindsCollection -> TODO()
-                is TypeFactory.MultibindsMap -> TODO()
+
+                is TypeFactory.MultibindsCollection -> propertySpec.multibindsCollection(factory, chain.resolver)
+                is TypeFactory.MultibindsMap -> propertySpec.multibindsMap(factory, chain.resolver)
             }
 
             chain.spec.addProperty(propertySpec.build())
         }
         return chain.proceed()
     }
+
+    // ---
+
+    private fun constructCallable(factory: TypeFactory.Callable, resolver: TypeResolver): CodeBlock {
+        val chain = InvocationChain(
+            subject = factory,
+            generators = listOf(
+                InvocationGeneratorConstructor(),
+                InvocationGeneratorMethod(),
+                InvocationGeneratorParameters()
+            ),
+            resolver = resolver
+        )
+        return chain.proceed().build()
+    }
+
+    // ---
 
     private fun PropertySpec.Builder.binds(factory: TypeFactory.Binds, resolver: TypeResolver) {
         val spec = FunSpec.getterBuilder()
@@ -54,47 +70,71 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
         getter(spec.build())
     }
 
-    private fun PropertySpec.Builder.classFactory(factory: TypeFactory.Class, resolver: TypeResolver) {
-        val chain = InvocationChain(
-            subject = factory,
-            generators = listOf(
-                InvocationGeneratorCaller(),
-                InvocationGeneratorConstructor(),
-                InvocationGeneratorParameters()
-            ),
-            resolver = resolver
-        )
-        val codeBlock = chain.proceed().build()
+    private fun PropertySpec.Builder.callableFactory(factory: TypeFactory.Callable, resolver: TypeResolver) {
+        val codeBlock = CodeBlock.builder()
         when (factory.singleton) {
-            true -> delegate(codeBlock)
-            else -> {
-                val spec = FunSpec.getterBuilder().addCode(codeBlock)
-                if (factory.canInline)
-                    spec.addModifiers(KModifier.INLINE)
-                getter(spec.build())
+            true -> codeBlock.beginControlFlow("by %M {", resolver.builtInMember { lazy })
+            else -> codeBlock.add("return ")
+        }
+        codeBlock.add(constructCallable(factory, resolver))
+        when (factory.singleton) {
+            true -> {
+                codeBlock.endControlFlow()
+                delegate(codeBlock.build())
             }
+
+            else -> getter(FunSpec.getterBuilder().addCode(codeBlock.build()).build())
         }
     }
 
-    private fun PropertySpec.Builder.methodFactory(factory: TypeFactory.Method, resolver: TypeResolver) {
-        val chain = InvocationChain(
-            subject = factory,
-            generators = listOf(
-                InvocationGeneratorCaller(),
-                InvocationGeneratorMethod(),
-                InvocationGeneratorParameters()
-            ),
-            resolver = resolver
-        )
-        val codeBlock = chain.proceed().build()
-        when (factory.singleton) {
-            true -> delegate(codeBlock)
-            else -> {
-                val spec = FunSpec.getterBuilder().addCode(codeBlock)
-                if (factory.canInline)
-                    spec.addModifiers(KModifier.INLINE)
-                getter(spec.build())
+    private fun PropertySpec.Builder.multibindsCollection(
+        factory: TypeFactory.MultibindsCollection,
+        resolver: TypeResolver
+    ) {
+        val codeBlock = CodeBlock.builder()
+        codeBlock.add("return %M(", resolver.getMemberName(factory.collectionMemberFactory))
+        codeBlock.withIndent {
+            for ((index, item) in factory.entries.withIndex()) {
+                if (index > 0) codeBlock.add(", ")
+                val callable = item.toCallableOrNull()
+                    ?: TODO("Constructing $item is not implemented yet in multibinding context")
+                codeBlock.add(constructCallable(callable, resolver))
             }
         }
+        codeBlock.add(")")
+        val spec = FunSpec.getterBuilder().addCode(codeBlock.build())
+        if (factory.canInline)
+            spec.addModifiers(KModifier.INLINE)
+        getter(spec.build())
+    }
+
+    private fun PropertySpec.Builder.multibindsMap(factory: TypeFactory.MultibindsMap, resolver: TypeResolver) {
+        val codeBlock = CodeBlock.builder()
+        codeBlock.add("return %M(", resolver.builtInMember { mapOf })
+        codeBlock.withIndent {
+            var index = 0
+            for ((key, item) in factory.keyValues) {
+                if(index++ > 0) codeBlock.add(", ")
+                val keyLiteral = when (key) {
+                    is String -> "\"$key\""
+                    is KClass<*> -> "${key.qualifiedName}::class"
+                    else -> key
+                }
+                codeBlock.add("%L to ", keyLiteral)
+                val callable = item.toCallableOrNull()
+                    ?: TODO("Constructing $item is not implemented yet in multibinding context")
+                codeBlock.add(constructCallable(callable, resolver))
+            }
+        }
+        codeBlock.add(")")
+        getter(FunSpec.getterBuilder().addCode(codeBlock.build()).build())
+    }
+
+    // ---
+
+    private fun TypeFactory.toCallableOrNull(): TypeFactory.Callable? = when (this) {
+        is TypeFactory.Callable -> this
+        is TypeFactory.Binds -> source.toCallableOrNull()
+        else -> null
     }
 }
