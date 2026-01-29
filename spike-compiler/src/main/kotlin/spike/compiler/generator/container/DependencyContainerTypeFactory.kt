@@ -4,10 +4,7 @@ import com.squareup.kotlinpoet.*
 import spike.compiler.generator.TypeGenerator
 import spike.compiler.generator.TypeGeneratorChain
 import spike.compiler.generator.TypeResolver
-import spike.compiler.generator.invocation.InvocationChain
-import spike.compiler.generator.invocation.InvocationGeneratorConstructor
-import spike.compiler.generator.invocation.InvocationGeneratorMethod
-import spike.compiler.generator.invocation.InvocationGeneratorParameters
+import spike.compiler.generator.invocation.*
 import spike.graph.DependencyGraph
 import spike.graph.TypeFactory
 import kotlin.reflect.KClass
@@ -59,6 +56,20 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
         return chain.proceed().build()
     }
 
+    private fun constructCallbackWithCompositor(factory: TypeFactory.Callable, resolver: TypeResolver): CodeBlock {
+        val chain = InvocationChain(
+            subject = factory,
+            generators = listOf(
+                InvocationGeneratorCompositor(),
+                InvocationGeneratorConstructor(),
+                InvocationGeneratorMethod(),
+                InvocationGeneratorParameters()
+            ),
+            resolver = resolver
+        )
+        return chain.proceed().build()
+    }
+
     // ---
 
     private fun PropertySpec.Builder.binds(factory: TypeFactory.Binds, resolver: TypeResolver) {
@@ -74,18 +85,21 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
     }
 
     private fun PropertySpec.Builder.callableFactory(factory: TypeFactory.Callable, resolver: TypeResolver) {
-        val codeBlock = CodeBlock.builder()
+        val chain = InvocationChain(
+            subject = factory,
+            generators = listOf(
+                InvocationGeneratorDelegation(),
+                InvocationGeneratorCompositor(),
+                InvocationGeneratorReturn(),
+                InvocationGeneratorConstructor(),
+                InvocationGeneratorMethod(),
+                InvocationGeneratorVariables()
+            ),
+            resolver = resolver
+        )
+        val codeBlock = chain.proceed()
         when (factory.singleton) {
-            true -> codeBlock.beginControlFlow("%M {", resolver.builtInMember { lazy })
-            else -> codeBlock.add("return ")
-        }
-        codeBlock.add(constructCallable(factory, resolver))
-        when (factory.singleton) {
-            true -> {
-                codeBlock.endControlFlow()
-                delegate(codeBlock.build())
-            }
-
+            true -> delegate(codeBlock.build())
             else -> {
                 val spec = FunSpec.getterBuilder().addCode(codeBlock.build())
                 if (factory.canInline)
