@@ -1,13 +1,7 @@
 internal class SpikeDependencyContainer() {
-  public val kindNameSphynxCat: Cat
-    get() = kindNameSphynxSphynx as Cat
-
-  public val cat: Cat
-    get() = someCat as Cat
-
-  private inline val kindNameSphynxSphynx: Sphynx
+  public inline val kindNameSphynxCat: Cat
     get() = Sphynx()
 
-  private inline val someCat: SomeCat
+  public inline val cat: Cat
     get() = defaultCat()
 }

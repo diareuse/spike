@@ -1,7 +1,4 @@
 internal class SpikeDependencyContainer() {
-  public val cat: Cat
-    get() = sphynx as Cat
-
-  private inline val sphynx: Sphynx
+  public inline val cat: Cat
     get() = Sphynx()
 }

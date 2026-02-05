@@ -41,4 +41,7 @@ class EntryPointTest : TestHarness() {
     @Test
     fun `multi binds are possible`() = test("multibinding")
 
+    @Test
+    fun `objects are composed`() = test("compositor")
+
 }

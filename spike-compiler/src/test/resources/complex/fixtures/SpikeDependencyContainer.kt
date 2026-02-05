@@ -1,4 +1,3 @@
-import kotlin.Lazy
 import kotlin.collections.List
 import kotlin.lazy
 import spike.Provider
@@ -6,32 +5,28 @@ import spike.Provider
 internal class SpikeDependencyContainer(
   private val listOfBattery: List<Battery>,
 ) {
-  public val television: Television
-    get() = samsungTelevision as Television
-
-  public val remote: Remote
-    get() = remoteControl as Remote
-
-  private val samsungTelevision: SamsungTelevision by lazy {
-        val lazyOfSoundSystem: Lazy<SoundSystem> = lazy(::soundSystem)
+  public val television: Television by lazy {
+        val lazyOfSoundSystem = lazy {
+            AmazonFireSoundBar()
+        }
         SamsungTelevision(
           soundSystem = lazyOfSoundSystem
         )
       }
 
-  private inline val remoteControl: RemoteControl
+  public inline val remote: Remote
     get() {
-      val providerOfTelevision: Provider<Television> = Provider(::television)
-      val listOfBattery: List<Battery> = listOfBattery
+      val providerOfTelevision = Provider<Television> {
+          val lazyOfSoundSystem = lazy {
+              AmazonFireSoundBar()
+          }
+          SamsungTelevision(
+            soundSystem = lazyOfSoundSystem
+          )
+      }
       return RemoteControl(
         televisionProvider = providerOfTelevision,
         batteries = listOfBattery
       )
     }
-
-  private inline val soundSystem: SoundSystem
-    get() = amazonFireSoundBar as SoundSystem
-
-  private inline val amazonFireSoundBar: AmazonFireSoundBar
-    get() = AmazonFireSoundBar()
 }

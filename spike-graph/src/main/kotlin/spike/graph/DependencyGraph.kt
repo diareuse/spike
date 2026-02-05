@@ -7,17 +7,8 @@ class DependencyGraph(
 ) {
 
     operator fun iterator() = iterator {
-        val queue = mutableListOf<TypeFactory>()
-        val emitted = mutableSetOf<Type>()
-        queue.addAll(methods)
-        queue.addAll(properties)
-        while (queue.isNotEmpty()) {
-            val item = queue.removeFirst()
-            if (emitted.add(item.type)) {
-                yield(item)
-                queue.addAll(item.dependencies)
-            }
-        }
+        yieldAll(methods)
+        yieldAll(properties)
     }
 
     class Builder {
