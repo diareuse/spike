@@ -1,6 +1,6 @@
 # Spike
 
-Spike is a Kotlin Multiplatform dependency injection framework that ensures compile-time safety and fast, incremental compilation through KSP. It is designed to be easy to use and universally applicable across all Kotlin platforms.
+Spike is a Kotlin Multiplatform dependency injection compositor that ensures compile-time safety and fast, incremental compilation through KSP. It is designed to be straightforward to use and universally applicable across all Kotlin platforms.
 
 ## Key Features
 
