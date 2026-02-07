@@ -45,6 +45,7 @@ class TypeResolver {
             } + type.descriptor
 
             is Type.Simple -> simpleName
+            is Type.WithVariance -> variance.toString() + type?.descriptor?.replaceFirstChar { it.uppercase() }.orEmpty()
         }
 
     fun getFieldName(type: Type) = fieldName.getOrPut(type) {

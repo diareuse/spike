@@ -70,12 +70,12 @@ class GraphContributorEntryPoint(
             method = Member.Method(
                 packageName = func.packageName.asString(),
                 name = func.simpleName.asString(),
-                returns = func.returnType!!.toType(),
+                returns = func.returnType!!.resolve().toType(),
                 parent = factoryType,
                 parameters = func.parameters.map {
                     Parameter(
                         name = it.name!!.asString(),
-                        type = it.type.toType().qualifiedBy(it.findQualifiers()),
+                        type = it.type.resolve().toType().qualifiedBy(it.findQualifiers()),
                         nullable = it.type.resolve().isMarkedNullable
                     )
                 }
@@ -88,7 +88,7 @@ class GraphContributorEntryPoint(
             Member.Property(
                 packageName = it.packageName.asString(),
                 name = it.simpleName.asString(),
-                returns = it.type.toType().qualifiedBy(it.findQualifiers())
+                returns = it.type.resolve().toType().qualifiedBy(it.findQualifiers()).also { generator.environment.logger.warn("Property type resolved: $it ${it::class}")}
             )
         }.toList()
     }
@@ -101,7 +101,7 @@ class GraphContributorEntryPoint(
             Member.Method(
                 it.packageName.asString(),
                 it.simpleName.asString(),
-                it.returnType!!.toType().qualifiedBy(it.findQualifiers()),
+                it.returnType!!.resolve().toType().qualifiedBy(it.findQualifiers()).also { generator.environment.logger.warn("Method type resolved: $it")},
                 it.parentDeclaration?.toType()
             )
         }.toList()

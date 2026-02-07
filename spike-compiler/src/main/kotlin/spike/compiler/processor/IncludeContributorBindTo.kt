@@ -38,7 +38,7 @@ class IncludeContributorBindTo(
     ) {
         val bindTo: KSClassDeclaration = annotated.getAnnotationParameter(Include::bindTo)
         val bindTarget = BindTarget.valueOf(bindTo.simpleName.asString())
-        fun toType() = annotated.returnType!!.toType().qualifiedBy(annotated.findQualifiers())
+        fun toType() = annotated.returnType!!.resolve().toType().qualifiedBy(annotated.findQualifiers())
         when (bindTarget) {
             BindTarget.None -> origin.contribute(context, annotated)
             BindTarget.Set -> context.multibind.addToSet(toType()) {

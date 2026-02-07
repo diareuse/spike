@@ -49,6 +49,31 @@ sealed class Type {
         }
     }
 
+    data class WithVariance(
+        val type: Type?,
+        val variance: Variance
+    ) : Type() {
+        override val packageName: String
+            get() = type?.packageName.orEmpty()
+        override val simpleName: String
+            get() = type?.simpleName.orEmpty()
+
+        enum class Variance {
+            IN, OUT, STAR;
+
+            override fun toString() = when (this) {
+                IN -> "in"
+                OUT -> "out"
+                STAR -> "*"
+            }
+        }
+
+        override fun toString() = when(type) {
+            null -> "$variance"
+            else -> "$variance $type"
+        }
+    }
+
     data class Qualified(
         val type: Type,
         val qualifiers: List<Qualifier>
@@ -68,6 +93,7 @@ sealed class Type {
     }
 
     companion object {
-        operator fun invoke(klass: KClass<*>) = Simple(klass.qualifiedName!!.substringBefore(".${klass.simpleName!!}"), klass.simpleName!!)
+        operator fun invoke(klass: KClass<*>) =
+            Simple(klass.qualifiedName!!.substringBefore(".${klass.simpleName!!}"), klass.simpleName!!)
     }
 }

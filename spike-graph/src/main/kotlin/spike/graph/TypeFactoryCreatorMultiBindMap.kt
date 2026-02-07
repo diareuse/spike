@@ -14,7 +14,7 @@ class TypeFactoryCreatorMultiBindMap(
         val instances = multibinding.map[valueType]
             ?.filterKeys { it.type == keyType }
             ?.mapKeys { it.key.value }
-            ?: error("Cannot find multibinding for $type, you must use spike.Include(bindTo = spike.BindTarget.Map) to use multibindings. Otherwise this type could not be found in graph.")
+            .orEmpty()
         val keyValues = buildMap {
             for ((k, v) in instances) {
                 var factory: TypeFactory? = null

@@ -44,4 +44,7 @@ class EntryPointTest : TestHarness() {
     @Test
     fun `objects are composed`() = test("compositor")
 
+    @Test
+    fun `out variance is preserved`() = test("out_variance")
+
 }

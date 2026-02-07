@@ -35,7 +35,7 @@ class IncludeContributorMain : IncludeContributor {
         annotated: KSFunctionDeclaration
     ) {
         val qualifiers = annotated.findQualifiers()
-        val returnType = annotated.returnType!!.toType().qualifiedBy(qualifiers)
+        val returnType = annotated.returnType!!.resolve().toType().qualifiedBy(qualifiers)
         val parentType = annotated.parentDeclaration?.toType()?.qualifiedBy(qualifiers)
         context.builder.addFactory(
             type = returnType,

@@ -3,11 +3,7 @@ package spike.compiler.processor
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.symbol.*
-import spike.graph.Invocation
-import spike.graph.Key
-import spike.graph.Parameter
-import spike.graph.Qualifier
-import spike.graph.Type
+import spike.graph.*
 import kotlin.reflect.KClass
 
 @OptIn(KspExperimental::class)
@@ -15,12 +11,12 @@ fun KSAnnotated.findQualifiers() = annotations
     .filter { it.annotationType.resolve().declaration.isAnnotationPresent(spike.Qualifier::class) }
     .map {
         Qualifier(
-            it.annotationType.toType(),
+            it.annotationType.resolve().toType(),
             it.arguments.map {
                 val value = when (val v = it.value) {
                     is KSType -> v.toType()
                     is KSClassDeclaration -> v.toType()
-                    is KSAnnotation -> v.annotationType.toType()
+                    is KSAnnotation -> v.annotationType.resolve().toType()
                     else -> v
                 }
                 Qualifier.Argument(it.name!!.asString(), value)
@@ -36,11 +32,11 @@ fun KSAnnotated.findKey() = annotations
     .map {
         val argument = it.arguments.singleOrNull()
         checkNotNull(argument) {
-            val klass = when(val k = this@findKey) {
+            val klass = when (val k = this@findKey) {
                 is KSDeclaration -> k.toType().toString()
                 else -> k.toString()
             }
-                "spike.Key annotation must have a single argument, but found none or too many $klass"
+            "spike.Key annotation must have a single argument, but found none or too many $klass"
         }
         val value = when (val v = argument.value) {
             null -> error("spike.Key annotation argument must not be null")
@@ -57,7 +53,7 @@ fun KSFunctionDeclaration.toInvocation() = Invocation(
     parameters = this.parameters.map {
         Parameter(
             name = it.name!!.asString(),
-            type = it.type.toType(),
+            type = it.type.resolve().toType(),
             nullable = it.type.resolve().isMarkedNullable
         )
     },
@@ -66,7 +62,7 @@ fun KSFunctionDeclaration.toInvocation() = Invocation(
     } == true
 )
 
-fun KClass<*>.toType() = Type.Simple(packageName = qualifiedName!!.substringBefore("."+simpleName!!), simpleName = simpleName!!)
+fun KClass<*>.toType() = Type.Simple(packageName = qualifiedName!!.substringBefore("." + simpleName!!), simpleName = simpleName!!)
 
 fun KSDeclaration.toType(): Type {
     val pd = parentDeclaration
@@ -77,20 +73,28 @@ fun KSDeclaration.toType(): Type {
     )
 }
 
-fun KSTypeReference.toType(): Type {
-    return resolve().toType()
-}
-
 fun Type.qualifiedBy(qualifiers: List<Qualifier>): Type {
     if (qualifiers.isEmpty()) return this
     return Type.Qualified(this, qualifiers)
 }
 
-fun KSType.toType(): Type {
-    if (this.arguments.isEmpty())
-        return declaration.toType()
-    return Type.Parametrized(
-        envelope = declaration.toType(),
-        typeArguments = arguments.map { it.type!!.toType() }
+fun KSType.toType(variance: Variance = Variance.INVARIANT): Type {
+    val rootType = declaration.toType()
+    val variance = when (variance) {
+        Variance.STAR -> Type.WithVariance.Variance.STAR
+        Variance.INVARIANT -> return when {
+            arguments.isEmpty() -> rootType
+            else -> Type.Parametrized(
+                envelope = rootType,
+                typeArguments = arguments.map { it.type!!.resolve().toType(it.variance) }
+            )
+        }
+
+        Variance.COVARIANT -> Type.WithVariance.Variance.OUT
+        Variance.CONTRAVARIANT -> Type.WithVariance.Variance.IN
+    }
+    return Type.WithVariance(
+        type = rootType,
+        variance = variance
     )
 }

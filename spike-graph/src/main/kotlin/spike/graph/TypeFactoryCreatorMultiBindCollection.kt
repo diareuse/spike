@@ -18,8 +18,7 @@ class TypeFactoryCreatorMultiBindCollection(
             return pass()
         }
         val valueType = type.typeArguments.single()
-        val instances = multibinding[valueType]
-            ?: error("Cannot find multibinding for $type, you must use spike.Include(bindTo = spike.BindTarget.List/Set) to use multibindings. Otherwise this type could not be found in graph.")
+        val instances = multibinding[valueType] ?: GraphStore()
         return TypeFactory.MultibindsCollection(
             type = type,
             entries = buildList {
