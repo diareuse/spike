@@ -5,7 +5,9 @@ import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
+import spike.EntryPoint
 import spike.compiler.generator.DependencyGraphGenerator
+import spike.compiler.processor.util.getSymbolsWithAnnotation
 import spike.graph.GraphStore
 import spike.graph.MultiBindingStore
 
@@ -25,7 +27,7 @@ class SpikeSymbolProcessor(
         val contributor = GraphContributor.create {
             this += GraphContributorIncludeClass(bindAs)
             this += GraphContributorIncludeFunction(bindAs)
-            this += GraphContributorEntryPoint(generator)
+            this += GraphContributorEntryPoint(generator) { it.getSymbolsWithAnnotation<EntryPoint>() }
         }
         val root = GraphStore.Builder()
         val multibind = MultiBindingStore.Builder()

@@ -3,6 +3,7 @@ package spike.compiler.processor
 import com.google.devtools.ksp.*
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.ClassKind
+import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import spike.EntryPoint
 import spike.compiler.generator.DependencyGraphGenerator
@@ -13,11 +14,11 @@ import spike.graph.Parameter
 
 @OptIn(KspExperimental::class)
 class GraphContributorEntryPoint(
-    private val generator: DependencyGraphGenerator
+    private val generator: DependencyGraphGenerator,
+    private val selector: (Resolver) -> Sequence<KSAnnotated>
 ) : GraphContributor {
     override fun contribute(context: GraphContext, resolver: Resolver) {
-        val entryPoints = resolver
-            .getSymbolsWithAnnotation(EntryPoint::class.qualifiedName!!)
+        val entryPoints = selector(resolver)
             .filterIsInstance<KSClassDeclaration>()
         for (entryPoint in entryPoints) {
             verifyInterface(entryPoint)
@@ -41,7 +42,7 @@ class GraphContributorEntryPoint(
 
     private fun verifyInterface(entryPoint: KSClassDeclaration) {
         check(entryPoint.classKind == ClassKind.INTERFACE) {
-            "Entry point must be an interface"
+            "Entry point must be an interface, but was ${entryPoint.classKind}"
         }
     }
 
@@ -88,7 +89,7 @@ class GraphContributorEntryPoint(
             Member.Property(
                 packageName = it.packageName.asString(),
                 name = it.simpleName.asString(),
-                returns = it.type.resolve().toType().qualifiedBy(it.findQualifiers()).also { generator.environment.logger.warn("Property type resolved: $it ${it::class}")}
+                returns = it.type.resolve().toType().qualifiedBy(it.findQualifiers())
             )
         }.toList()
     }
@@ -101,7 +102,7 @@ class GraphContributorEntryPoint(
             Member.Method(
                 it.packageName.asString(),
                 it.simpleName.asString(),
-                it.returnType!!.resolve().toType().qualifiedBy(it.findQualifiers()).also { generator.environment.logger.warn("Method type resolved: $it")},
+                it.returnType!!.resolve().toType().qualifiedBy(it.findQualifiers()),
                 it.parentDeclaration?.toType()
             )
         }.toList()
