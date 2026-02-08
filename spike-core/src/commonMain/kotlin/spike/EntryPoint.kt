@@ -1,9 +1,9 @@
 package spike
 
 @Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.BINARY)
 annotation class EntryPoint {
     @Target(AnnotationTarget.CLASS)
-    @Retention(AnnotationRetention.SOURCE)
+    @Retention(AnnotationRetention.BINARY)
     annotation class Factory
 }
