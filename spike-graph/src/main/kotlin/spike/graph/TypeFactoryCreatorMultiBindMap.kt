@@ -11,7 +11,7 @@ class TypeFactoryCreatorMultiBindMap(
             return pass()
         }
         val (keyType, valueType) = type.typeArguments
-        val instances = multibinding.map[valueType]
+        val instances = multibinding.map[valueType.unwrapParametrized()]
             ?.filterKeys { it.type == keyType }
             ?.mapKeys { it.key.value }
             .orEmpty()
@@ -21,19 +21,19 @@ class TypeFactoryCreatorMultiBindMap(
                 if (v.factories.isNotEmpty()) {
                     val definition = v.factories.singleOrNull()
                         ?: error("Multiple factories found for the same type $type. You must define only one per key ($k).")
-                    factory = mint(definition.type, clone(store = definition.asGraphStore() + store))
+                    factory = mint(definition.type.overrideType(valueType), clone(store = definition.asGraphStore() + store))
                 }
                 if (v.constructors.isNotEmpty()) {
                     if (factory != null) error("You cannot assign multiple contributors for the same key ($k) for the same type $type.")
                     val definition = v.constructors.singleOrNull()
                         ?: error("Multiple classes found for the same $type. You must define only one per key ($k).")
-                    factory = mint(definition.type, clone(store = definition.asGraphStore() + store))
+                    factory = mint(definition.type.overrideType(valueType), clone(store = definition.asGraphStore() + store))
                 }
                 if (v.binders.isNotEmpty()) {
                     if (factory != null) error("You cannot assign multiple contributors for the same key ($k) for the same type $type.")
                     val definition = v.binders.singleOrNull()
                         ?: error("Multiple bindings found for the same type $type. You must define only one per key ($k).")
-                    factory = mint(definition.type, clone(store = definition.asGraphStore() + store))
+                    factory = mint(definition.type.overrideType(valueType), clone(store = definition.asGraphStore() + store))
                 }
                 if (factory == null)
                     error("No definition found for $type whilst being multi-bound, this is however most likely a spike inference error.")
@@ -45,5 +45,19 @@ class TypeFactoryCreatorMultiBindMap(
             keyValues = keyValues,
             isPublic = isTopLevel
         )
+    }
+
+    private fun Type.overrideType(valueType: Type) = when (valueType) {
+         is Type.Parametrized -> when (valueType.envelope) {
+             BuiltInTypes.Provider,
+             BuiltInTypes.Lazy -> Type.Parametrized(valueType.envelope, listOf(this))
+             else -> this
+         }
+        else -> this
+    }
+
+    private fun Type.unwrapParametrized() = when (this) {
+        is Type.Parametrized -> typeArguments.single()
+        else -> this
     }
 }
