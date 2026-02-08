@@ -1,13 +1,9 @@
 package spike.compiler.processor
 
 import com.google.devtools.ksp.KspExperimental
-import com.google.devtools.ksp.getConstructors
-import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import spike.Include
-import spike.Inject
-import spike.Singleton
 
 @OptIn(KspExperimental::class)
 class GraphContributorIncludeClass(
