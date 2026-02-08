@@ -47,4 +47,7 @@ class EntryPointTest : TestHarness() {
     @Test
     fun `out variance is preserved`() = test("out_variance")
 
+    @Test
+    fun `androidx viewmodels are found`() = test("androidx_viewmodel")
+
 }

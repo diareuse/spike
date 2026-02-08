@@ -30,7 +30,10 @@ class DependencyGraphGenerator(
             ),
             resolver = resolver
         )
-        dependencyContainerFile.proceed().build().writeTo(environment.codeGenerator, false)
+        try {
+            dependencyContainerFile.proceed().build().writeTo(environment.codeGenerator, false)
+        } catch (_: FileAlreadyExistsException) {
+        }
 
         val entryPointFactoryType = EntryPointFactoryTypeChain(
             subject = graph.entry.factory,
@@ -48,7 +51,10 @@ class DependencyGraphGenerator(
             ),
             resolver = resolver
         )
-        entryPointFactoryFile.proceed().build().writeTo(environment.codeGenerator, false)
+        try {
+            entryPointFactoryFile.proceed().build().writeTo(environment.codeGenerator, false)
+        } catch (_: FileAlreadyExistsException) {
+        }
 
         val entryPointType = EntryPointTypeChain(
             subject = graph.entry,
@@ -69,7 +75,10 @@ class DependencyGraphGenerator(
             ),
             resolver = resolver
         )
-        entryPointFile.proceed().build().writeTo(environment.codeGenerator, false)
+        try {
+            entryPointFile.proceed().build().writeTo(environment.codeGenerator, false)
+        } catch (_: FileAlreadyExistsException) {
+        }
     }
 
 }

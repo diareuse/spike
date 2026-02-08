@@ -30,3 +30,4 @@ rootProject.name = 'spike'
 include ":spike-core"
 include ":spike-compiler"
 include ":spike-graph"
+include ":spike-androidx"

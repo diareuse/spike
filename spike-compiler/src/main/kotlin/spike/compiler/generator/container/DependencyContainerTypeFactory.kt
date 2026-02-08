@@ -6,6 +6,7 @@ import spike.compiler.generator.TypeGeneratorChain
 import spike.compiler.generator.TypeResolver
 import spike.compiler.generator.invocation.*
 import spike.graph.DependencyGraph
+import spike.graph.Type
 import spike.graph.TypeFactory
 import kotlin.reflect.KClass
 
@@ -136,12 +137,32 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
                 val keyLiteral = when (key) {
                     is String -> "\"$key\""
                     is KClass<*> -> "${key.qualifiedName}::class"
+                    is Type -> resolver.getTypeName(key).toString() + "::class"
                     else -> key
                 }
                 codeBlock.add("%L to ", keyLiteral)
-                val callable = item.toCallableOrNull()
-                    ?: TODO("Constructing $item is not implemented yet in multibinding context")
-                codeBlock.add(constructCallable(callable, resolver))
+                when (item) {
+                    is TypeFactory.Deferred -> when (item) {
+                        is TypeFactory.Memorizes -> {
+                            codeBlock.beginControlFlow("%M {", resolver.builtInMember { lazy })
+                            codeBlock.add(constructCallable(item.factory as TypeFactory.Callable, resolver))
+                            codeBlock.add("\n")
+                            codeBlock.endControlFlow()
+                        }
+                        is TypeFactory.Provides -> {
+                            codeBlock.beginControlFlow("%T {", resolver.builtInType { Provider })
+                            codeBlock.add(constructCallable(item.factory as TypeFactory.Callable, resolver))
+                            codeBlock.add("\n")
+                            codeBlock.endControlFlow()
+                        }
+                    }
+
+                    else -> {
+                        val callable = item.toCallableOrNull()
+                            ?: TODO("Constructing $item is not implemented yet in multibinding context")
+                        codeBlock.add(constructCallable(callable, resolver))
+                    }
+                }
             }
         }
         codeBlock.add(")")

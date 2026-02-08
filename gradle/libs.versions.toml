@@ -4,15 +4,19 @@ google-ksp = "2.3.4"
 kotlin = "2.2.21"
 agp = "8.13.0"
 kotlinpoet = "2.2.0"
+androidx-activity = "1.12.2"
+androidx-lifecycle = "2.10.0"
 
 [libraries]
 google-dagger = { module = "com.google.dagger:dagger", version.ref = "google-dagger" }
 google-dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "google-dagger" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
-google-ksp-api = {module = "com.google.devtools.ksp:symbol-processing-api", version.ref="google-ksp"}
-squareup-kotlinpoet = {module="com.squareup:kotlinpoet", version.ref="kotlinpoet"}
-squareup-kotlinpoet-ksp = {module="com.squareup:kotlinpoet-ksp", version.ref="kotlinpoet"}
+google-ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "google-ksp" }
+squareup-kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
+squareup-kotlinpoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinpoet" }
+androidx-activity = { module = "androidx.activity:activity", version.ref = "androidx-activity" }
+androidx-lifecycle-viewmodel-savedstate = { module = "androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "androidx-lifecycle" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

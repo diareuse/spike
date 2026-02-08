@@ -23,11 +23,14 @@ class SpikeSymbolProcessor(
                 IncludeContributorMain()
             )
         )
+        val viewModel = IncludeContributorViewModel()
         val generator = DependencyGraphGenerator(environment)
         val contributor = GraphContributor.create {
+            this += GraphContributorIncludeViewModel(viewModel)
             this += GraphContributorIncludeClass(bindAs)
             this += GraphContributorIncludeFunction(bindAs)
             this += GraphContributorEntryPoint(generator) { it.getSymbolsWithAnnotation<EntryPoint>() }
+            this += GraphContributorEntryPoint(generator) { it.getSymbolsWithAnnotation<EntryPoint>("spike.lifecycle.viewmodel") }
         }
         val root = GraphStore.Builder()
         val multibind = MultiBindingStore.Builder()
