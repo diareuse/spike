@@ -15,7 +15,6 @@ kotlin {
         namespace = "spike"
         compileSdk = 35
         minSdk = 1
-        withJava()
     }
     iosX64()
     iosArm64()
