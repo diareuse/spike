@@ -12,7 +12,6 @@ kotlin {
         namespace = "spike.androidx"
         compileSdk = 36
         minSdk = 1
-        withJava()
     }
     iosX64()
     iosArm64()
@@ -30,7 +29,4 @@ kotlin {
             implementation(libs.kotlin.test)
         }
     }
-}
-
-dependencies {
 }

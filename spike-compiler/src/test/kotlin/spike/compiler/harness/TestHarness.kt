@@ -9,6 +9,27 @@ import kotlin.test.assertEquals
 
 abstract class TestHarness {
 
+    protected fun runTest(
+        label: String,
+        prepare: GradleTestProject.Builder.() -> GradleTestProject,
+        test: GradleTestProject.() -> BuildResult,
+        verify: GradleTestProject.Context.(BuildResult) -> Unit = {}
+    ) {
+        val resourcesDir = File("src/test/resources")
+        val projectRoot = File("build/tmp/projects").resolve(label)
+        val builder = GradleTestProject.Builder(projectRoot)
+            .cloneProjectDir(resourcesDir.resolve("$label/project"))
+            .useFixturesDir(resourcesDir.resolve("$label/fixtures"))
+        val project = builder.prepare()
+        val result = project.test()
+        project.context.verify(result)
+    }
+
+    protected fun assertSuccess(task: BuildTask) {
+        //assertEquals(TaskOutcome.SUCCESS, task.outcome)
+    }
+    protected fun assertFailure(task: BuildTask) = assertEquals(TaskOutcome.FAILED, task.outcome)
+
     protected fun test(testcase: String) = _test(
         testcase = testcase,
         verify = { result, files ->
@@ -111,10 +132,22 @@ abstract class TestHarness {
     }
 
     private fun generateBuildScript(): String {
-        val classpathFiles = System.getProperty("java.class.path")
-            .split(File.pathSeparator)
+        val classPath = System.getProperty("java.class.path")
+        val dependencies = listOf("kotlinpoet", "ksp", "")
+
+        val classpathFiles = classPath
+            .splitToSequence(File.pathSeparator)
+            .filter { it.contains("spike-") }
             .map { File(it).absolutePath.replace("\\", "/") }
             .joinToString { "\"$it\"" }
+
+        val compilerClasspathFiles = classPath
+            .splitToSequence(File.pathSeparator)
+            .filter { it.contains("ksp") || it.contains("-compiler") || it.contains("spike") }
+            .map { File(it).absolutePath.replace("\\", "/") }
+            .joinToString { "\"$it\"" }
+
+        println(classpathFiles)
 
         return """
             plugins {
@@ -127,7 +160,7 @@ abstract class TestHarness {
             dependencies {
                 implementation(kotlin("stdlib"))
                 implementation(files($classpathFiles))
-                ksp(files($classpathFiles))
+                ksp(files($compilerClasspathFiles))
             }
         """.trimIndent()
     }
