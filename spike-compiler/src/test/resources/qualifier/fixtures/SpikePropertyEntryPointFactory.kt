@@ -1,3 +1,3 @@
-internal class SpikePropertyEntryPointFactory {
+internal object SpikePropertyEntryPointFactory {
   public fun create(): PropertyEntryPoint = SpikePropertyEntryPoint(SpikeDependencyContainer())
 }

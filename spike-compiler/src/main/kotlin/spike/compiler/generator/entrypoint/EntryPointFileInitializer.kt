@@ -14,11 +14,11 @@ class EntryPointFileInitializer : FileGenerator<GraphEntryPoint> {
             .receiver(entryPointCompanion)
             .returns(entryPointClass)
         val body = CodeBlock.builder()
-            .add(
-                "return %T().%N(",
-                chain.resolver.transformClassName(chain.subject.factory.type),
-                chain.subject.factory.method.name
-            )
+        when (chain.subject.factory.isVirtual) {
+            true -> body.add("return %T", chain.resolver.transformClassName(chain.subject.factory.type))
+            else -> body.add("return factory")
+        }
+        body.add(".%N(", chain.subject.factory.method.name)
         for ((index, param) in chain.subject.factory.method.parameters.withIndex()) {
             if (index > 0) body.add(", ")
             body.add("%N", param.name)

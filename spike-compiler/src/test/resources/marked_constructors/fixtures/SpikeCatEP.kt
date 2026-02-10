@@ -5,4 +5,4 @@ internal class SpikeCatEP(
     get() = container.cat
 }
 
-public operator fun CatEP.Companion.invoke(): CatEP = SpikeCatEPFactory().create()
+public operator fun CatEP.Companion.invoke(): CatEP = SpikeCatEPFactory.create()

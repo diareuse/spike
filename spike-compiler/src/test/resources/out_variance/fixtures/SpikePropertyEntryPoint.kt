@@ -8,4 +8,4 @@ internal class SpikePropertyEntryPoint(
     get() = container.mapOfKClassOfoutCatAndCat
 }
 
-public operator fun PropertyEntryPoint.Companion.invoke(): PropertyEntryPoint = SpikePropertyEntryPointFactory().create()
+public operator fun PropertyEntryPoint.Companion.invoke(): PropertyEntryPoint = SpikePropertyEntryPointFactory.create()

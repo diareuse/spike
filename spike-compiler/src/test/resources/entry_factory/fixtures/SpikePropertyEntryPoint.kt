@@ -5,4 +5,7 @@ internal class SpikePropertyEntryPoint(
     get() = container.cat
 }
 
-public operator fun PropertyEntryPoint.Companion.invoke(dog: Dog): PropertyEntryPoint = SpikePropertyEntryPointFactory().create(dog)
+public val PropertyEntryPoint.Companion.factory: PropertyEntryPoint.Factory
+  get() = SpikePropertyEntryPointFactory
+
+public operator fun PropertyEntryPoint.Companion.invoke(dog: Dog): PropertyEntryPoint = factory.create(dog)

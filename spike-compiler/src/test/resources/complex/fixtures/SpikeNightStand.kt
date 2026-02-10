@@ -10,4 +10,7 @@ internal class SpikeNightStand(
     get() = container.remote
 }
 
-public operator fun NightStand.Companion.invoke(batteries: List<Battery>): NightStand = SpikeNightStandFactory().create(batteries)
+public val NightStand.Companion.factory: NightStand.Factory
+  get() = SpikeNightStandFactory
+
+public operator fun NightStand.Companion.invoke(batteries: List<Battery>): NightStand = factory.create(batteries)

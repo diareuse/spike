@@ -16,4 +16,4 @@ internal class SpikePropertyEntryPoint(
     get() = container.setOfCat
 }
 
-public operator fun PropertyEntryPoint.Companion.invoke(): PropertyEntryPoint = SpikePropertyEntryPointFactory().create()
+public operator fun PropertyEntryPoint.Companion.invoke(): PropertyEntryPoint = SpikePropertyEntryPointFactory.create()

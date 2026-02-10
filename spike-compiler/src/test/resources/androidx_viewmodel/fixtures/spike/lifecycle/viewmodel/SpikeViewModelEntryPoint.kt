@@ -13,4 +13,7 @@ internal class SpikeViewModelEntryPoint(
     get() = container.mapOfKClassOfoutViewModelAndProviderOfViewModel
 }
 
-public operator fun ViewModelEntryPoint.Companion.invoke(handle: SavedStateHandle): ViewModelEntryPoint = SpikeViewModelEntryPointFactory().create(handle)
+public val ViewModelEntryPoint.Companion.factory: ViewModelEntryPoint.Factory
+  get() = SpikeViewModelEntryPointFactory
+
+public operator fun ViewModelEntryPoint.Companion.invoke(handle: SavedStateHandle): ViewModelEntryPoint = factory.create(handle)

@@ -71,6 +71,7 @@ class DependencyGraphGenerator(
             subject = graph.entry,
             generators = listOf(
                 EntryPointFileWithType(entryPointType),
+                EntryPointFileFactoryAccessor(),
                 EntryPointFileInitializer()
             ),
             resolver = resolver
