@@ -1,5 +1,6 @@
 package spike.graph
 
+@Suppress("DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING", "DataClassPrivateConstructor")
 data class GraphEntryPoint private constructor(
     val type: Type,
     val factory: Factory,
