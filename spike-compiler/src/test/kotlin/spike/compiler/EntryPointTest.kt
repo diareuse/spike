@@ -3,6 +3,7 @@ package spike.compiler
 import spike.compiler.assertion.assertContentEquals
 import spike.compiler.harness.BuildResultTasks.compileKotlin
 import spike.compiler.harness.BuildResultTasks.kspKotlin
+import spike.compiler.harness.BuildResultTasks.test
 import spike.compiler.harness.TestHarness
 import kotlin.test.Test
 
@@ -169,6 +170,18 @@ class EntryPointTest : TestHarness() {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
             fixtures.assertContentEquals(outputFiles)
+        }
+    )
+
+    @Test
+    fun `ktor plugin handles requests`() = runTest(
+        label = "ktor",
+        prepare = { useClassPath { it.whitelistModules(Kotlin + Ktor) }.build() },
+        test = { build("kspKotlin", "compileKotlin", "test") },
+        verify = {
+            assertSuccess(it.compileKotlin)
+            assertSuccess(it.kspKotlin)
+            assertSuccess(it.test)
         }
     )
 

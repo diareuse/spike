@@ -1,0 +1,19 @@
+plugins {
+    alias libs.plugins.kotlin.jvm
+}
+
+group = 'spike.ktor'
+version = ""
+
+test {
+    useJUnitPlatform()
+}
+kotlin {
+    jvmToolchain(21)
+}
+
+dependencies {
+    implementation project(":spike-core")
+    implementation libs.ktor.core
+    testImplementation libs.kotlin.test
+}

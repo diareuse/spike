@@ -7,6 +7,7 @@ kotlinpoet = "2.2.0"
 androidx-activity = "1.12.3"
 androidx-lifecycle = "2.9.6"
 androidx-compose = "1.10.1"
+ktor = "3.4.0"
 
 [libraries]
 google-dagger = { module = "com.google.dagger:dagger", version.ref = "google-dagger" }
@@ -21,6 +22,7 @@ androidx-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecy
 androidx-lifecycle-viewmodel-savedstate = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-savedstate", version.ref = "androidx-lifecycle" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "androidx-compose" }
 jetbrains-compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "androidx-compose" }
+ktor-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

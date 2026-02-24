@@ -21,5 +21,6 @@ dependencies {
     api libs.kotlin.reflect
     testImplementation libs.kotlin.test
     testImplementation project(':spike-androidx')
+    testImplementation project(':spike-ktor')
     testImplementation gradleTestKit()
 }

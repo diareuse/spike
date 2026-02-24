@@ -80,6 +80,7 @@ object ClassPathFilter {
 
     val Kotlin = listOf("spike-core", "spike-graph", "spike-compiler")
     val Androidx = listOf("spike-androidx")
+    val Ktor = listOf("spike-ktor")
 
     fun Sequence<File>.whitelistModules(module: String, vararg modules: String) = filterNot {
         it.name.contains("spike")
