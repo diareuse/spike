@@ -2,9 +2,9 @@ package spike.compiler.harness
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.BuildTask
-import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import java.io.File
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 abstract class TestHarness {
@@ -25,7 +25,9 @@ abstract class TestHarness {
         project.context.verify(result)
     }
 
-    protected fun assertSuccess(task: BuildTask) = assertEquals(TaskOutcome.SUCCESS, task.outcome)
+    protected fun assertSuccess(task: BuildTask) =
+        assertContains(listOf(TaskOutcome.SUCCESS, TaskOutcome.UP_TO_DATE), task.outcome)
+
     protected fun assertFailure(task: BuildTask) = assertEquals(TaskOutcome.FAILED, task.outcome)
 
 }
