@@ -102,6 +102,10 @@ object BuildResultTasks {
         }
     val BuildResult.compileKotlin
         get() = requireNotNull(task(":compileKotlin")) {
-            "Couldn't find kspKotlin task in build result, but found ${tasks.joinToString { it.path }}"
+            "Couldn't find compileKotlin task in build result, but found ${tasks.joinToString { it.path }}"
+        }
+    val BuildResult.test
+        get() = requireNotNull(task(":test")) {
+            "Couldn't find test task in build result, but found ${tasks.joinToString { it.path }}"
         }
 }
