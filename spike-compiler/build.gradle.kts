@@ -1,16 +1,9 @@
 plugins {
-    alias(libs.plugins.kotlin.jvm)
+    id("spike.jvm")
 }
 
 group = "spike.compiler"
 version = ""
-
-tasks.test {
-    useJUnitPlatform()
-}
-kotlin {
-    jvmToolchain(21)
-}
 
 dependencies {
     implementation(project(":spike-core"))
@@ -19,7 +12,6 @@ dependencies {
     implementation(libs.squareup.kotlinpoet.ksp)
     implementation(libs.google.ksp.api)
     api(libs.kotlin.reflect)
-    testImplementation(libs.kotlin.test)
     testImplementation(project(":spike-androidx"))
     testImplementation(project(":spike-ktor"))
     testImplementation(gradleTestKit())
