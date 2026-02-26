@@ -5,9 +5,9 @@ import com.squareup.kotlinpoet.withIndent
 import spike.compiler.generator.CodeBlockGenerator
 import spike.compiler.generator.CodeBlockGeneratorChain
 import spike.compiler.generator.TypeResolver
-import spike.graph.BuiltInMembers
-import spike.graph.Type
-import spike.graph.TypeFactory
+import spike.compiler.graph.BuiltInMembers
+import spike.compiler.graph.Type
+import spike.compiler.graph.TypeFactory
 
 class InvocationGeneratorCompositor(
     private val componentSubChain: (TypeFactory.Callable) -> InvocationChain

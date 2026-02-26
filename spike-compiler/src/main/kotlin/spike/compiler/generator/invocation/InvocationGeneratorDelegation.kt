@@ -3,8 +3,8 @@ package spike.compiler.generator.invocation
 import com.squareup.kotlinpoet.CodeBlock
 import spike.compiler.generator.CodeBlockGenerator
 import spike.compiler.generator.CodeBlockGeneratorChain
-import spike.graph.BuiltInMembers
-import spike.graph.TypeFactory
+import spike.compiler.graph.BuiltInMembers
+import spike.compiler.graph.TypeFactory
 
 class InvocationGeneratorDelegation : CodeBlockGenerator<TypeFactory.Callable> {
     override fun generate(chain: CodeBlockGeneratorChain<TypeFactory.Callable>): CodeBlock.Builder {

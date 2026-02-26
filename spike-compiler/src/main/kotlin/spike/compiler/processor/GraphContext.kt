@@ -1,7 +1,7 @@
 package spike.compiler.processor
 
-import spike.graph.GraphStore
-import spike.graph.MultiBindingStore
+import spike.compiler.graph.GraphStore
+import spike.compiler.graph.MultiBindingStore
 
 data class GraphContext(
     val builder: GraphStore.Builder,

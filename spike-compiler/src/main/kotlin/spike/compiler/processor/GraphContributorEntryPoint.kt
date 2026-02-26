@@ -7,10 +7,10 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import spike.EntryPoint
 import spike.compiler.generator.DependencyGraphGenerator
-import spike.graph.DependencyGraph
-import spike.graph.GraphEntryPoint
-import spike.graph.Member
-import spike.graph.Parameter
+import spike.compiler.graph.DependencyGraph
+import spike.compiler.graph.GraphEntryPoint
+import spike.compiler.graph.Member
+import spike.compiler.graph.Parameter
 
 @OptIn(KspExperimental::class)
 class GraphContributorEntryPoint(

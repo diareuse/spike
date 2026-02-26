@@ -6,7 +6,7 @@ import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import spike.Include
 import spike.compiler.processor.util.getAnnotationParameter
-import spike.graph.BuiltInTypes
+import spike.compiler.graph.BuiltInTypes
 
 class IncludeContributorBindAs : IncludeContributor {
     override fun contribute(context: GraphContext, annotated: KSClassDeclaration) {

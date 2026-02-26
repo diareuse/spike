@@ -30,7 +30,6 @@ rootProject.name = "spike"
 includeBuild("build-src")
 include(":spike-core")
 include(":spike-compiler")
-include(":spike-graph")
 include(":spike-androidx")
 include(":spike-androidx-compose")
 include(":spike-ktor")

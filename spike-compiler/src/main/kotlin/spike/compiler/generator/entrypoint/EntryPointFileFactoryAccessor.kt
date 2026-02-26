@@ -6,7 +6,7 @@ import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.PropertySpec
 import spike.compiler.generator.FileGenerator
 import spike.compiler.generator.FileGeneratorChain
-import spike.graph.GraphEntryPoint
+import spike.compiler.graph.GraphEntryPoint
 
 class EntryPointFileFactoryAccessor : FileGenerator<GraphEntryPoint> {
     override fun generate(chain: FileGeneratorChain<GraphEntryPoint>): FileSpec.Builder {

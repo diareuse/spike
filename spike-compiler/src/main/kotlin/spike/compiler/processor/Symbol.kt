@@ -3,7 +3,7 @@ package spike.compiler.processor
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.symbol.*
-import spike.graph.*
+import spike.compiler.graph.*
 import kotlin.reflect.KClass
 
 @OptIn(KspExperimental::class)

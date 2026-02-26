@@ -7,8 +7,8 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import spike.Inject
-import spike.graph.Key
-import spike.graph.Type
+import spike.compiler.graph.Key
+import spike.compiler.graph.Type
 import kotlin.reflect.KClass
 
 class IncludeContributorViewModel : IncludeContributor {

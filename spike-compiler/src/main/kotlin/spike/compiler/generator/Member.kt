@@ -1,7 +1,7 @@
 package spike.compiler.generator
 
 import com.squareup.kotlinpoet.MemberName
-import spike.graph.Member
+import spike.compiler.graph.Member
 
 fun Member.toMemberName(): MemberName = when (this) {
     is Member.Method -> when (val p = parent) {

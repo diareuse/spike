@@ -4,7 +4,7 @@ import com.squareup.kotlinpoet.TypeSpec
 import spike.compiler.generator.TypeGenerator
 import spike.compiler.generator.TypeGeneratorChain
 import spike.compiler.generator.TypeResolver
-import spike.graph.GraphEntryPoint
+import spike.compiler.graph.GraphEntryPoint
 
 data class EntryPointFactoryTypeChain(
     override val subject: GraphEntryPoint.Factory,

@@ -4,8 +4,8 @@ import com.squareup.kotlinpoet.FileSpec
 import spike.compiler.generator.FileGenerator
 import spike.compiler.generator.FileGeneratorChain
 import spike.compiler.generator.TypeResolver
-import spike.graph.DependencyGraph
-import spike.graph.GraphEntryPoint
+import spike.compiler.graph.DependencyGraph
+import spike.compiler.graph.GraphEntryPoint
 
 data class DependencyContainerFileChain(
     override val subject: DependencyGraph,

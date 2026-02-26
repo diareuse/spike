@@ -4,7 +4,7 @@ import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.WildcardTypeName
-import spike.graph.Type
+import spike.compiler.graph.Type
 
 fun Type.toClassName(): ClassName = when (this) {
     is Type.Parametrized -> envelope.toClassName()

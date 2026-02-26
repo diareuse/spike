@@ -3,7 +3,7 @@ package spike.compiler.generator.entrypoint
 import com.squareup.kotlinpoet.TypeSpec
 import spike.compiler.generator.TypeGenerator
 import spike.compiler.generator.TypeGeneratorChain
-import spike.graph.GraphEntryPoint
+import spike.compiler.graph.GraphEntryPoint
 
 class EntryPointTypeSuperinterface : TypeGenerator<GraphEntryPoint> {
     override fun generate(chain: TypeGeneratorChain<GraphEntryPoint>): TypeSpec.Builder {

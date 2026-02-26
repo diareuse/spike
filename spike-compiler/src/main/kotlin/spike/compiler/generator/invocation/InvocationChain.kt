@@ -4,7 +4,7 @@ import com.squareup.kotlinpoet.CodeBlock
 import spike.compiler.generator.CodeBlockGenerator
 import spike.compiler.generator.CodeBlockGeneratorChain
 import spike.compiler.generator.TypeResolver
-import spike.graph.TypeFactory
+import spike.compiler.graph.TypeFactory
 
 data class InvocationChain(
     override val subject: TypeFactory.Callable,

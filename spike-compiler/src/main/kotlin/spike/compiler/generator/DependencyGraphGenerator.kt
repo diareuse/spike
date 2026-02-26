@@ -5,7 +5,7 @@ import com.squareup.kotlinpoet.ksp.writeTo
 import spike.compiler.generator.container.*
 import spike.compiler.generator.entrypoint.*
 import spike.compiler.generator.entrypoint.factory.*
-import spike.graph.DependencyGraph
+import spike.compiler.graph.DependencyGraph
 
 class DependencyGraphGenerator(
     private val environment: SymbolProcessorEnvironment

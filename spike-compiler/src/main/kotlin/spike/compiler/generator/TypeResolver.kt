@@ -3,10 +3,10 @@ package spike.compiler.generator
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.TypeName
-import spike.graph.BuiltInMembers
-import spike.graph.BuiltInTypes
-import spike.graph.Member
-import spike.graph.Type
+import spike.compiler.graph.BuiltInMembers
+import spike.compiler.graph.BuiltInTypes
+import spike.compiler.graph.Member
+import spike.compiler.graph.Type
 
 class TypeResolver {
 

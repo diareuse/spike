@@ -4,7 +4,7 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.TypeSpec
 import spike.compiler.generator.TypeGenerator
 import spike.compiler.generator.TypeGeneratorChain
-import spike.graph.GraphEntryPoint
+import spike.compiler.graph.GraphEntryPoint
 
 class EntryPointTypeInternal : TypeGenerator<GraphEntryPoint> {
     override fun generate(chain: TypeGeneratorChain<GraphEntryPoint>): TypeSpec.Builder {

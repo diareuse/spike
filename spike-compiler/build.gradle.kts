@@ -7,7 +7,6 @@ version = ""
 
 dependencies {
     implementation(project(":spike-core"))
-    implementation(project(":spike-graph"))
     implementation(libs.squareup.kotlinpoet)
     implementation(libs.squareup.kotlinpoet.ksp)
     implementation(libs.google.ksp.api)

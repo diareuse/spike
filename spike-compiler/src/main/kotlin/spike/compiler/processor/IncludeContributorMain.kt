@@ -7,7 +7,7 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import spike.Inject
 import spike.Singleton
-import spike.graph.Member
+import spike.compiler.graph.Member
 
 @OptIn(KspExperimental::class)
 class IncludeContributorMain : IncludeContributor {

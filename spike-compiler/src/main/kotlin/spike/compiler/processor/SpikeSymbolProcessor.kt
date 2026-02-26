@@ -8,8 +8,8 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import spike.EntryPoint
 import spike.compiler.generator.DependencyGraphGenerator
 import spike.compiler.processor.util.getSymbolsWithAnnotation
-import spike.graph.GraphStore
-import spike.graph.MultiBindingStore
+import spike.compiler.graph.GraphStore
+import spike.compiler.graph.MultiBindingStore
 
 @OptIn(KspExperimental::class)
 class SpikeSymbolProcessor(

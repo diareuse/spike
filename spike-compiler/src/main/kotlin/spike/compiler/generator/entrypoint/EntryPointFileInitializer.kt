@@ -3,7 +3,7 @@ package spike.compiler.generator.entrypoint
 import com.squareup.kotlinpoet.*
 import spike.compiler.generator.FileGenerator
 import spike.compiler.generator.FileGeneratorChain
-import spike.graph.GraphEntryPoint
+import spike.compiler.graph.GraphEntryPoint
 
 class EntryPointFileInitializer : FileGenerator<GraphEntryPoint> {
     override fun generate(chain: FileGeneratorChain<GraphEntryPoint>): FileSpec.Builder {

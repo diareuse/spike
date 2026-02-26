@@ -5,9 +5,9 @@ import spike.compiler.generator.TypeGenerator
 import spike.compiler.generator.TypeGeneratorChain
 import spike.compiler.generator.TypeResolver
 import spike.compiler.generator.invocation.*
-import spike.graph.DependencyGraph
-import spike.graph.Type
-import spike.graph.TypeFactory
+import spike.compiler.graph.DependencyGraph
+import spike.compiler.graph.Type
+import spike.compiler.graph.TypeFactory
 import kotlin.reflect.KClass
 
 class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
