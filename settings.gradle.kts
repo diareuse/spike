@@ -12,7 +12,7 @@ pluginManagement {
     }
 }
 plugins {
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 dependencyResolutionManagement {
     repositories {
@@ -26,10 +26,10 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = 'spike'
-include ":spike-core"
-include ":spike-compiler"
-include ":spike-graph"
-include ":spike-androidx"
-include ":spike-androidx-compose"
-include ":spike-ktor"
+rootProject.name = "spike"
+include(":spike-core")
+include(":spike-compiler")
+include(":spike-graph")
+include(":spike-androidx")
+include(":spike-androidx-compose")
+include(":spike-ktor")
