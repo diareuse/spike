@@ -1,8 +1,5 @@
 plugins {
+    // these plugins are here only because intellij wants to "commonize" on sync
     alias(libs.plugins.kotlin.multiplatform) apply false
-    alias(libs.plugins.kotlin.jvm) apply false
-    alias(libs.plugins.kotlin.compose) apply false
-    alias(libs.plugins.jetbrains.compose) apply false
     alias(libs.plugins.android.kotlin.multiplatform.library) apply false
-    alias(libs.plugins.google.ksp) apply false
 }
