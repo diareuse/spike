@@ -1,6 +1,7 @@
 plugins {
     id("org.jetbrains.kotlin.multiplatform")
     id("com.google.devtools.ksp")
+    id("com.vanniktech.maven.publish")
 }
 
 kotlin {
