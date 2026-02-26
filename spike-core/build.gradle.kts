@@ -1,10 +1,10 @@
 plugins {
-    alias libs.plugins.kotlin.multiplatform
-    alias libs.plugins.google.ksp
-    alias libs.plugins.android.kotlin.multiplatform.library
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.google.ksp)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
 }
 
-group = 'spike'
+group = "spike"
 version = ""
 
 // https://github.com/Kotlin/multiplatform-library-template/blob/main/library/build.gradle.kts
@@ -13,7 +13,7 @@ kotlin {
     jvm()
     androidLibrary {
         namespace = "spike"
-        compileSdk = 35
+        compileSdk = 36
         minSdk = 1
     }
     iosX64()
@@ -21,10 +21,6 @@ kotlin {
     iosSimulatorArm64()
     linuxX64()
     sourceSets {
-        commonMain.dependencies {
-            //put your multiplatform dependencies here
-        }
-
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }

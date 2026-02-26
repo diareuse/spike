@@ -1,7 +1,7 @@
 plugins {
-    alias libs.plugins.kotlin.multiplatform
-    alias libs.plugins.google.ksp
-    alias libs.plugins.android.kotlin.multiplatform.library
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.google.ksp)
+    alias(libs.plugins.android.kotlin.multiplatform.library)
 }
 
 // https://github.com/Kotlin/multiplatform-library-template/blob/main/library/build.gradle.kts
@@ -18,12 +18,9 @@ kotlin {
     iosSimulatorArm64()
     linuxX64()
     sourceSets {
-        androidMain.dependencies {
-            implementation libs.androidx.activity
-        }
         commonMain.dependencies {
-            implementation libs.androidx.lifecycle.viewmodel.savedstate
-            implementation project(":spike-core")
+            implementation(libs.androidx.lifecycle.viewmodel.savedstate)
+            implementation(project(":spike-core"))
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
