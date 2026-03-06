@@ -13,12 +13,16 @@ repositories {
 kotlin {
     sourceSets {
         main {
-            kotlin.setSrcDirs(listOf(project.projectDir.resolve("src/main")))
+            kotlin.srcDir(project.projectDir.resolve("src/main"))
         }
         test {
-            kotlin.setSrcDirs(listOf(project.projectDir.resolve("src/test")))
+            kotlin.srcDir(project.projectDir.resolve("src/test"))
         }
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 val testClasspath: String by project
@@ -28,7 +32,7 @@ dependencies {
     implementation("io.ktor:ktor-server-core:3.4.0")
     implementation("io.ktor:ktor-client-java:3.4.0")
     testImplementation("io.ktor:ktor-server-test-host:3.4.0")
-    testImplementation(kotlin("test"))
+    testImplementation(kotlin("test-junit"))
     implementation(files(testClasspath.split(";")))
     ksp(files(testClasspath.split(";")))
 }
