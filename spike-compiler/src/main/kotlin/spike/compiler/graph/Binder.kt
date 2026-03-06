@@ -1,6 +1,6 @@
 package spike.compiler.graph
 
-class Binder(
+data class Binder(
     val source: Type,
     val type: Type,
 )
