@@ -1,0 +1,14 @@
+{
+  "always-update": true,
+  "include-v-in-tag": false,
+  "release-type": "simple",
+  "bump-patch-for-minor-pre-major": true,
+  "prerelease": true,
+  "initial-version": "0.0.1",
+  "packages": {
+    ".": {
+      "changelog-path": "CHANGELOG.md"
+    }
+  },
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
+}

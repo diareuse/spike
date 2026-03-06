@@ -1,0 +1,24 @@
+name: auto-release
+
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      issues: write
+      repository-projects: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: "Merge PRs with 'autorelease: pending' label"
+        run: |
+          gh pr list --label "autorelease: pending" --json number,mergeStateStatus --jq '.[] | select(.mergeStateStatus == "CLEAN") | .number' | while read pr; do
+            gh pr merge --rebase "$pr" || echo "Failed to merge PR $pr"
+          done
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.AUTH_TOKEN }}
