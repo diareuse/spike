@@ -5,22 +5,17 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 plugins {
     id("base.kotlin.multiplatform")
     id("base.android")
-    id("com.diffplug.spotless")
+    id("dev.detekt")
 }
 
-spotless {
-    kotlin {
-        ktfmt().googleStyle().configure {
-            it.setBlockIndent(4)
-            it.setContinuationIndent(4)
-        }
-    }
-    kotlinGradle {
-        target("**/*.gradle.kts")
-        ktfmt().googleStyle().configure {
-            it.setBlockIndent(4)
-            it.setContinuationIndent(4)
-        }
+detekt {
+    buildUponDefaultConfig = true
+    autoCorrect = true
+    parallel = true
+    baseline.set(file(".config/baseline"))
+    val configFile = rootProject.file(".config/detekt.yml")
+    if (configFile.exists()) {
+        config.setFrom(configFile)
     }
 }
 

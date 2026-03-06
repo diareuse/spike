@@ -27,7 +27,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - run: ./gradlew spotlessCheck
+      - run: ./gradlew detekt
 
   merge:
     runs-on: ubuntu-latest

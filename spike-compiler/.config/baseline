@@ -1,0 +1,41 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>LongMethod:DependencyGraphGenerator.kt:DependencyGraphGenerator$fun generate</ID>
+    <ID>LoopWithTooManyJumpStatements:InvocationGeneratorCompositor.kt:InvocationGeneratorCompositor$for</ID>
+    <ID>MaxLineLength:BuiltInMembers.kt:BuiltInMembers$val listOf = Member.Method(packageName = "kotlin.collections", name = "listOf", returns = BuiltInTypes.List, parent = null)</ID>
+    <ID>MaxLineLength:BuiltInMembers.kt:BuiltInMembers$val mapOf = Member.Method(packageName = "kotlin.collections", name = "mapOf", returns = BuiltInTypes.Map, parent = null)</ID>
+    <ID>MaxLineLength:BuiltInMembers.kt:BuiltInMembers$val setOf = Member.Method(packageName = "kotlin.collections", name = "setOf", returns = BuiltInTypes.Set, parent = null)</ID>
+    <ID>MaxLineLength:DependencyContainerTypeFactory.kt:DependencyContainerTypeFactory$is TypeFactory.Binds -&gt; propertySpec.callableFactory(factory.source as TypeFactory.Callable, chain.resolver)</ID>
+    <ID>MaxLineLength:GraphContributor.kt:GraphContributor.Companion$inline fun create: GraphContributor</ID>
+    <ID>MaxLineLength:GraphContributorEntryPoint.kt:GraphContributorEntryPoint$"Entry point methods must not have parameters, prefer properties for concise syntax. Found ${it.simpleName.asString()} in ${it.parentDeclaration?.qualifiedName?.asString()} (${it.parameters.joinToString { "${it.name?.asString()}: ${it.type.resolve().declaration.qualifiedName?.asString()}" }})"</ID>
+    <ID>MaxLineLength:GraphContributorEntryPoint.kt:GraphContributorEntryPoint$private</ID>
+    <ID>MaxLineLength:GraphEntryPoint.kt:GraphEntryPoint$fun isRootProperty: Boolean</ID>
+    <ID>MaxLineLength:IncludeContributorBindAs.kt:IncludeContributorBindAs$private fun errorMessage: String</ID>
+    <ID>MaxLineLength:IncludeContributorMain.kt:IncludeContributorMain$"Include class (${annotated.qualifiedName?.asString()}) must have a constructor annotated with @spike.Inject if it has more than one constructor"</ID>
+    <ID>MaxLineLength:IncludeContributorViewModel.kt:IncludeContributorViewModel$"Include class (${annotated.qualifiedName?.asString()}) must have a constructor annotated with @spike.Inject if it has more than one constructor"</ID>
+    <ID>MaxLineLength:IncludeContributorViewModel.kt:IncludeContributorViewModel$val keyType = Type.Parametrized(KClass::class.toType(), listOf(Type.WithVariance(Type.Simple("androidx.lifecycle", "ViewModel"), Type.WithVariance.Variance.OUT)))</ID>
+    <ID>MaxLineLength:Invocation.kt:Invocation$override fun toString: String</ID>
+    <ID>MaxLineLength:InvocationGeneratorCompositor.kt:InvocationGeneratorCompositor$private</ID>
+    <ID>MaxLineLength:InvocationGeneratorParameters.kt:InvocationGeneratorParameters$"Constructs similar to Provider&lt;Provider&lt;T&gt;&gt; are not supported. Use Provider&lt;T&gt; or Lazy&lt;T&gt; instead. Faulty type: $this"</ID>
+    <ID>MaxLineLength:InvocationGeneratorParameters.kt:InvocationGeneratorParameters$override</ID>
+    <ID>MaxLineLength:InvocationGeneratorVariables.kt:InvocationGeneratorVariables$override</ID>
+    <ID>MaxLineLength:MultiBindingStore.kt:MultiBindingStore.Builder$fun addToList</ID>
+    <ID>MaxLineLength:MultiBindingStore.kt:MultiBindingStore.Builder$fun addToMap</ID>
+    <ID>MaxLineLength:MultiBindingStore.kt:MultiBindingStore.Builder$fun addToSet</ID>
+    <ID>MaxLineLength:Resolver.kt:inline</ID>
+    <ID>MaxLineLength:SpikeSymbolProcessor.kt:SpikeSymbolProcessor$this += GraphContributorEntryPoint(generator) { it.getSymbolsWithAnnotation&lt;EntryPoint&gt;("spike.lifecycle.viewmodel") }</ID>
+    <ID>MaxLineLength:Symbol.kt:fun KClass&lt;*&gt;.toType</ID>
+    <ID>MaxLineLength:Type.kt:Type.Companion$operator fun invoke</ID>
+    <ID>MaxLineLength:TypeFactoryCreatorMultiBindMap.kt:TypeFactoryCreatorMultiBindMap$?:</ID>
+    <ID>MaxLineLength:TypeFactoryCreatorMultiBindMap.kt:TypeFactoryCreatorMultiBindMap$error("No definition found for $type whilst being multi-bound, this is however most likely a spike inference error.")</ID>
+    <ID>MaxLineLength:TypeFactoryCreatorMultiBindMap.kt:TypeFactoryCreatorMultiBindMap$factory = mint(definition.type.overrideType(valueType), clone(store = definition.asGraphStore() + store))</ID>
+    <ID>MaxLineLength:TypeFactoryCreatorMultiBindMap.kt:TypeFactoryCreatorMultiBindMap$if (factory != null) error("You cannot assign multiple contributors for the same key ($k) for the same type $type.")</ID>
+    <ID>MaxLineLength:TypeResolver.kt:TypeResolver$fun getDependencyContainerClassName</ID>
+    <ID>MaxLineLength:TypeResolver.kt:TypeResolver$is Type.WithVariance -&gt; variance.toString() + type?.descriptor?.replaceFirstChar { it.uppercase() }.orEmpty()</ID>
+    <ID>NewLineAtEndOfFile:EntryPointTest.kt:spike.compiler.EntryPointTest.kt</ID>
+    <ID>NewLineAtEndOfFile:ListAssertion.kt:spike.compiler.assertion.ListAssertion.kt</ID>
+    <ID>NewLineAtEndOfFile:TestHarness.kt:spike.compiler.harness.TestHarness.kt</ID>
+  </CurrentIssues>
+</SmellBaseline>

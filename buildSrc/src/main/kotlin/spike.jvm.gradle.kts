@@ -1,14 +1,18 @@
+import gradle.kotlin.dsl.accessors._c24a720b039b223a012fa023f45bc99b.detekt
+
 plugins {
     id("base.kotlin.jvm")
-    id("com.diffplug.spotless")
+    id("dev.detekt")
 }
 
-spotless {
-    kotlin {
-        targetExclude("**/test/**", "**/build/**", "**/commonTest/**")
-        ktfmt().googleStyle().configure {
-            it.setBlockIndent(4)
-            it.setContinuationIndent(4)
-        }
+detekt {
+    buildUponDefaultConfig = true
+    autoCorrect = true
+    parallel = true
+    baseline.set(file(".config/baseline"))
+    val configFile = rootProject.file(".config/detekt.yml")
+    if (configFile.exists()) {
+        config.setFrom(configFile)
     }
 }
+
