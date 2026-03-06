@@ -9,7 +9,7 @@ data class TypeFactoryCreatorChain(
 ) : TypeFactoryCreator.Context {
 
     override fun pass(): TypeFactory {
-        if (creators.size == index) error("Cannot find factory for $type")
+        if (creators.size == index) error("Cannot find factory for $type in current context $store")
         return with(creators[index]) { copy(index = index + 1).create() }
     }
 
