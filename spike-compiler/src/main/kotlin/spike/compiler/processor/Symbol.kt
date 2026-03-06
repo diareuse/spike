@@ -31,7 +31,7 @@ fun KSAnnotated.findQualifiers() = annotations
                     else -> v
                 }
                 Qualifier.Argument(it.name!!.asString(), value)
-            }
+            },
         )
     }
     .sorted()
@@ -65,12 +65,12 @@ fun KSFunctionDeclaration.toInvocation() = Invocation(
         Parameter(
             name = it.name!!.asString(),
             type = it.type.resolve().toType(),
-            nullable = it.type.resolve().isMarkedNullable
+            nullable = it.type.resolve().isMarkedNullable,
         )
     },
     singleton = (this.parentDeclaration as? KSClassDeclaration)?.run {
         classKind == ClassKind.OBJECT
-    } == true
+    } == true,
 )
 
 fun KClass<*>.toType() = Type.Simple(packageName = qualifiedName!!.substringBefore("." + simpleName!!), simpleName = simpleName!!)
@@ -80,7 +80,7 @@ fun KSDeclaration.toType(): Type {
     if (pd != null) return Type.Inner(pd.toType(), simpleName.asString())
     return Type.Simple(
         packageName = packageName.asString(),
-        simpleName = simpleName.asString()
+        simpleName = simpleName.asString(),
     )
 }
 
@@ -97,15 +97,14 @@ fun KSType.toType(variance: Variance = Variance.INVARIANT): Type {
             arguments.isEmpty() -> rootType
             else -> Type.Parametrized(
                 envelope = rootType,
-                typeArguments = arguments.map { it.type!!.resolve().toType(it.variance) }
+                typeArguments = arguments.map { it.type!!.resolve().toType(it.variance) },
             )
         }
-
         Variance.COVARIANT -> Type.WithVariance.Variance.OUT
         Variance.CONTRAVARIANT -> Type.WithVariance.Variance.IN
     }
     return Type.WithVariance(
         type = rootType,
-        variance = variance
+        variance = variance,
     )
 }

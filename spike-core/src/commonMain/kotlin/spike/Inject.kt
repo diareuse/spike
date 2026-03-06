@@ -2,4 +2,4 @@ package spike
 
 @Target(AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.SOURCE)
-annotation class Inject
+public annotation class Inject

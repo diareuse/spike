@@ -1,5 +1,5 @@
 package spike.ktor
 
-interface RegularRouteBuilder : RouteBuilder {
-    val path: String
+public interface RegularRouteBuilder : RouteBuilder {
+    public val path: String
 }

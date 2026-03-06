@@ -1,6 +1,6 @@
 package spike
 
-enum class BindTarget {
+public enum class BindTarget {
     None,
     Set,
     List,

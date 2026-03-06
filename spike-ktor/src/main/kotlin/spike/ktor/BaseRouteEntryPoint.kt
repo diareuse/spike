@@ -1,5 +1,5 @@
 package spike.ktor
 
-interface BaseRouteEntryPoint {
-    val routes: Set<RouteBuilder>
+public interface BaseRouteEntryPoint {
+    public val routes: Set<RouteBuilder>
 }

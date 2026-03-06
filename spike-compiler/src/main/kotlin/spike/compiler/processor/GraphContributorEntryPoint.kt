@@ -20,7 +20,7 @@ import spike.compiler.graph.Parameter
 @OptIn(KspExperimental::class)
 class GraphContributorEntryPoint(
     private val generator: DependencyGraphGenerator,
-    private val selector: (Resolver) -> Sequence<KSAnnotated>
+    private val selector: (Resolver) -> Sequence<KSAnnotated>,
 ) : GraphContributor {
     override fun contribute(context: GraphContext, resolver: Resolver) {
         val entryPoints = selector(resolver)
@@ -35,7 +35,7 @@ class GraphContributorEntryPoint(
                 type = entryPoint.toType(),
                 factory = factory,
                 properties = properties,
-                methods = methods
+                methods = methods,
             )
             val graph = DependencyGraph.Builder()
                 .addRootGraph(context.builder.build())
@@ -82,34 +82,30 @@ class GraphContributorEntryPoint(
                     Parameter(
                         name = it.name!!.asString(),
                         type = it.type.resolve().toType().qualifiedBy(it.findQualifiers()),
-                        nullable = it.type.resolve().isMarkedNullable
+                        nullable = it.type.resolve().isMarkedNullable,
                     )
-                }
-            )
+                },
+            ),
         )
     }
 
-    private fun findProperties(entryPoint: KSClassDeclaration): List<Member.Property> {
-        return entryPoint.getAllProperties().filter { it.isAbstract() }.map {
-            Member.Property(
-                packageName = it.packageName.asString(),
-                name = it.simpleName.asString(),
-                returns = it.type.resolve().toType().qualifiedBy(it.findQualifiers())
-            )
-        }.toList()
-    }
+    private fun findProperties(entryPoint: KSClassDeclaration): List<Member.Property> = entryPoint.getAllProperties().filter { it.isAbstract() }.map {
+        Member.Property(
+            packageName = it.packageName.asString(),
+            name = it.simpleName.asString(),
+            returns = it.type.resolve().toType().qualifiedBy(it.findQualifiers()),
+        )
+    }.toList()
 
-    private fun findMethods(entryPoint: KSClassDeclaration): List<Member.Method> {
-        return entryPoint.getAllFunctions().filter { it.isAbstract }.map {
-            check(it.parameters.isEmpty()) {
-                "Entry point methods must not have parameters, prefer properties for concise syntax. Found ${it.simpleName.asString()} in ${it.parentDeclaration?.qualifiedName?.asString()} (${it.parameters.joinToString { "${it.name?.asString()}: ${it.type.resolve().declaration.qualifiedName?.asString()}" }})"
-            }
-            Member.Method(
-                it.packageName.asString(),
-                it.simpleName.asString(),
-                it.returnType!!.resolve().toType().qualifiedBy(it.findQualifiers()),
-                it.parentDeclaration?.toType()
-            )
-        }.toList()
-    }
+    private fun findMethods(entryPoint: KSClassDeclaration): List<Member.Method> = entryPoint.getAllFunctions().filter { it.isAbstract }.map {
+        check(it.parameters.isEmpty()) {
+            "Entry point methods must not have parameters, prefer properties for concise syntax. Found ${it.simpleName.asString()} in ${it.parentDeclaration?.qualifiedName?.asString()} (${it.parameters.joinToString { "${it.name?.asString()}: ${it.type.resolve().declaration.qualifiedName?.asString()}" }})"
+        }
+        Member.Method(
+            it.packageName.asString(),
+            it.simpleName.asString(),
+            it.returnType!!.resolve().toType().qualifiedBy(it.findQualifiers()),
+            it.parentDeclaration?.toType(),
+        )
+    }.toList()
 }

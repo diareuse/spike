@@ -1,6 +1,7 @@
 package spike.compose
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ProvidedValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import spike.lifecycle.viewmodel.ViewModelEntryPoint
 
@@ -16,12 +17,12 @@ import spike.lifecycle.viewmodel.ViewModelEntryPoint
  * }
  * ```
  * */
-object LocalViewModelEntryPointFactory {
+public object LocalViewModelEntryPointFactory {
     private val LocalViewModelEntryPointFactory = staticCompositionLocalOf<ViewModelEntryPoint.Factory?> {
         null
     }
-    val current
+    public val current: ViewModelEntryPoint.Factory?
         @Composable get() = LocalViewModelEntryPointFactory.current
 
-    infix fun provides(factory: ViewModelEntryPoint.Factory) = LocalViewModelEntryPointFactory provides factory
+    public infix fun provides(factory: ViewModelEntryPoint.Factory): ProvidedValue<ViewModelEntryPoint.Factory?> = LocalViewModelEntryPointFactory provides factory
 }

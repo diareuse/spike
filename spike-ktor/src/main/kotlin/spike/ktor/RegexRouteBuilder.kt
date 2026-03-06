@@ -1,5 +1,5 @@
 package spike.ktor
 
-interface RegexRouteBuilder : RouteBuilder {
-    val path: Regex
+public interface RegexRouteBuilder : RouteBuilder {
+    public val path: Regex
 }

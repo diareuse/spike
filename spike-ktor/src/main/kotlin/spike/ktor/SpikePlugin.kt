@@ -16,12 +16,12 @@ private val SpikePlugin = createApplicationPlugin(
     }
 }
 
-object Spike : ApplicationPlugin<SpikeConfig> by SpikePlugin
+public object Spike : ApplicationPlugin<SpikeConfig> by SpikePlugin
 
-class SpikeConfig internal constructor() {
+public class SpikeConfig internal constructor() {
 
     internal var entryPoint: BaseRouteEntryPoint? = null
-    fun entryPoint(entryPoint: BaseRouteEntryPoint) {
+    public fun entryPoint(entryPoint: BaseRouteEntryPoint) {
         this.entryPoint = entryPoint
     }
 }

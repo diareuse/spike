@@ -27,7 +27,7 @@ import spike.compiler.generator.entrypoint.factory.EntryPointFactoryTypeSuperint
 import spike.compiler.graph.DependencyGraph
 
 class DependencyGraphGenerator(
-    private val environment: SymbolProcessorEnvironment
+    private val environment: SymbolProcessorEnvironment,
 ) {
 
     private val resolver = TypeResolver()
@@ -38,16 +38,16 @@ class DependencyGraphGenerator(
             generators = listOf(
                 DependencyContainerTypeConstructor(),
                 DependencyContainerTypeFactory(),
-                DependencyContainerTypeInternal()
+                DependencyContainerTypeInternal(),
             ),
-            resolver = resolver
+            resolver = resolver,
         )
         val dependencyContainerFile = DependencyContainerFileChain(
             subject = graph,
             generators = listOf(
-                DependencyContainerFileWithType(dependencyContainerType)
+                DependencyContainerFileWithType(dependencyContainerType),
             ),
-            resolver = resolver
+            resolver = resolver,
         )
         try {
             dependencyContainerFile.proceed().build().writeTo(environment.codeGenerator, false)
@@ -59,16 +59,16 @@ class DependencyGraphGenerator(
             generators = listOf(
                 EntryPointFactoryTypeSuperinterface(),
                 EntryPointFactoryTypeInternal(),
-                EntryPointFactoryTypeMethod()
+                EntryPointFactoryTypeMethod(),
             ),
-            resolver = resolver
+            resolver = resolver,
         )
         val entryPointFactoryFile = EntryPointFactoryFileChain(
             subject = graph.entry.factory,
             generators = listOf(
-                EntryPointFactoryFileWithType(entryPointFactoryType)
+                EntryPointFactoryFileWithType(entryPointFactoryType),
             ),
-            resolver = resolver
+            resolver = resolver,
         )
         try {
             entryPointFactoryFile.proceed().build().writeTo(environment.codeGenerator, false)
@@ -82,23 +82,22 @@ class DependencyGraphGenerator(
                 EntryPointTypeSuperinterface(),
                 EntryPointTypeConstructor(),
                 EntryPointTypeProperties(),
-                EntryPointTypeFunctions()
+                EntryPointTypeFunctions(),
             ),
-            resolver = resolver
+            resolver = resolver,
         )
         val entryPointFile = EntryPointFileChain(
             subject = graph.entry,
             generators = listOf(
                 EntryPointFileWithType(entryPointType),
                 EntryPointFileFactoryAccessor(),
-                EntryPointFileInitializer()
+                EntryPointFileInitializer(),
             ),
-            resolver = resolver
+            resolver = resolver,
         )
         try {
             entryPointFile.proceed().build().writeTo(environment.codeGenerator, false)
         } catch (_: FileAlreadyExistsException) {
         }
     }
-
 }

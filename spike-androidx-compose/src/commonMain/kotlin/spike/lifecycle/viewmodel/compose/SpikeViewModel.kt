@@ -2,6 +2,7 @@ package spike.lifecycle.viewmodel.compose
 
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -10,7 +11,7 @@ import spike.lifecycle.viewmodel.ViewModelEntryPoint
 import spike.lifecycle.viewmodel.ViewModelProviderFactory
 
 @Composable
-inline fun <reified VM : ViewModel> spikeViewModel(
+public inline fun <reified VM : ViewModel> spikeViewModel(
     viewModelStoreOwner: ViewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     },
@@ -32,7 +33,7 @@ inline fun <reified VM : ViewModel> spikeViewModel(
 internal fun createSpikeViewModelFactory(
     viewModelStoreOwner: ViewModelStoreOwner,
     entryPoint: ViewModelEntryPoint.Factory
-) = ViewModelProviderFactory.from(
+): ViewModelProvider.Factory? = ViewModelProviderFactory.from(
     owner = viewModelStoreOwner,
     entryPoint = entryPoint
 )

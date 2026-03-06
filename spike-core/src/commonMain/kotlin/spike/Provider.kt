@@ -1,9 +1,9 @@
 package spike
 
-fun interface Provider<T> {
-    fun get(): T
+public fun interface Provider<T> {
+    public fun get(): T
 
-    companion object {
-        operator fun <T> Provider<T>.invoke() = get()
+    public companion object {
+        public operator fun <T> Provider<T>.invoke(): T = get()
     }
 }

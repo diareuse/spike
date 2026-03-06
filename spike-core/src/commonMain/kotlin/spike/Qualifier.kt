@@ -2,4 +2,4 @@ package spike
 
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 @Retention(AnnotationRetention.SOURCE)
-annotation class Qualifier
+public annotation class Qualifier

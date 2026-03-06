@@ -7,11 +7,11 @@ import spike.Provider
 import kotlin.reflect.KClass
 
 @EntryPoint
-interface ViewModelEntryPoint {
-    val viewModels: Map<KClass<out ViewModel>, Provider<ViewModel>>
+public interface ViewModelEntryPoint {
+    public val viewModels: Map<KClass<out ViewModel>, Provider<ViewModel>>
     @EntryPoint.Factory
-    interface Factory {
-        fun create(handle: SavedStateHandle): ViewModelEntryPoint
+    public interface Factory {
+        public fun create(handle: SavedStateHandle): ViewModelEntryPoint
     }
-    companion object
+    public companion object
 }

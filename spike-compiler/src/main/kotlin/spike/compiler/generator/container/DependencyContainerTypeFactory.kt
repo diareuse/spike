@@ -30,8 +30,9 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
 
             // Unwrap providers to raw factories
             var factory = factory
-            while (factory is TypeFactory.Provides)
+            while (factory is TypeFactory.Provides) {
                 factory = factory.factory
+            }
 
             val propertyName = chain.resolver.getFieldName(factory.type)
             val propertyTypeName = chain.resolver.getTypeName(factory.type)
@@ -39,12 +40,12 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
                 .addModifiers(if (factory.isPublic) KModifier.PUBLIC else KModifier.PRIVATE)
 
             when (factory) {
-                is TypeFactory.Binds -> propertySpec.callableFactory(factory.source as TypeFactory.Callable, chain.resolver) //propertySpec.binds(factory, chain.resolver)
+                is TypeFactory.Binds -> propertySpec.callableFactory(factory.source as TypeFactory.Callable, chain.resolver) // propertySpec.binds(factory, chain.resolver)
                 is TypeFactory.Class -> propertySpec.callableFactory(factory, chain.resolver)
                 is TypeFactory.Method -> propertySpec.callableFactory(factory, chain.resolver)
                 is TypeFactory.Property,
-                is TypeFactory.Deferred -> error("Compiler error, this should never be called")
-
+                is TypeFactory.Deferred,
+                -> error("Compiler error, this should never be called")
                 is TypeFactory.MultibindsCollection -> propertySpec.multibindsCollection(factory, chain.resolver)
                 is TypeFactory.MultibindsMap -> propertySpec.multibindsMap(factory, chain.resolver)
             }
@@ -62,9 +63,9 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
             generators = listOf(
                 InvocationGeneratorConstructor(),
                 InvocationGeneratorMethod(),
-                InvocationGeneratorParameters()
+                InvocationGeneratorParameters(),
             ),
-            resolver = resolver
+            resolver = resolver,
         )
         return chain.proceed().build()
     }
@@ -76,10 +77,11 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
             .addStatement(
                 "return %N as %T",
                 resolver.getFieldName(factory.source.type),
-                resolver.getTypeName(factory.type)
+                resolver.getTypeName(factory.type),
             )
-        if (factory.canInline)
+        if (factory.canInline) {
             spec.addModifiers(KModifier.INLINE)
+        }
         getter(spec.build())
     }
 
@@ -94,25 +96,26 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
                         generators = listOf(
                             InvocationGeneratorConstructor(),
                             InvocationGeneratorMethod(),
-                            InvocationGeneratorVariables()
+                            InvocationGeneratorVariables(),
                         ),
-                        resolver = resolver
+                        resolver = resolver,
                     )
                 },
                 InvocationGeneratorReturn(),
                 InvocationGeneratorConstructor(),
                 InvocationGeneratorMethod(),
-                InvocationGeneratorVariables()
+                InvocationGeneratorVariables(),
             ),
-            resolver = resolver
+            resolver = resolver,
         )
         val codeBlock = chain.proceed()
         when (factory.singleton) {
             true -> delegate(codeBlock.build())
             else -> {
                 val spec = FunSpec.getterBuilder().addCode(codeBlock.build())
-                if (factory.canInline)
+                if (factory.canInline) {
                     spec.addModifiers(KModifier.INLINE)
+                }
                 getter(spec.build())
             }
         }
@@ -120,7 +123,7 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
 
     private fun PropertySpec.Builder.multibindsCollection(
         factory: TypeFactory.MultibindsCollection,
-        resolver: TypeResolver
+        resolver: TypeResolver,
     ) {
         val codeBlock = CodeBlock.builder()
         codeBlock.add("return %M(", resolver.getMemberName(factory.collectionMemberFactory))
@@ -134,8 +137,9 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
         }
         codeBlock.add(")")
         val spec = FunSpec.getterBuilder().addCode(codeBlock.build())
-        if (factory.canInline)
+        if (factory.canInline) {
             spec.addModifiers(KModifier.INLINE)
+        }
         getter(spec.build())
     }
 
@@ -168,7 +172,6 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
                             codeBlock.endControlFlow()
                         }
                     }
-
                     else -> {
                         val callable = item.toCallableOrNull()
                             ?: TODO("Constructing $item is not implemented yet in multibinding context")

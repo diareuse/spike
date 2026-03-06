@@ -4,7 +4,7 @@ import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.CreationExtras
 import kotlin.reflect.KClass
 
-class ViewModelProviderFactory private constructor(
+public class ViewModelProviderFactory private constructor(
     private val entryPoint: ViewModelEntryPoint.Factory,
     private val origin: ViewModelProvider.Factory
 ) : ViewModelProvider.Factory {
@@ -20,7 +20,7 @@ class ViewModelProviderFactory private constructor(
         }
     }
 
-    companion object {
+    public companion object {
         /**
          * Use this provider to supply [ViewModel]s to your components.
          *
@@ -48,7 +48,7 @@ class ViewModelProviderFactory private constructor(
          *   the best practice not to include such dependencies as binding arbitrary primitive values to a graph is
          *   going to wreak havoc.
          * */
-        fun from(
+        public fun from(
             owner: ViewModelStoreOwner,
             entryPoint: ViewModelEntryPoint.Factory
         ): ViewModelProvider.Factory? = when (owner) {
