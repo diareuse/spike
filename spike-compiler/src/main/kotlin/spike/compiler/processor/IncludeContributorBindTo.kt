@@ -2,8 +2,11 @@ package spike.compiler.processor
 
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import com.google.devtools.ksp.symbol.KSType
 import spike.BindTarget
 import spike.Include
+import spike.compiler.graph.BuiltInTypes
+import spike.compiler.graph.Type
 import spike.compiler.processor.util.getAnnotationParameter
 
 class IncludeContributorBindTo(
@@ -15,7 +18,13 @@ class IncludeContributorBindTo(
     ) {
         val bindTo: KSClassDeclaration = annotated.getAnnotationParameter(Include::bindTo)
         val bindTarget = BindTarget.valueOf(bindTo.simpleName.asString())
-        fun toType() = annotated.toType().qualifiedBy(annotated.findQualifiers())
+        fun toType(): Type {
+            val bindAs: KSType = annotated.getAnnotationParameter(Include::bindAs)
+            val targetType =
+                if (bindAs.toType() == BuiltInTypes.Any) annotated.toType()
+                else bindAs.toType()
+            return targetType.qualifiedBy(annotated.findQualifiers())
+        }
         when (bindTarget) {
             BindTarget.None -> origin.contribute(context, annotated)
             BindTarget.Set -> context.multibind.addToSet(toType()) {
@@ -36,7 +45,13 @@ class IncludeContributorBindTo(
     ) {
         val bindTo: KSClassDeclaration = annotated.getAnnotationParameter(Include::bindTo)
         val bindTarget = BindTarget.valueOf(bindTo.simpleName.asString())
-        fun toType() = annotated.returnType!!.resolve().toType().qualifiedBy(annotated.findQualifiers())
+        fun toType(): Type {
+            val bindAs: KSType = annotated.getAnnotationParameter(Include::bindAs)
+            val targetType =
+                if (bindAs.toType() == BuiltInTypes.Any) annotated.returnType!!.resolve().toType()
+                else bindAs.toType()
+            return targetType.qualifiedBy(annotated.findQualifiers())
+        }
         when (bindTarget) {
             BindTarget.None -> origin.contribute(context, annotated)
             BindTarget.Set -> context.multibind.addToSet(toType()) {

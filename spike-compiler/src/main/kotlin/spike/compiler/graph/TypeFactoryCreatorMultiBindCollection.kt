@@ -1,6 +1,7 @@
 package spike.compiler.graph
 
 import spike.compiler.graph.GraphStore.Companion.asGraphStore
+import spike.compiler.graph.TypeFactory.Companion.contains
 
 class TypeFactoryCreatorMultiBindCollection(
     multibinding: MultiBindingStore,
@@ -22,9 +23,16 @@ class TypeFactoryCreatorMultiBindCollection(
         return TypeFactory.MultibindsCollection(
             type = type,
             entries = buildList {
-                addAll(instances.constructors.map { mint(it.type, clone(store = it.asGraphStore() + store)) })
-                addAll(instances.factories.map { mint(it.type, clone(store = it.asGraphStore() + store)) })
-                addAll(instances.binders.map { mint(it.type, clone(store = it.asGraphStore() + store)) })
+                for (c in instances.constructors) {
+                    add(mint(c.type, clone(store = c.asGraphStore() + store + instances)))
+                }
+                for(f in instances.factories) {
+                    add(mint(f.type, clone(store = f.asGraphStore() + store + instances)))
+                }
+                for (b in instances.binders) {
+                    if(b.source in this) continue
+                    add(mint(b.type, clone(store = b.asGraphStore() + store + instances)))
+                }
             },
             isPublic = isTopLevel,
             collectionType = collectionType,
