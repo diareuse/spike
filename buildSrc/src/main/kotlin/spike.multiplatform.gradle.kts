@@ -10,11 +10,17 @@ plugins {
 
 spotless {
     kotlin {
-        ktfmt().googleStyle()
+        ktfmt().googleStyle().configure {
+            it.setBlockIndent(4)
+            it.setContinuationIndent(4)
+        }
     }
     kotlinGradle {
         target("**/*.gradle.kts")
-        ktfmt().googleStyle()
+        ktfmt().googleStyle().configure {
+            it.setBlockIndent(4)
+            it.setContinuationIndent(4)
+        }
     }
 }
 

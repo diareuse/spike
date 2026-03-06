@@ -6,7 +6,10 @@ plugins {
 
 spotless {
     kotlin {
-        ktlint()
+        ktfmt().googleStyle().configure {
+            it.setBlockIndent(4)
+            it.setContinuationIndent(4)
+        }
     }
 }
 

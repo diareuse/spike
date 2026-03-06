@@ -6,6 +6,9 @@ plugins {
 spotless {
     kotlin {
         targetExclude("**/test/**", "**/build/**", "**/commonTest/**")
-        ktlint()
+        ktfmt().googleStyle().configure {
+            it.setBlockIndent(4)
+            it.setContinuationIndent(4)
+        }
     }
 }

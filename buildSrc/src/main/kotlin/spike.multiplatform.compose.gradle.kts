@@ -5,8 +5,9 @@ plugins {
 
 spotless {
     kotlin {
-        ktlint().customRuleSets(
-            listOf("io.nlopez.compose.rules:ktlint:0.5.6")
-        )
+        ktfmt().googleStyle().configure {
+            it.setBlockIndent(4)
+            it.setContinuationIndent(4)
+        }
     }
 }
