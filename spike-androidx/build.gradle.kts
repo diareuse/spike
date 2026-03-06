@@ -1,8 +1,5 @@
 plugins {
     id("spike.androidx")
-    alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.google.ksp)
-    alias(libs.plugins.android.kotlin.multiplatform.library)
 }
 
 kotlin {

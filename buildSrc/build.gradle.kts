@@ -17,4 +17,5 @@ dependencies {
     implementation("com.android.kotlin.multiplatform.library:com.android.kotlin.multiplatform.library.gradle.plugin:8.13.2")
     implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:2.3.6")
     implementation("com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin:0.36.0")
+    implementation("com.diffplug.spotless:com.diffplug.spotless.gradle.plugin:8.3.0")
 }

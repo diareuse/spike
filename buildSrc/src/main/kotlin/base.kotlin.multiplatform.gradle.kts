@@ -7,6 +7,10 @@ plugins {
 kotlin {
     jvmToolchain(17)
     jvm()
+    explicitApi()
+    compilerOptions {
+        allWarningsAsErrors = true
+    }
     sourceSets {
         commonTest.dependencies {
             implementation(kotlin("test"))

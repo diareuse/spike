@@ -5,6 +5,10 @@ plugins {
 
 kotlin {
     jvmToolchain(17)
+    explicitApi()
+    compilerOptions {
+        allWarningsAsErrors = true
+    }
 }
 
 tasks.test {

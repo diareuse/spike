@@ -1,6 +1,17 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 plugins {
     id("base.kotlin.multiplatform")
     id("base.android")
+    id("com.diffplug.spotless")
+}
+
+spotless {
+    kotlin {
+        ktlint()
+    }
 }
 
 kotlin {

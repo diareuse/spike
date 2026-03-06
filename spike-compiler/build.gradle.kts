@@ -1,9 +1,15 @@
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
+
 plugins {
     id("spike.jvm")
 }
 
 group = "spike.compiler"
 version = ""
+
+kotlin {
+    explicitApi = ExplicitApiMode.Disabled
+}
 
 dependencies {
     implementation(project(":spike-core"))

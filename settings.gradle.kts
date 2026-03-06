@@ -27,7 +27,6 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "spike"
-includeBuild("build-src")
 include(":spike-core")
 include(":spike-compiler")
 include(":spike-androidx")

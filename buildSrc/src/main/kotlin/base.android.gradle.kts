@@ -4,8 +4,12 @@ plugins {
 }
 
 kotlin {
+    explicitApi()
     androidLibrary {
         compileSdk = 36
         minSdk = 1
+    }
+    compilerOptions {
+        allWarningsAsErrors = true
     }
 }
