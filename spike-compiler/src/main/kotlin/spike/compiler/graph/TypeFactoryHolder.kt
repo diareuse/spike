@@ -6,24 +6,20 @@ class TypeFactoryHolder {
 
     fun insert(type: Type, factory: TypeFactory) {
         val ejected = factories.put(type, factory)
-        if (ejected != null) error(
-            "Cannot insert factory for $type, already exists: $ejected"
-        )
+        if (ejected != null) {
+            error(
+                "Cannot insert factory for $type, already exists: $ejected",
+            )
+        }
     }
 
-    operator fun get(type: Type): TypeFactory? {
-        return factories[type]
-    }
+    operator fun get(type: Type): TypeFactory? = factories[type]
 
     companion object {
 
         inline fun TypeFactoryHolder.getOrPut(
             type: Type,
-            factory: TypeFactoryHolder.(Type) -> TypeFactory
-        ): TypeFactory {
-            return get(type) ?: factory(type).also { insert(type, it) }
-        }
-
+            factory: TypeFactoryHolder.(Type) -> TypeFactory,
+        ): TypeFactory = get(type) ?: factory(type).also { insert(type, it) }
     }
-
 }

@@ -5,5 +5,5 @@ import spike.compiler.graph.MultiBindingStore
 
 data class GraphContext(
     val builder: GraphStore.Builder,
-    val multibind: MultiBindingStore.Builder
+    val multibind: MultiBindingStore.Builder,
 )

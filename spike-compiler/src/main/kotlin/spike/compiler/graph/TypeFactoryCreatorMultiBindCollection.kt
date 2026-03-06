@@ -4,7 +4,7 @@ import spike.compiler.graph.GraphStore.Companion.asGraphStore
 
 class TypeFactoryCreatorMultiBindCollection(
     multibinding: MultiBindingStore,
-    private val collectionType: Type
+    private val collectionType: Type,
 ) : TypeFactoryCreator {
     private val multibinding = when (collectionType) {
         BuiltInTypes.Set -> multibinding.set
@@ -27,7 +27,7 @@ class TypeFactoryCreatorMultiBindCollection(
                 addAll(instances.binders.map { mint(it.type, clone(store = it.asGraphStore() + store)) })
             },
             isPublic = isTopLevel,
-            collectionType = collectionType
+            collectionType = collectionType,
         )
     }
 }

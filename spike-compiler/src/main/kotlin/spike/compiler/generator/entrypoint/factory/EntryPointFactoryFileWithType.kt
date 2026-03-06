@@ -6,7 +6,7 @@ import spike.compiler.generator.FileGeneratorChain
 import spike.compiler.graph.GraphEntryPoint
 
 class EntryPointFactoryFileWithType(
-    private val type: EntryPointFactoryTypeChain
+    private val type: EntryPointFactoryTypeChain,
 ) : FileGenerator<GraphEntryPoint.Factory> {
     override fun generate(chain: FileGeneratorChain<GraphEntryPoint.Factory>): FileSpec.Builder {
         chain.spec.addType(type.proceed().build())

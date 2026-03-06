@@ -8,23 +8,21 @@ fun interface GraphContributor {
     fun contribute(context: GraphContext, resolver: Resolver)
 
     companion object {
-        inline fun create(body: GraphContributorBuilder.() -> Unit): GraphContributor {
-            return create(mutableListOf<GraphContributor>().apply(body))
-        }
+        inline fun create(body: GraphContributorBuilder.() -> Unit): GraphContributor = create(mutableListOf<GraphContributor>().apply(body))
 
-        fun create(contributors: List<GraphContributor>): GraphContributor =
-            GraphContributorMeta(contributors.toList())
+        fun create(contributors: List<GraphContributor>): GraphContributor = GraphContributorMeta(contributors.toList())
     }
 }
 
 private class GraphContributorMeta(
-    private val contributors: List<GraphContributor>
+    private val contributors: List<GraphContributor>,
 ) : GraphContributor {
     override fun contribute(
         context: GraphContext,
-        resolver: Resolver
+        resolver: Resolver,
     ) {
-        for (contributor in contributors)
+        for (contributor in contributors) {
             contributor.contribute(context, resolver)
+        }
     }
 }

@@ -7,7 +7,7 @@ import spike.Include
 
 @OptIn(KspExperimental::class)
 class GraphContributorIncludeClass(
-    private val contributor: IncludeContributor
+    private val contributor: IncludeContributor,
 ) : GraphContributor {
     override fun contribute(context: GraphContext, resolver: Resolver) {
         val classes = resolver

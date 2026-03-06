@@ -7,21 +7,21 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
 import spike.EntryPoint
 import spike.compiler.generator.DependencyGraphGenerator
-import spike.compiler.processor.util.getSymbolsWithAnnotation
 import spike.compiler.graph.GraphStore
 import spike.compiler.graph.MultiBindingStore
+import spike.compiler.processor.util.getSymbolsWithAnnotation
 
 @OptIn(KspExperimental::class)
 class SpikeSymbolProcessor(
-    private val environment: SymbolProcessorEnvironment
+    private val environment: SymbolProcessorEnvironment,
 ) : SymbolProcessor {
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val bindAs = IncludeContributorBindTo(
             IncludeContributorChain(
                 IncludeContributorBindAs(),
-                IncludeContributorMain()
-            )
+                IncludeContributorMain(),
+            ),
         )
         val viewModel = IncludeContributorViewModel()
         val generator = DependencyGraphGenerator(environment)
@@ -37,5 +37,4 @@ class SpikeSymbolProcessor(
         contributor.contribute(GraphContext(root, multibind), resolver)
         return emptyList()
     }
-
 }

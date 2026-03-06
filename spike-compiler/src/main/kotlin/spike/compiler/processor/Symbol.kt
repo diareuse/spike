@@ -2,8 +2,19 @@ package spike.compiler.processor
 
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.isAnnotationPresent
-import com.google.devtools.ksp.symbol.*
-import spike.compiler.graph.*
+import com.google.devtools.ksp.symbol.ClassKind
+import com.google.devtools.ksp.symbol.KSAnnotated
+import com.google.devtools.ksp.symbol.KSAnnotation
+import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSDeclaration
+import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.Variance
+import spike.compiler.graph.Invocation
+import spike.compiler.graph.Key
+import spike.compiler.graph.Parameter
+import spike.compiler.graph.Qualifier
+import spike.compiler.graph.Type
 import kotlin.reflect.KClass
 
 @OptIn(KspExperimental::class)

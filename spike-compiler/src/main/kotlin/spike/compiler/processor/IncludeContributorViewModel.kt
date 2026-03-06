@@ -15,14 +15,13 @@ class IncludeContributorViewModel : IncludeContributor {
     @OptIn(KspExperimental::class)
     override fun contribute(
         context: GraphContext,
-        annotated: KSClassDeclaration
+        annotated: KSClassDeclaration,
     ) {
         val constructors = annotated.getConstructors().toList()
         val constructor = when {
             constructors.size > 1 -> checkNotNull(constructors.firstOrNull { it.isAnnotationPresent(Inject::class) }) {
                 "Include class (${annotated.qualifiedName?.asString()}) must have a constructor annotated with @spike.Inject if it has more than one constructor"
             }
-
             else -> constructors.single()
         }
         val type = annotated.toType().qualifiedBy(annotated.findQualifiers())
@@ -33,14 +32,14 @@ class IncludeContributorViewModel : IncludeContributor {
             addConstructor(
                 type = annotated.toType().qualifiedBy(annotated.findQualifiers()),
                 invocation = constructor.toInvocation(),
-                singleton = false
+                singleton = false,
             )
         }
     }
 
     override fun contribute(
         context: GraphContext,
-        annotated: KSFunctionDeclaration
+        annotated: KSFunctionDeclaration,
     ) {
         error("ViewModels must not be included as a function")
     }

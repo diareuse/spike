@@ -1,10 +1,22 @@
 package spike.compiler.generator.container
 
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeSpec
+import com.squareup.kotlinpoet.withIndent
 import spike.compiler.generator.TypeGenerator
 import spike.compiler.generator.TypeGeneratorChain
 import spike.compiler.generator.TypeResolver
-import spike.compiler.generator.invocation.*
+import spike.compiler.generator.invocation.InvocationChain
+import spike.compiler.generator.invocation.InvocationGeneratorCompositor
+import spike.compiler.generator.invocation.InvocationGeneratorConstructor
+import spike.compiler.generator.invocation.InvocationGeneratorDelegation
+import spike.compiler.generator.invocation.InvocationGeneratorMethod
+import spike.compiler.generator.invocation.InvocationGeneratorParameters
+import spike.compiler.generator.invocation.InvocationGeneratorReturn
+import spike.compiler.generator.invocation.InvocationGeneratorVariables
 import spike.compiler.graph.DependencyGraph
 import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
@@ -27,7 +39,7 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
                 .addModifiers(if (factory.isPublic) KModifier.PUBLIC else KModifier.PRIVATE)
 
             when (factory) {
-                is TypeFactory.Binds -> propertySpec.callableFactory(factory.source as TypeFactory.Callable, chain.resolver)//propertySpec.binds(factory, chain.resolver)
+                is TypeFactory.Binds -> propertySpec.callableFactory(factory.source as TypeFactory.Callable, chain.resolver) //propertySpec.binds(factory, chain.resolver)
                 is TypeFactory.Class -> propertySpec.callableFactory(factory, chain.resolver)
                 is TypeFactory.Method -> propertySpec.callableFactory(factory, chain.resolver)
                 is TypeFactory.Property,

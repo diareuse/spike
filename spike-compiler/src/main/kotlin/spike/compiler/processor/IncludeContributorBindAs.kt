@@ -5,8 +5,8 @@ import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import spike.Include
-import spike.compiler.processor.util.getAnnotationParameter
 import spike.compiler.graph.BuiltInTypes
+import spike.compiler.processor.util.getAnnotationParameter
 
 class IncludeContributorBindAs : IncludeContributor {
     override fun contribute(context: GraphContext, annotated: KSClassDeclaration) {
@@ -35,7 +35,5 @@ class IncludeContributorBindAs : IncludeContributor {
 
     // ---
 
-    private fun errorMessage(declaration: KSDeclaration, bindAs: KSType): String {
-        return "Bind target (${declaration.qualifiedName?.asString()}) must be assignable from the '${Include::bindAs.name}' class (${bindAs.declaration.qualifiedName?.asString()})"
-    }
+    private fun errorMessage(declaration: KSDeclaration, bindAs: KSType): String = "Bind target (${declaration.qualifiedName?.asString()}) must be assignable from the '${Include::bindAs.name}' class (${bindAs.declaration.qualifiedName?.asString()})"
 }

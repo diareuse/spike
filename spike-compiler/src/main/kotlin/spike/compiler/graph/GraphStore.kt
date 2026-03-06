@@ -3,13 +3,13 @@ package spike.compiler.graph
 data class GraphStore(
     val constructors: List<Constructor> = emptyList(),
     val factories: List<Factory> = emptyList(),
-    val binders: List<Binder> = emptyList()
+    val binders: List<Binder> = emptyList(),
 ) {
 
     operator fun plus(other: GraphStore) = GraphStore(
         constructors = constructors + other.constructors,
         factories = factories + other.factories,
-        binders = binders + other.binders
+        binders = binders + other.binders,
     )
 
     class Builder {
@@ -33,7 +33,7 @@ data class GraphStore(
         fun build() = GraphStore(
             constructors = constructors.toList(),
             factories = factories.toList(),
-            binders = binders.toList()
+            binders = binders.toList(),
         )
     }
 
@@ -42,6 +42,5 @@ data class GraphStore(
         fun Constructor.asGraphStore() = GraphStore(constructors = listOf(this))
         fun Factory.asGraphStore() = GraphStore(factories = listOf(this))
         fun Binder.asGraphStore() = GraphStore(binders = listOf(this))
-
     }
 }

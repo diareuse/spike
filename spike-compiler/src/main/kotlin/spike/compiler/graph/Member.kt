@@ -5,7 +5,7 @@ sealed class Member {
         val packageName: String,
         val name: String,
         val returns: Type,
-        val parent: Type? = null
+        val parent: Type? = null,
     ) : Member()
 
     data class Method(
@@ -13,11 +13,11 @@ sealed class Member {
         val name: String,
         val returns: Type,
         val parent: Type? = null,
-        val parameters: List<Parameter> = emptyList()
+        val parameters: List<Parameter> = emptyList(),
     ) : Member()
 
     data class Receiver(
         val receiver: Type,
-        val member: Member
+        val member: Member,
     ) : Member()
 }

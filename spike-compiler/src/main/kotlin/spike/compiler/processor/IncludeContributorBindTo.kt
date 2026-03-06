@@ -7,11 +7,11 @@ import spike.Include
 import spike.compiler.processor.util.getAnnotationParameter
 
 class IncludeContributorBindTo(
-    private val origin: IncludeContributor
+    private val origin: IncludeContributor,
 ) : IncludeContributor {
     override fun contribute(
         context: GraphContext,
-        annotated: KSClassDeclaration
+        annotated: KSClassDeclaration,
     ) {
         val bindTo: KSClassDeclaration = annotated.getAnnotationParameter(Include::bindTo)
         val bindTarget = BindTarget.valueOf(bindTo.simpleName.asString())
@@ -21,11 +21,9 @@ class IncludeContributorBindTo(
             BindTarget.Set -> context.multibind.addToSet(toType()) {
                 origin.contribute(context.copy(builder = this), annotated)
             }
-
             BindTarget.List -> context.multibind.addToList(toType()) {
                 origin.contribute(context.copy(builder = this), annotated)
             }
-
             BindTarget.Map -> context.multibind.addToMap(toType(), annotated.findKey()) {
                 origin.contribute(context.copy(builder = this), annotated)
             }
@@ -34,7 +32,7 @@ class IncludeContributorBindTo(
 
     override fun contribute(
         context: GraphContext,
-        annotated: KSFunctionDeclaration
+        annotated: KSFunctionDeclaration,
     ) {
         val bindTo: KSClassDeclaration = annotated.getAnnotationParameter(Include::bindTo)
         val bindTarget = BindTarget.valueOf(bindTo.simpleName.asString())
@@ -44,11 +42,9 @@ class IncludeContributorBindTo(
             BindTarget.Set -> context.multibind.addToSet(toType()) {
                 origin.contribute(context.copy(builder = this), annotated)
             }
-
             BindTarget.List -> context.multibind.addToList(toType()) {
                 origin.contribute(context.copy(builder = this), annotated)
             }
-
             BindTarget.Map -> context.multibind.addToMap(toType(), annotated.findKey()) {
                 origin.contribute(context.copy(builder = this), annotated)
             }

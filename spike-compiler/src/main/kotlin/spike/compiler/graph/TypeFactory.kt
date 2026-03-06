@@ -15,8 +15,9 @@ sealed interface TypeFactory {
         override val invocation: Invocation,
         override val singleton: Boolean,
         override val dependencies: List<TypeFactory>,
-        override val isPublic: Boolean
-    ) : TypeFactory, Callable {
+        override val isPublic: Boolean,
+    ) : TypeFactory,
+        Callable {
         override val canInline: Boolean
             get() = !singleton
 
@@ -52,8 +53,9 @@ sealed interface TypeFactory {
         override val invocation: Invocation,
         override val singleton: Boolean,
         override val dependencies: List<TypeFactory>,
-        override val isPublic: Boolean
-    ) : TypeFactory, Callable {
+        override val isPublic: Boolean,
+    ) : TypeFactory,
+        Callable {
         override val canInline: Boolean
             get() = !singleton
     }
@@ -61,16 +63,14 @@ sealed interface TypeFactory {
     data class Binds(
         override val type: Type,
         val source: TypeFactory,
-        override val isPublic: Boolean
+        override val isPublic: Boolean,
     ) : TypeFactory {
         override val dependencies: List<TypeFactory>
             get() = listOf(source)
         override val canInline: Boolean
             get() = !isPublic && super.canInline
 
-        override fun toString(): String {
-            return "$source as $type"
-        }
+        override fun toString(): String = "$source as $type"
     }
 
     sealed interface Deferred : TypeFactory {
@@ -80,7 +80,7 @@ sealed interface TypeFactory {
     data class Provides(
         override val type: Type.Parametrized,
         override val factory: TypeFactory,
-        override val isPublic: Boolean
+        override val isPublic: Boolean,
     ) : Deferred {
         override val dependencies: List<TypeFactory>
             get() = factory.dependencies
@@ -101,7 +101,7 @@ sealed interface TypeFactory {
     data class Memorizes(
         override val type: Type.Parametrized,
         override val factory: TypeFactory,
-        override val isPublic: Boolean
+        override val isPublic: Boolean,
     ) : Deferred {
         override val dependencies: List<TypeFactory>
             get() = factory.dependencies
@@ -133,7 +133,7 @@ sealed interface TypeFactory {
         override val type: Type,
         val entries: List<TypeFactory>,
         override val isPublic: Boolean,
-        val collectionType: Type
+        val collectionType: Type,
     ) : TypeFactory {
         // the values must be constructed locally as there can be a one binding and multibinding allows
         // one type bound multiple times
@@ -160,7 +160,7 @@ sealed interface TypeFactory {
     data class MultibindsMap(
         override val type: Type,
         val keyValues: Map<Any?, TypeFactory>,
-        override val isPublic: Boolean
+        override val isPublic: Boolean,
     ) : TypeFactory {
         // the values must be constructed locally as there can be a one binding and multibinding allows
         // one type bound multiple times
@@ -176,7 +176,7 @@ sealed interface TypeFactory {
         }
     }
 
-    sealed interface Callable: TypeFactory {
+    sealed interface Callable : TypeFactory {
         override val type: Type
         val invocation: Invocation
         val singleton: Boolean

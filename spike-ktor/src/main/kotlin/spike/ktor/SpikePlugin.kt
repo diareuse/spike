@@ -6,7 +6,7 @@ import io.ktor.server.routing.routing
 
 private val SpikePlugin = createApplicationPlugin(
     name = "spike",
-    createConfiguration = { SpikeConfig() }
+    createConfiguration = { SpikeConfig() },
 ) {
     application.routing {
         val ep = checkNotNull(pluginConfig.entryPoint) {
@@ -24,5 +24,4 @@ class SpikeConfig internal constructor() {
     fun entryPoint(entryPoint: BaseRouteEntryPoint) {
         this.entryPoint = entryPoint
     }
-
 }

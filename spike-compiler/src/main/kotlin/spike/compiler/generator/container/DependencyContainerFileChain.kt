@@ -12,7 +12,7 @@ data class DependencyContainerFileChain(
     private val generators: List<FileGenerator<DependencyGraph>>,
     override val resolver: TypeResolver,
     override val spec: FileSpec.Builder = subject.entry.asFileSpecBuilder(resolver),
-    private val index: Int = 0
+    private val index: Int = 0,
 ) : FileGeneratorChain<DependencyGraph> {
     override fun proceed(): FileSpec.Builder {
         if (index == generators.size) return spec

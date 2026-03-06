@@ -9,7 +9,7 @@ import spike.Singleton
 import spike.compiler.graph.Member
 
 class GraphContributorIncludeFunction(
-    private val bindAs: IncludeContributor
+    private val bindAs: IncludeContributor,
 ) : GraphContributor {
     @OptIn(KspExperimental::class)
     override fun contribute(context: GraphContext, resolver: Resolver) {

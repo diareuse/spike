@@ -12,7 +12,7 @@ data class DependencyContainerTypeChain(
     private val generators: List<TypeGenerator<DependencyGraph>>,
     override val resolver: TypeResolver,
     override val spec: TypeSpec.Builder = subject.entry.asTypeSpecBuilder(resolver),
-    private val index: Int = 0
+    private val index: Int = 0,
 ) : TypeGeneratorChain<DependencyGraph> {
     override fun proceed(): TypeSpec.Builder {
         if (index == generators.size) return spec

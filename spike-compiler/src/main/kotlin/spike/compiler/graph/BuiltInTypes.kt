@@ -9,6 +9,4 @@ object BuiltInTypes {
     val Map = Type(kotlin.collections.Map::class)
     val List = Type(kotlin.collections.List::class)
     val Set = Type(kotlin.collections.Set::class)
-
 }
-

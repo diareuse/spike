@@ -2,7 +2,7 @@ package spike.compiler.graph
 
 class DependencyTail(
     val type: Type,
-    val parent: DependencyTail? = null
+    val parent: DependencyTail? = null,
 ) {
     val isStart get() = parent == null
     fun then(type: Type) = DependencyTail(type, this)

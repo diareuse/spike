@@ -10,7 +10,7 @@ import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
 
 class InvocationGeneratorCompositor(
-    private val componentSubChain: (TypeFactory.Callable) -> InvocationChain
+    private val componentSubChain: (TypeFactory.Callable) -> InvocationChain,
 ) : CodeBlockGenerator<TypeFactory.Callable> {
     override fun generate(chain: CodeBlockGeneratorChain<TypeFactory.Callable>): CodeBlock.Builder {
         val components = chain.subject.invertDependencyChain().distinctBy { it.type }
@@ -19,45 +19,45 @@ class InvocationGeneratorCompositor(
     }
 
     private fun generateComposition(components: List<TypeFactory>, chain: CodeBlockGeneratorChain<TypeFactory.Callable>) {
-        for (component in components) when (component) {
-            is TypeFactory.Callable -> {
-                chain.spec.add(
-                    "val %N: %T = ",
-                    chain.resolver.getFieldName(component.type),
-                    chain.resolver.getTypeName(component.type)
-                )
-                chain.spec.add(componentSubChain(component).proceed().build())
-                chain.spec.add("\n")
-            }
-
-            is TypeFactory.Binds -> continue
-            is TypeFactory.Property -> continue
-            is TypeFactory.Deferred -> {
-                chain.spec.add("val %N = ", chain.resolver.getFieldName(component.type))
-                when (component) {
-                    is TypeFactory.Memorizes -> chain.spec.beginControlFlow(
-                        "%M {",
-                        chain.resolver.builtInMember { BuiltInMembers.lazy })
-
-                    is TypeFactory.Provides -> chain.spec.beginControlFlow(
-                        "%T {",
-                        chain.resolver.getTypeName(component.type)
+        for (component in components) {
+            when (component) {
+                is TypeFactory.Callable -> {
+                    chain.spec.add(
+                        "val %N: %T = ",
+                        chain.resolver.getFieldName(component.type),
+                        chain.resolver.getTypeName(component.type),
                     )
+                    chain.spec.add(componentSubChain(component).proceed().build())
+                    chain.spec.add("\n")
                 }
-                chain.spec.withIndent {
-                    var out = component.factory
-                    while (out !is TypeFactory.Callable) {
-                        out = out.dependencies.single()
+                is TypeFactory.Binds -> continue
+                is TypeFactory.Property -> continue
+                is TypeFactory.Deferred -> {
+                    chain.spec.add("val %N = ", chain.resolver.getFieldName(component.type))
+                    when (component) {
+                        is TypeFactory.Memorizes -> chain.spec.beginControlFlow(
+                            "%M {",
+                            chain.resolver.builtInMember { BuiltInMembers.lazy },
+                        )
+                        is TypeFactory.Provides -> chain.spec.beginControlFlow(
+                            "%T {",
+                            chain.resolver.getTypeName(component.type),
+                        )
                     }
-                    // fixme remove recursion
-                    generateComposition(out.invertDependencyChain(), chain)
-                    add(componentSubChain(out).proceed().build())
-                    add("\n")
+                    chain.spec.withIndent {
+                        var out = component.factory
+                        while (out !is TypeFactory.Callable) {
+                            out = out.dependencies.single()
+                        }
+                        // fixme remove recursion
+                        generateComposition(out.invertDependencyChain(), chain)
+                        add(componentSubChain(out).proceed().build())
+                        add("\n")
+                    }
+                    chain.spec.endControlFlow()
                 }
-                chain.spec.endControlFlow()
+                else -> error("Cannot process component (${component::class}) $component")
             }
-
-            else -> error("Cannot process component (${component::class}) $component")
         }
     }
 
@@ -70,14 +70,12 @@ class InvocationGeneratorCompositor(
                     add(")")
                     return
                 }
-
                 resolver.builtInType.Lazy -> {
                     add("%M(::", resolver.builtInMember { lazy })
                     constructInvocation(type.typeArguments.single(), resolver)
                     add(")")
                     return
                 }
-
                 else -> {}
             }
         }
@@ -96,5 +94,4 @@ class InvocationGeneratorCompositor(
         }
         return out.toList()
     }
-
 }

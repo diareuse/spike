@@ -8,7 +8,7 @@ class TypeFactoryCreatorConstructor : TypeFactoryCreator {
             invocation = constructor.invocation,
             singleton = constructor.singleton,
             dependencies = constructor.invocation.parameters.map { mint(it.type) },
-            isPublic = isTopLevel
+            isPublic = isTopLevel,
         )
     }
 }

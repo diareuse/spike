@@ -5,7 +5,7 @@ data class GraphEntryPoint private constructor(
     val type: Type,
     val factory: Factory,
     val properties: List<Member.Property>,
-    val methods: List<Member.Method>
+    val methods: List<Member.Method>,
 ) {
     override fun toString(): String {
         var out = ""
@@ -22,14 +22,12 @@ data class GraphEntryPoint private constructor(
         return out
     }
 
-    fun isRootProperty(type: Type): Boolean {
-        return properties.any { it.returns == type } || methods.any { it.returns == type }
-    }
+    fun isRootProperty(type: Type): Boolean = properties.any { it.returns == type } || methods.any { it.returns == type }
 
     data class Factory(
         val type: Type,
         val method: Member.Method,
-        val isVirtual: Boolean = false
+        val isVirtual: Boolean = false,
     )
 
     companion object {
@@ -39,12 +37,12 @@ data class GraphEntryPoint private constructor(
             type: Type,
             factory: Factory?,
             properties: List<Member.Property>,
-            methods: List<Member.Method>
+            methods: List<Member.Method>,
         ) = GraphEntryPoint(
             type = type,
             factory = factory ?: type.defaultFactory(),
             properties = properties,
-            methods = methods
+            methods = methods,
         )
 
         private fun Type.defaultFactory(): Factory {
@@ -55,9 +53,9 @@ data class GraphEntryPoint private constructor(
                     packageName = packageName,
                     name = "create",
                     returns = this,
-                    parent = factoryType
+                    parent = factoryType,
                 ),
-                isVirtual = true
+                isVirtual = true,
             )
         }
     }

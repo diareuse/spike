@@ -3,7 +3,7 @@ package spike.compiler.graph
 import spike.compiler.graph.GraphStore.Companion.asGraphStore
 
 class TypeFactoryCreatorMultiBindMap(
-    private val multibinding: MultiBindingStore
+    private val multibinding: MultiBindingStore,
 ) : TypeFactoryCreator {
     override fun TypeFactoryCreator.Context.create(): TypeFactory {
         val type = type
@@ -35,24 +35,26 @@ class TypeFactoryCreatorMultiBindMap(
                         ?: error("Multiple bindings found for the same type $type. You must define only one per key ($k).")
                     factory = mint(definition.type.overrideType(valueType), clone(store = definition.asGraphStore() + store))
                 }
-                if (factory == null)
+                if (factory == null) {
                     error("No definition found for $type whilst being multi-bound, this is however most likely a spike inference error.")
+                }
                 put(k, factory)
             }
         }
         return TypeFactory.MultibindsMap(
             type = type,
             keyValues = keyValues,
-            isPublic = isTopLevel
+            isPublic = isTopLevel,
         )
     }
 
     private fun Type.overrideType(valueType: Type) = when (valueType) {
-         is Type.Parametrized -> when (valueType.envelope) {
-             BuiltInTypes.Provider,
-             BuiltInTypes.Lazy -> Type.Parametrized(valueType.envelope, listOf(this))
-             else -> this
-         }
+        is Type.Parametrized -> when (valueType.envelope) {
+            BuiltInTypes.Provider,
+            BuiltInTypes.Lazy,
+            -> Type.Parametrized(valueType.envelope, listOf(this))
+            else -> this
+        }
         else -> this
     }
 

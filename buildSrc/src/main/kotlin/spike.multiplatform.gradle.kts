@@ -10,7 +10,11 @@ plugins {
 
 spotless {
     kotlin {
-        ktlint()
+        ktfmt().googleStyle()
+    }
+    kotlinGradle {
+        target("**/*.gradle.kts")
+        ktfmt().googleStyle()
     }
 }
 

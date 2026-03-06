@@ -7,7 +7,7 @@ class TypeFactoryCreatorBinder : TypeFactoryCreator {
         return TypeFactory.Binds(
             type = type,
             source = mint(binder.source),
-            isPublic = isTopLevel
+            isPublic = isTopLevel,
         )
     }
 }

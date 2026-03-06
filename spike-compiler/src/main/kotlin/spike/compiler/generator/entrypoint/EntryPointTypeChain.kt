@@ -11,7 +11,7 @@ data class EntryPointTypeChain(
     private val generators: List<TypeGenerator<GraphEntryPoint>>,
     override val resolver: TypeResolver,
     override val spec: TypeSpec.Builder = subject.asTypeSpecBuilder(resolver),
-    private val index: Int = 0
+    private val index: Int = 0,
 ) : TypeGeneratorChain<GraphEntryPoint> {
     override fun proceed(): TypeSpec.Builder {
         if (index == generators.size) return spec

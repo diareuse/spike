@@ -6,7 +6,8 @@ interface TypeFactoryCreator {
         val type: Type
         val store: GraphStore
         val isTopLevel: Boolean
-        //val multiBind: MultiBindingStore
+        // val multiBind: MultiBindingStore
+
         /** Passes execution to a lower level when this factory cannot provide the [TypeFactory] */
         fun pass(): TypeFactory
 

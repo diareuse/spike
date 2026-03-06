@@ -17,7 +17,7 @@ class EntryPointFileFactoryAccessor : FileGenerator<GraphEntryPoint> {
         val initializer = FunSpec.getterBuilder()
             .addStatement(
                 "return %T",
-                chain.resolver.transformClassName(chain.subject.factory.type)
+                chain.resolver.transformClassName(chain.subject.factory.type),
             )
         val property = PropertySpec
             .builder("factory", entryPointFactoryClass)

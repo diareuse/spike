@@ -6,5 +6,4 @@ object BuiltInMembers {
     val listOf = Member.Method(packageName = "kotlin.collections", name = "listOf", returns = BuiltInTypes.List, parent = null)
     val setOf = Member.Method(packageName = "kotlin.collections", name = "setOf", returns = BuiltInTypes.Set, parent = null)
     val mapOf = Member.Method(packageName = "kotlin.collections", name = "mapOf", returns = BuiltInTypes.Map, parent = null)
-
 }

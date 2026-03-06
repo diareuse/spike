@@ -8,16 +8,14 @@ sealed class Type {
 
     data class Simple(
         override val packageName: String,
-        override val simpleName: String
+        override val simpleName: String,
     ) : Type() {
-        override fun toString(): String {
-            return "$packageName.$simpleName"
-        }
+        override fun toString(): String = "$packageName.$simpleName"
     }
 
     data class Inner(
         val parent: Type,
-        override val simpleName: String
+        override val simpleName: String,
     ) : Type() {
         override val packageName: String get() = parent.packageName
         val names
@@ -30,28 +28,24 @@ sealed class Type {
                 add(0, curr.simpleName)
             }
 
-        override fun toString(): String {
-            return "$parent.$simpleName"
-        }
+        override fun toString(): String = "$parent.$simpleName"
     }
 
     data class Parametrized(
         val envelope: Type,
-        val typeArguments: List<Type>
+        val typeArguments: List<Type>,
     ) : Type() {
         override val packageName: String
             get() = envelope.packageName
         override val simpleName: String
             get() = envelope.simpleName
 
-        override fun toString(): String {
-            return "$envelope<${typeArguments.joinToString(", ")}>"
-        }
+        override fun toString(): String = "$envelope<${typeArguments.joinToString(", ")}>"
     }
 
     data class WithVariance(
         val type: Type?,
-        val variance: Variance
+        val variance: Variance,
     ) : Type() {
         override val packageName: String
             get() = type?.packageName.orEmpty()
@@ -59,7 +53,10 @@ sealed class Type {
             get() = type?.simpleName.orEmpty()
 
         enum class Variance {
-            IN, OUT, STAR;
+            IN,
+            OUT,
+            STAR,
+            ;
 
             override fun toString() = when (this) {
                 IN -> "in"
@@ -68,7 +65,7 @@ sealed class Type {
             }
         }
 
-        override fun toString() = when(type) {
+        override fun toString() = when (type) {
             null -> "$variance"
             else -> "$variance $type"
         }
@@ -76,7 +73,7 @@ sealed class Type {
 
     data class Qualified(
         val type: Type,
-        val qualifiers: List<Qualifier>
+        val qualifiers: List<Qualifier>,
     ) : Type() {
         init {
             check(qualifiers.isNotEmpty()) { "At least one qualifier is required for type $type" }
@@ -87,13 +84,10 @@ sealed class Type {
         override val simpleName: String
             get() = type.simpleName
 
-        override fun toString(): String {
-            return "${qualifiers.joinToString(" ")} $type"
-        }
+        override fun toString(): String = "${qualifiers.joinToString(" ")} $type"
     }
 
     companion object {
-        operator fun invoke(klass: KClass<*>) =
-            Simple(klass.qualifiedName!!.substringBefore(".${klass.simpleName!!}"), klass.simpleName!!)
+        operator fun invoke(klass: KClass<*>) = Simple(klass.qualifiedName!!.substringBefore(".${klass.simpleName!!}"), klass.simpleName!!)
     }
 }

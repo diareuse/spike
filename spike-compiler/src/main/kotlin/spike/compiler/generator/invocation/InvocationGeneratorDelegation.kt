@@ -11,8 +11,9 @@ class InvocationGeneratorDelegation : CodeBlockGenerator<TypeFactory.Callable> {
         val factory = chain.subject
         val codeBlock = chain.spec
         val resolver = chain.resolver
-        if (factory.singleton)
+        if (factory.singleton) {
             codeBlock.beginControlFlow("%M {", resolver.builtInMember { BuiltInMembers.lazy })
+        }
         return chain.proceed().also {
             if (factory.singleton) {
                 codeBlock.add("\n")

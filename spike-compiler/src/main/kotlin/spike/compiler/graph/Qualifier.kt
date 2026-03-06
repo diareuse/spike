@@ -2,7 +2,7 @@ package spike.compiler.graph
 
 data class Qualifier(
     val type: Type,
-    val arguments: List<Argument>
+    val arguments: List<Argument>,
 ) : Comparable<Qualifier> {
 
     override fun compareTo(other: Qualifier): Int {
@@ -10,16 +10,12 @@ data class Qualifier(
         return toString().compareTo(other.toString())
     }
 
-    override fun toString(): String {
-        return "@" + type.toString() + arguments.joinToString(prefix = "(", postfix = ")")
-    }
+    override fun toString(): String = "@" + type.toString() + arguments.joinToString(prefix = "(", postfix = ")")
 
     data class Argument(
         val name: String,
-        val value: Any?
+        val value: Any?,
     ) {
-        override fun toString(): String {
-            return "$name=$value"
-        }
+        override fun toString(): String = "$name=$value"
     }
 }

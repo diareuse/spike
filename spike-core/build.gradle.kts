@@ -1,15 +1,7 @@
-plugins {
-    id("spike.multiplatform")
-}
+plugins { id("spike.multiplatform") }
 
 group = "spike"
 
-kotlin {
-    androidLibrary {
-        namespace = "spike"
-    }
-}
+kotlin { androidLibrary { namespace = "spike" } }
 
-dependencies {
-    add("kspJvmTest", project(":spike-compiler"))
-}
+dependencies { add("kspJvmTest", project(":spike-compiler")) }

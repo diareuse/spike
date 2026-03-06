@@ -6,7 +6,7 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 
 @OptIn(KspExperimental::class)
 class GraphContributorIncludeViewModel(
-    private val contributor: IncludeContributor
+    private val contributor: IncludeContributor,
 ) : GraphContributor {
     override fun contribute(context: GraphContext, resolver: Resolver) {
         val classes = resolver

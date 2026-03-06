@@ -11,7 +11,7 @@ data class InvocationChain(
     private val generators: List<CodeBlockGenerator<TypeFactory.Callable>>,
     override val resolver: TypeResolver,
     override val spec: CodeBlock.Builder = CodeBlock.builder(),
-    private val index: Int = 0
+    private val index: Int = 0,
 ) : CodeBlockGeneratorChain<TypeFactory.Callable> {
     override fun proceed(): CodeBlock.Builder {
         if (index == generators.size) return spec

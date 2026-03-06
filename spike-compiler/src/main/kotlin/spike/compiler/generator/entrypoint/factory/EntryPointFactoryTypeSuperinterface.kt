@@ -7,8 +7,9 @@ import spike.compiler.graph.GraphEntryPoint
 
 class EntryPointFactoryTypeSuperinterface : TypeGenerator<GraphEntryPoint.Factory> {
     override fun generate(chain: TypeGeneratorChain<GraphEntryPoint.Factory>): TypeSpec.Builder {
-        if (!chain.subject.isVirtual)
+        if (!chain.subject.isVirtual) {
             chain.spec.addSuperinterface(chain.resolver.getTypeName(chain.subject.type))
+        }
         return chain.proceed()
     }
 }

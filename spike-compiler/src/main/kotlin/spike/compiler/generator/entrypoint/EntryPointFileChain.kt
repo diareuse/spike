@@ -11,7 +11,7 @@ data class EntryPointFileChain(
     private val generators: List<FileGenerator<GraphEntryPoint>>,
     override val resolver: TypeResolver,
     override val spec: FileSpec.Builder = subject.asFileSpecBuilder(resolver),
-    private val index: Int = 0
+    private val index: Int = 0,
 ) : FileGeneratorChain<GraphEntryPoint> {
     override fun proceed(): FileSpec.Builder {
         if (index == generators.size) return spec

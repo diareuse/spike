@@ -13,13 +13,14 @@ class EntryPointFactoryTypeMethod : TypeGenerator<GraphEntryPoint.Factory> {
         val method = chain.subject.method
         val factoryMethod = FunSpec.builder(method.name)
             .returns(chain.resolver.getTypeName(method.returns))
-        if (!chain.subject.isVirtual)
+        if (!chain.subject.isVirtual) {
             factoryMethod.addModifiers(KModifier.OVERRIDE)
+        }
         val body = CodeBlock.builder()
             .add(
                 "return %T(%T(",
                 chain.resolver.transformClassName(method.returns),
-                chain.resolver.getDependencyContainerClassName(method.returns)
+                chain.resolver.getDependencyContainerClassName(method.returns),
             )
         for ((index, param) in method.parameters.withIndex()) {
             if (index > 0) body.add(", ")

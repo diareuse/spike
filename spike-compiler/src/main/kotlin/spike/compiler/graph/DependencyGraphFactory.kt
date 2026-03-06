@@ -3,7 +3,7 @@ package spike.compiler.graph
 class DependencyGraphFactory(
     private val entry: GraphEntryPoint,
     private val root: GraphStore,
-    private val multibinding: MultiBindingStore
+    private val multibinding: MultiBindingStore,
 ) {
 
     fun create(): DependencyGraph {
@@ -32,7 +32,7 @@ class DependencyGraphFactory(
         return DependencyGraph(
             entry = entry,
             methods = methods,
-            properties = properties
+            properties = properties,
         )
     }
 
@@ -42,5 +42,4 @@ class DependencyGraphFactory(
         val chain = TypeFactoryCreatorChain(type, creators, root)
         return chain.pass()
     }
-
 }

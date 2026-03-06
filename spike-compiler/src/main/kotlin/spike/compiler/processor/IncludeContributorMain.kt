@@ -13,26 +13,25 @@ import spike.compiler.graph.Member
 class IncludeContributorMain : IncludeContributor {
     override fun contribute(
         context: GraphContext,
-        annotated: KSClassDeclaration
+        annotated: KSClassDeclaration,
     ) {
         val constructors = annotated.getConstructors().toList()
         val constructor = when {
             constructors.size > 1 -> checkNotNull(constructors.firstOrNull { it.isAnnotationPresent(Inject::class) }) {
                 "Include class (${annotated.qualifiedName?.asString()}) must have a constructor annotated with @spike.Inject if it has more than one constructor"
             }
-
             else -> constructors.single()
         }
         context.builder.addConstructor(
             type = annotated.toType().qualifiedBy(annotated.findQualifiers()),
             invocation = constructor.toInvocation(),
-            singleton = annotated.isAnnotationPresent(Singleton::class)
+            singleton = annotated.isAnnotationPresent(Singleton::class),
         )
     }
 
     override fun contribute(
         context: GraphContext,
-        annotated: KSFunctionDeclaration
+        annotated: KSFunctionDeclaration,
     ) {
         val qualifiers = annotated.findQualifiers()
         val returnType = annotated.returnType!!.resolve().toType().qualifiedBy(qualifiers)
@@ -43,10 +42,10 @@ class IncludeContributorMain : IncludeContributor {
                 packageName = annotated.packageName.asString(),
                 name = annotated.simpleName.asString(),
                 returns = returnType,
-                parent = parentType
+                parent = parentType,
             ),
             invocation = annotated.toInvocation(),
-            singleton = annotated.isAnnotationPresent(Singleton::class)
+            singleton = annotated.isAnnotationPresent(Singleton::class),
         )
     }
 }

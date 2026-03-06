@@ -8,11 +8,9 @@ fun Member.toMemberName(): MemberName = when (this) {
         null -> MemberName(packageName, name)
         else -> MemberName(p.toClassName(), name)
     }
-
     is Member.Property -> when (val p = parent) {
         null -> MemberName(packageName, name)
         else -> MemberName(p.toClassName(), name)
     }
-
     is Member.Receiver -> member.toMemberName()
 }
