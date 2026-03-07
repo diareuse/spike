@@ -24,6 +24,6 @@ class DependencyContainerTypeConstructor : TypeGenerator<DependencyGraph> {
             constructor.addParameter(parameterName, parameterType)
         }
         chain.spec.primaryConstructor(constructor.build())
-        return chain.proceed()
+        return chain.proceed(this)
     }
 }

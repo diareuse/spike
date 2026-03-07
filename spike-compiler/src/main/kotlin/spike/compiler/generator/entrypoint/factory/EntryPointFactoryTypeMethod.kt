@@ -30,6 +30,6 @@ class EntryPointFactoryTypeMethod : TypeGenerator<GraphEntryPoint.Factory> {
         body.add("))")
         factoryMethod.addCode(body.build())
         chain.spec.addFunction(factoryMethod.build())
-        return chain.proceed()
+        return chain.proceed(this)
     }
 }

@@ -31,6 +31,6 @@ class EntryPointFileInitializer : FileGenerator<GraphEntryPoint> {
         body.add(")")
         initializer.addCode(body.build())
         chain.spec.addFunction(initializer.build())
-        return chain.proceed()
+        return chain.proceed(this)
     }
 }

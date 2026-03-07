@@ -10,6 +10,6 @@ class EntryPointFileWithType(
 ) : FileGenerator<GraphEntryPoint> {
     override fun generate(chain: FileGeneratorChain<GraphEntryPoint>): FileSpec.Builder {
         chain.spec.addType(type.proceed().build())
-        return chain.proceed()
+        return chain.proceed(this)
     }
 }

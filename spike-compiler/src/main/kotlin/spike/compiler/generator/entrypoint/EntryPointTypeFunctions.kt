@@ -17,6 +17,6 @@ class EntryPointTypeFunctions : TypeGenerator<GraphEntryPoint> {
                 .build()
             chain.spec.addFunction(spec)
         }
-        return chain.proceed()
+        return chain.proceed(this)
     }
 }

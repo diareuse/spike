@@ -7,16 +7,17 @@ import spike.compiler.generator.TypeResolver
 import spike.compiler.graph.DependencyGraph
 import spike.compiler.graph.GraphEntryPoint
 
-data class DependencyContainerFileChain(
+class DependencyContainerFileChain(
     override val subject: DependencyGraph,
     private val generators: List<FileGenerator<DependencyGraph>>,
     override val resolver: TypeResolver,
-    override val spec: FileSpec.Builder = subject.entry.asFileSpecBuilder(resolver),
-    private val index: Int = 0,
 ) : FileGeneratorChain<DependencyGraph> {
-    override fun proceed(): FileSpec.Builder {
+    override val spec: FileSpec.Builder = subject.entry.asFileSpecBuilder(resolver)
+    fun proceed() = generators[0].generate(this)
+    override fun proceed(origin: FileGenerator<DependencyGraph>): FileSpec.Builder {
+        val index = generators.indexOf(origin) + 1
         if (index == generators.size) return spec
-        return generators[index].generate(copy(index = index + 1))
+        return generators[index].generate(this)
     }
 
     private companion object {

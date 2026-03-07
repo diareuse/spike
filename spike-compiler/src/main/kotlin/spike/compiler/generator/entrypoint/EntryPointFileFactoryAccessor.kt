@@ -10,7 +10,7 @@ import spike.compiler.graph.GraphEntryPoint
 
 class EntryPointFileFactoryAccessor : FileGenerator<GraphEntryPoint> {
     override fun generate(chain: FileGeneratorChain<GraphEntryPoint>): FileSpec.Builder {
-        if (chain.subject.factory.isVirtual) return chain.proceed()
+        if (chain.subject.factory.isVirtual) return chain.proceed(this)
         val entryPointClass = chain.resolver.getTypeName(chain.subject.type) as ClassName
         val entryPointCompanion = entryPointClass.nestedClass("Companion")
         val entryPointFactoryClass = chain.resolver.getTypeName(chain.subject.factory.type) as ClassName
@@ -24,6 +24,6 @@ class EntryPointFileFactoryAccessor : FileGenerator<GraphEntryPoint> {
             .receiver(entryPointCompanion)
             .getter(initializer.build())
         chain.spec.addProperty(property.build())
-        return chain.proceed()
+        return chain.proceed(this)
     }
 }

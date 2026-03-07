@@ -12,6 +12,6 @@ class InvocationGeneratorReturn : CodeBlockGenerator<TypeFactory.Callable> {
         if (!factory.singleton) {
             codeBlock.add("return ")
         }
-        return chain.proceed()
+        return chain.proceed(this)
     }
 }

@@ -10,6 +10,6 @@ class EntryPointFactoryTypeSuperinterface : TypeGenerator<GraphEntryPoint.Factor
         if (!chain.subject.isVirtual) {
             chain.spec.addSuperinterface(chain.resolver.getTypeName(chain.subject.type))
         }
-        return chain.proceed()
+        return chain.proceed(this)
     }
 }

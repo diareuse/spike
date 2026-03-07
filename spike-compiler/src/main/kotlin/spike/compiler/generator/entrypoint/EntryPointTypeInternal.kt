@@ -9,6 +9,6 @@ import spike.compiler.graph.GraphEntryPoint
 class EntryPointTypeInternal : TypeGenerator<GraphEntryPoint> {
     override fun generate(chain: TypeGeneratorChain<GraphEntryPoint>): TypeSpec.Builder {
         chain.spec.addModifiers(KModifier.INTERNAL)
-        return chain.proceed()
+        return chain.proceed(this)
     }
 }

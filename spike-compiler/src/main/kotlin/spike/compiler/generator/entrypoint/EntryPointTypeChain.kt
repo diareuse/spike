@@ -1,21 +1,23 @@
 package spike.compiler.generator.entrypoint
 
 import com.squareup.kotlinpoet.TypeSpec
+import spike.compiler.generator.Generator
 import spike.compiler.generator.TypeGenerator
 import spike.compiler.generator.TypeGeneratorChain
 import spike.compiler.generator.TypeResolver
 import spike.compiler.graph.GraphEntryPoint
 
-data class EntryPointTypeChain(
+class EntryPointTypeChain(
     override val subject: GraphEntryPoint,
     private val generators: List<TypeGenerator<GraphEntryPoint>>,
     override val resolver: TypeResolver,
-    override val spec: TypeSpec.Builder = subject.asTypeSpecBuilder(resolver),
-    private val index: Int = 0,
 ) : TypeGeneratorChain<GraphEntryPoint> {
-    override fun proceed(): TypeSpec.Builder {
+    override val spec: TypeSpec.Builder = subject.asTypeSpecBuilder(resolver)
+    fun proceed() = generators[0].generate(this)
+    override fun proceed(origin: TypeGenerator<GraphEntryPoint>): TypeSpec.Builder {
+        val index = generators.indexOf(origin) + 1
         if (index == generators.size) return spec
-        return generators[index].generate(copy(index = index + 1))
+        return generators[index].generate(this)
     }
 
     private companion object {

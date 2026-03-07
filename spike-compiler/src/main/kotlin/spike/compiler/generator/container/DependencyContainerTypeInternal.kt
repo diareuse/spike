@@ -9,6 +9,6 @@ import spike.compiler.graph.DependencyGraph
 class DependencyContainerTypeInternal : TypeGenerator<DependencyGraph> {
     override fun generate(chain: TypeGeneratorChain<DependencyGraph>): TypeSpec.Builder {
         chain.spec.addModifiers(KModifier.INTERNAL)
-        return chain.proceed()
+        return chain.proceed(this)
     }
 }

@@ -15,7 +15,7 @@ class InvocationGeneratorCompositor(
     override fun generate(chain: CodeBlockGeneratorChain<TypeFactory.Callable>): CodeBlock.Builder {
         val components = chain.subject.invertDependencyChain().distinctBy { it.type }
         generateComposition(components, chain)
-        return chain.proceed()
+        return chain.proceed(this)
     }
 
     private fun generateComposition(components: List<TypeFactory>, chain: CodeBlockGeneratorChain<TypeFactory.Callable>) {

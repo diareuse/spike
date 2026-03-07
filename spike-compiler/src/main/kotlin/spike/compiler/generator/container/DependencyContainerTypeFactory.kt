@@ -49,7 +49,7 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
 
             chain.spec.addProperty(propertySpec.build())
         }
-        return chain.proceed()
+        return chain.proceed(this)
     }
 
     // ---

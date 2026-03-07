@@ -19,6 +19,6 @@ class EntryPointTypeProperties : TypeGenerator<GraphEntryPoint> {
                 .build()
             chain.spec.addProperty(spec)
         }
-        return chain.proceed()
+        return chain.proceed(this)
     }
 }

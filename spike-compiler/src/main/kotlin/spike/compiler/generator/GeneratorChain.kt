@@ -12,5 +12,5 @@ interface GeneratorChain<Subject, Builder> {
     val spec: Builder
     val resolver: TypeResolver
     val subject: Subject
-    fun proceed(): Builder
+    fun proceed(origin: Generator<Subject, Builder>): Builder
 }

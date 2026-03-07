@@ -14,7 +14,7 @@ class InvocationGeneratorDelegation : CodeBlockGenerator<TypeFactory.Callable> {
         if (factory.singleton) {
             codeBlock.beginControlFlow("%M {", resolver.builtInMember { BuiltInMembers.lazy })
         }
-        return chain.proceed().also {
+        return chain.proceed(this).also {
             if (factory.singleton) {
                 codeBlock.add("\n")
                 codeBlock.endControlFlow()

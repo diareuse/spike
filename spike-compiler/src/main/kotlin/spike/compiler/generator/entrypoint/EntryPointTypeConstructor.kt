@@ -18,6 +18,6 @@ class EntryPointTypeConstructor : TypeGenerator<GraphEntryPoint> {
             .addModifiers(KModifier.PRIVATE)
             .initializer("container")
         chain.spec.addProperty(property.build())
-        return chain.proceed()
+        return chain.proceed(this)
     }
 }

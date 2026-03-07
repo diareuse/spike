@@ -7,9 +7,9 @@ import spike.compiler.graph.TypeFactory
 
 class InvocationGeneratorConstructor : CodeBlockGenerator<TypeFactory.Callable> {
     override fun generate(chain: CodeBlockGeneratorChain<TypeFactory.Callable>): CodeBlock.Builder {
-        if (chain.subject !is TypeFactory.Class) return chain.proceed()
+        if (chain.subject !is TypeFactory.Class) return chain.proceed(this)
         chain.spec.add("%T(", chain.resolver.getTypeName(chain.subject.type))
-        return chain.proceed().also {
+        return chain.proceed(this).also {
             chain.spec.add(")")
         }
     }

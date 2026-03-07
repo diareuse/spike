@@ -6,16 +6,17 @@ import spike.compiler.generator.FileGeneratorChain
 import spike.compiler.generator.TypeResolver
 import spike.compiler.graph.GraphEntryPoint
 
-data class EntryPointFileChain(
+class EntryPointFileChain(
     override val subject: GraphEntryPoint,
     private val generators: List<FileGenerator<GraphEntryPoint>>,
     override val resolver: TypeResolver,
-    override val spec: FileSpec.Builder = subject.asFileSpecBuilder(resolver),
-    private val index: Int = 0,
 ) : FileGeneratorChain<GraphEntryPoint> {
-    override fun proceed(): FileSpec.Builder {
+    override val spec: FileSpec.Builder = subject.asFileSpecBuilder(resolver)
+    fun proceed() = generators[0].generate(this)
+    override fun proceed(origin: FileGenerator<GraphEntryPoint>): FileSpec.Builder {
+        val index = generators.indexOf(origin) + 1
         if (index == generators.size) return spec
-        return generators[index].generate(copy(index = index + 1))
+        return generators[index].generate(this)
     }
 
     private companion object {
