@@ -1,0 +1,45 @@
+name: benchmark
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    branches:
+      - master
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up JDK
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - run: zsh spike-benchmark/benchmark.sh
+
+      - run: |
+          # Use awk to average the 'measured build' lines only
+          AVG=$(grep "measured build" spike-benchmark/output/benchmark.csv | cut -d',' -f2 | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; else print 0 }')
+          echo "[{\"name\": \"Build Time\", \"unit\": \"ms\", \"value\": $AVG}]" > results.json
+
+      - uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: 'customGeneric'
+          output-file-path: 'results.json'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+          alert-threshold: '115%'
+          comment-on-commit: true
+          fail-on-alert: true
