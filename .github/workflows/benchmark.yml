@@ -30,6 +30,8 @@ jobs:
           curl -s "https://get.sdkman.io?ci=true" | bash
           source "/home/runner/.sdkman/bin/sdkman-init.sh"
           sdk install gradleprofiler
+          echo "SDKMAN_DIR=$HOME/.sdkman" >> $GITHUB_ENV
+          echo "$HOME/.sdkman/candidates/gradleprofiler/current/bin" >> $GITHUB_PATH
 
       - run: |
           cat spike-benchmark/gradle.properties >> gradle.properties
