@@ -27,10 +27,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - run: cat spike-benchmark/gradle.properties >> gradle.properties
       - run: bash spike-benchmark/benchmark.sh
 
       - run: |
-          # Use awk to average the 'measured build' lines only
           AVG=$(grep "measured build" spike-benchmark/output/benchmark.csv | cut -d',' -f2 | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; else print 0 }')
           echo "[{\"name\": \"Build Time\", \"unit\": \"ms\", \"value\": $AVG}]" > results.json
 
