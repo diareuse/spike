@@ -27,7 +27,9 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - run: cat spike-benchmark/gradle.properties >> gradle.properties
+      - run: |
+          cat spike-benchmark/gradle.properties >> gradle.properties
+          echo "VERSION_NAME=unspecified" >> gradle.properties
       - run: bash spike-benchmark/benchmark.sh
 
       - run: |
