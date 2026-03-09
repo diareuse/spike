@@ -45,7 +45,7 @@ jobs:
 
       - uses: benchmark-action/github-action-benchmark@v1
         with:
-          tool: 'customGeneric'
+          tool: 'customSmallerIsBetter'
           output-file-path: 'results.json'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
