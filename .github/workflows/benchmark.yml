@@ -27,7 +27,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - run: zsh spike-benchmark/benchmark.sh
+      - run: bash spike-benchmark/benchmark.sh
 
       - run: |
           # Use awk to average the 'measured build' lines only

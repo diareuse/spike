@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 set -e
 ./gradlew publishToMavenLocal
 gradle-profiler --benchmark \
