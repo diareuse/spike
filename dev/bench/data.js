@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773252887894,
+  "lastUpdate": 1773255117389,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -86,6 +86,35 @@ window.BENCHMARK_DATA = {
           {
             "name": "Build Time",
             "value": 2687.33,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "60a590e1caa7d65a1b82cee8d5fd8a76c0a934f1",
+          "message": "chore(compiler): refine `pass` method to improve clarity\n\n- Updated `pass` method to accept `TypeFactoryCreator` as a parameter.\n- Modified all implementations to pass the respective creator instance.\n- Adjusted `TypeFactoryCreatorChain` implementation to align with new changes.\n- Ensures more explicit context binding for error handling and execution flow.",
+          "timestamp": "2026-03-11T19:45:14+01:00",
+          "tree_id": "259554d6bd304c99727900acd0832c539d848313",
+          "url": "https://github.com/diareuse/spike/commit/60a590e1caa7d65a1b82cee8d5fd8a76c0a934f1"
+        },
+        "date": 1773255116538,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2676.17,
             "unit": "ms"
           }
         ]
