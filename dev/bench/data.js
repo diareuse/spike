@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773252742920,
+  "lastUpdate": 1773252887894,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -57,6 +57,35 @@ window.BENCHMARK_DATA = {
           {
             "name": "Build Time",
             "value": 2720.32,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "6912c2a6f0896fac4d7f1fea20a004f7800ae729",
+          "message": "docs: add build status badge to README\n\n- Added a static badge showing build status to the README file.\n- Links to benchmarking history for more detailed insights.",
+          "timestamp": "2026-03-11T19:07:50+01:00",
+          "tree_id": "8ac92c943d679acfdec2fb93b9fb41bca3e535e1",
+          "url": "https://github.com/diareuse/spike/commit/6912c2a6f0896fac4d7f1fea20a004f7800ae729"
+        },
+        "date": 1773252887378,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2687.33,
             "unit": "ms"
           }
         ]
