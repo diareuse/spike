@@ -6,7 +6,7 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.withIndent
-import spike.compiler.generator.GeneratorChainGeneric
+import spike.compiler.generator.GeneratorChain
 import spike.compiler.generator.TypeGenerator
 import spike.compiler.generator.TypeGeneratorChain
 import spike.compiler.generator.TypeResolver
@@ -55,15 +55,12 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
     // ---
 
     private fun constructCallable(factory: TypeFactory.Callable, resolver: TypeResolver): CodeBlock {
-        val chain = GeneratorChainGeneric(
+        val chain = GeneratorChain.codeBlock(
             subject = factory,
-            generators = listOf(
-                InvocationGeneratorConstructor(),
-                InvocationGeneratorMethod(),
-                InvocationGeneratorParameters(),
-            ),
             resolver = resolver,
-            spec = CodeBlock.builder()
+            InvocationGeneratorConstructor(),
+            InvocationGeneratorMethod(),
+            InvocationGeneratorParameters(),
         )
         return chain.proceed().build()
     }
@@ -71,29 +68,23 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
     // ---
 
     private fun PropertySpec.Builder.callableFactory(factory: TypeFactory.Callable, resolver: TypeResolver) {
-        val chain = GeneratorChainGeneric(
+        val chain = GeneratorChain.codeBlock(
             subject = factory,
-            generators = listOf(
-                InvocationGeneratorDelegation(),
-                InvocationGeneratorCompositor {
-                    GeneratorChainGeneric(
-                        subject = it,
-                        generators = listOf(
-                            InvocationGeneratorConstructor(),
-                            InvocationGeneratorMethod(),
-                            InvocationGeneratorVariables(),
-                        ),
-                        resolver = resolver,
-                        spec = CodeBlock.builder()
-                    )
-                },
-                InvocationGeneratorReturn(),
-                InvocationGeneratorConstructor(),
-                InvocationGeneratorMethod(),
-                InvocationGeneratorVariables(),
-            ),
             resolver = resolver,
-            spec = CodeBlock.builder()
+            InvocationGeneratorDelegation(),
+            InvocationGeneratorCompositor {
+                GeneratorChain.codeBlock(
+                    subject = it,
+                    resolver = resolver,
+                    InvocationGeneratorConstructor(),
+                    InvocationGeneratorMethod(),
+                    InvocationGeneratorVariables(),
+                )
+            },
+            InvocationGeneratorReturn(),
+            InvocationGeneratorConstructor(),
+            InvocationGeneratorMethod(),
+            InvocationGeneratorVariables(),
         )
         val codeBlock = chain.proceed()
         when (factory.singleton) {
