@@ -9,7 +9,7 @@ interface TypeFactoryCreator {
         // val multiBind: MultiBindingStore
 
         /** Passes execution to a lower level when this factory cannot provide the [TypeFactory] */
-        fun pass(): TypeFactory
+        fun pass(creator: TypeFactoryCreator): TypeFactory
 
         /** Restarts the process from the start of the chain. This is useful for recursively finding types. */
         fun mint(type: Type, context: Context = this): TypeFactory

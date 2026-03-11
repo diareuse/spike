@@ -16,7 +16,7 @@ class TypeFactoryCreatorMultiBindCollection(
     override fun TypeFactoryCreator.Context.create(): TypeFactory {
         val type = type
         if (!(type is Type.Parametrized && type.envelope == collectionType)) {
-            return pass()
+            return pass(this@TypeFactoryCreatorMultiBindCollection)
         }
         val valueType = type.typeArguments.single()
         val instances = multibinding[valueType] ?: GraphStore()

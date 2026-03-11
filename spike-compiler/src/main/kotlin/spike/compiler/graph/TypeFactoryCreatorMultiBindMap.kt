@@ -8,7 +8,7 @@ class TypeFactoryCreatorMultiBindMap(
     override fun TypeFactoryCreator.Context.create(): TypeFactory {
         val type = type
         if (!(type is Type.Parametrized && type.envelope == BuiltInTypes.Map)) {
-            return pass()
+            return pass(this@TypeFactoryCreatorMultiBindMap)
         }
         val (keyType, valueType) = type.typeArguments
         val instances = multibinding.map[valueType.unwrapParametrized()]

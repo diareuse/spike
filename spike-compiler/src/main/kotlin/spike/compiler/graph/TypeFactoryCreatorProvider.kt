@@ -7,6 +7,6 @@ class TypeFactoryCreatorProvider : TypeFactoryCreator {
             val dependency = mint(type.typeArguments.single())
             return TypeFactory.Provides(type, dependency, isPublic = isTopLevel)
         }
-        return pass()
+        return pass(this@TypeFactoryCreatorProvider)
     }
 }

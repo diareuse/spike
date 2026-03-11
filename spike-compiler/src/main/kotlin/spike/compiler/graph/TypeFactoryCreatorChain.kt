@@ -5,12 +5,14 @@ data class TypeFactoryCreatorChain(
     private val creators: List<TypeFactoryCreator>,
     override val store: GraphStore,
     override val isTopLevel: Boolean = true,
-    private val index: Int = 0,
 ) : TypeFactoryCreator.Context {
 
-    override fun pass(): TypeFactory {
-        if (creators.size == index) error("Cannot find factory for $type in current context $store")
-        return with(creators[index]) { copy(index = index + 1).create() }
+    fun pass() = with(creators[0]) { create() }
+
+    override fun pass(creator: TypeFactoryCreator): TypeFactory {
+        val index = creators.indexOf(creator) + 1
+        if (index == creators.size) error("Cannot find factory for $type in current context $store")
+        return with(creators[index]) { create() }
     }
 
     override fun mint(
@@ -18,7 +20,7 @@ data class TypeFactoryCreatorChain(
         context: TypeFactoryCreator.Context,
     ): TypeFactory {
         context as TypeFactoryCreatorChain
-        return with(creators[0]) { context.copy(type = type, index = 1, isTopLevel = false).create() }
+        return context.copy(type = type, isTopLevel = false).pass()
     }
 
     override fun clone(store: GraphStore) = copy(store = store)

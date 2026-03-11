@@ -2,7 +2,8 @@ package spike.compiler.graph
 
 class TypeFactoryCreatorMethod : TypeFactoryCreator {
     override fun TypeFactoryCreator.Context.create(): TypeFactory {
-        val factory = store.factories.find { it.type == type } ?: return pass()
+        val factory = store.factories.find { it.type == type }
+            ?: return pass(this@TypeFactoryCreatorMethod)
         return TypeFactory.Method(
             type = type,
             member = factory.member,
