@@ -4,13 +4,16 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.withIndent
 import spike.compiler.generator.CodeBlockGenerator
 import spike.compiler.generator.CodeBlockGeneratorChain
+import spike.compiler.generator.GeneratorChain
+import spike.compiler.generator.GeneratorChainOrigin
 import spike.compiler.generator.TypeResolver
 import spike.compiler.graph.BuiltInMembers
 import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
 
+private typealias NewChain = GeneratorChainOrigin<TypeFactory.Callable, CodeBlock.Builder>
 class InvocationGeneratorCompositor(
-    private val componentSubChain: (TypeFactory.Callable) -> InvocationChain,
+    private val componentSubChain: (TypeFactory.Callable) -> NewChain,
 ) : CodeBlockGenerator<TypeFactory.Callable> {
     override fun generate(chain: CodeBlockGeneratorChain<TypeFactory.Callable>): CodeBlock.Builder {
         val components = chain.subject.invertDependencyChain().distinctBy { it.type }

@@ -6,10 +6,10 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.withIndent
+import spike.compiler.generator.GeneratorChainGeneric
 import spike.compiler.generator.TypeGenerator
 import spike.compiler.generator.TypeGeneratorChain
 import spike.compiler.generator.TypeResolver
-import spike.compiler.generator.invocation.InvocationChain
 import spike.compiler.generator.invocation.InvocationGeneratorCompositor
 import spike.compiler.generator.invocation.InvocationGeneratorConstructor
 import spike.compiler.generator.invocation.InvocationGeneratorDelegation
@@ -55,7 +55,7 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
     // ---
 
     private fun constructCallable(factory: TypeFactory.Callable, resolver: TypeResolver): CodeBlock {
-        val chain = InvocationChain(
+        val chain = GeneratorChainGeneric(
             subject = factory,
             generators = listOf(
                 InvocationGeneratorConstructor(),
@@ -63,6 +63,7 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
                 InvocationGeneratorParameters(),
             ),
             resolver = resolver,
+            spec = CodeBlock.builder()
         )
         return chain.proceed().build()
     }
@@ -70,12 +71,12 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
     // ---
 
     private fun PropertySpec.Builder.callableFactory(factory: TypeFactory.Callable, resolver: TypeResolver) {
-        val chain = InvocationChain(
+        val chain = GeneratorChainGeneric(
             subject = factory,
             generators = listOf(
                 InvocationGeneratorDelegation(),
                 InvocationGeneratorCompositor {
-                    InvocationChain(
+                    GeneratorChainGeneric(
                         subject = it,
                         generators = listOf(
                             InvocationGeneratorConstructor(),
@@ -83,6 +84,7 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
                             InvocationGeneratorVariables(),
                         ),
                         resolver = resolver,
+                        spec = CodeBlock.builder()
                     )
                 },
                 InvocationGeneratorReturn(),
@@ -91,6 +93,7 @@ class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
                 InvocationGeneratorVariables(),
             ),
             resolver = resolver,
+            spec = CodeBlock.builder()
         )
         val codeBlock = chain.proceed()
         when (factory.singleton) {
