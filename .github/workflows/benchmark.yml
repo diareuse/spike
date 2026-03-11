@@ -41,6 +41,7 @@ jobs:
 
       - run: |
           AVG=$(grep "measured build" spike-benchmark/output/benchmark.csv | cut -d',' -f2 | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; else print 0 }')
+          git stash
           echo "[{\"name\": \"Build Time\", \"unit\": \"ms\", \"value\": $AVG}]" > results.json
 
       - uses: benchmark-action/github-action-benchmark@v1
