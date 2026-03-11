@@ -8,9 +8,13 @@ class TestFixtureGenerator {
     }
 
     private fun generateNode(depth: Int, maxDepth: Int): Node {
-        return when(depth == 0) {
+        return when (depth == 0) {
             true -> Node(List((1..3).random()) { generateNode(1, maxDepth) }, 0, "Root")
-            else -> Node(if(depth == maxDepth) emptyList()  else List((1..3).random()) { generateNode(depth + 1, maxDepth) }, depth)
+            else -> Node(
+                leaves = if (depth == maxDepth) emptyList()
+                else List((1..3).random()) { generateNode(depth + 1, maxDepth) },
+                depth = depth
+            )
         }
     }
 
