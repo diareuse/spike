@@ -1,5 +1,7 @@
 package spike.compiler.graph
 
+import spike.compiler.graph.TypeFactoryCreator.Context
+
 interface TypeFactoryCreator {
     fun Context.create(): TypeFactory
     interface Context {
@@ -16,3 +18,6 @@ interface TypeFactoryCreator {
         fun clone(store: GraphStore = this.store): Context
     }
 }
+
+context(caller: TypeFactoryCreator, context: Context)
+internal fun pass() = context.pass(caller)

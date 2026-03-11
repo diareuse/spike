@@ -7,6 +7,6 @@ class TypeFactoryCreatorLazy : TypeFactoryCreator {
             val dependency = mint(type.typeArguments.single())
             return TypeFactory.Memorizes(type, dependency, isPublic = isTopLevel)
         }
-        return pass(this@TypeFactoryCreatorLazy)
+        return pass()
     }
 }

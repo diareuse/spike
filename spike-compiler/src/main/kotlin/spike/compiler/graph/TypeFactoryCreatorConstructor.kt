@@ -2,8 +2,7 @@ package spike.compiler.graph
 
 class TypeFactoryCreatorConstructor : TypeFactoryCreator {
     override fun TypeFactoryCreator.Context.create(): TypeFactory {
-        val constructor = store.constructors.find { it.type == type }
-            ?: return pass(this@TypeFactoryCreatorConstructor)
+        val constructor = store.constructors.find { it.type == type } ?: return pass()
         return TypeFactory.Class(
             type = type,
             invocation = constructor.invocation,
