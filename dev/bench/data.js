@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773255117389,
+  "lastUpdate": 1773260114118,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -115,6 +115,35 @@ window.BENCHMARK_DATA = {
           {
             "name": "Build Time",
             "value": 2676.17,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "6194ad7f46fdddc68b008c89980890ec66b13042",
+          "message": "refactor(compiler): simplify and unify generator chain logic\n\n- Removed specialized chain classes and replaced them with generic chain implementations like `GeneratorChain`.\n- Deleted `DependencyContainerFileWithType`, `EntryPointFileWithType`, and `GeneratorChainGeneric`.\n- Introduced a companion object in `GeneratorChain` to handle type, object, and file generation.\n- Simplified `DependencyGraphGenerator` by reducing redundant code through shared chain logic.\n- Added `GeneratorFileWithType` for streamlined file generation involving types.",
+          "timestamp": "2026-03-11T20:55:34+01:00",
+          "tree_id": "1a3490b775005b5b5943bbc85910450e5f96031e",
+          "url": "https://github.com/diareuse/spike/commit/6194ad7f46fdddc68b008c89980890ec66b13042"
+        },
+        "date": 1773260113105,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2663.69,
             "unit": "ms"
           }
         ]
