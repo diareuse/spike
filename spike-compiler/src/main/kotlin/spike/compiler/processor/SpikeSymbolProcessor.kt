@@ -26,9 +26,9 @@ class SpikeSymbolProcessor(
         val viewModel = IncludeContributorViewModel()
         val generator = DependencyGraphGenerator(environment)
         val contributor = GraphContributor.create {
-            this += GraphContributorIncludeViewModel(viewModel)
-            this += GraphContributorIncludeClass(bindAs)
-            this += GraphContributorIncludeFunction(bindAs)
+            this += GraphContributorIncludeViewModel(viewModel).timed("ViewModel")
+            this += GraphContributorIncludeClass(bindAs).timed("Class")
+            this += GraphContributorIncludeFunction(bindAs).timed("Function")
             this += GraphContributorEntryPoint(generator) { it.getSymbolsWithAnnotation<EntryPoint>() }
             this += GraphContributorEntryPoint(generator) { it.getSymbolsWithAnnotation<EntryPoint>("spike.lifecycle.viewmodel") }
         }
@@ -37,4 +37,9 @@ class SpikeSymbolProcessor(
         contributor.contribute(GraphContext(root, multibind), resolver)
         return emptyList()
     }
+
+    private fun GraphContributor.timed(tag: String): GraphContributor {
+        return GraphContributorMeasureTime(this, environment, tag)
+    }
+
 }
