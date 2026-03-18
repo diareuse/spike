@@ -8,6 +8,7 @@ import spike.compiler.generator.TypeGenerator
 import spike.compiler.generator.TypeGeneratorChain
 import spike.compiler.graph.DependencyGraph
 
+@Deprecated("Extremely inefficient method of constructing objects")
 class DependencyContainerTypeConstructor : TypeGenerator<DependencyGraph> {
     override fun generate(chain: TypeGeneratorChain<DependencyGraph>): TypeSpec.Builder {
         val factoryParameters = chain.subject.entry.factory.method.parameters

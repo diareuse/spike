@@ -22,6 +22,7 @@ import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
 import kotlin.reflect.KClass
 
+@Deprecated("Extremely inefficient method of constructing objects")
 class DependencyContainerTypeFactory : TypeGenerator<DependencyGraph> {
     override fun generate(chain: TypeGeneratorChain<DependencyGraph>): TypeSpec.Builder {
         for (factory in chain.subject) {
