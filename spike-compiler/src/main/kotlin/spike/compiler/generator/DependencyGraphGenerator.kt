@@ -1,6 +1,9 @@
+@file:Suppress("DEPRECATION")
+
 package spike.compiler.generator
 
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
+import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.ksp.writeTo
 import spike.compiler.generator.container.DependencyContainerTypeConstructor
 import spike.compiler.generator.container.DependencyContainerTypeFactory
@@ -82,6 +85,14 @@ class DependencyGraphGenerator(
         )
         try {
             entryPointFile.proceed().build().writeTo(environment.codeGenerator, false)
+        } catch (_: FileAlreadyExistsException) {
+        }
+        val file = FileSpec.builder("test", "Generated")
+        MegaGenerator(graph, resolver, environment.logger).generate().forEach {
+            file.addType(it)
+        }
+        try {
+            file.build().writeTo(environment.codeGenerator, false)
         } catch (_: FileAlreadyExistsException) {
         }
     }
