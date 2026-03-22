@@ -88,7 +88,7 @@ class DependencyGraphGenerator(
         } catch (_: FileAlreadyExistsException) {
         }
         val file = FileSpec.builder("test", "Generated")
-        MegaGenerator(graph, resolver, environment.logger).generate().forEach {
+        MegaGenerator(graph, resolver).generate().forEach {
             file.addType(it)
         }
         try {

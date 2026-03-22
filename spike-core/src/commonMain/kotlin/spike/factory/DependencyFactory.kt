@@ -3,6 +3,7 @@ package spike.factory
 public abstract class DependencyFactory {
 
     protected abstract val maxConstructorArgs: Int
+    protected abstract val instructionSet: IntArray
 
     public inline fun <reified T> get(id: DependencyId): T {
         return initialize(id) as T
@@ -13,18 +14,19 @@ public abstract class DependencyFactory {
     @PublishedApi
     internal fun initialize(rootId: DependencyId): Any {
         // Fetch the flattened instruction set for this specific root dependency
-        val instructions = getInstructions(rootId)
+        val pointer = getInstructionsPointer(rootId)
             ?: return instantiate(emptyArray(), rootId)
+        val instructions = instructionSet
+        val endInclusive = pointer.endInclusive
+        var programCounter = pointer.offset
+        var contextIndex = 0
 
         // instructions[0] contains the exact number of instances required for this graph
-        val contextSize = instructions[0]
+        val contextSize = instructions[programCounter++]
         val context = arrayOfNulls<Any>(contextSize)
         val argBuffer = arrayOfNulls<Any>(maxConstructorArgs)
 
-        var programCounter = 1
-        var contextIndex = 0
-
-        while (programCounter < instructions.size) {
+        while (programCounter <= endInclusive) {
             val depId = instructions[programCounter++]
             val argCount = instructions[programCounter++]
 
@@ -71,7 +73,7 @@ public abstract class DependencyFactory {
      * 2, 2, 1, 0  // Create Service (ID 2), requires 2 args from context indices 1 and 0. Stored at context index 2.
      * ]
      */
-    protected abstract fun getInstructions(id: DependencyId): IntArray?
+    protected abstract fun getInstructionsPointer(id: DependencyId): InstructionSetPointer?
 
 }
 

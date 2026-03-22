@@ -1,6 +1,6 @@
 package spike.compiler.generator
 
-import com.google.devtools.ksp.processing.KSPLogger
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
@@ -17,13 +17,13 @@ import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
 import spike.factory.DependencyFactory
 import spike.factory.DependencyId
-import java.util.concurrent.atomic.AtomicInteger
+import spike.factory.InstructionSet
+import spike.factory.InstructionSetPointer
 import kotlin.reflect.KClass
 
 class MegaGenerator(
     private val graph: DependencyGraph,
-    private val resolver: TypeResolver,
-    private val logger: KSPLogger
+    private val resolver: TypeResolver
 ) {
 
     private val types = mutableListOf<TypeSpec>()
@@ -54,9 +54,9 @@ class MegaGenerator(
         )
         // ---
         spec.addFunction(
-            FunSpec.builder("getInstructions")
+            FunSpec.builder("getInstructionsPointer")
                 .addModifiers(KModifier.OVERRIDE)
-                .returns(IntArray::class.asClassName().copy(nullable = true))
+                .returns(InstructionSetPointer::class.asClassName().copy(nullable = true))
                 .addParameter("id", DependencyId::class)
                 .addCode(createGetInstructionsBody(graph))
                 .build()
@@ -68,6 +68,16 @@ class MegaGenerator(
                 .addParameter("buffer", Array::class.asClassName().parameterizedBy(Any::class.asTypeName().copy(nullable = true)))
                 .addParameter("id", DependencyId::class)
                 .addCode(createInstantiateBody())
+                .build()
+        )
+        spec.addProperty(
+            PropertySpec.builder("instructionSet", IntArray::class)
+                .addModifiers(KModifier.OVERRIDE)
+                .getter(
+                    FunSpec.getterBuilder()
+                        .addStatement("return %T.%L", createInstructionSet(), InstructionSet::memory.name)
+                        .build()
+                )
                 .build()
         )
         return spec.build()
@@ -89,6 +99,26 @@ class MegaGenerator(
         return block.build()
     }
 
+    class DependencyFactoryInstructionsSet {
+        val instructions = mutableListOf<Int>()
+        private var start = -1
+        fun start() = instructions.size.also {
+            start = it
+        }
+
+        fun end(contextSize: Int): Int {
+            instructions.add(start, contextSize)
+            return (instructions.size - start).also {
+                start = -1
+            }
+        }
+
+        fun add(instruction: Int) {
+            instructions.add(instruction)
+        }
+    }
+
+    private val dfis = DependencyFactoryInstructionsSet()
     private fun createGetInstructionsBody(graph: DependencyGraph): CodeBlock {
         val block = CodeBlock.builder()
             .beginControlFlow("return when (id.%L) {", DependencyId::id.name)
@@ -96,27 +126,26 @@ class MegaGenerator(
             val visited = mutableSetOf<Int>()
             val contextWindow = mutableListOf<Int>()
             val dependencyTree = type.invertDependencyChain() + type
-            block.add("%L -> intArrayOf(", getDependencyId(type))
-            val deps = CodeBlock.builder()
+            block.add("%L -> ", getDependencyId(type))
+            val offset = dfis.start()
             var contextSize = 0
             for (dependency in dependencyTree) {
                 if (!visited.add(dependency.hashCode()))
                     continue
-                contextWindow+=dependency.hashCode()
+                contextWindow += dependency.hashCode()
                 contextSize++
                 val id = getDependencyId(dependency)
-                deps.add(",%L", id)
+                dfis.add(id)
                 val dependencyCount = dependency.dependencies.size
-                deps.add(",%L", dependencyCount)
+                dfis.add(dependencyCount)
                 for (argument in dependency.dependencies) {
                     val i = contextWindow.indexOf(argument.hashCode())
                     if (i == -1) error("Dependency '$argument' was not found in dependencyTree $dependencyTree")
-                    deps.add(",%L", i)
+                    dfis.add(i)
                 }
             }
-            block.add("%L", contextSize)
-            block.add(deps.build())
-            block.addStatement(")")
+            val size = dfis.end(contextSize)
+            block.addStatement("%T(%L, %L)", InstructionSetPointer::class.asClassName(), offset, size)
         }
         block.addStatement("else -> error(\"Invalid identifier\")")
         block.endControlFlow()
@@ -127,7 +156,7 @@ class MegaGenerator(
 
     private fun createDependencyHolders(): List<Pair<Int, String>> {
         return buildList {
-            for((index, holder) in tfih.holders.withIndex()) {
+            for ((index, holder) in tfih.holders.withIndex()) {
                 add(index to createDependencyHolder(index, holder).name!!) // fixme this should return ClassName
             }
         }
@@ -150,7 +179,7 @@ class MegaGenerator(
         val holders = mutableListOf<MutableList<TypeFactory>>(mutableListOf())
         fun add(typeFactory: TypeFactory): Int {
             var h = holders.last()
-            if (h.size >= 8000) {
+            if (h.size >= 1000) { // keep under 1000 to retain JIT speed boosts
                 holders.add(mutableListOf())
                 h = holders.last()
             }
@@ -266,6 +295,32 @@ class MegaGenerator(
         builder.addCode(body.build())
 
         return builder.build()
+    }
+
+    // ---
+
+    private fun createInstructionSet(): ClassName {
+        val type = TypeSpec.objectBuilder("InstructionSet")
+            .addSuperinterface(InstructionSet::class)
+        type.addProperty(
+            PropertySpec.builder(InstructionSet::memory.name, IntArray::class)
+                .addModifiers(KModifier.OVERRIDE)
+                .initializer("IntArray(%L)", dfis.instructions.size)
+                .build()
+        )
+        val initializer = CodeBlock.builder()
+        var index = 0
+        for ((no, block) in dfis.instructions.chunked(8000).withIndex()) {
+            val body = FunSpec.builder("init$no")
+            for (instruction in block) {
+                body.addStatement("%L[%L] = %L", InstructionSet::memory.name, index++, instruction)
+            }
+            type.addFunction(body.build())
+            initializer.addStatement("%L()", body.build().name)
+        }
+        type.addInitializerBlock(initializer.build())
+        types += type.build()
+        return ClassName("test", "InstructionSet") // fixme replace with actual classname
     }
 
 }
