@@ -1,4 +1,5 @@
 plugins {
+    `application`
     kotlin("jvm") version "2.2.21"
     id("com.google.devtools.ksp") version "2.3.4"
 }
@@ -7,6 +8,10 @@ repositories {
     mavenLocal()
     mavenCentral()
     google()
+}
+
+application {
+    mainClass = "MainKt"
 }
 
 kotlin {
