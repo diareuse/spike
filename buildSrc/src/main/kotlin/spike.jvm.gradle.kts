@@ -1,5 +1,3 @@
-import gradle.kotlin.dsl.accessors._c24a720b039b223a012fa023f45bc99b.detekt
-
 plugins {
     id("base.kotlin.jvm")
     id("dev.detekt")
