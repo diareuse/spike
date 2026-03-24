@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.0.2](https://github.com/diareuse/spike/compare/0.0.1...0.0.2) (2026-03-24)
+
+
+### Bug Fixes
+
+* **deps:** bump org.jetbrains.compose:org.jetbrains.compose.gradle.plugin ([40d1b79](https://github.com/diareuse/spike/commit/40d1b79aa2a72d91b16b1ad609959855487e0e13))
+* **deps:** bump org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin ([2220113](https://github.com/diareuse/spike/commit/222011399d3628ac13d776889ae22c61b831cee2))
+* **deps:** bump org.jetbrains.kotlin.multiplatform from 2.3.10 to 2.3.20 ([9d78af4](https://github.com/diareuse/spike/commit/9d78af417d34a0d56d90ca0da7e38aeba87843d8))
+* **deps:** bump org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin ([ec61e56](https://github.com/diareuse/spike/commit/ec61e56a595983ff14de9b7074aca28f0a18a0f5))
+* **deps:** bump org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin ([899bfa3](https://github.com/diareuse/spike/commit/899bfa3307e4811a63d34e2dae80aaeb0dc3971a))
+
 ## 0.0.1 (2026-03-06)
 
 
