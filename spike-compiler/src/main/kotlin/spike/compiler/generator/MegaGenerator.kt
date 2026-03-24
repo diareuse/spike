@@ -320,7 +320,7 @@ class MegaGenerator(
         )
         val initializer = CodeBlock.builder()
         var index = 0
-        for ((no, block) in dfis.instructions.chunked(8000).withIndex()) {
+        for ((no, block) in dfis.instructions.chunked(1000).withIndex()) {
             val body = FunSpec.builder("init$no")
             for (instruction in block) {
                 body.addStatement("%L[%L] = %L", InstructionSet::memory.name, index++, instruction)
