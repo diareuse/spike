@@ -2,8 +2,10 @@ package spike.compiler.generator
 
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
@@ -26,15 +28,16 @@ class MegaGenerator(
     private val resolver: TypeResolver
 ) {
 
-    private val types = mutableListOf<TypeSpec>()
+    private val types = mutableListOf<FileSpec>()
 
-    fun generate(): List<TypeSpec> {
+    fun generate(): List<FileSpec> {
         types.clear()
         types += createDependencyFactory()
+        types += createEntryPoint()
         return types.toList()
     }
 
-    private fun createDependencyFactory(): TypeSpec {
+    private fun createDependencyFactory(): FileSpec {
         val spec = TypeSpec.classBuilder("DependencyFactoryImpl")
         spec.superclass(DependencyFactory::class)
         val factories = sequence {
@@ -80,7 +83,10 @@ class MegaGenerator(
                 )
                 .build()
         )
-        return spec.build()
+        val type = spec.build()
+        return FileSpec.builder("", "DependencyFactoryImpl")
+            .addType(type)
+            .build()
     }
 
     // ---
@@ -198,6 +204,7 @@ class MegaGenerator(
             }
             return add(typeFactory)
         }
+        fun find(type: Type) = holders.flatten().first { it.type == type }
     }
 
     private val tfih = TypeFactoryIdHolder()
@@ -208,10 +215,13 @@ class MegaGenerator(
     // ---###---
 
     private fun createDependencyHolder(index: Int, factories: List<TypeFactory>): TypeSpec {
-        val type = TypeSpec.objectBuilder("DependencyHolder$index")
+        val name = "DependencyHolder$index"
+        val type = TypeSpec.objectBuilder(name)
         type.addFunction(createCreateMethod(factories))
         return type.build().also { type ->
-            types += type
+            types += FileSpec.builder("", name)
+                .addType(type)
+                .build()
         }
     }
 
@@ -319,8 +329,52 @@ class MegaGenerator(
             initializer.addStatement("%L()", body.build().name)
         }
         type.addInitializerBlock(initializer.build())
-        types += type.build()
-        return ClassName("test", "InstructionSet") // fixme replace with actual classname
+        types += FileSpec.builder("", "InstructionSet")
+            .addType(type.build())
+            .build()
+        return ClassName("", "InstructionSet") // fixme replace with actual classname
+    }
+
+    // ---###---
+
+    private fun createEntryPoint(): FileSpec {
+        val ep = graph.entry
+        val dfcn = ClassName("", "DependencyFactoryImpl")
+        val type = TypeSpec.classBuilder("EntryPoint")
+            .addSuperinterface(resolver.getTypeName(ep.type))
+            .primaryConstructor(
+                FunSpec.constructorBuilder()
+                    .addParameter(ParameterSpec.builder("factory", dfcn)
+                        .defaultValue("%T()", dfcn)
+                        .build())
+                    .build()
+            )
+            .addProperty(
+                PropertySpec.builder("factory", dfcn)
+                    .addModifiers(KModifier.PRIVATE)
+                    .initializer("factory")
+                    .build()
+            )
+        for (m in ep.methods) {
+            type.addFunction(
+                FunSpec.builder(m.name)
+                    .addModifiers(KModifier.OVERRIDE)
+                    .returns(resolver.getTypeName(m.returns))
+                    .addStatement("return factory.get(%L(%L))", DependencyId::class.asClassName(), getDependencyId(tfih.find(m.returns)))
+                    .build()
+            )
+        }
+        for (p in ep.properties) {
+            type.addProperty(PropertySpec.builder(p.name, resolver.getTypeName(p.returns))
+                .addModifiers(KModifier.OVERRIDE)
+                .getter(FunSpec.getterBuilder()
+                    .addStatement("return factory.get(%L(%L))", DependencyId::class.asClassName(), getDependencyId(tfih.find(p.returns)))
+                    .build())
+                .build())
+        }
+        return FileSpec.builder("", "EntryPoint")
+            .addType(type.build())
+            .build()
     }
 
 }

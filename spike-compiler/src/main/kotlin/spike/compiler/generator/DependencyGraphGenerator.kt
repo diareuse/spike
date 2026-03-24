@@ -3,7 +3,6 @@
 package spike.compiler.generator
 
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
-import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.ksp.writeTo
 import spike.compiler.generator.container.DependencyContainerTypeConstructor
 import spike.compiler.generator.container.DependencyContainerTypeFactory
@@ -27,7 +26,7 @@ class DependencyGraphGenerator(
     private val resolver = TypeResolver()
 
     fun generate(graph: DependencyGraph) {
-        val dependencyContainerType = GeneratorChain.classType(
+        /*val dependencyContainerType = GeneratorChain.classType(
             subject = graph,
             resolver = resolver,
             name = resolver.getDependencyContainerClassName(graph.entry.type),
@@ -86,14 +85,12 @@ class DependencyGraphGenerator(
         try {
             entryPointFile.proceed().build().writeTo(environment.codeGenerator, false)
         } catch (_: FileAlreadyExistsException) {
-        }
-        val file = FileSpec.builder("test", "Generated")
-        MegaGenerator(graph, resolver).generate().forEach {
-            file.addType(it)
-        }
-        try {
-            file.build().writeTo(environment.codeGenerator, false)
-        } catch (_: FileAlreadyExistsException) {
+        }*/
+        MegaGenerator(graph, resolver).generate().forEach { file ->
+            try {
+                file.writeTo(environment.codeGenerator, false)
+            } catch (_: FileAlreadyExistsException) {
+            }
         }
     }
 }
