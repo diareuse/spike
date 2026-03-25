@@ -241,12 +241,12 @@ class MegaGenerator(
         for ((index, factory) in factories.withIndex()) {
             body.add("$index -> ")
             when (factory) {
-                is TypeFactory.Binds -> body.addStatement("buffer[0] as %T", factory.type.toClassName())
+                is TypeFactory.Binds -> body.addStatement("buffer[0] as %T", factory.type.toTypeName())
                 is TypeFactory.Class -> {
-                    body.add("%T(", factory.type.toClassName())
+                    body.add("%T(", factory.type.toTypeName())
                     for ((index, parameter) in factory.invocation.parameters.withIndex()) {
                         if (index > 0) body.add(", ")
-                        body.add("buffer[%L] as %T", index, parameter.type.toClassName())
+                        body.add("buffer[%L] as %T", index, parameter.type.toTypeName())
                     }
                     body.addStatement(")")
                 }
@@ -254,7 +254,7 @@ class MegaGenerator(
                     body.add("%M(", resolver.getMemberName(factory.member))
                     for ((index, parameter) in factory.invocation.parameters.withIndex()) {
                         if (index > 0) body.add(", ")
-                        body.add("buffer[%L] as %T", index, parameter.type.toClassName())
+                        body.add("buffer[%L] as %T", index, parameter.type.toTypeName())
                     }
                     body.addStatement(")")
                 }
@@ -274,7 +274,7 @@ class MegaGenerator(
                     body.add("%M(", resolver.getMemberName(factory.collectionMemberFactory))
                     for ((index, item) in factory.entries.withIndex()) {
                         if (index > 0) body.add(", ")
-                        body.add("buffer[%L] as %T", index, item.type.toClassName())
+                        body.add("buffer[%L] as %T", index, item.type.toTypeName())
                     }
                     body.addStatement(")")
                 }
@@ -290,7 +290,7 @@ class MegaGenerator(
                             else -> k
                         }
                         // fixme this is the most certainly completely wrong and will mismatch instances to indices
-                        body.add("%L to buffer[%L] as %T", key, index, v.type.toClassName())
+                        body.add("%L to buffer[%L] as %T", key, index, v.type.toTypeName())
                     }
                     body.addStatement(")")
                 }
