@@ -1,3 +1,7 @@
+fun main() {
+    PropertyEntryPoint().injectable
+}
+
 @spike.EntryPoint
 interface PropertyEntryPoint {
     val injectable: Injectable

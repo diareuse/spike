@@ -1,3 +1,7 @@
+fun main() {
+    check(PropertyEntryPoint().cat is Sphynx)
+}
+
 @spike.EntryPoint
 interface PropertyEntryPoint {
     val cat: Cat

@@ -1,3 +1,7 @@
+fun main() {
+    CatEP().cat
+}
+
 @spike.EntryPoint
 interface CatEP {
     val cat: Cat

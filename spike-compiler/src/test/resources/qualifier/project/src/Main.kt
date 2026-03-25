@@ -1,3 +1,10 @@
+fun main() {
+    PropertyEntryPoint().apply {
+        check(cat.name == "Sphynx")
+        check(normalCat.name == "black")
+    }
+}
+
 @spike.EntryPoint
 interface PropertyEntryPoint {
     @Kind("sphynx")

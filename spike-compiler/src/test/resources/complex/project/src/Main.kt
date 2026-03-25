@@ -1,3 +1,10 @@
+fun main() {
+    NightStand(kotlin.collections.emptyList()).apply {
+        check(television is SamsungTelevision)
+        check(remote is RemoteControl)
+    }
+}
+
 @spike.EntryPoint
 interface NightStand {
     val television: Television

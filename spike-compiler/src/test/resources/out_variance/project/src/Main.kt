@@ -1,3 +1,7 @@
+fun main() {
+    PropertyEntryPoint().cats
+}
+
 @spike.EntryPoint
 interface PropertyEntryPoint {
     val cats: Map<kotlin.reflect.KClass<out Cat>, Cat>

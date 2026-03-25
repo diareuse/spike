@@ -1,3 +1,23 @@
+fun main() {
+    PropertyEntryPoint().apply {
+        val cwn = catsWithNames
+        check(checkNotNull(cwn["sphynx"]).name == "sphynx") {
+            cwn.toString()
+        }
+        check(checkNotNull(cwn["ragamuffin"]).name = "ragamuffin") {
+            cwn.toString()
+        }
+        val cats = cats
+        check(listOf(Cat("toyger"), Cat("bombay")) == cats) {
+            cats.toString()
+        }
+        val uniqueCats = uniqueCats
+        check(setOf(Cat("ragdoll"), Cat("abyssinian")) == uniqueCats) {
+            uniqueCats.toString()
+        }
+    }
+}
+
 @spike.EntryPoint
 interface PropertyEntryPoint {
     val catsWithNames: Map<String, Cat>
