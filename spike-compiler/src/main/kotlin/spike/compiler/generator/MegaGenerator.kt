@@ -40,7 +40,7 @@ class MegaGenerator(
     }
 
     private fun createDependencyFactory(): FileSpec {
-        val spec = TypeSpec.classBuilder(dependencyFactoryClassName)
+        val spec = TypeSpec.objectBuilder(dependencyFactoryClassName)
         spec.superclass(DependencyFactory::class)
         val factories = sequence {
             val queue = graph.iterator().asSequence().toList().toMutableList()
@@ -259,10 +259,10 @@ class MegaGenerator(
                     body.addStatement(")")
                 }
                 is TypeFactory.Memorizes -> {
-                    body.addStatement("%M { %T().get<%T>(%T(%L)) }", resolver.builtInMember { lazy }, dependencyFactoryClassName, factory.type.typeArguments.single().toTypeName(), DependencyId::class, getDependencyId(factory))
+                    body.addStatement("%M { %T.get<%T>(%T(%L)) }", resolver.builtInMember { lazy }, dependencyFactoryClassName, factory.type.typeArguments.single().toTypeName(), DependencyId::class, getDependencyId(factory))
                 }
                 is TypeFactory.Provides -> {
-                    body.addStatement("%T { %T().get<%T>(%T(%L)) }", resolver.builtInType { Provider }, dependencyFactoryClassName, factory.type.typeArguments.single().toTypeName(), DependencyId::class, getDependencyId(factory))
+                    body.addStatement("%T { %T.get<%T>(%T(%L)) }", resolver.builtInType { Provider }, dependencyFactoryClassName, factory.type.typeArguments.single().toTypeName(), DependencyId::class, getDependencyId(factory))
                 }
                 is TypeFactory.MultibindsCollection -> {
                     body.add("%M(", resolver.getMemberName(factory.collectionMemberFactory))
