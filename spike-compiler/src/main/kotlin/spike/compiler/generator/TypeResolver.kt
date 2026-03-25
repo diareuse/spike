@@ -5,6 +5,7 @@ import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.TypeName
 import spike.compiler.graph.BuiltInMembers
 import spike.compiler.graph.BuiltInTypes
+import spike.compiler.graph.DependencyGraph
 import spike.compiler.graph.Member
 import spike.compiler.graph.Type
 
@@ -25,6 +26,12 @@ class TypeResolver {
     }
 
     fun getDependencyContainerClassName(entryPoint: Type) = transformClassName(Type.Simple(entryPoint.packageName, "DependencyContainer"))
+
+    // ---
+
+    fun peerClass(graph: DependencyGraph, name: String) = graph.entry.type.toClassName()
+        .peerClass { it.simpleNames.joinToString("") + "_$name" }
+        .asRootClass()
 
     // ---
 
