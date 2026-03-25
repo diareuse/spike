@@ -1,6 +1,11 @@
+lateinit var dog: Dog
 fun main() {
-    PropertyEntryPoint(Dog()).cat
+    dog = Dog()
+    PropertyEntryPoint().cat
 }
+
+@spike.Include
+fun inputParameterDog(): Dog = dog
 
 @spike.EntryPoint
 interface PropertyEntryPoint {

@@ -38,7 +38,7 @@ sealed interface TypeFactory {
                     parameter.type
                 }
                 out += dependencies.firstOrNull { dit -> dit.type == targetType }?.toString()?.prependIndent()
-                    ?: error("${parameter.type} cannot be resolved to factory")
+                    ?: "<error cannot resolve ${parameter.type}>"
                 first = false
             }
             if (!first) out += "\n"
