@@ -37,7 +37,7 @@ class EntryPointTest : TestHarness() {
     fun `standalone EntryPoint with properties`() = runTest(
         label = "entrypoint",
         prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin") },
+        test = { build("kspKotlin", "compileKotlin", "run") },
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
@@ -49,7 +49,7 @@ class EntryPointTest : TestHarness() {
     fun `EntryPoint factory is created`() = runTest(
         label = "entry_factory",
         prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin") },
+        test = { build("kspKotlin", "compileKotlin", "run") },
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
@@ -61,7 +61,7 @@ class EntryPointTest : TestHarness() {
     fun `complex tree is resolved`() = runTest(
         label = "complex",
         prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin") },
+        test = { build("kspKotlin", "compileKotlin", "run") },
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
@@ -73,7 +73,7 @@ class EntryPointTest : TestHarness() {
     fun `binds interfaces to concrete classes`() = runTest(
         label = "bind",
         prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin") },
+        test = { build("kspKotlin", "compileKotlin", "run") },
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
@@ -85,7 +85,7 @@ class EntryPointTest : TestHarness() {
     fun `EntryPoint generates providers`() = runTest(
         label = "provider",
         prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin") },
+        test = { build("kspKotlin", "compileKotlin", "run") },
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
@@ -97,7 +97,7 @@ class EntryPointTest : TestHarness() {
     fun `entries with qualifiers resolve`() = runTest(
         label = "qualifier",
         prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin") },
+        test = { build("kspKotlin", "compileKotlin", "run") },
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
@@ -117,7 +117,7 @@ class EntryPointTest : TestHarness() {
     fun `multiple constructors are marked`() = runTest(
         label = "marked_constructors",
         prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin") },
+        test = { build("kspKotlin", "compileKotlin", "run") },
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
@@ -129,7 +129,7 @@ class EntryPointTest : TestHarness() {
     fun `multi binds are possible`() = runTest(
         label = "multibinding",
         prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin") },
+        test = { build("kspKotlin", "compileKotlin", "run") },
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
@@ -141,7 +141,7 @@ class EntryPointTest : TestHarness() {
     fun `objects are composed`() = runTest(
         label = "compositor",
         prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin") },
+        test = { build("kspKotlin", "compileKotlin", "run") },
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
@@ -153,7 +153,7 @@ class EntryPointTest : TestHarness() {
     fun `out variance is preserved`() = runTest(
         label = "out_variance",
         prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin") },
+        test = { build("kspKotlin", "compileKotlin", "run") },
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
@@ -165,7 +165,7 @@ class EntryPointTest : TestHarness() {
     fun `androidx viewmodels are found`() = runTest(
         label = "androidx_viewmodel",
         prepare = { useClassPath { it.whitelistModules(Kotlin + Androidx) }.build() },
-        test = { build("kspKotlin", "compileKotlin") },
+        test = { build("kspKotlin", "compileKotlin", "run") },
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
