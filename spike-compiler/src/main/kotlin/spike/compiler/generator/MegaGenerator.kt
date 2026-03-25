@@ -259,16 +259,10 @@ class MegaGenerator(
                     body.addStatement(")")
                 }
                 is TypeFactory.Memorizes -> {
-                    // fixme support for lazy should be probably removed, it currently makes no sense
-                    body.addStatement("%M { buffer[0] as %T }", BuiltInMembers.lazy, factory.type.toClassName())
+                    body.addStatement("%M { %T().get<%T>(%T(%L)) }", resolver.builtInMember { lazy }, dependencyFactoryClassName, factory.type.typeArguments.single().toTypeName(), DependencyId::class, getDependencyId(factory))
                 }
                 is TypeFactory.Provides -> {
-                    // fixme support for providers should be probably removed or re-thought
-                    //  - to overcome circular dependency chain, users should switch to calling via method
-                    //  - to provide new instances, users should create explicit factories and not to depend on DI creating them for them
-                    //    - actually we already kind of have factories through `DH.create(buffer, position)` so wrapping these should suffice(?)
-                    //    - we would need to know which dependency holder owns it to create it from here
-                    body.addStatement("%T { buffer[0] as %T }", BuiltInTypes.Provider, factory.type.toClassName())
+                    body.addStatement("%T { %T().get<%T>(%T(%L)) }", resolver.builtInType { Provider }, dependencyFactoryClassName, factory.type.typeArguments.single().toTypeName(), DependencyId::class, getDependencyId(factory))
                 }
                 is TypeFactory.MultibindsCollection -> {
                     body.add("%M(", resolver.getMemberName(factory.collectionMemberFactory))
