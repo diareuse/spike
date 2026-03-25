@@ -28,6 +28,8 @@ class MegaGenerator(
     private val resolver: TypeResolver
 ) {
 
+    private val dependencyFactoryClassName = resolver.peerClass(graph, "Factory")
+    private val instructionSetClassName = resolver.peerClass(graph, "InstructionSet")
     private val types = mutableListOf<FileSpec>()
 
     fun generate(): List<FileSpec> {
@@ -38,7 +40,7 @@ class MegaGenerator(
     }
 
     private fun createDependencyFactory(): FileSpec {
-        val spec = TypeSpec.classBuilder("DependencyFactoryImpl")
+        val spec = TypeSpec.classBuilder(dependencyFactoryClassName)
         spec.superclass(DependencyFactory::class)
         val factories = sequence {
             val queue = graph.iterator().asSequence().toList().toMutableList()
@@ -84,7 +86,7 @@ class MegaGenerator(
                 .build()
         )
         val type = spec.build()
-        return FileSpec.builder("", "DependencyFactoryImpl")
+        return FileSpec.builder(dependencyFactoryClassName)
             .addType(type)
             .build()
     }
@@ -97,7 +99,7 @@ class MegaGenerator(
         block.beginControlFlow("return when (id.%L) {", DependencyId::segment.name)
         block.withIndent {
             for ((index, holder) in dependencyHolders) {
-                addStatement("$index -> $holder.create(buffer, id.position)")
+                addStatement("$index -> %T.create(buffer, id.position)", holder)
             }
             addStatement("else -> error(\"Invalid segment\")")
         }
@@ -160,10 +162,10 @@ class MegaGenerator(
 
     // ---
 
-    private fun createDependencyHolders(): List<Pair<Int, String>> {
+    private fun createDependencyHolders(): List<Pair<Int, ClassName>> {
         return buildList {
             for ((index, holder) in tfih.holders.withIndex()) {
-                add(index to createDependencyHolder(index, holder).name!!) // fixme this should return ClassName
+                add(index to createDependencyHolder(index, holder))
             }
         }
     }
@@ -214,15 +216,16 @@ class MegaGenerator(
 
     // ---###---
 
-    private fun createDependencyHolder(index: Int, factories: List<TypeFactory>): TypeSpec {
-        val name = "DependencyHolder$index"
-        val type = TypeSpec.objectBuilder(name)
+    private fun createDependencyHolder(index: Int, factories: List<TypeFactory>): ClassName {
+        val className = resolver.peerClass(graph, "DependencyHolder$index")
+        val type = TypeSpec.objectBuilder(className)
         type.addFunction(createCreateMethod(factories))
-        return type.build().also { type ->
-            types += FileSpec.builder("", name)
+        type.build().also { type ->
+            types += FileSpec.builder(className)
                 .addType(type)
                 .build()
         }
+        return className
     }
 
     private fun createCreateMethod(factories: List<TypeFactory>): FunSpec {
@@ -310,12 +313,12 @@ class MegaGenerator(
     // ---
 
     private fun createInstructionSet(): ClassName {
-        val type = TypeSpec.objectBuilder("InstructionSet")
+        val type = TypeSpec.objectBuilder(instructionSetClassName)
             .addSuperinterface(InstructionSet::class)
         type.addProperty(
             PropertySpec.builder(InstructionSet::memory.name, IntArray::class)
                 .addModifiers(KModifier.OVERRIDE)
-                .initializer("IntArray(%L)", dfis.instructions.size)
+                .initializer("%T(%L)", IntArray::class, dfis.instructions.size)
                 .build()
         )
         val initializer = CodeBlock.builder()
@@ -329,18 +332,19 @@ class MegaGenerator(
             initializer.addStatement("%L()", body.build().name)
         }
         type.addInitializerBlock(initializer.build())
-        types += FileSpec.builder("", "InstructionSet")
+        types += FileSpec.builder(instructionSetClassName)
             .addType(type.build())
             .build()
-        return ClassName("", "InstructionSet") // fixme replace with actual classname
+        return instructionSetClassName
     }
 
     // ---###---
 
     private fun createEntryPoint(): FileSpec {
         val ep = graph.entry
-        val dfcn = ClassName("", "DependencyFactoryImpl")
-        val type = TypeSpec.classBuilder("EntryPoint")
+        val epcn = resolver.peerClass(graph, "EntryPoint")
+        val dfcn = dependencyFactoryClassName
+        val type = TypeSpec.classBuilder(epcn)
             .addSuperinterface(resolver.getTypeName(ep.type))
             .primaryConstructor(
                 FunSpec.constructorBuilder()
@@ -372,7 +376,7 @@ class MegaGenerator(
                     .build())
                 .build())
         }
-        return FileSpec.builder("", "EntryPoint")
+        return FileSpec.builder(epcn)
             .addType(type.build())
             .build()
     }

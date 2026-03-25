@@ -1,4 +1,4 @@
 fun main() {
-    EntryPoint().obj
+    PropertyEntryPoint_EntryPoint().obj
     println("OK!")
 }
