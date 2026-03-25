@@ -4,7 +4,7 @@ fun main() {
         check(checkNotNull(cwn["sphynx"]).name == "sphynx") {
             cwn.toString()
         }
-        check(checkNotNull(cwn["ragamuffin"]).name = "ragamuffin") {
+        check(checkNotNull(cwn["ragamuffin"]).name == "ragamuffin") {
             cwn.toString()
         }
         val cats = cats

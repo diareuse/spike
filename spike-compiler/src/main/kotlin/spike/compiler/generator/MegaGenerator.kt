@@ -338,27 +338,15 @@ class MegaGenerator(
         val ep = graph.entry
         val epcn = resolver.peerClass(graph, "EntryPoint")
         val dfcn = dependencyFactoryClassName
-        val type = TypeSpec.classBuilder(epcn)
+        val type = TypeSpec.objectBuilder(epcn)
             .addSuperinterface(resolver.getTypeName(ep.type))
-            .primaryConstructor(
-                FunSpec.constructorBuilder()
-                    .addParameter(ParameterSpec.builder("factory", dfcn)
-                        .defaultValue("%T()", dfcn)
-                        .build())
-                    .build()
-            )
-            .addProperty(
-                PropertySpec.builder("factory", dfcn)
-                    .addModifiers(KModifier.PRIVATE)
-                    .initializer("factory")
-                    .build()
-            )
+            .addModifiers(KModifier.PRIVATE)
         for (m in ep.methods) {
             type.addFunction(
                 FunSpec.builder(m.name)
                     .addModifiers(KModifier.OVERRIDE)
                     .returns(resolver.getTypeName(m.returns))
-                    .addStatement("return factory.get(%L(%L))", DependencyId::class.asClassName(), getDependencyId(tfih.find(m.returns)))
+                    .addStatement("return %T.get(%L(%L))", dfcn, DependencyId::class.asClassName(), getDependencyId(tfih.find(m.returns)))
                     .build()
             )
         }
@@ -366,12 +354,18 @@ class MegaGenerator(
             type.addProperty(PropertySpec.builder(p.name, resolver.getTypeName(p.returns))
                 .addModifiers(KModifier.OVERRIDE)
                 .getter(FunSpec.getterBuilder()
-                    .addStatement("return factory.get(%L(%L))", DependencyId::class.asClassName(), getDependencyId(tfih.find(p.returns)))
+                    .addStatement("return %T.get(%L(%L))", dfcn, DependencyId::class.asClassName(), getDependencyId(tfih.find(p.returns)))
                     .build())
                 .build())
         }
         return FileSpec.builder(epcn)
             .addType(type.build())
+            .addFunction(FunSpec.builder("invoke")
+                .addModifiers(KModifier.OPERATOR)
+                .receiver((resolver.getTypeName(ep.type) as ClassName).nestedClass("Companion"))
+                .returns(resolver.getTypeName(ep.type))
+                .addStatement("return %T", epcn)
+                .build())
             .build()
     }
 

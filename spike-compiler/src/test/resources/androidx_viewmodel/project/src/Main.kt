@@ -1,5 +1,7 @@
+import spike.lifecycle.viewmodel.invoke
+
 fun main() {
-    spike.lifecycle.viewmodel.ViewModelEntryPoint().viewModels[MyViewModel::class].get()
+    spike.lifecycle.viewmodel.ViewModelEntryPoint().viewModels[MyViewModel::class]!!.get()
 }
 
 @spike.lifecycle.viewmodel.SpikeViewModel
