@@ -1,5 +1,5 @@
 fun main() {
-    PropertyEntryPoint().cat
+    PropertyEntryPoint().cat.food
 }
 
 @spike.EntryPoint

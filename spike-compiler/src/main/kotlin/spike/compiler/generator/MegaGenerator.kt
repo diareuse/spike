@@ -212,6 +212,7 @@ class MegaGenerator(
             }
             return add(typeFactory)
         }
+
         fun find(type: Type) = holders.flatten().first { it.type == type }
     }
 
@@ -357,21 +358,27 @@ class MegaGenerator(
             )
         }
         for (p in ep.properties) {
-            type.addProperty(PropertySpec.builder(p.name, resolver.getTypeName(p.returns))
-                .addModifiers(KModifier.OVERRIDE)
-                .getter(FunSpec.getterBuilder()
-                    .addStatement("return %T.get(%L(%L))", dfcn, DependencyId::class.asClassName(), getDependencyId(tfih.find(p.returns)))
-                    .build())
-                .build())
+            type.addProperty(
+                PropertySpec.builder(p.name, resolver.getTypeName(p.returns))
+                    .addModifiers(KModifier.OVERRIDE)
+                    .getter(
+                        FunSpec.getterBuilder()
+                            .addStatement("return %T.get(%L(%L))", dfcn, DependencyId::class.asClassName(), getDependencyId(tfih.find(p.returns)))
+                            .build()
+                    )
+                    .build()
+            )
         }
         return FileSpec.builder(epcn)
             .addType(type.build())
-            .addFunction(FunSpec.builder("invoke")
-                .addModifiers(KModifier.OPERATOR)
-                .receiver((resolver.getTypeName(ep.type) as ClassName).nestedClass("Companion"))
-                .returns(resolver.getTypeName(ep.type))
-                .addStatement("return %T", epcn)
-                .build())
+            .addFunction(
+                FunSpec.builder("invoke")
+                    .addModifiers(KModifier.OPERATOR)
+                    .receiver((resolver.getTypeName(ep.type) as ClassName).nestedClass("Companion"))
+                    .returns(resolver.getTypeName(ep.type))
+                    .addStatement("return %T", epcn)
+                    .build()
+            )
             .build()
     }
 
