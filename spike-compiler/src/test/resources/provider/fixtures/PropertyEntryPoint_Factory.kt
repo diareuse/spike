@@ -14,7 +14,8 @@ public object PropertyEntryPoint_Factory : DependencyFactory() {
 
   override fun getInstructionsPointer(id: DependencyId): InstructionSetPointer? = when (id.id) {
     0 -> InstructionSetPointer(0, 6)
-    else -> error("Invalid identifier")
+    2 -> InstructionSetPointer(6, 3)
+    else -> error("Invalid identifier ${id}")
   }
 
   override fun instantiate(buffer: Array<Any?>, id: DependencyId): Any = when (id.segment) {
