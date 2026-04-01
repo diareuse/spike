@@ -1,20 +1,20 @@
 fun main() {
-    NightStand(kotlin.collections.emptyList()).apply {
-        check(television is SamsungTelevision)
+    NightStand().apply {
+        val remote = remote
+        val tv = television
+        check(tv is SamsungTelevision)
         check(remote is RemoteControl)
+        remote.togglePower()
     }
 }
+
+@spike.Include
+fun batteries() = kotlin.collections.emptyList<Battery>()
 
 @spike.EntryPoint
 interface NightStand {
     val television: Television
     val remote: Remote
-
-    @spike.EntryPoint.Factory
-    interface Factory {
-        fun create(batteries: List<Battery>): NightStand
-    }
-
     companion object
 }
 
