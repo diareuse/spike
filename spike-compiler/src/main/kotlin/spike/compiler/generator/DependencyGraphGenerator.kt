@@ -4,19 +4,6 @@ package spike.compiler.generator
 
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.squareup.kotlinpoet.ksp.writeTo
-import spike.compiler.generator.container.DependencyContainerTypeConstructor
-import spike.compiler.generator.container.DependencyContainerTypeFactory
-import spike.compiler.generator.container.DependencyContainerTypeInternal
-import spike.compiler.generator.entrypoint.EntryPointFileFactoryAccessor
-import spike.compiler.generator.entrypoint.EntryPointFileInitializer
-import spike.compiler.generator.entrypoint.EntryPointTypeConstructor
-import spike.compiler.generator.entrypoint.EntryPointTypeFunctions
-import spike.compiler.generator.entrypoint.EntryPointTypeInternal
-import spike.compiler.generator.entrypoint.EntryPointTypeProperties
-import spike.compiler.generator.entrypoint.EntryPointTypeSuperinterface
-import spike.compiler.generator.entrypoint.factory.EntryPointFactoryTypeInternal
-import spike.compiler.generator.entrypoint.factory.EntryPointFactoryTypeMethod
-import spike.compiler.generator.entrypoint.factory.EntryPointFactoryTypeSuperinterface
 import spike.compiler.graph.DependencyGraph
 
 class DependencyGraphGenerator(
