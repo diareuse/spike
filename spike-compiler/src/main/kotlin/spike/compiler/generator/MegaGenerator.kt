@@ -5,15 +5,12 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
-import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.withIndent
-import spike.compiler.graph.BuiltInMembers
-import spike.compiler.graph.BuiltInTypes
 import spike.compiler.graph.DependencyGraph
 import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
@@ -130,7 +127,13 @@ class MegaGenerator(
     private fun createGetInstructionsBody(graph: DependencyGraph): CodeBlock {
         val block = CodeBlock.builder()
             .beginControlFlow("return when (id.%L) {", DependencyId::id.name)
-        for (type in graph.iterator()) {
+        val queue = graph.iterator().asSequence().toMutableList()
+        val uniqueTypes = mutableSetOf<Int>()
+        while (queue.isNotEmpty()) {
+            val type = queue.removeFirst()
+            if (!uniqueTypes.add(type.hashCode())) {
+                continue
+            }
             val visited = mutableSetOf<Int>()
             val contextWindow = mutableListOf<Int>()
             val dependencyTree = type.invertDependencyChain() + type
@@ -138,15 +141,18 @@ class MegaGenerator(
             val offset = dfis.start()
             var contextSize = 0
             for (dependency in dependencyTree) {
+                if (dependency is TypeFactory.Deferred) {
+                    queue.add(0, dependency.factory)
+                }
                 if (!visited.add(dependency.hashCode()))
                     continue
                 contextWindow += dependency.hashCode()
                 contextSize++
                 val id = getDependencyId(dependency)
                 dfis.add(id)
-                val dependencyCount = dependency.dependencies.size
+                val dependencyCount = if (dependency is TypeFactory.Deferred) 0 else dependency.dependencies.size
                 dfis.add(dependencyCount)
-                for (argument in dependency.dependencies) {
+                if (dependency !is TypeFactory.Deferred) for (argument in dependency.dependencies) {
                     val i = contextWindow.indexOf(argument.hashCode())
                     if (i == -1) error("Dependency '$argument' was not found in dependencyTree $dependencyTree")
                     dfis.add(i)
@@ -155,7 +161,7 @@ class MegaGenerator(
             val size = dfis.end(contextSize)
             block.addStatement("%T(%L, %L)", InstructionSetPointer::class.asClassName(), offset, size)
         }
-        block.addStatement("else -> error(\"Invalid identifier\")")
+        block.addStatement($$"else -> error(\"Invalid identifier ${id}\")")
         block.endControlFlow()
         return block.build()
     }
@@ -259,10 +265,10 @@ class MegaGenerator(
                     body.addStatement(")")
                 }
                 is TypeFactory.Memorizes -> {
-                    body.addStatement("%M { %T.get<%T>(%T(%L)) }", resolver.builtInMember { lazy }, dependencyFactoryClassName, factory.type.typeArguments.single().toTypeName(), DependencyId::class, getDependencyId(factory))
+                    body.addStatement("%M { %T.get<%T>(%T(%L)) }", resolver.builtInMember { lazy }, dependencyFactoryClassName, factory.factory.type.toTypeName(), DependencyId::class, getDependencyId(factory.factory))
                 }
                 is TypeFactory.Provides -> {
-                    body.addStatement("%T { %T.get<%T>(%T(%L)) }", resolver.builtInType { Provider }, dependencyFactoryClassName, factory.type.typeArguments.single().toTypeName(), DependencyId::class, getDependencyId(factory))
+                    body.addStatement("%T { %T.get<%T>(%T(%L)) }", resolver.builtInType { Provider }, dependencyFactoryClassName, factory.factory.type.toTypeName(), DependencyId::class, getDependencyId(factory.factory))
                 }
                 is TypeFactory.MultibindsCollection -> {
                     body.add("%M(", resolver.getMemberName(factory.collectionMemberFactory))
