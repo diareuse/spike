@@ -49,13 +49,17 @@ fun KSAnnotated.findKey() = annotations
             }
             "spike.Key annotation must have a single argument, but found none or too many $klass"
         }
+        val dcl = it.annotationType.resolve().declaration as KSClassDeclaration
+        val param = checkNotNull(dcl.primaryConstructor?.parameters?.singleOrNull()) {
+            "Annotation requires exactly one argument, but found ${dcl.primaryConstructor?.parameters?.size}"
+        }
         val value = when (val v = argument.value) {
             null -> error("spike.Key annotation argument must not be null")
             is KSType -> v.toType()
             is KSClassDeclaration -> v.toType()
             else -> v
         }
-        Key(value::class.toType(), value)
+        Key(param.type.resolve().toType(), value)
     }
     .singleOrNull() ?: error("spike.Key inheritor must be defined in $this")
 
