@@ -1,8 +1,11 @@
 import spike.lifecycle.viewmodel.invoke
 
 fun main() {
-    spike.lifecycle.viewmodel.ViewModelEntryPoint().viewModels[MyViewModel::class]!!.get()
+    val vm = spike.lifecycle.viewmodel.ViewModelEntryPoint().viewModels[MyViewModel::class]!!.get() as MyViewModel
+    check(vm.sayYes() == "yes")
 }
 
 @spike.lifecycle.viewmodel.SpikeViewModel
-class MyViewModel : androidx.lifecycle.ViewModel()
+class MyViewModel : androidx.lifecycle.ViewModel() {
+    fun sayYes() = "yes"
+}
