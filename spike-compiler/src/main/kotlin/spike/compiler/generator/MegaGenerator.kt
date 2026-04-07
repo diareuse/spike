@@ -141,8 +141,11 @@ class MegaGenerator(
             val offset = dfis.start()
             var contextSize = 0
             for (dependency in dependencyTree) {
-                if (dependency is TypeFactory.Deferred) {
-                    queue.add(0, dependency.factory)
+                when (dependency) {
+                    is TypeFactory.Deferred -> queue.add(0, dependency.factory)
+                    is TypeFactory.MultibindsCollection -> queue.addAll(0, dependency.entries)
+                    is TypeFactory.MultibindsMap -> queue.addAll(0, dependency.keyValues.values)
+                    else -> {}
                 }
                 if (!visited.add(dependency.hashCode()))
                     continue
