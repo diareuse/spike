@@ -283,7 +283,9 @@ class MegaGenerator(
                     body.addStatement(")")
                 }
                 is TypeFactory.MultibindsMap -> {
-                    body.add("%M(", resolver.builtInMember { mapOf })
+                    val t = factory.type as Type.Parametrized
+                    val a = t.typeArguments
+                    body.add("%M<%T, %T>(", resolver.builtInMember { mapOf }, a[0].toTypeName(), a[1].toTypeName())
                     for ((index, entry) in factory.keyValues.entries.withIndex()) {
                         if (index > 0) body.add(", ")
                         val (k, v) = entry
