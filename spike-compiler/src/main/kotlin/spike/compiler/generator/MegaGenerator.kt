@@ -298,8 +298,8 @@ class MegaGenerator(
                             }
                             body.add("%L to ", key)
                             when (v) {
-                                is TypeFactory.Memorizes -> body.add("%M { %T.get<%T>(%T(%L)) }", resolver.builtInMember { lazy }, dependencyFactoryClassName, v.type.typeArguments.single().toTypeName(), DependencyId::class, getDependencyId(factory))
-                                is TypeFactory.Provides -> body.add("%T { %T.get<%T>(%T(%L)) }", resolver.builtInType { Provider }, dependencyFactoryClassName, v.type.typeArguments.single().toTypeName(), DependencyId::class, getDependencyId(factory))
+                                is TypeFactory.Memorizes -> body.add("%M { %T.get<%T>(%T(%L)) }", resolver.builtInMember { lazy }, dependencyFactoryClassName, v.type.typeArguments.single().toTypeName(), DependencyId::class, getDependencyId(v.factory))
+                                is TypeFactory.Provides -> body.add("%T { %T.get<%T>(%T(%L)) }", resolver.builtInType { Provider }, dependencyFactoryClassName, v.type.typeArguments.single().toTypeName(), DependencyId::class, getDependencyId(v.factory))
                                 else -> body.add("buffer[%L] as %T", index, v.type.toTypeName())
                             }
                         }
