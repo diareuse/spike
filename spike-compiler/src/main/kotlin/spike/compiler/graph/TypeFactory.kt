@@ -135,9 +135,7 @@ sealed interface TypeFactory {
         override val isPublic: Boolean,
         val collectionType: Type,
     ) : TypeFactory {
-        // the values must be constructed locally as there can be a one binding and multibinding allows
-        // one type bound multiple times
-        override val dependencies: List<TypeFactory> = entries.flatMap { it.dependencies }
+        override val dependencies: List<TypeFactory> get() = entries
 
         val collectionMemberFactory
             get() = when (collectionType) {
@@ -162,9 +160,7 @@ sealed interface TypeFactory {
         val keyValues: Map<Any?, TypeFactory>,
         override val isPublic: Boolean,
     ) : TypeFactory {
-        // the values must be constructed locally as there can be a one binding and multibinding allows
-        // one type bound multiple times
-        override val dependencies get() = keyValues.values.flatMap { it.dependencies }.toList()
+        override val dependencies get() = keyValues.values.toList()
         override fun toString(): String {
             var out = "Map {"
             for ((key, value) in keyValues) {
