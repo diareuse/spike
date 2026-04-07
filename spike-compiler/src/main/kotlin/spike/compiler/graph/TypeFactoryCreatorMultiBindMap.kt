@@ -14,7 +14,9 @@ class TypeFactoryCreatorMultiBindMap(
         val instances = multibinding.map[valueType.unwrapParametrized()]
             ?.filterKeys { it.type == keyType }
             ?.mapKeys { it.key.value }
-            .orEmpty()
+        checkNotNull(instances) {
+            "Multibinding for $type not found in $multibinding"
+        }
         val keyValues = buildMap {
             for ((k, v) in instances) {
                 var factory: TypeFactory? = null
