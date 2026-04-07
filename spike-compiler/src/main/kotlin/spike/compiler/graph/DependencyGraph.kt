@@ -1,5 +1,7 @@
 package spike.compiler.graph
 
+import com.google.devtools.ksp.processing.KSPLogger
+
 class DependencyGraph(
     val entry: GraphEntryPoint,
     val methods: List<TypeFactory>,
@@ -11,7 +13,9 @@ class DependencyGraph(
         yieldAll(properties)
     }
 
-    class Builder {
+    class Builder(
+        private val logger: KSPLogger
+    ) {
 
         private lateinit var store: GraphStore
         private lateinit var multibinding: MultiBindingStore
@@ -24,6 +28,6 @@ class DependencyGraph(
             this.multibinding = graph
         }
 
-        fun build(entry: GraphEntryPoint): DependencyGraph = DependencyGraphFactory(entry, store, multibinding).create()
+        fun build(entry: GraphEntryPoint): DependencyGraph = DependencyGraphFactory(entry, store, multibinding, logger).create()
     }
 }

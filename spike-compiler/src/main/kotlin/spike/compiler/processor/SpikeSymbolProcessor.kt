@@ -17,6 +17,7 @@ class SpikeSymbolProcessor(
 ) : SymbolProcessor {
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
+        val logger = environment.logger
         val bindAs = IncludeContributorBindTo(
             IncludeContributorChain(
                 IncludeContributorBindAs(),
@@ -29,8 +30,8 @@ class SpikeSymbolProcessor(
             this += GraphContributorIncludeViewModel(viewModel).timed("ViewModel")
             this += GraphContributorIncludeClass(bindAs).timed("Class")
             this += GraphContributorIncludeFunction(bindAs).timed("Function")
-            this += GraphContributorEntryPoint(generator) { it.getSymbolsWithAnnotation<EntryPoint>() }
-            this += GraphContributorEntryPoint(generator) { it.getSymbolsWithAnnotation<EntryPoint>("spike.lifecycle.viewmodel") }
+            this += GraphContributorEntryPoint(generator, logger) { it.getSymbolsWithAnnotation<EntryPoint>() }
+            this += GraphContributorEntryPoint(generator, logger) { it.getSymbolsWithAnnotation<EntryPoint>("spike.lifecycle.viewmodel") }
         }
         val root = GraphStore.Builder()
         val multibind = MultiBindingStore.Builder()

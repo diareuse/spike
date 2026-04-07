@@ -1,9 +1,12 @@
 package spike.compiler.graph
 
+import com.google.devtools.ksp.processing.KSPLogger
+
 class DependencyGraphFactory(
     private val entry: GraphEntryPoint,
     private val root: GraphStore,
     private val multibinding: MultiBindingStore,
+    private val logger: KSPLogger,
 ) {
 
     fun create(): DependencyGraph {
@@ -15,7 +18,7 @@ class DependencyGraphFactory(
             TypeFactoryCreatorBinder(),
             TypeFactoryCreatorLazy(),
             TypeFactoryCreatorProvider(),
-            TypeFactoryCreatorMultiBindMap(multibinding),
+            TypeFactoryCreatorMultiBindMap(multibinding, logger),
             TypeFactoryCreatorMultiBindCollection(multibinding, BuiltInTypes.Set),
             TypeFactoryCreatorMultiBindCollection(multibinding, BuiltInTypes.List),
         )
