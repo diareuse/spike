@@ -6,6 +6,7 @@ import com.google.devtools.ksp.isAbstract
 import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.isInternal
 import com.google.devtools.ksp.isPublic
+import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotated
@@ -20,6 +21,7 @@ import spike.compiler.graph.Parameter
 @OptIn(KspExperimental::class)
 class GraphContributorEntryPoint(
     private val generator: DependencyGraphGenerator,
+    private val logger: KSPLogger,
     private val selector: (Resolver) -> Sequence<KSAnnotated>,
 ) : GraphContributor {
     override fun contribute(context: GraphContext, resolver: Resolver) {
@@ -37,7 +39,7 @@ class GraphContributorEntryPoint(
                 properties = properties,
                 methods = methods,
             )
-            val graph = DependencyGraph.Builder()
+            val graph = DependencyGraph.Builder(logger)
                 .addRootGraph(context.builder.build())
                 .addMultibindGraph(context.multibind.build())
                 .build(entry)
