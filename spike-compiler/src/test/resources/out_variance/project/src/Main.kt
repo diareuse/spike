@@ -1,5 +1,7 @@
+import kotlin.reflect.KClass
+
 fun main() {
-    PropertyEntryPoint().cats
+    checkNotNull(PropertyEntryPoint().cats[SomeCat::class])
 }
 
 @spike.EntryPoint
@@ -10,3 +12,10 @@ interface PropertyEntryPoint {
 }
 
 interface Cat
+
+@spike.Key
+annotation class CatKey(val klass: KClass<out Cat>)
+
+@spike.Include(bindTo = spike.BindTarget.Map, bindAs = Cat::class)
+@CatKey(SomeCat::class)
+class SomeCat : Cat
