@@ -285,18 +285,25 @@ class MegaGenerator(
                 is TypeFactory.MultibindsMap -> {
                     val t = factory.type as Type.Parametrized
                     val a = t.typeArguments
-                    body.add("%M<%T, %T>(", resolver.builtInMember { mapOf }, a[0].toTypeName(), a[1].toTypeName())
-                    for ((index, entry) in factory.keyValues.entries.withIndex()) {
-                        if (index > 0) body.add(", ")
-                        val (k, v) = entry
-                        val key = when (k) {
-                            is String -> "\"$k\""
-                            is KClass<*> -> "${k.qualifiedName}::class"
-                            is Type -> resolver.getTypeName(k).toString() + "::class"
-                            else -> k
+                    body.addStatement("%M<%T, %T>(", resolver.builtInMember { mapOf }, a[0].toTypeName(), a[1].toTypeName())
+                    body.withIndent {
+                        for ((index, entry) in factory.keyValues.entries.withIndex()) {
+                            if (index > 0) body.addStatement(",")
+                            val (k, v) = entry
+                            val key = when (k) {
+                                is String -> "\"$k\""
+                                is KClass<*> -> "${k.qualifiedName}::class"
+                                is Type -> resolver.getTypeName(k).toString() + "::class"
+                                else -> k
+                            }
+                            body.add("%L to ", key)
+                            when (v) {
+                                is TypeFactory.Memorizes -> body.add("%M { %T.get<%T>(%T(%L)) }", resolver.builtInMember { lazy }, dependencyFactoryClassName, v.type.typeArguments.single().toTypeName(), DependencyId::class, getDependencyId(factory))
+                                is TypeFactory.Provides -> body.add("%T { %T.get<%T>(%T(%L)) }", resolver.builtInType { Provider }, dependencyFactoryClassName, v.type.typeArguments.single().toTypeName(), DependencyId::class, getDependencyId(factory))
+                                else -> body.add("buffer[%L] as %T", index, v.type.toTypeName())
+                            }
                         }
-                        // fixme this is the most certainly completely wrong and will mismatch instances to indices
-                        body.add("%L to buffer[%L] as %T", key, index, v.type.toTypeName())
+                        body.addStatement("")
                     }
                     body.addStatement(")")
                 }
