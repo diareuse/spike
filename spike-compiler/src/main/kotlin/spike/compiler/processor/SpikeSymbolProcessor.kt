@@ -30,8 +30,8 @@ class SpikeSymbolProcessor(
             this += GraphContributorIncludeViewModel(viewModel).timed("ViewModel")
             this += GraphContributorIncludeClass(bindAs).timed("Class")
             this += GraphContributorIncludeFunction(bindAs).timed("Function")
-            this += GraphContributorEntryPoint(generator, logger) { it.getSymbolsWithAnnotation<EntryPoint>() }
-            this += GraphContributorEntryPoint(generator, logger) { it.getSymbolsWithAnnotation<EntryPoint>("spike.lifecycle.viewmodel") }
+            this += GraphContributorEntryPoint(generator, logger) { it.getSymbolsWithAnnotation<EntryPoint>() }.timed("EntryPoint")
+            this += GraphContributorEntryPoint(generator, logger) { it.getSymbolsWithAnnotation<EntryPoint>("spike.lifecycle.viewmodel") }.timed("ViewModelEntryPoint")
         }
         val root = GraphStore.Builder()
         val multibind = MultiBindingStore.Builder()
