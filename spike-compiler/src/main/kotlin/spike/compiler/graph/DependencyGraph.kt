@@ -13,6 +13,8 @@ class DependencyGraph(
         yieldAll(properties)
     }
 
+    fun toList() = methods + properties
+
     class Builder(
         private val logger: KSPLogger
     ) {
