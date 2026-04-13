@@ -40,7 +40,7 @@ class MegaGenerator(
         val spec = TypeSpec.objectBuilder(dependencyFactoryClassName)
         spec.superclass(DependencyFactory::class)
         val factories = sequence {
-            val queue = graph.iterator().asSequence().toList().toMutableList()
+            val queue = ArrayDeque(graph.toList())
             while (queue.isNotEmpty()) {
                 val item = queue.removeFirst()
                 yield(item)
@@ -127,16 +127,15 @@ class MegaGenerator(
     private fun createGetInstructionsBody(graph: DependencyGraph): CodeBlock {
         val block = CodeBlock.builder()
             .beginControlFlow("return when (id.%L) {", DependencyId::id.name)
-        val queue = graph.iterator().asSequence().toMutableList()
-        val uniqueTypes = mutableSetOf<Int>()
+        val queue = ArrayDeque(graph.toList())
+        val uniqueTypes = HashSet<Int>()
         while (queue.isNotEmpty()) {
             val type = queue.removeFirst()
             if (!uniqueTypes.add(type.hashCode())) {
                 continue
             }
-            val visited = mutableSetOf<Int>()
-            val contextWindow = mutableListOf<Int>()
             val dependencyTree = type.invertDependencyChain() + type
+            val contextIndexByHash = HashMap<Int, Int>(dependencyTree.size * 2)
             block.add("%L -> ", getDependencyId(type))
             val offset = dfis.start()
             var contextSize = 0
@@ -147,17 +146,17 @@ class MegaGenerator(
                     is TypeFactory.MultibindsMap -> queue.addAll(0, dependency.keyValues.values)
                     else -> {}
                 }
-                if (!visited.add(dependency.hashCode()))
+                val dependencyHash = dependency.hashCode()
+                if (contextIndexByHash.containsKey(dependencyHash))
                     continue
-                contextWindow += dependency.hashCode()
-                contextSize++
+                contextIndexByHash[dependencyHash] = contextSize++
                 val id = getDependencyId(dependency)
                 dfis.add(id)
                 val dependencyCount = if (dependency is TypeFactory.Deferred) 0 else dependency.dependencies.size
                 dfis.add(dependencyCount)
                 if (dependency !is TypeFactory.Deferred) for (argument in dependency.dependencies) {
-                    val i = contextWindow.indexOf(argument.hashCode())
-                    if (i == -1) error("Dependency '$argument' was not found in dependencyTree $dependencyTree")
+                    val i = contextIndexByHash[argument.hashCode()]
+                        ?: error("Dependency '$argument' was not found in dependencyTree $dependencyTree")
                     dfis.add(i)
                 }
             }
