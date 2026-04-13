@@ -11,10 +11,6 @@ sealed class Type {
         override val simpleName: String,
     ) : Type() {
         override fun toString(): String = "$packageName.$simpleName"
-        private val hashCode by lazy { super.hashCode() }
-        override fun hashCode(): Int {
-            return hashCode
-        }
     }
 
     data class Inner(
@@ -33,10 +29,6 @@ sealed class Type {
             }
 
         override fun toString(): String = "$parent.$simpleName"
-        private val hashCode by lazy { super.hashCode() }
-        override fun hashCode(): Int {
-            return hashCode
-        }
     }
 
     data class Parametrized(
@@ -49,10 +41,6 @@ sealed class Type {
             get() = envelope.simpleName
 
         override fun toString(): String = "$envelope<${typeArguments.joinToString(", ")}>"
-        private val hashCode by lazy { super.hashCode() }
-        override fun hashCode(): Int {
-            return hashCode
-        }
     }
 
     data class WithVariance(
@@ -81,10 +69,6 @@ sealed class Type {
             null -> "$variance"
             else -> "$variance $type"
         }
-        private val hashCode by lazy { super.hashCode() }
-        override fun hashCode(): Int {
-            return hashCode
-        }
     }
 
     data class Qualified(
@@ -101,10 +85,6 @@ sealed class Type {
             get() = type.simpleName
 
         override fun toString(): String = "${qualifiers.joinToString(" ")} $type"
-        private val hashCode by lazy { super.hashCode() }
-        override fun hashCode(): Int {
-            return hashCode
-        }
     }
 
     companion object {
