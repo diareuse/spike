@@ -307,13 +307,7 @@ class MegaGenerator(
                     }
                     body.addStatement(")")
                 }
-                is TypeFactory.Property -> {
-                    // fixme properties don't make any sense in this type of resolution-matching
-                    //  - users might instead bind external class with lateinit property and initialize said property prior to calling the entry point
-                    //    - this can also allow dynamic readjustments without reinitializing the graph
-                    //body.add("buffer[0] as %T", factory.type.toClassName())
-                    body.addStatement("error(\"Properties are deprecated, bind using external holder\")")
-                }
+                is TypeFactory.Property -> error("Properties are unsupported, bind using external holder")
             }
         }
         body.addStatement("else -> error(\"Invalid position\")")
