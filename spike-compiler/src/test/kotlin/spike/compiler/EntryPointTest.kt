@@ -185,4 +185,15 @@ class EntryPointTest : TestHarness() {
         }
     )
 
+    @Test
+    fun `benchmark compiles`() = runTest(
+        label = "benchmark",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { build("kspKotlin", "compileKotlin") },
+        verify = {
+            assertSuccess(it.compileKotlin)
+            assertSuccess(it.kspKotlin)
+        }
+    )
+
 }
