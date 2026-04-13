@@ -329,13 +329,23 @@ class MegaGenerator(
         )
         val initializer = CodeBlock.builder()
         var index = 0
-        for ((no, block) in dfis.instructions.chunked(1000).withIndex()) {
-            val body = FunSpec.builder("init$no")
-            for (instruction in block) {
-                body.addStatement("%L[%L] = %L", InstructionSet::memory.name, index++, instruction)
+        var blockIndex = 0
+        val instructions = dfis.instructions
+        val total = instructions.size
+
+        while (index < total) {
+            val end = minOf(index + 1000, total)
+            val functionName = "init$blockIndex"
+            val body = FunSpec.builder(functionName)
+
+            while (index < end) {
+                body.addStatement("%L[%L] = %L", InstructionSet::memory.name, index, instructions[index])
+                index++
             }
+
             type.addFunction(body.build())
-            initializer.addStatement("%L()", body.build().name)
+            initializer.addStatement("%L()", functionName)
+            blockIndex++
         }
         type.addInitializerBlock(initializer.build())
         types += FileSpec.builder(instructionSetClassName)
