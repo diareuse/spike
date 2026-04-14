@@ -179,6 +179,12 @@ class MegaGenerator(
             addParameter(index, parameter)
         }
     }
+    private fun CodeBlock.Builder.addParameters(factories: List<TypeFactory>) = apply {
+        for ((index, parameter) in factories.withIndex()) {
+            if (index > 0) add(", ")
+            addBufferCast(index, parameter.type)
+        }
+    }
 
     private fun CodeBlock.Builder.addBufferCast(index: Int, type: Type) = add("buffer[%L] as %T", index, resolver.getTypeName(type))
     private inline fun CodeBlock.Builder.addLazy(body: CodeBlock.Builder.() -> Unit) = apply {
@@ -233,10 +239,7 @@ class MegaGenerator(
                     addDependencyFactoryCall(factory.factory)
                 }.addStatement("")
                 is TypeFactory.MultibindsCollection -> body.addMember(factory.collectionMemberFactory) {
-                    for ((index, item) in factory.entries.withIndex()) {
-                        if (index > 0) body.add(", ")
-                        body.addBufferCast(index, item.type)
-                    }
+                    addParameters(factory.entries)
                 }.addStatement("")
                 is TypeFactory.MultibindsMap -> {
                     val t = factory.type as Type.Parametrized
