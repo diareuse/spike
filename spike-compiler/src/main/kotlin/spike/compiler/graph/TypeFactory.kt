@@ -10,7 +10,7 @@ sealed interface TypeFactory {
     val canInline: Boolean
         get() = true
 
-    class Class(
+    data class Class(
         override val type: Type,
         override val invocation: Invocation,
         override val singleton: Boolean,
@@ -45,23 +45,9 @@ sealed interface TypeFactory {
             out += ")"
             return out
         }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is Class) return false
-
-            if (type != other.type) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return type.hashCode()
-        }
-
     }
 
-    class Method(
+    data class Method(
         override val type: Type,
         val member: Member.Method,
         override val invocation: Invocation,
@@ -72,22 +58,9 @@ sealed interface TypeFactory {
         Callable {
         override val canInline: Boolean
             get() = !singleton
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is Method) return false
-
-            if (type != other.type) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return type.hashCode()
-        }
     }
 
-    class Binds(
+    data class Binds(
         override val type: Type,
         val source: TypeFactory,
         override val isPublic: Boolean,
@@ -98,26 +71,13 @@ sealed interface TypeFactory {
             get() = !isPublic && super.canInline
 
         override fun toString(): String = "$source as $type"
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is Binds) return false
-
-            if (type != other.type) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return type.hashCode()
-        }
-
     }
 
     sealed interface Deferred : TypeFactory {
         val factory: TypeFactory
     }
 
-    class Provides(
+    data class Provides(
         override val type: Type.Parametrized,
         override val factory: TypeFactory,
         override val isPublic: Boolean,
@@ -136,22 +96,9 @@ sealed interface TypeFactory {
             out += "\n}"
             return out
         }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is Provides) return false
-
-            if (type != other.type) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return type.hashCode()
-        }
     }
 
-    class Memorizes(
+    data class Memorizes(
         override val type: Type.Parametrized,
         override val factory: TypeFactory,
         override val isPublic: Boolean,
@@ -170,22 +117,9 @@ sealed interface TypeFactory {
             out += "\n}"
             return out
         }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is Memorizes) return false
-
-            if (type != other.type) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return type.hashCode()
-        }
     }
 
-    class Property(
+    data class Property(
         override val type: Type,
         val name: String,
     ) : TypeFactory {
@@ -193,22 +127,9 @@ sealed interface TypeFactory {
             get() = true
         override val dependencies: List<TypeFactory>
             get() = emptyList()
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is Property) return false
-
-            if (type != other.type) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return type.hashCode()
-        }
     }
 
-    class MultibindsCollection(
+    data class MultibindsCollection(
         override val type: Type,
         val entries: List<TypeFactory>,
         override val isPublic: Boolean,
@@ -232,22 +153,9 @@ sealed interface TypeFactory {
             out += "\n}"
             return out
         }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is MultibindsCollection) return false
-
-            if (type != other.type) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return type.hashCode()
-        }
     }
 
-    class MultibindsMap(
+    data class MultibindsMap(
         override val type: Type,
         val keyValues: Map<Any?, TypeFactory>,
         override val isPublic: Boolean,
@@ -262,20 +170,6 @@ sealed interface TypeFactory {
             out += "\n}"
             return out
         }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (other !is MultibindsMap) return false
-
-            if (type != other.type) return false
-
-            return true
-        }
-
-        override fun hashCode(): Int {
-            return type.hashCode()
-        }
-
     }
 
     sealed interface Callable : TypeFactory {
