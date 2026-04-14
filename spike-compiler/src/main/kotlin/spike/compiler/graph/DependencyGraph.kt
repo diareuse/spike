@@ -13,7 +13,12 @@ class DependencyGraph(
         yieldAll(properties)
     }
 
-    fun toList() = methods + properties
+    fun toSequence() = sequence {
+        for (m in methods)
+            yield(m)
+        for (p in properties)
+            yield(p)
+    }
 
     class Builder(
         private val logger: KSPLogger
