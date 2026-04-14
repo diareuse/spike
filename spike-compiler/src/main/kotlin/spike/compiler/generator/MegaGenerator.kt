@@ -13,6 +13,7 @@ import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.withIndent
 import spike.compiler.graph.DependencyGraph
 import spike.compiler.graph.Invocation
+import spike.compiler.graph.Member
 import spike.compiler.graph.Parameter
 import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
@@ -179,7 +180,7 @@ class MegaGenerator(
         }
     }
 
-    private fun CodeBlock.Builder.addBufferCast(index: Int, type: Type) = add("buffer[%L] as %T", index, type.toTypeName())
+    private fun CodeBlock.Builder.addBufferCast(index: Int, type: Type) = add("buffer[%L] as %T", index, resolver.getTypeName(type))
     private inline fun CodeBlock.Builder.addLazy(body: CodeBlock.Builder.() -> Unit) = apply {
         add("%M { ", resolver.builtInMember { lazy })
         body()
@@ -192,7 +193,19 @@ class MegaGenerator(
         add(" }")
     }
 
-    private fun CodeBlock.Builder.addDependencyFactoryCall(factory: TypeFactory, type: Type = factory.type) = add("%T.get<%T>(%T(%L))", dependencyFactoryClassName, type.toTypeName(), DependencyId::class, getDependencyId(factory))
+    private fun CodeBlock.Builder.addDependencyFactoryCall(factory: TypeFactory, type: Type = factory.type) = add("%T.get<%T>(%T(%L))", dependencyFactoryClassName, resolver.getTypeName(type), DependencyId::class, getDependencyId(factory))
+    private inline fun CodeBlock.Builder.addMember(member: Member, body: CodeBlock.Builder.() -> Unit) = apply {
+        add("%M(", resolver.getMemberName(member))
+        body()
+        add(")")
+    }
+
+    private inline fun CodeBlock.Builder.addType(type: Type, body: CodeBlock.Builder.() -> Unit) = apply {
+        add("%T(", resolver.getTypeName(type))
+        body()
+        add(")")
+    }
+
     private fun createCreateMethod(factories: List<TypeFactory>): FunSpec {
         val builder = FunSpec.builder("create")
             .addModifiers(KModifier.INTERNAL)
@@ -207,34 +220,28 @@ class MegaGenerator(
             body.add("$index -> ")
             when (factory) {
                 is TypeFactory.Binds -> body.addBufferCast(0, factory.type).addStatement("")
-                is TypeFactory.Class -> {
-                    body.add("%T(", factory.type.toTypeName())
+                is TypeFactory.Class -> body.addType(factory.type) {
                     body.addParameters(factory.invocation)
-                    body.addStatement(")")
-                }
-                is TypeFactory.Method -> {
-                    body.add("%M(", resolver.getMemberName(factory.member))
+                }.addStatement("")
+                is TypeFactory.Method -> body.addMember(factory.member) {
                     body.addParameters(factory.invocation)
-                    body.addStatement(")")
-                }
+                }.addStatement("")
                 is TypeFactory.Memorizes -> body.addLazy {
                     addDependencyFactoryCall(factory.factory)
                 }.addStatement("")
                 is TypeFactory.Provides -> body.addProvider {
                     addDependencyFactoryCall(factory.factory)
                 }.addStatement("")
-                is TypeFactory.MultibindsCollection -> {
-                    body.add("%M(", resolver.getMemberName(factory.collectionMemberFactory))
+                is TypeFactory.MultibindsCollection -> body.addMember(factory.collectionMemberFactory) {
                     for ((index, item) in factory.entries.withIndex()) {
                         if (index > 0) body.add(", ")
                         body.addBufferCast(index, item.type)
                     }
-                    body.addStatement(")")
-                }
+                }.addStatement("")
                 is TypeFactory.MultibindsMap -> {
                     val t = factory.type as Type.Parametrized
                     val a = t.typeArguments
-                    body.addStatement("%M<%T, %T>(", resolver.builtInMember { mapOf }, a[0].toTypeName(), a[1].toTypeName())
+                    body.addStatement("%M<%T, %T>(", resolver.builtInMember { mapOf }, resolver.getTypeName(a[0]), resolver.getTypeName(a[1]))
                     body.withIndent {
                         for ((index, entry) in factory.keyValues.entries.withIndex()) {
                             if (index > 0) body.addStatement(",")
