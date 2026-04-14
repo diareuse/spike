@@ -14,6 +14,7 @@ import com.squareup.kotlinpoet.withIndent
 import spike.compiler.graph.DependencyGraph
 import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
+import spike.compiler.graph.TypeFactory.Companion.invertDependencyTree
 import spike.factory.DependencyFactory
 import spike.factory.DependencyId
 import spike.factory.InstructionSet
@@ -134,12 +135,11 @@ class MegaGenerator(
             if (!uniqueTypes.add(type.hashCode())) {
                 continue
             }
-            val dependencyTree = type.invertDependencyChain() + type
-            val contextIndexByHash = HashMap<Int, Int>(dependencyTree.size * 2)
+            val contextIndexByHash = HashMap<Int, Int>()
             block.add("%L -> ", getDependencyId(type))
             val offset = dfis.start()
             var contextSize = 0
-            for (dependency in dependencyTree) {
+            for (dependency in type.invertDependencyTree()) {
                 when (dependency) {
                     is TypeFactory.Deferred -> queue.add(0, dependency.factory)
                     is TypeFactory.MultibindsCollection -> queue.addAll(0, dependency.entries)
@@ -156,7 +156,7 @@ class MegaGenerator(
                 dfis.add(dependencyCount)
                 if (dependency !is TypeFactory.Deferred) for (argument in dependency.dependencies) {
                     val i = contextIndexByHash[argument.hashCode()]
-                        ?: error("Dependency '$argument' was not found in dependencyTree $dependencyTree")
+                        ?: error("Dependency '$argument' was not found in dependencyTree")
                     dfis.add(i)
                 }
             }
@@ -179,17 +179,6 @@ class MegaGenerator(
     }
 
     // ---
-
-    private fun TypeFactory.invertDependencyChain(): List<TypeFactory> = buildList {
-        val queue = dependencies.toMutableList()
-        while (queue.isNotEmpty()) {
-            val dependency = queue.removeFirst()
-            if (dependency !is TypeFactory.Deferred) {
-                queue.addAll(0, dependency.dependencies)
-            }
-            add(0, dependency)
-        }
-    }
 
     class TypeFactoryIdHolder {
         val holders = mutableListOf<MutableList<TypeFactory>>(mutableListOf())
