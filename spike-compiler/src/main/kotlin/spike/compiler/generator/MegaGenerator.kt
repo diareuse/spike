@@ -11,15 +11,22 @@ import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.withIndent
+import com.sun.tools.javac.tree.TreeInfo.args
+import jdk.javadoc.internal.doclets.formats.html.markup.HtmlStyle
 import spike.compiler.graph.DependencyGraph
+import spike.compiler.graph.Invocation
+import spike.compiler.graph.Parameter
 import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
+import spike.compiler.graph.TypeFactory.Companion.dependencyTree
 import spike.compiler.graph.TypeFactory.Companion.invertDependencyTree
 import spike.factory.DependencyFactory
 import spike.factory.DependencyId
 import spike.factory.InstructionSet
 import spike.factory.InstructionSetPointer
+import java.util.concurrent.CompletableFuture
 import kotlin.reflect.KClass
+import kotlin.time.measureTime
 
 class MegaGenerator(
     private val graph: DependencyGraph,
@@ -28,11 +35,14 @@ class MegaGenerator(
 
     private val dependencyFactoryClassName = resolver.peerClass(graph, "Factory")
     private val instructionSetClassName = resolver.peerClass(graph, "InstructionSet")
+    private val dfis = DependencyFactoryInstructionsSet()
+    private val tfih = TypeFactoryIdHolder()
+
     private val types = mutableListOf<FileSpec>()
 
     fun generate(): List<FileSpec> {
         types.clear()
-        types += createDependencyFactory()
+        println("createDependencyFactory() " + measureTime { types += createDependencyFactory() })
         types += createEntryPoint()
         return types.toList()
     }
@@ -40,15 +50,7 @@ class MegaGenerator(
     private fun createDependencyFactory(): FileSpec {
         val spec = TypeSpec.objectBuilder(dependencyFactoryClassName)
         spec.superclass(DependencyFactory::class)
-        val factories = sequence {
-            val queue = ArrayDeque(graph.toList())
-            while (queue.isNotEmpty()) {
-                val item = queue.removeFirst()
-                yield(item)
-                queue.addAll(item.dependencies)
-            }
-        }
-        val maxConstructorArgs = factories.maxOf { it.dependencies.size }
+        val maxConstructorArgs = graph.toSequence().flatMap { it.dependencyTree() }.maxOf { it.dependencies.size }
         spec.addProperty(
             PropertySpec.builder("maxConstructorArgs", Int::class)
                 .initializer("$maxConstructorArgs")
@@ -90,7 +92,6 @@ class MegaGenerator(
     }
 
     // ---
-
     private fun createInstantiateBody(): CodeBlock {
         val dependencyHolders = createDependencyHolders()
         val block = CodeBlock.builder()
@@ -105,30 +106,10 @@ class MegaGenerator(
         return block.build()
     }
 
-    class DependencyFactoryInstructionsSet {
-        val instructions = mutableListOf<Int>()
-        private var start = -1
-        fun start() = instructions.size.also {
-            start = it
-        }
-
-        fun end(contextSize: Int): Int {
-            instructions.add(start, contextSize)
-            return (instructions.size - start).also {
-                start = -1
-            }
-        }
-
-        fun add(instruction: Int) {
-            instructions.add(instruction)
-        }
-    }
-
-    private val dfis = DependencyFactoryInstructionsSet()
     private fun createGetInstructionsBody(graph: DependencyGraph): CodeBlock {
         val block = CodeBlock.builder()
             .beginControlFlow("return when (id.%L) {", DependencyId::id.name)
-        val queue = ArrayDeque(graph.toList())
+        val queue = ArrayDeque(graph.toSequence().toList())
         val uniqueTypes = HashSet<Int>()
         while (queue.isNotEmpty()) {
             val type = queue.removeFirst()
@@ -170,44 +151,11 @@ class MegaGenerator(
 
     // ---
 
-    private fun createDependencyHolders(): List<Pair<Int, ClassName>> {
-        return buildList {
-            for ((index, holder) in tfih.holders.withIndex()) {
-                add(index to createDependencyHolder(index, holder))
-            }
-        }
+    private fun createDependencyHolders() = tfih.iterable().mapIndexed { index, holder ->
+        index to createDependencyHolder(index, holder)
     }
 
     // ---
-
-    class TypeFactoryIdHolder {
-        val holders = mutableListOf<MutableList<TypeFactory>>(mutableListOf())
-        fun add(typeFactory: TypeFactory): Int {
-            var h = holders.last()
-            if (h.size >= 1000) { // keep under 1000 to retain JIT speed boosts
-                holders.add(mutableListOf())
-                h = holders.last()
-            }
-            val segment = holders.indexOf(h)
-            val index = h.size
-            h.add(typeFactory)
-            return DependencyId(segment, index).id
-        }
-
-        fun getOrAdd(typeFactory: TypeFactory): Int {
-            for ((segment, holder) in holders.withIndex()) {
-                val index = holder.indexOf(typeFactory)
-                if (index >= 0) {
-                    return DependencyId(segment, index).id
-                }
-            }
-            return add(typeFactory)
-        }
-
-        fun find(type: Type) = holders.flatten().first { it.type == type }
-    }
-
-    private val tfih = TypeFactoryIdHolder()
     private fun getDependencyId(factory: TypeFactory): Int {
         return tfih.getOrAdd(factory)
     }
@@ -226,6 +174,14 @@ class MegaGenerator(
         return className
     }
 
+    private fun CodeBlock.Builder.addParameter(index: Int, parameter: Parameter) = addBufferCast(index, parameter.type)
+    private fun CodeBlock.Builder.addParameters(invocation: Invocation) {
+        for ((index, parameter) in invocation.parameters.withIndex()) {
+            if (index > 0) add(", ")
+            addParameter(index, parameter)
+        }
+    }
+    private fun CodeBlock.Builder.addBufferCast(index: Int, type: Type) = add("buffer[%L] as %T", index, type.toTypeName())
     private fun createCreateMethod(factories: List<TypeFactory>): FunSpec {
         val builder = FunSpec.builder("create")
             .addModifiers(KModifier.INTERNAL)
@@ -239,21 +195,15 @@ class MegaGenerator(
         for ((index, factory) in factories.withIndex()) {
             body.add("$index -> ")
             when (factory) {
-                is TypeFactory.Binds -> body.addStatement("buffer[0] as %T", factory.type.toTypeName())
+                is TypeFactory.Binds -> body.addBufferCast(0, factory.type).addStatement("")
                 is TypeFactory.Class -> {
                     body.add("%T(", factory.type.toTypeName())
-                    for ((index, parameter) in factory.invocation.parameters.withIndex()) {
-                        if (index > 0) body.add(", ")
-                        body.add("buffer[%L] as %T", index, parameter.type.toTypeName())
-                    }
+                    body.addParameters(factory.invocation)
                     body.addStatement(")")
                 }
                 is TypeFactory.Method -> {
                     body.add("%M(", resolver.getMemberName(factory.member))
-                    for ((index, parameter) in factory.invocation.parameters.withIndex()) {
-                        if (index > 0) body.add(", ")
-                        body.add("buffer[%L] as %T", index, parameter.type.toTypeName())
-                    }
+                    body.addParameters(factory.invocation)
                     body.addStatement(")")
                 }
                 is TypeFactory.Memorizes -> {
@@ -266,7 +216,7 @@ class MegaGenerator(
                     body.add("%M(", resolver.getMemberName(factory.collectionMemberFactory))
                     for ((index, item) in factory.entries.withIndex()) {
                         if (index > 0) body.add(", ")
-                        body.add("buffer[%L] as %T", index, item.type.toTypeName())
+                        body.addBufferCast(index, item.type)
                     }
                     body.addStatement(")")
                 }
@@ -288,7 +238,7 @@ class MegaGenerator(
                             when (v) {
                                 is TypeFactory.Memorizes -> body.add("%M { %T.get<%T>(%T(%L)) }", resolver.builtInMember { lazy }, dependencyFactoryClassName, v.type.typeArguments.single().toTypeName(), DependencyId::class, getDependencyId(v.factory))
                                 is TypeFactory.Provides -> body.add("%T { %T.get<%T>(%T(%L)) }", resolver.builtInType { Provider }, dependencyFactoryClassName, v.type.typeArguments.single().toTypeName(), DependencyId::class, getDependencyId(v.factory))
-                                else -> body.add("buffer[%L] as %T", index, v.type.toTypeName())
+                                else -> body.addBufferCast(index, v.type)
                             }
                         }
                         body.addStatement("")

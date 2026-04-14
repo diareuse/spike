@@ -1,7 +1,5 @@
 package spike.compiler.graph
 
-import kotlin.collections.iterator
-
 sealed interface TypeFactory {
     val type: Type
     val dependencies: List<TypeFactory>
@@ -182,6 +180,15 @@ sealed interface TypeFactory {
 
     companion object {
         operator fun List<TypeFactory>.contains(type: Type) = any { it.type == type }
+
+        fun TypeFactory.dependencyTree() = sequence {
+            yield(this@dependencyTree)
+            val queue = dependencies.toMutableList()
+            while (queue.isNotEmpty()) {
+                val dependency = queue.removeFirst().also { yield(it) }
+                queue.addAll(dependency.dependencies)
+            }
+        }
 
         fun TypeFactory.invertDependencyTree(): List<TypeFactory> = buildList {
             add(this@invertDependencyTree)
