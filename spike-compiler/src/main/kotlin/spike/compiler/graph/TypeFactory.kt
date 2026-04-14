@@ -288,5 +288,18 @@ sealed interface TypeFactory {
 
     companion object {
         operator fun List<TypeFactory>.contains(type: Type) = any { it.type == type }
+
+        fun TypeFactory.invertDependencyTree(): List<TypeFactory> = buildList {
+            add(this@invertDependencyTree)
+            val queue = dependencies.toMutableList()
+            while (queue.isNotEmpty()) {
+                val dependency = queue.removeFirst()
+                if (dependency !is Deferred) {
+                    queue.addAll(0, dependency.dependencies)
+                }
+                add(0, dependency)
+            }
+        }
+
     }
 }
