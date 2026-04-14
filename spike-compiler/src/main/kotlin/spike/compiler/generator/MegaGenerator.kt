@@ -11,8 +11,6 @@ import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.withIndent
-import com.sun.tools.javac.tree.TreeInfo.args
-import jdk.javadoc.internal.doclets.formats.html.markup.HtmlStyle
 import spike.compiler.graph.DependencyGraph
 import spike.compiler.graph.Invocation
 import spike.compiler.graph.Parameter
@@ -24,7 +22,6 @@ import spike.factory.DependencyFactory
 import spike.factory.DependencyId
 import spike.factory.InstructionSet
 import spike.factory.InstructionSetPointer
-import java.util.concurrent.CompletableFuture
 import kotlin.reflect.KClass
 import kotlin.time.measureTime
 
@@ -175,13 +172,27 @@ class MegaGenerator(
     }
 
     private fun CodeBlock.Builder.addParameter(index: Int, parameter: Parameter) = addBufferCast(index, parameter.type)
-    private fun CodeBlock.Builder.addParameters(invocation: Invocation) {
+    private fun CodeBlock.Builder.addParameters(invocation: Invocation) = apply {
         for ((index, parameter) in invocation.parameters.withIndex()) {
             if (index > 0) add(", ")
             addParameter(index, parameter)
         }
     }
+
     private fun CodeBlock.Builder.addBufferCast(index: Int, type: Type) = add("buffer[%L] as %T", index, type.toTypeName())
+    private inline fun CodeBlock.Builder.addLazy(body: CodeBlock.Builder.() -> Unit) = apply {
+        add("%M { ", resolver.builtInMember { lazy })
+        body()
+        add(" }")
+    }
+
+    private inline fun CodeBlock.Builder.addProvider(body: CodeBlock.Builder.() -> Unit) = apply {
+        add("%T { ", resolver.builtInType { Provider })
+        body()
+        add(" }")
+    }
+
+    private fun CodeBlock.Builder.addDependencyFactoryCall(factory: TypeFactory, type: Type = factory.type) = add("%T.get<%T>(%T(%L))", dependencyFactoryClassName, type.toTypeName(), DependencyId::class, getDependencyId(factory))
     private fun createCreateMethod(factories: List<TypeFactory>): FunSpec {
         val builder = FunSpec.builder("create")
             .addModifiers(KModifier.INTERNAL)
@@ -206,12 +217,12 @@ class MegaGenerator(
                     body.addParameters(factory.invocation)
                     body.addStatement(")")
                 }
-                is TypeFactory.Memorizes -> {
-                    body.addStatement("%M { %T.get<%T>(%T(%L)) }", resolver.builtInMember { lazy }, dependencyFactoryClassName, factory.factory.type.toTypeName(), DependencyId::class, getDependencyId(factory.factory))
-                }
-                is TypeFactory.Provides -> {
-                    body.addStatement("%T { %T.get<%T>(%T(%L)) }", resolver.builtInType { Provider }, dependencyFactoryClassName, factory.factory.type.toTypeName(), DependencyId::class, getDependencyId(factory.factory))
-                }
+                is TypeFactory.Memorizes -> body.addLazy {
+                    addDependencyFactoryCall(factory.factory)
+                }.addStatement("")
+                is TypeFactory.Provides -> body.addProvider {
+                    addDependencyFactoryCall(factory.factory)
+                }.addStatement("")
                 is TypeFactory.MultibindsCollection -> {
                     body.add("%M(", resolver.getMemberName(factory.collectionMemberFactory))
                     for ((index, item) in factory.entries.withIndex()) {
@@ -236,8 +247,12 @@ class MegaGenerator(
                             }
                             body.add("%L to ", key)
                             when (v) {
-                                is TypeFactory.Memorizes -> body.add("%M { %T.get<%T>(%T(%L)) }", resolver.builtInMember { lazy }, dependencyFactoryClassName, v.type.typeArguments.single().toTypeName(), DependencyId::class, getDependencyId(v.factory))
-                                is TypeFactory.Provides -> body.add("%T { %T.get<%T>(%T(%L)) }", resolver.builtInType { Provider }, dependencyFactoryClassName, v.type.typeArguments.single().toTypeName(), DependencyId::class, getDependencyId(v.factory))
+                                is TypeFactory.Memorizes -> body.addLazy {
+                                    addDependencyFactoryCall(v.factory, v.type.typeArguments.single())
+                                }
+                                is TypeFactory.Provides -> body.addProvider {
+                                    addDependencyFactoryCall(v.factory, v.type.typeArguments.single())
+                                }
                                 else -> body.addBufferCast(index, v.type)
                             }
                         }
