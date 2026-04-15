@@ -154,7 +154,7 @@ sealed interface TypeFactory {
     }
 
     data class MultibindsMap(
-        override val type: Type,
+        override val type: Type.Parametrized,
         val keyValues: Map<Any?, TypeFactory>,
         override val isPublic: Boolean,
     ) : TypeFactory {
