@@ -179,6 +179,7 @@ class MegaGenerator(
             addParameter(index, parameter)
         }
     }
+
     private fun CodeBlock.Builder.addParameters(factories: List<TypeFactory>) = apply {
         for ((index, parameter) in factories.withIndex()) {
             if (index > 0) add(", ")
@@ -212,6 +213,39 @@ class MegaGenerator(
         add(")")
     }
 
+    private inline fun CodeBlock.Builder.addMap(key: Type, value: Type, body: CodeBlock.Builder.() -> Unit) = apply {
+        addStatement("%M<%T, %T>(", resolver.builtInMember { mapOf }, resolver.getTypeName(key), resolver.getTypeName(value))
+        withIndent {
+            body()
+        }
+        addStatement(")")
+    }
+
+    private fun mapEntryKey(key: Any?) = when (key) {
+        is String -> "\"$key\""
+        is KClass<*> -> "${key.qualifiedName}::class"
+        is Type -> resolver.getTypeName(key).toString() + "::class"
+        else -> key
+    }
+
+    private fun CodeBlock.Builder.mapEntries(entries: Iterable<Map.Entry<Any?, TypeFactory>>) = apply {
+        for ((index, entry) in entries.withIndex()) {
+            if (index > 0) addStatement(",")
+            val (k, v) = entry
+            add("%L to ", mapEntryKey(k))
+            when (v) {
+                is TypeFactory.Memorizes -> addLazy {
+                    addDependencyFactoryCall(v.factory, v.type.typeArguments.single())
+                }
+                is TypeFactory.Provides -> addProvider {
+                    addDependencyFactoryCall(v.factory, v.type.typeArguments.single())
+                }
+                else -> addBufferCast(index, v.type)
+            }
+        }
+        addStatement("")
+    }
+
     private fun createCreateMethod(factories: List<TypeFactory>): FunSpec {
         val builder = FunSpec.builder("create")
             .addModifiers(KModifier.INTERNAL)
@@ -241,34 +275,8 @@ class MegaGenerator(
                 is TypeFactory.MultibindsCollection -> body.addMember(factory.collectionMemberFactory) {
                     addParameters(factory.entries)
                 }.addStatement("")
-                is TypeFactory.MultibindsMap -> {
-                    val t = factory.type as Type.Parametrized
-                    val a = t.typeArguments
-                    body.addStatement("%M<%T, %T>(", resolver.builtInMember { mapOf }, resolver.getTypeName(a[0]), resolver.getTypeName(a[1]))
-                    body.withIndent {
-                        for ((index, entry) in factory.keyValues.entries.withIndex()) {
-                            if (index > 0) body.addStatement(",")
-                            val (k, v) = entry
-                            val key = when (k) {
-                                is String -> "\"$k\""
-                                is KClass<*> -> "${k.qualifiedName}::class"
-                                is Type -> resolver.getTypeName(k).toString() + "::class"
-                                else -> k
-                            }
-                            body.add("%L to ", key)
-                            when (v) {
-                                is TypeFactory.Memorizes -> body.addLazy {
-                                    addDependencyFactoryCall(v.factory, v.type.typeArguments.single())
-                                }
-                                is TypeFactory.Provides -> body.addProvider {
-                                    addDependencyFactoryCall(v.factory, v.type.typeArguments.single())
-                                }
-                                else -> body.addBufferCast(index, v.type)
-                            }
-                        }
-                        body.addStatement("")
-                    }
-                    body.addStatement(")")
+                is TypeFactory.MultibindsMap -> body.addMap(factory.type.typeArguments[0], factory.type.typeArguments[1]) {
+                    mapEntries(factory.keyValues.entries)
                 }
                 is TypeFactory.Property -> error("Properties are unsupported, bind using external holder")
             }
