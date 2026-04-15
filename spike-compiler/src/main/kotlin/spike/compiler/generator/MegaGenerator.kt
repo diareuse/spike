@@ -40,7 +40,7 @@ class MegaGenerator(
 
     fun generate(): List<FileSpec> {
         types.clear()
-        println("createDependencyFactory() " + measureTime { types += createDependencyFactory() })
+        types += createDependencyFactory()
         types += createEntryPoint()
         return types.toList()
     }
