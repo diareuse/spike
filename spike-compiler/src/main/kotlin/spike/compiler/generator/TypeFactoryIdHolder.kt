@@ -8,6 +8,7 @@ class TypeFactoryIdHolder(
     private val limit: Int = 1000
 ) {
     private val holders = mutableListOf<MutableList<TypeFactory>>(mutableListOf())
+    val indices get()=holders.indices
 
     fun add(typeFactory: TypeFactory): Int {
         var h = holders.last()
@@ -34,5 +35,5 @@ class TypeFactoryIdHolder(
     fun find(type: Type) = holders.flatten().first { it.type == type }
 
     operator fun iterator(): Iterator<List<TypeFactory>> = holders.iterator()
-    fun iterable(): Iterable<List<TypeFactory>> = holders
+    fun toList(): List<List<TypeFactory>> = holders
 }
