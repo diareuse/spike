@@ -3,6 +3,7 @@
 package spike.compiler.generator
 
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
+import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.ksp.writeTo
 import spike.compiler.graph.DependencyGraph
 
@@ -22,15 +23,15 @@ class DependencyGraphGenerator(
             instructionSet = instructionSet,
             dependencyHolder = { index -> DependencyHolderGenerator(index, dependencyFactoryClassName) },
         )
-        MegaGenerator(
-            context = context,
-            entryPoint = entryPoint,
-            dependencyFactory = dependencyFactory,
-        ).generate().forEach { file ->
-            try {
-                file.writeTo(environment.codeGenerator, false)
-            } catch (_: FileAlreadyExistsException) {
-            }
+        dependencyFactory.generate(context, ::writeToFile)
+        entryPoint.generate(context, ::writeToFile)
+    }
+
+    private fun writeToFile(fileSpec: FileSpec) {
+        try {
+            fileSpec.writeTo(environment.codeGenerator, false)
+        } catch (_: FileAlreadyExistsException) {
+            environment.logger.warn("File ${fileSpec.name} already exists")
         }
     }
 }
