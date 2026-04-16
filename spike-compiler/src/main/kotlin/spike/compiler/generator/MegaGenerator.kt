@@ -24,7 +24,6 @@ import spike.factory.DependencyId
 import spike.factory.InstructionSet
 import spike.factory.InstructionSetPointer
 import kotlin.reflect.KClass
-import kotlin.time.measureTime
 
 class MegaGenerator(
     private val graph: DependencyGraph,
@@ -149,7 +148,7 @@ class MegaGenerator(
 
     // ---
 
-    private fun createDependencyHolders() = tfih.iterable().mapIndexed { index, holder ->
+    private fun createDependencyHolders() = tfih.toList().mapIndexed { index, holder ->
         index to createDependencyHolder(index, holder)
     }
 
@@ -218,7 +217,7 @@ class MegaGenerator(
         withIndent {
             body()
         }
-        addStatement(")")
+        add(")")
     }
 
     private fun mapEntryKey(key: Any?) = when (key) {
@@ -277,7 +276,7 @@ class MegaGenerator(
                 }.addStatement("")
                 is TypeFactory.MultibindsMap -> body.addMap(factory.type.typeArguments[0], factory.type.typeArguments[1]) {
                     mapEntries(factory.keyValues.entries)
-                }
+                }.addStatement("")
                 is TypeFactory.Property -> error("Properties are unsupported, bind using external holder")
             }
         }
