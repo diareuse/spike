@@ -12,9 +12,6 @@ import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.withIndent
 import spike.compiler.graph.DependencyGraph
-import spike.compiler.graph.Invocation
-import spike.compiler.graph.Member
-import spike.compiler.graph.Parameter
 import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
 import spike.compiler.graph.TypeFactory.Companion.dependencyTree
@@ -173,55 +170,6 @@ class MegaGenerator(
         return className
     }
 
-    private fun CodeBlock.Builder.addParameter(index: Int, parameter: Parameter) = addBufferCast(index, parameter.type)
-    private fun CodeBlock.Builder.addParameters(invocation: Invocation) = apply {
-        for ((index, parameter) in invocation.parameters.withIndex()) {
-            if (index > 0) add(", ")
-            addParameter(index, parameter)
-        }
-    }
-
-    private fun CodeBlock.Builder.addParameters(factories: List<TypeFactory>) = apply {
-        for ((index, parameter) in factories.withIndex()) {
-            if (index > 0) add(", ")
-            addBufferCast(index, parameter.type)
-        }
-    }
-
-    private fun CodeBlock.Builder.addBufferCast(index: Int, type: Type) = add("buffer[%L] as %T", index, resolver.getTypeName(type))
-    private inline fun CodeBlock.Builder.addLazy(body: CodeBlock.Builder.() -> Unit) = apply {
-        add("%M { ", resolver.builtInMember { lazy })
-        body()
-        add(" }")
-    }
-
-    private inline fun CodeBlock.Builder.addProvider(body: CodeBlock.Builder.() -> Unit) = apply {
-        add("%T { ", resolver.builtInType { Provider })
-        body()
-        add(" }")
-    }
-
-    private fun CodeBlock.Builder.addDependencyFactoryCall(factory: TypeFactory, type: Type = factory.type) = add("%T.get<%T>(%T(%L))", dependencyFactoryClassName, resolver.getTypeName(type), DependencyId::class, getDependencyId(factory))
-    private inline fun CodeBlock.Builder.addMember(member: Member, body: CodeBlock.Builder.() -> Unit) = apply {
-        add("%M(", resolver.getMemberName(member))
-        body()
-        add(")")
-    }
-
-    private inline fun CodeBlock.Builder.addType(type: Type, body: CodeBlock.Builder.() -> Unit) = apply {
-        add("%T(", resolver.getTypeName(type))
-        body()
-        add(")")
-    }
-
-    private inline fun CodeBlock.Builder.addMap(key: Type, value: Type, body: CodeBlock.Builder.() -> Unit) = apply {
-        addStatement("%M<%T, %T>(", resolver.builtInMember { mapOf }, resolver.getTypeName(key), resolver.getTypeName(value))
-        withIndent {
-            body()
-        }
-        add(")")
-    }
-
     private fun mapEntryKey(key: Any?) = when (key) {
         is String -> "\"$key\""
         is KClass<*> -> "${key.qualifiedName}::class"
@@ -230,16 +178,16 @@ class MegaGenerator(
     }
 
     private fun CodeBlock.Builder.mapEntries(entries: Iterable<Map.Entry<Any?, TypeFactory>>) = apply {
-        for ((index, entry) in entries.withIndex()) {
+        for ((index, entry) in entries.withIndex()) context.apply {
             if (index > 0) addStatement(",")
             val (k, v) = entry
             add("%L to ", mapEntryKey(k))
             when (v) {
                 is TypeFactory.Memorizes -> addLazy {
-                    addDependencyFactoryCall(v.factory, v.type.typeArguments.single())
+                    addDependencyFactoryCall(dependencyFactoryClassName, v.factory, v.type.typeArguments.single())
                 }
                 is TypeFactory.Provides -> addProvider {
-                    addDependencyFactoryCall(v.factory, v.type.typeArguments.single())
+                    addDependencyFactoryCall(dependencyFactoryClassName, v.factory, v.type.typeArguments.single())
                 }
                 else -> addBufferCast(index, v.type)
             }
@@ -257,7 +205,7 @@ class MegaGenerator(
         val body = CodeBlock.builder()
         body.beginControlFlow("return when(position) {")
         // the index here expects a well-ordered factories argument
-        for ((index, factory) in factories.withIndex()) {
+        for ((index, factory) in factories.withIndex()) context.apply {
             body.add("$index -> ")
             when (factory) {
                 is TypeFactory.Binds -> body.addBufferCast(0, factory.type).addStatement("")
@@ -268,10 +216,10 @@ class MegaGenerator(
                     body.addParameters(factory.invocation)
                 }.addStatement("")
                 is TypeFactory.Memorizes -> body.addLazy {
-                    addDependencyFactoryCall(factory.factory)
+                    addDependencyFactoryCall(dependencyFactoryClassName, factory.factory)
                 }.addStatement("")
                 is TypeFactory.Provides -> body.addProvider {
-                    addDependencyFactoryCall(factory.factory)
+                    addDependencyFactoryCall(dependencyFactoryClassName, factory.factory)
                 }.addStatement("")
                 is TypeFactory.MultibindsCollection -> body.addMember(factory.collectionMemberFactory) {
                     addParameters(factory.entries)
