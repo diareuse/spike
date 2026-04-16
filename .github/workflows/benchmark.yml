@@ -41,8 +41,9 @@ jobs:
 
       - run: |
           AVG=$(grep "measured build" spike-benchmark/output/benchmark.csv | cut -d',' -f2 | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; else print 0 }')
+          AVG2=$(grep "measured build" spike-benchmark/output-run/benchmark.csv | cut -d',' -f2 | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; else print 0 }')
           git stash
-          echo "[{\"name\": \"Build Time\", \"unit\": \"ms\", \"value\": $AVG}]" > results.json
+          echo "[{\"name\": \"Build Time\", \"unit\": \"ms\", \"value\": $AVG}, {\"name\": \"Run Time\", \"unit\": \"ms\", \"value\": $AVG2}]" > results.json
 
       - uses: benchmark-action/github-action-benchmark@v1
         with:
