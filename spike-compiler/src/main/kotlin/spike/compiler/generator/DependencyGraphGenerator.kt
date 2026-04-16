@@ -14,12 +14,14 @@ class DependencyGraphGenerator(
 
     fun generate(graph: DependencyGraph) {
         val context = FileGeneratorContext(resolver, graph)
-        val entryPoint = EntryPointGenerator(context.resolver.peerClass(graph, "Factory"))
+        val dependencyFactoryClassName = context.resolver.peerClass(graph, "Factory")
+        val entryPoint = EntryPointGenerator(dependencyFactoryClassName)
         val instructionSet = InstructionSetGenerator()
         MegaGenerator(
             context = context,
             entryPoint = entryPoint,
             instructionSet = instructionSet,
+            dependencyHolder = { index -> DependencyHolderGenerator(index, dependencyFactoryClassName) },
         ).generate().forEach { file ->
             try {
                 file.writeTo(environment.codeGenerator, false)
