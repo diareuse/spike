@@ -26,21 +26,23 @@ import spike.factory.InstructionSetPointer
 import kotlin.reflect.KClass
 
 class MegaGenerator(
-    private val graph: DependencyGraph,
-    private val resolver: TypeResolver
+    private val context: FileGeneratorContext,
+    private val entryPoint: EntryPointGenerator
 ) {
+    private val graph: DependencyGraph inline get() = context.graph
+    private val resolver: TypeResolver inline get() = context.resolver
 
     private val dependencyFactoryClassName = resolver.peerClass(graph, "Factory")
     private val instructionSetClassName = resolver.peerClass(graph, "InstructionSet")
-    private val dfis = DependencyFactoryInstructionsSet()
-    private val tfih = TypeFactoryIdHolder()
+    private val dfis inline get() = context.instructions
+    private val tfih inline get() = context.ids
 
     private val types = mutableListOf<FileSpec>()
 
     fun generate(): List<FileSpec> {
         types.clear()
         types += createDependencyFactory()
-        types += createEntryPoint()
+        types += entryPoint.generate(context)
         return types.toList()
     }
 
@@ -323,49 +325,6 @@ class MegaGenerator(
             .addType(type.build())
             .build()
         return instructionSetClassName
-    }
-
-    // ---###---
-
-    private fun createEntryPoint(): FileSpec {
-        val ep = graph.entry
-        val epcn = resolver.peerClass(graph, "EntryPoint")
-        val dfcn = dependencyFactoryClassName
-        val type = TypeSpec.objectBuilder(epcn)
-            .addSuperinterface(resolver.getTypeName(ep.type))
-            .addModifiers(KModifier.PRIVATE)
-        for (m in ep.methods) {
-            type.addFunction(
-                FunSpec.builder(m.name)
-                    .addModifiers(KModifier.OVERRIDE)
-                    .returns(resolver.getTypeName(m.returns))
-                    .addStatement("return %T.get(%L(%L))", dfcn, DependencyId::class.asClassName(), getDependencyId(tfih.find(m.returns)))
-                    .build()
-            )
-        }
-        for (p in ep.properties) {
-            type.addProperty(
-                PropertySpec.builder(p.name, resolver.getTypeName(p.returns))
-                    .addModifiers(KModifier.OVERRIDE)
-                    .getter(
-                        FunSpec.getterBuilder()
-                            .addStatement("return %T.get(%L(%L))", dfcn, DependencyId::class.asClassName(), getDependencyId(tfih.find(p.returns)))
-                            .build()
-                    )
-                    .build()
-            )
-        }
-        return FileSpec.builder(epcn)
-            .addType(type.build())
-            .addFunction(
-                FunSpec.builder("invoke")
-                    .addModifiers(KModifier.OPERATOR)
-                    .receiver((resolver.getTypeName(ep.type) as ClassName).nestedClass("Companion"))
-                    .returns(resolver.getTypeName(ep.type))
-                    .addStatement("return %T", epcn)
-                    .build()
-            )
-            .build()
     }
 
 }
