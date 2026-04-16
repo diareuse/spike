@@ -12,7 +12,6 @@ import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.withIndent
 import spike.compiler.graph.DependencyGraph
-import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
 import spike.compiler.graph.TypeFactory.Companion.dependencyTree
 import spike.compiler.graph.TypeFactory.Companion.invertDependencyTree
@@ -20,20 +19,18 @@ import spike.factory.DependencyFactory
 import spike.factory.DependencyId
 import spike.factory.InstructionSet
 import spike.factory.InstructionSetPointer
-import kotlin.reflect.KClass
 
 class MegaGenerator(
     private val context: FileGeneratorContext,
     private val entryPoint: EntryPointGenerator,
-    private val instructionSet: InstructionSetGenerator
+    private val instructionSet: InstructionSetGenerator,
+    private val dependencyHolder: (Int) -> DependencyHolderGenerator,
 ) {
     private val graph: DependencyGraph inline get() = context.graph
     private val resolver: TypeResolver inline get() = context.resolver
 
     private val dependencyFactoryClassName = resolver.peerClass(graph, "Factory")
-    private val instructionSetClassName = resolver.peerClass(graph, "InstructionSet")
     private val dfis inline get() = context.instructions
-    private val tfih inline get() = context.ids
 
     private val types = mutableListOf<FileSpec>()
 
@@ -90,11 +87,11 @@ class MegaGenerator(
 
     // ---
     private fun createInstantiateBody(): CodeBlock {
-        val dependencyHolders = createDependencyHolders()
         val block = CodeBlock.builder()
         block.beginControlFlow("return when (id.%L) {", DependencyId::segment.name)
         block.withIndent {
-            for ((index, holder) in dependencyHolders) {
+            for (index in context.ids.indices) {
+                val holder = dependencyHolder(index).generate(context).also { types += it }.toClassName()
                 addStatement("$index -> %T.create(buffer, id.position)", holder)
             }
             addStatement("else -> error(\"Invalid segment\")")
@@ -147,98 +144,9 @@ class MegaGenerator(
     }
 
     // ---
-
-    private fun createDependencyHolders() = tfih.toList().mapIndexed { index, holder ->
-        index to createDependencyHolder(index, holder)
-    }
-
-    // ---
-    private fun getDependencyId(factory: TypeFactory): Int {
-        return tfih.getOrAdd(factory)
-    }
+    private fun getDependencyId(factory: TypeFactory): Int = context.getDependencyId(factory)
 
     // ---###---
-
-    private fun createDependencyHolder(index: Int, factories: List<TypeFactory>): ClassName {
-        val className = resolver.peerClass(graph, "DependencyHolder$index")
-        val type = TypeSpec.objectBuilder(className)
-        type.addFunction(createCreateMethod(factories))
-        type.build().also { type ->
-            types += FileSpec.builder(className)
-                .addType(type)
-                .build()
-        }
-        return className
-    }
-
-    private fun mapEntryKey(key: Any?) = when (key) {
-        is String -> "\"$key\""
-        is KClass<*> -> "${key.qualifiedName}::class"
-        is Type -> resolver.getTypeName(key).toString() + "::class"
-        else -> key
-    }
-
-    private fun CodeBlock.Builder.mapEntries(entries: Iterable<Map.Entry<Any?, TypeFactory>>) = apply {
-        for ((index, entry) in entries.withIndex()) context.apply {
-            if (index > 0) addStatement(",")
-            val (k, v) = entry
-            add("%L to ", mapEntryKey(k))
-            when (v) {
-                is TypeFactory.Memorizes -> addLazy {
-                    addDependencyFactoryCall(dependencyFactoryClassName, v.factory, v.type.typeArguments.single())
-                }
-                is TypeFactory.Provides -> addProvider {
-                    addDependencyFactoryCall(dependencyFactoryClassName, v.factory, v.type.typeArguments.single())
-                }
-                else -> addBufferCast(index, v.type)
-            }
-        }
-        addStatement("")
-    }
-
-    private fun createCreateMethod(factories: List<TypeFactory>): FunSpec {
-        val builder = FunSpec.builder("create")
-            .addModifiers(KModifier.INTERNAL)
-            .addParameter("buffer", Array::class.asTypeName().parameterizedBy(Any::class.asTypeName().copy(nullable = true)))
-            .addParameter("position", Int::class)
-            .returns(Any::class)
-
-        val body = CodeBlock.builder()
-        body.beginControlFlow("return when(position) {")
-        // the index here expects a well-ordered factories argument
-        for ((index, factory) in factories.withIndex()) context.apply {
-            body.add("$index -> ")
-            when (factory) {
-                is TypeFactory.Binds -> body.addBufferCast(0, factory.type).addStatement("")
-                is TypeFactory.Class -> body.addType(factory.type) {
-                    body.addParameters(factory.invocation)
-                }.addStatement("")
-                is TypeFactory.Method -> body.addMember(factory.member) {
-                    body.addParameters(factory.invocation)
-                }.addStatement("")
-                is TypeFactory.Memorizes -> body.addLazy {
-                    addDependencyFactoryCall(dependencyFactoryClassName, factory.factory)
-                }.addStatement("")
-                is TypeFactory.Provides -> body.addProvider {
-                    addDependencyFactoryCall(dependencyFactoryClassName, factory.factory)
-                }.addStatement("")
-                is TypeFactory.MultibindsCollection -> body.addMember(factory.collectionMemberFactory) {
-                    addParameters(factory.entries)
-                }.addStatement("")
-                is TypeFactory.MultibindsMap -> body.addMap(factory.type.typeArguments[0], factory.type.typeArguments[1]) {
-                    mapEntries(factory.keyValues.entries)
-                }.addStatement("")
-                is TypeFactory.Property -> error("Properties are unsupported, bind using external holder")
-            }
-        }
-        body.addStatement("else -> error(\"Invalid position\")")
-        body.endControlFlow()
-        builder.addCode(body.build())
-
-        return builder.build()
-    }
-
-    // ---
 
     private fun createInstructionSet(): ClassName {
         return instructionSet.generate(context).also { types += it }.toClassName()
