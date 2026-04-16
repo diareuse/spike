@@ -15,7 +15,12 @@ class DependencyGraphGenerator(
     fun generate(graph: DependencyGraph) {
         val context = FileGeneratorContext(resolver, graph)
         val entryPoint = EntryPointGenerator(context.resolver.peerClass(graph, "Factory"))
-        MegaGenerator(context, entryPoint).generate().forEach { file ->
+        val instructionSet = InstructionSetGenerator()
+        MegaGenerator(
+            context = context,
+            entryPoint = entryPoint,
+            instructionSet = instructionSet,
+        ).generate().forEach { file ->
             try {
                 file.writeTo(environment.codeGenerator, false)
             } catch (_: FileAlreadyExistsException) {
