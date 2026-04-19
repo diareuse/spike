@@ -39,7 +39,7 @@ class DependencyFactoryGenerator(
         spec.addFunction(
             FunSpec.builder("getInstructionsPointer")
                 .addModifiers(KModifier.OVERRIDE)
-                .returns(InstructionSetPointer::class.asClassName().copy(nullable = true))
+                .returns(InstructionSetPointerNull)
                 .addParameter("id", DependencyId::class)
                 .addCode(createGetInstructionsBody(context))
                 .build()
@@ -48,19 +48,22 @@ class DependencyFactoryGenerator(
             FunSpec.builder("instantiate")
                 .addModifiers(KModifier.OVERRIDE)
                 .returns(Any::class)
-                .addParameter("buffer", Array::class.asClassName().parameterizedBy(Any::class.asTypeName().copy(nullable = true)))
+                .addParameter("buffer", ArrayOfAny)
                 .addParameter("id", DependencyId::class)
                 .addCode(createInstantiateBody(context, collector))
                 .build()
         )
+        val instructionSetGetter = FunSpec.getterBuilder()
+            .addStatement(
+                "return %T.%L",
+                createInstructionSet(context, collector),
+                InstructionSet::memory.name
+            )
+            .build()
         spec.addProperty(
             PropertySpec.builder("instructionSet", IntArray::class)
                 .addModifiers(KModifier.OVERRIDE)
-                .getter(
-                    FunSpec.getterBuilder()
-                        .addStatement("return %T.%L", createInstructionSet(context, collector), InstructionSet::memory.name)
-                        .build()
-                )
+                .getter(instructionSetGetter)
                 .build()
         )
         val type = spec.build()
@@ -140,5 +143,11 @@ class DependencyFactoryGenerator(
                 add(it)
             }
         }.single().toClassName()
+    }
+
+    private companion object {
+        val InstructionSetPointerNull = InstructionSetPointer::class.asClassName().copy(nullable = true)
+        val ArrayOfAny = Array::class.asClassName()
+            .parameterizedBy(Any::class.asTypeName().copy(nullable = true))
     }
 }

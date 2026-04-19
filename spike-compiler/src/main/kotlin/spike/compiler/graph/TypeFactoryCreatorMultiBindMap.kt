@@ -15,7 +15,12 @@ class TypeFactoryCreatorMultiBindMap(
         val (keyType, valueType) = type.typeArguments
         var instanceMap = multibinding.map[valueType.unwrapParametrized()]
         if (instanceMap == null) {
-            logger.warn("[soft-err] Multibinding for $type(${valueType.unwrapParametrized()}) not found in ${multibinding.map.keys}. (This sometimes happens with Androidx ViewModels, nothing to worry about there)")
+            val unwrapped = valueType.unwrapParametrized()
+            val keys = multibinding.map.keys
+            logger.warn(
+                "[soft-err] Multibinding for $type($unwrapped) not found in $keys. " +
+                        "(This sometimes happens with Androidx ViewModels, nothing to worry about there)"
+            )
             instanceMap = emptyMap()
         }
         val instances = instanceMap
@@ -28,22 +33,29 @@ class TypeFactoryCreatorMultiBindMap(
                 if (v.factories.isNotEmpty()) {
                     val definition = v.factories.singleOrNull()
                         ?: error("Multiple factories found for the same type $type. You must define only one per key ($k).")
-                    put(k, mint(definition.type.overrideType(valueType), clone(store = definition.asGraphStore() + store)))
-                    continue
-                }
-                if (v.constructors.isNotEmpty()) {
+                    val newType = mint(
+                        type = definition.type.overrideType(valueType),
+                        context = clone(store = definition.asGraphStore() + store)
+                    )
+                    put(k, newType)
+                } else if (v.constructors.isNotEmpty()) {
                     val definition = v.constructors.singleOrNull()
                         ?: error("Multiple classes found for the same $type. You must define only one per key ($k).")
-                    put(k, mint(definition.type.overrideType(valueType), clone(store = definition.asGraphStore() + store)))
-                    continue
-                }
-                if (v.binders.isNotEmpty()) {
+                    val newType = mint(
+                        type = definition.type.overrideType(valueType),
+                        context = clone(store = definition.asGraphStore() + store)
+                    )
+                    put(k, newType)
+                } else if (v.binders.isNotEmpty()) {
                     val definition = v.binders.singleOrNull()
                         ?: error("Multiple bindings found for the same type $type. You must define only one per key ($k).")
-                    put(k, mint(definition.type.overrideType(valueType), clone(store = definition.asGraphStore() + store)))
-                    continue
-                }
-                error("No definition found for $type whilst being multi-bound, this is however most likely a spike inference error.")
+                    val newType = mint(
+                        type = definition.type.overrideType(valueType),
+                        context = clone(store = definition.asGraphStore() + store)
+                    )
+                    put(k, newType)
+                } else
+                    error("No definition found for $type whilst being multi-bound, this is however most likely a spike inference error.")
             }
         }
         return TypeFactory.MultibindsMap(
