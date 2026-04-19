@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773260114118,
+  "lastUpdate": 1776594474908,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -144,6 +144,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Build Time",
             "value": 2663.69,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "5b9a5c9686f181ddf084131b416e1f4ff9a6ad66",
+          "message": "refactor(compiler): simplify dependency writing in `DependencyFactoryGenerator`\n\n- Extracted dependency writing logic into `writeDependencies` for reuse.\n- Introduced `enqueueNestedTypes` to manage nested type queuing.\n- Added `appendDependencyInstructions` for streamlined instruction appending.\n- Improved modularity and readability of `DependencyFactoryGenerator`.",
+          "timestamp": "2026-04-19T12:20:43+02:00",
+          "tree_id": "92a336397c5bc0e84f5ae56bf8e4e5f1abdce71e",
+          "url": "https://github.com/diareuse/spike/commit/5b9a5c9686f181ddf084131b416e1f4ff9a6ad66"
+        },
+        "date": 1776594474479,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2938.06,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 500.847,
             "unit": "ms"
           }
         ]
