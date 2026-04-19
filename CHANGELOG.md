@@ -1,5 +1,50 @@
 # Changelog
 
+## [0.0.2](https://github.com/diareuse/spike/compare/0.0.1...0.0.2) (2026-04-19)
+
+
+### Features
+
+* **compiler:** add instruction set generation for MegaGenerator ([32b3bb6](https://github.com/diareuse/spike/commit/32b3bb6d86c32e3d572b9705816fc23de360cb7c))
+* **compiler:** add new Generator for advanced factory generation ([010434e](https://github.com/diareuse/spike/commit/010434e208779ffa4ca5f1d053f5c64232a4573d))
+* **compiler:** enhance MegaGenerator to support FileSpec output ([a9469af](https://github.com/diareuse/spike/commit/a9469af075284d057a38d10262e3ce27801c8286))
+
+
+### Bug Fixes
+
+* **compiler:** add logger support to improve diagnostics ([046baf1](https://github.com/diareuse/spike/commit/046baf143c39d2144675f10298dd617725716ed2))
+* **compiler:** consolidate dependency tree inversion logic ([c7d9eb6](https://github.com/diareuse/spike/commit/c7d9eb6a68f45e336638b3676617591d1312381f))
+* **compiler:** correct dependency id resolution in MegaGenerator ([bcd9ccc](https://github.com/diareuse/spike/commit/bcd9ccc15aab92e7d0afd42d481342e62633ca28))
+* **compiler:** deprecate properties handling in MegaGenerator ([7085170](https://github.com/diareuse/spike/commit/7085170c7d723d26854f55d7f75740932abd940b))
+* **compiler:** enhance dependency resolution in MegaGenerator ([153437f](https://github.com/diareuse/spike/commit/153437f4153972fc07bf5ed092b65e4605d81abe))
+* **compiler:** enhance multibindings handling in MegaGenerator ([69615ee](https://github.com/diareuse/spike/commit/69615ee4c3d88e087059f5dd81fe54b10b919f84))
+* **compiler:** enhance parameter handling in type collection ([185b6d5](https://github.com/diareuse/spike/commit/185b6d58f5d58b009e285c6a5929f917608b3e38))
+* **compiler:** fixed "Method too large" ([e8e1b31](https://github.com/diareuse/spike/commit/e8e1b31e849f6ac59d80b0643d02dccf51e90552))
+* **compiler:** improve batch initialization in MegaGenerator ([e6accd8](https://github.com/diareuse/spike/commit/e6accd8c84363c49c5cb6d0efcbcd3433e41927c))
+* **compiler:** improve error handling in multibinding resolution ([96f9bdb](https://github.com/diareuse/spike/commit/96f9bdb6d45449cfb99f01cefed2d8f898beb3de))
+* **compiler:** improve generic type handling in MultibindsMap ([7298fd8](https://github.com/diareuse/spike/commit/7298fd8ba85f45acb270c7b415fb25d0c3d908d2))
+* **compiler:** improve MegaGenerator class and type handling ([978fe3a](https://github.com/diareuse/spike/commit/978fe3ad8fa1e93f58c9ac8e3c3101c6852dc7cf))
+* **compiler:** improve multibinding resolution and checks ([680cb46](https://github.com/diareuse/spike/commit/680cb46d0cb46b19841a6eb012be1b72f7aa4005))
+* **compiler:** optimize dependency traversal and type handling ([d4f8ffd](https://github.com/diareuse/spike/commit/d4f8ffda562aa9dcff37396f3d6475ea94a66269))
+* **compiler:** refactor memorizes and providers in MegaGenerator ([df9b290](https://github.com/diareuse/spike/commit/df9b2909db416b8cf94c82f5953027bff0ac4ea7))
+* **compiler:** refactor MultibindsMap generation logic ([af6b7cf](https://github.com/diareuse/spike/commit/af6b7cf12904456b8dd0e334b6e0fccd5a3a92c8))
+* **compiler:** remove unused import statements in DependencyGraphGenerator ([48bc27c](https://github.com/diareuse/spike/commit/48bc27c604dade1978dd082348291eec1fc0d788))
+* **compiler:** replace `toClassName` with `toTypeName` in MegaGenerator ([7edaa82](https://github.com/diareuse/spike/commit/7edaa827d0f33ab5845a399e3681ca2d4834e46a))
+* **compiler:** resolve bugs in MegaGenerator and test resources ([7513707](https://github.com/diareuse/spike/commit/751370747c86e0f7016069b8e5896ad9a5ec0575))
+* **compiler:** simplify dependency resolution in TypeFactory ([a092a42](https://github.com/diareuse/spike/commit/a092a42cc07ffc7fc8aa94cf1b0825c9f835771b))
+* **compiler:** update `createDependencyFactory` to use `objectBuilder` ([1a7176f](https://github.com/diareuse/spike/commit/1a7176fbc40482c0d55d4096f52243388a2c980e))
+* **compiler:** update entry point generation for factories ([004d1d7](https://github.com/diareuse/spike/commit/004d1d73a83268513a3b6898e14c103e635f8137))
+* **deps:** bump androidx-lifecycle from 2.9.6 to 2.10.0 ([0b10648](https://github.com/diareuse/spike/commit/0b1064895a4bc6deba5bbe852279220cb91353bc))
+* **deps:** bump gradle-wrapper from 9.4.0 to 9.4.1 ([b976448](https://github.com/diareuse/spike/commit/b976448bdf114546ff3680ab0151bcff85e8d033))
+* **deps:** bump io.ktor:ktor-server-core from 3.4.1 to 3.4.2 ([d98c747](https://github.com/diareuse/spike/commit/d98c7476410542af4f64e12f536c1650f94d43da))
+* **deps:** bump kotlinpoet from 2.2.0 to 2.3.0 ([6b5d40e](https://github.com/diareuse/spike/commit/6b5d40ebdaefe79d06e658a567565c180f7d5eb8))
+* **deps:** bump org.jetbrains.compose:org.jetbrains.compose.gradle.plugin ([40d1b79](https://github.com/diareuse/spike/commit/40d1b79aa2a72d91b16b1ad609959855487e0e13))
+* **deps:** bump org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin ([2220113](https://github.com/diareuse/spike/commit/222011399d3628ac13d776889ae22c61b831cee2))
+* **deps:** bump org.jetbrains.kotlin.multiplatform from 2.3.10 to 2.3.20 ([9d78af4](https://github.com/diareuse/spike/commit/9d78af417d34a0d56d90ca0da7e38aeba87843d8))
+* **deps:** bump org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin ([ec61e56](https://github.com/diareuse/spike/commit/ec61e56a595983ff14de9b7074aca28f0a18a0f5))
+* **deps:** bump org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin ([899bfa3](https://github.com/diareuse/spike/commit/899bfa3307e4811a63d34e2dae80aaeb0dc3971a))
+* **test:** add annotation support for multibindings ([a67cdf5](https://github.com/diareuse/spike/commit/a67cdf509102110b6dfeab0fc8aafa3cb137e279))
+
 ## 0.0.1 (2026-03-06)
 
 
