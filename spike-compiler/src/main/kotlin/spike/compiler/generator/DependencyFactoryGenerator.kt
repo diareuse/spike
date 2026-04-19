@@ -98,43 +98,81 @@ class DependencyFactoryGenerator(
             .beginControlFlow("return when (id.%L) {", DependencyId::id.name)
         val queue = ArrayDeque(graph.toSequence().toList())
         val uniqueTypes = HashSet<Int>()
+
         while (queue.isNotEmpty()) {
             val type = queue.removeFirst()
             if (!uniqueTypes.add(type.hashCode())) {
                 continue
             }
-            val contextIndexByHash = HashMap<Int, Int>()
+
             block.add("%L -> ", context.getDependencyId(type))
             val offset = context.instructions.start()
-            var contextSize = 0
-            for (dependency in type.invertDependencyTree()) {
-                when (dependency) {
-                    is TypeFactory.Deferred -> queue.add(0, dependency.factory)
-                    is TypeFactory.MultibindsCollection -> queue.addAll(0, dependency.entries)
-                    is TypeFactory.MultibindsMap -> queue.addAll(0, dependency.keyValues.values)
-                    else -> {}
-                }
-                val dependencyHash = dependency.hashCode()
-                if (contextIndexByHash.containsKey(dependencyHash))
-                    continue
-                contextIndexByHash[dependencyHash] = contextSize++
-                val id = context.getDependencyId(dependency)
-                context.instructions.add(id)
-                val dependencyCount = if (dependency is TypeFactory.Deferred) 0 else dependency.dependencies.size
-                context.instructions.add(dependencyCount)
-                if (dependency !is TypeFactory.Deferred) for (argument in dependency.dependencies) {
-                    val i = contextIndexByHash[argument.hashCode()]
-                        ?: error("Dependency '$argument' was not found in dependencyTree")
-                    context.instructions.add(i)
-                }
-            }
+            val contextSize = writeDependencies(
+                type = type,
+                queue = queue,
+                context = context
+            )
             val size = context.instructions.end(contextSize)
             block.addStatement("%T(%L, %L)", InstructionSetPointer::class.asClassName(), offset, size)
         }
+
         block.addStatement($$"else -> error(\"Invalid identifier ${id}\")")
         block.endControlFlow()
         return block.build()
     }
+
+    private fun writeDependencies(
+        type: TypeFactory,
+        queue: ArrayDeque<TypeFactory>,
+        context: FileGeneratorContext,
+    ): Int {
+        val contextIndexByHash = HashMap<Int, Int>()
+        var contextSize = 0
+
+        for (dependency in type.invertDependencyTree()) {
+            enqueueNestedTypes(dependency, queue)
+
+            val dependencyHash = dependency.hashCode()
+            if (contextIndexByHash.containsKey(dependencyHash)) {
+                continue
+            }
+
+            contextIndexByHash[dependencyHash] = contextSize++
+            appendDependencyInstructions(dependency, contextIndexByHash, context)
+        }
+
+        return contextSize
+    }
+
+    private fun enqueueNestedTypes(dependency: TypeFactory, queue: ArrayDeque<TypeFactory>) {
+        when (dependency) {
+            is TypeFactory.Deferred -> queue.add(0, dependency.factory)
+            is TypeFactory.MultibindsCollection -> queue.addAll(0, dependency.entries)
+            is TypeFactory.MultibindsMap -> queue.addAll(0, dependency.keyValues.values)
+            else -> {}
+        }
+    }
+
+    private fun appendDependencyInstructions(
+        dependency: TypeFactory,
+        contextIndexByHash: Map<Int, Int>,
+        context: FileGeneratorContext,
+    ) {
+        val id = context.getDependencyId(dependency)
+        context.instructions.add(id)
+
+        val dependencyCount = if (dependency is TypeFactory.Deferred) 0 else dependency.dependencies.size
+        context.instructions.add(dependencyCount)
+
+        if (dependency !is TypeFactory.Deferred) {
+            for (argument in dependency.dependencies) {
+                val i = contextIndexByHash[argument.hashCode()]
+                    ?: error("Dependency '$argument' was not found in dependencyTree")
+                context.instructions.add(i)
+            }
+        }
+    }
+
 
     private fun createInstructionSet(context: FileGeneratorContext, collector: FileSpecCollector): ClassName {
         return buildList {
