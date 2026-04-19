@@ -4,7 +4,7 @@ kotlin = "2.3.20"
 agp = "8.13.2"
 kotlinpoet = "2.2.0"
 androidx-lifecycle = "2.10.0"
-ktor = "3.4.1"
+ktor = "3.4.2"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
