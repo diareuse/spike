@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1776595031383,
+  "lastUpdate": 1776595089783,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -212,6 +212,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 438.444,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "0b1064895a4bc6deba5bbe852279220cb91353bc",
+          "message": "fix(deps): bump androidx-lifecycle from 2.9.6 to 2.10.0\n\nBumps `androidx-lifecycle` from 2.9.6 to 2.10.0.\n\nUpdates `org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose` from 2.9.6 to 2.10.0\n- [Release notes](https://github.com/JetBrains/compose-jb/releases)\n- [Changelog](https://github.com/JetBrains/compose-multiplatform/blob/master/CHANGELOG.md)\n- [Commits](https://github.com/JetBrains/compose-jb/commits)\n\nUpdates `org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-savedstate` from 2.9.6 to 2.10.0\n- [Release notes](https://github.com/JetBrains/compose-jb/releases)\n- [Changelog](https://github.com/JetBrains/compose-multiplatform/blob/master/CHANGELOG.md)\n- [Commits](https://github.com/JetBrains/compose-jb/commits)\n\n---\nupdated-dependencies:\n- dependency-name: org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose\n  dependency-version: 2.10.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n- dependency-name: org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-savedstate\n  dependency-version: 2.10.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-04-19T12:30:56+02:00",
+          "tree_id": "e134235778d0d9468777897fd47145fdc69c51fb",
+          "url": "https://github.com/diareuse/spike/commit/0b1064895a4bc6deba5bbe852279220cb91353bc"
+        },
+        "date": 1776595089368,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2923.44,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 506.233,
             "unit": "ms"
           }
         ]
