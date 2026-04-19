@@ -8,7 +8,9 @@ import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import spike.factory.InstructionSet
 
-class InstructionSetGenerator : Generator {
+class InstructionSetGenerator(
+    private val sizeLimit: Int = 1000
+) : Generator {
     override fun generate(context: FileGeneratorContext, collector: FileSpecCollector) {
         val instructionSetClassName = context.resolver.peerClass(context.graph, "InstructionSet")
         val dfis = context.instructions
@@ -27,7 +29,7 @@ class InstructionSetGenerator : Generator {
         val total = instructions.size
 
         while (index < total) {
-            val end = minOf(index + 1000, total)
+            val end = minOf(index + sizeLimit, total)
             val functionName = "init$blockIndex"
             val body = FunSpec.builder(functionName)
 

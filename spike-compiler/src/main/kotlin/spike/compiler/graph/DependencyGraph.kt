@@ -35,6 +35,11 @@ class DependencyGraph(
             this.multibinding = graph
         }
 
-        fun build(entry: GraphEntryPoint): DependencyGraph = DependencyGraphFactory(entry, store, multibinding, logger).create()
+        fun build(entry: GraphEntryPoint): DependencyGraph = DependencyGraphFactory(
+            entry = entry,
+            root = store,
+            multibinding = multibinding,
+            logger = logger
+        ).create()
     }
 }

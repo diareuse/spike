@@ -26,7 +26,12 @@ class EntryPointGenerator(
                 FunSpec.builder(m.name)
                     .addModifiers(KModifier.OVERRIDE)
                     .returns(resolver.getTypeName(m.returns))
-                    .addStatement("return %T.get(%L(%L))", dfcn, DependencyId::class.asClassName(), context.getDependencyId(context.ids.find(m.returns)))
+                    .addStatement(
+                        "return %T.get(%L(%L))",
+                        dfcn,
+                        DependencyId::class.asClassName(),
+                        context.getDependencyId(context.ids.find(m.returns))
+                    )
                     .build()
             )
         }
@@ -36,7 +41,12 @@ class EntryPointGenerator(
                     .addModifiers(KModifier.OVERRIDE)
                     .getter(
                         FunSpec.getterBuilder()
-                            .addStatement("return %T.get(%L(%L))", dfcn, DependencyId::class.asClassName(), context.getDependencyId(context.ids.find(p.returns)))
+                            .addStatement(
+                                "return %T.get(%L(%L))",
+                                dfcn,
+                                DependencyId::class.asClassName(),
+                                context.getDependencyId(context.ids.find(p.returns))
+                            )
                             .build()
                     )
                     .build()
