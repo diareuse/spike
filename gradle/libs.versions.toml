@@ -2,7 +2,7 @@
 google-ksp = "2.3.6"
 kotlin = "2.3.20"
 agp = "8.13.2"
-kotlinpoet = "2.2.0"
+kotlinpoet = "2.3.0"
 androidx-lifecycle = "2.10.0"
 ktor = "3.4.1"
 
