@@ -52,23 +52,8 @@ class DependencyFactoryGenerator(
                 .build()
         )
         // ---
-        spec.addFunction(
-            FunSpec.builder("getInstructionsPointer")
-                .addModifiers(KModifier.OVERRIDE)
-                .returns(InstructionSetPointerNull)
-                .addParameter("id", DependencyId::class)
-                .addCode(createGetInstructionsBody(context))
-                .build()
-        )
-        spec.addFunction(
-            FunSpec.builder("instantiate")
-                .addModifiers(KModifier.OVERRIDE)
-                .returns(Any::class)
-                .addParameter("buffer", ArrayOfAny)
-                .addParameter("id", DependencyId::class)
-                .addCode(createInstantiateBody(context, spec, collector))
-                .build()
-        )
+        createInstructionPointer(context, spec)
+        createInstantiate(context, spec, collector)
         val instructionSetGetter = FunSpec.getterBuilder()
             .addStatement(
                 "return %T.%L",
@@ -87,6 +72,36 @@ class DependencyFactoryGenerator(
             .addType(type)
             .build()
         collector.emit(file)
+    }
+
+    private fun createInstructionPointer(
+        context: FileGeneratorContext,
+        spec: TypeSpec.Builder
+    ) {
+        spec.addFunction(
+            FunSpec.builder("getInstructionsPointer")
+                .addModifiers(KModifier.OVERRIDE)
+                .returns(InstructionSetPointerNull)
+                .addParameter("id", DependencyId::class)
+                .addCode(createGetInstructionsBody(context))
+                .build()
+        )
+    }
+
+    private fun createInstantiate(
+        context: FileGeneratorContext,
+        spec: TypeSpec.Builder,
+        collector: FileSpecCollector
+    ) {
+        spec.addFunction(
+            FunSpec.builder("instantiate")
+                .addModifiers(KModifier.OVERRIDE)
+                .returns(Any::class)
+                .addParameter("buffer", ArrayOfAny)
+                .addParameter("id", DependencyId::class)
+                .addCode(createInstantiateBody(context, spec, collector))
+                .build()
+        )
     }
 
     private fun createInstantiateBody(
