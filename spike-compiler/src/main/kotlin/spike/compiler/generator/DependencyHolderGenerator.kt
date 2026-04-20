@@ -44,6 +44,7 @@ class DependencyHolderGenerator(
         )
         type.addProperty(
             PropertySpec.builder("factory", dependencyFactoryClassName)
+                .addModifiers(KModifier.PRIVATE)
                 .initializer("factory")
                 .build()
         )

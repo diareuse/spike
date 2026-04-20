@@ -1,7 +1,6 @@
 package spike.compiler.generator
 
 import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
@@ -34,14 +33,7 @@ class EntryPointGenerator(
                     .build()
             )
             .addModifiers(KModifier.PRIVATE)
-        type.addFunction(
-            FunSpec.constructorBuilder()
-                .addParameters(ep.factory.method.parameters.map {
-                    ParameterSpec.builder(it.name, resolver.getTypeName(it.type)).build()
-                })
-                .callThisConstructor(CodeBlock.of("%T(${ep.factory.method.parameters.joinToString { it.name }})", dfcn))
-                .build()
-        )
+        type.addType(createFactory(context, epcn, dfcn))
         for (m in ep.methods) {
             type.addFunction(
                 FunSpec.builder(m.name)
@@ -81,10 +73,33 @@ class EntryPointGenerator(
                     .addParameters(ep.factory.method.parameters.map {
                         ParameterSpec.builder(it.name, resolver.getTypeName(it.type)).build()
                     })
-                    .addStatement("return %T(${ep.factory.method.parameters.joinToString { it.name }})", epcn)
+                    .addStatement("return %T.Factory.create(${ep.factory.method.parameters.joinToString { it.name }})", epcn)
                     .build()
             )
             .build()
         collector.emit(file)
+    }
+
+    private fun createFactory(context: FileGeneratorContext, epcn: ClassName, dfcn: ClassName): TypeSpec {
+        if (context.graph.entry.factory.isVirtual) return TypeSpec.objectBuilder("Factory")
+            .addFunction(
+                FunSpec.builder("create")
+                    .returns(epcn)
+                    .addCode("return %T(%T())", epcn, dfcn)
+                    .build()
+            )
+            .build()
+        val m = context.graph.entry.factory.method
+        return TypeSpec.objectBuilder("Factory")
+            .addSuperinterface(context.resolver.getTypeName(context.graph.entry.factory.type))
+            .addFunction(
+                FunSpec.builder(m.name)
+                    .returns(context.resolver.getTypeName(m.returns))
+                    .addModifiers(KModifier.OVERRIDE)
+                    .addParameters(m.parameters.map { ParameterSpec.builder(it.name, context.resolver.getTypeName(it.type)).build() })
+                    .addCode("return %T(%T(${m.parameters.joinToString { it.name }}))", epcn, dfcn)
+                    .build()
+            )
+            .build()
     }
 }

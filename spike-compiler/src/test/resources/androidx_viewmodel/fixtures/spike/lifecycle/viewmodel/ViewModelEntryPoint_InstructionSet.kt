@@ -4,7 +4,7 @@ import kotlin.IntArray
 import spike.factory.InstructionSet
 
 public object ViewModelEntryPoint_InstructionSet : InstructionSet {
-  override val memory: IntArray = IntArray(12)
+  override val memory: IntArray = IntArray(17)
 
   init {
     init0()
@@ -17,11 +17,16 @@ public object ViewModelEntryPoint_InstructionSet : InstructionSet {
     memory[3] = 0
     memory[4] = 1
     memory[5] = 0
-    memory[6] = 1
-    memory[7] = 1
+    memory[6] = 2
+    memory[7] = 2
     memory[8] = 0
     memory[9] = 1
-    memory[10] = 2
-    memory[11] = 0
+    memory[10] = 0
+    memory[11] = 2
+    memory[12] = 2
+    memory[13] = 0
+    memory[14] = 3
+    memory[15] = 1
+    memory[16] = 0
   }
 }

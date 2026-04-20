@@ -4,7 +4,9 @@ import kotlin.Int
 import kotlin.collections.mapOf
 import kotlin.reflect.KClass
 
-public object PropertyEntryPoint_DependencyHolder0 {
+public class PropertyEntryPoint_DependencyHolder0(
+  private val factory: PropertyEntryPoint_Factory,
+) {
   internal fun create(buffer: Array<Any?>, position: Int): Any = when(position) {
     0 -> mapOf<KClass<out Cat>, Cat>(
       SomeCat::class to buffer[0] as SomeCat

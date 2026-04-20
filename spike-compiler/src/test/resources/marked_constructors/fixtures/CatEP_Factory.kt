@@ -6,8 +6,10 @@ import spike.factory.DependencyFactory
 import spike.factory.DependencyId
 import spike.factory.InstructionSetPointer
 
-public object CatEP_Factory : DependencyFactory() {
+public class CatEP_Factory() : DependencyFactory() {
   override val maxConstructorArgs: Int = 3
+
+  private val holder0: CatEP_DependencyHolder0 = CatEP_DependencyHolder0(this)
 
   override val instructionSet: IntArray
     get() = CatEP_InstructionSet.memory
@@ -18,7 +20,7 @@ public object CatEP_Factory : DependencyFactory() {
   }
 
   override fun instantiate(buffer: Array<Any?>, id: DependencyId): Any = when (id.segment) {
-      0 -> CatEP_DependencyHolder0.create(buffer, id.position)
+      0 -> holder0.create(buffer, id.position)
       else -> error("Invalid segment")
   }
 }
