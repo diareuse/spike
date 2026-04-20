@@ -5,6 +5,7 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
@@ -25,8 +26,23 @@ class DependencyFactoryGenerator(
     private val dependencyHolder: (Int) -> DependencyHolderGenerator,
 ) : Generator {
     override fun generate(context: FileGeneratorContext, collector: FileSpecCollector) {
-        val spec = TypeSpec.objectBuilder(dependencyFactoryClassName)
+        val spec = TypeSpec.classBuilder(dependencyFactoryClassName)
         spec.superclass(DependencyFactory::class)
+        spec.primaryConstructor(
+            FunSpec.constructorBuilder()
+                .addParameters(
+                    context.graph.entry.factory.method.parameters.map {
+                        ParameterSpec.builder(it.name, context.resolver.getTypeName(it.type)).build()
+                    }
+                )
+                .build()
+        )
+        spec.addProperties(context.graph.entry.factory.method.parameters.map {
+            PropertySpec.builder(it.name, context.resolver.getTypeName(it.type))
+                .initializer(it.name)
+                .addModifiers(KModifier.PUBLIC)
+                .build()
+        })
         val graph = context.graph
         val maxConstructorArgs = graph.toSequence().flatMap { it.dependencyTree() }.maxOf { it.dependencies.size }
         spec.addProperty(
@@ -50,7 +66,7 @@ class DependencyFactoryGenerator(
                 .returns(Any::class)
                 .addParameter("buffer", ArrayOfAny)
                 .addParameter("id", DependencyId::class)
-                .addCode(createInstantiateBody(context, collector))
+                .addCode(createInstantiateBody(context, spec, collector))
                 .build()
         )
         val instructionSetGetter = FunSpec.getterBuilder()
@@ -73,7 +89,11 @@ class DependencyFactoryGenerator(
         collector.emit(file)
     }
 
-    private fun createInstantiateBody(context: FileGeneratorContext, collector: FileSpecCollector): CodeBlock {
+    private fun createInstantiateBody(
+        context: FileGeneratorContext,
+        spec: TypeSpec.Builder,
+        collector: FileSpecCollector
+    ): CodeBlock {
         val block = CodeBlock.builder()
         block.beginControlFlow("return when (id.%L) {", DependencyId::segment.name)
         block.withIndent {
@@ -84,7 +104,13 @@ class DependencyFactoryGenerator(
                         add(it)
                     }
                 }.single().toClassName()
-                addStatement("$index -> %T.create(buffer, id.position)", holder)
+                spec.addProperty(
+                    PropertySpec.builder("holder$index", holder)
+                        .initializer("%T(this)", holder)
+                        .addModifiers(KModifier.PRIVATE)
+                        .build()
+                )
+                addStatement("$index -> holder$index.create(buffer, id.position)")
             }
             addStatement("else -> error(\"Invalid segment\")")
         }
