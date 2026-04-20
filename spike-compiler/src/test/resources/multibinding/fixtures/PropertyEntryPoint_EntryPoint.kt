@@ -3,15 +3,21 @@ import kotlin.collections.List
 import kotlin.collections.Map
 import kotlin.collections.Set
 
-private object PropertyEntryPoint_EntryPoint : PropertyEntryPoint {
+private class PropertyEntryPoint_EntryPoint(
+  private val factory: PropertyEntryPoint_Factory,
+) : PropertyEntryPoint {
   override val catsWithNames: Map<String, Cat>
-    get() = PropertyEntryPoint_Factory.get(spike.factory.DependencyId(0))
+    get() = factory.get(spike.factory.DependencyId(0))
 
   override val cats: List<Cat>
-    get() = PropertyEntryPoint_Factory.get(spike.factory.DependencyId(3))
+    get() = factory.get(spike.factory.DependencyId(3))
 
   override val uniqueCats: Set<Cat>
-    get() = PropertyEntryPoint_Factory.get(spike.factory.DependencyId(6))
+    get() = factory.get(spike.factory.DependencyId(6))
+
+  public object Factory {
+    public fun create(): PropertyEntryPoint_EntryPoint = PropertyEntryPoint_EntryPoint(PropertyEntryPoint_Factory())
+  }
 }
 
-public operator fun PropertyEntryPoint.Companion.invoke(): PropertyEntryPoint = PropertyEntryPoint_EntryPoint
+public operator fun PropertyEntryPoint.Companion.invoke(): PropertyEntryPoint = PropertyEntryPoint_EntryPoint.Factory.create()

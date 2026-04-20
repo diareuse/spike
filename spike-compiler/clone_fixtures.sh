@@ -8,4 +8,6 @@ main() {
   cp -r $source/* $target
 }
 
-main $@
+for dir in src/test/resources/*(/N); do
+  main "${dir##*/}"
+done

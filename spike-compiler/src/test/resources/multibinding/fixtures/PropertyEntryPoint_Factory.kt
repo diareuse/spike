@@ -6,8 +6,11 @@ import spike.factory.DependencyFactory
 import spike.factory.DependencyId
 import spike.factory.InstructionSetPointer
 
-public object PropertyEntryPoint_Factory : DependencyFactory() {
+public class PropertyEntryPoint_Factory() : DependencyFactory() {
   override val maxConstructorArgs: Int = 2
+
+  private val holder0: PropertyEntryPoint_DependencyHolder0 =
+      PropertyEntryPoint_DependencyHolder0(this)
 
   override val instructionSet: IntArray
     get() = PropertyEntryPoint_InstructionSet.memory
@@ -26,7 +29,7 @@ public object PropertyEntryPoint_Factory : DependencyFactory() {
   }
 
   override fun instantiate(buffer: Array<Any?>, id: DependencyId): Any = when (id.segment) {
-      0 -> PropertyEntryPoint_DependencyHolder0.create(buffer, id.position)
+      0 -> holder0.create(buffer, id.position)
       else -> error("Invalid segment")
   }
 }

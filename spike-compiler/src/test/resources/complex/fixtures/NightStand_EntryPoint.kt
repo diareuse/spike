@@ -1,9 +1,15 @@
-private object NightStand_EntryPoint : NightStand {
+private class NightStand_EntryPoint(
+  private val factory: NightStand_Factory,
+) : NightStand {
   override val television: Television
-    get() = NightStand_Factory.get(spike.factory.DependencyId(0))
+    get() = factory.get(spike.factory.DependencyId(0))
 
   override val remote: Remote
-    get() = NightStand_Factory.get(spike.factory.DependencyId(5))
+    get() = factory.get(spike.factory.DependencyId(5))
+
+  public object Factory {
+    public fun create(): NightStand_EntryPoint = NightStand_EntryPoint(NightStand_Factory())
+  }
 }
 
-public operator fun NightStand.Companion.invoke(): NightStand = NightStand_EntryPoint
+public operator fun NightStand.Companion.invoke(): NightStand = NightStand_EntryPoint.Factory.create()

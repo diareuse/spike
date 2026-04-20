@@ -6,7 +6,9 @@ import kotlin.collections.listOf
 import kotlin.collections.mapOf
 import kotlin.collections.setOf
 
-public object PropertyEntryPoint_DependencyHolder0 {
+public class PropertyEntryPoint_DependencyHolder0(
+  private val factory: PropertyEntryPoint_Factory,
+) {
   internal fun create(buffer: Array<Any?>, position: Int): Any = when(position) {
     0 -> mapOf<String, Cat>(
       "sphynx" to buffer[0] as Cat,
