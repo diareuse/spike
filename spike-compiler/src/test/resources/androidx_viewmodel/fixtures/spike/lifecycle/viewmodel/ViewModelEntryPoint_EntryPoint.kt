@@ -18,3 +18,5 @@ private class ViewModelEntryPoint_EntryPoint(
 }
 
 public operator fun ViewModelEntryPoint.Companion.invoke(handle: SavedStateHandle): ViewModelEntryPoint = ViewModelEntryPoint_EntryPoint.Factory.create(handle)
+
+public fun ViewModelEntryPoint.Companion.factory(): ViewModelEntryPoint.Factory = ViewModelEntryPoint_EntryPoint.Factory
