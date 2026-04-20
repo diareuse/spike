@@ -76,8 +76,16 @@ class EntryPointGenerator(
                     .addStatement("return %T.Factory.create(${ep.factory.method.parameters.joinToString { it.name }})", epcn)
                     .build()
             )
-            .build()
-        collector.emit(file)
+        if (!ep.factory.isVirtual) {
+            file.addFunction(
+                FunSpec.builder("factory")
+                    .returns(context.resolver.getTypeName(ep.factory.type))
+                    .receiver((resolver.getTypeName(ep.type) as ClassName).nestedClass("Companion"))
+                    .addCode("return %T.Factory", epcn)
+                    .build()
+            )
+        }
+        collector.emit(file.build())
     }
 
     private fun createFactory(context: FileGeneratorContext, epcn: ClassName, dfcn: ClassName): TypeSpec {
