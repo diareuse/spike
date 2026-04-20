@@ -6,6 +6,7 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
@@ -35,7 +36,17 @@ class DependencyHolderGenerator(
     override fun generate(context: FileGeneratorContext, collector: FileSpecCollector) {
         val factories = context.ids.toList()[index]
         val className = context.resolver.peerClass(context.graph, "DependencyHolder${index}")
-        val type = TypeSpec.objectBuilder(className)
+        val type = TypeSpec.classBuilder(className)
+        type.primaryConstructor(
+            FunSpec.constructorBuilder()
+                .addParameter("factory", dependencyFactoryClassName)
+                .build()
+        )
+        type.addProperty(
+            PropertySpec.builder("factory", dependencyFactoryClassName)
+                .initializer("factory")
+                .build()
+        )
         type.addFunction(context.run { createCreateMethod(factories) })
         val file = FileSpec.builder(className)
             .addType(type.build())
@@ -65,10 +76,10 @@ class DependencyHolderGenerator(
                     body.addParameters(factory.invocation)
                 }.addStatement("")
                 is Memorizes -> body.addLazy {
-                    addDependencyFactoryCall(dependencyFactoryClassName, factory.factory)
+                    addDependencyFactoryCall(factory.factory)
                 }.addStatement("")
                 is Provides -> body.addProvider {
-                    addDependencyFactoryCall(dependencyFactoryClassName, factory.factory)
+                    addDependencyFactoryCall(factory.factory)
                 }.addStatement("")
                 is MultibindsCollection -> body.addMember(factory.collectionMemberFactory) {
                     addParameters(factory.entries)
@@ -77,9 +88,9 @@ class DependencyHolderGenerator(
                     key = factory.type.typeArguments[0],
                     value = factory.type.typeArguments[1]
                 ) {
-                    mapEntries(dependencyFactoryClassName, factory.keyValues.entries)
+                    mapEntries(factory.keyValues.entries)
                 }.addStatement("")
-                is Property -> error("Properties are unsupported, bind using external holder")
+                is Property -> body.addStatement("factory.${factory.name}")
             }
         }
         body.addStatement("else -> error(\"Invalid position\")")

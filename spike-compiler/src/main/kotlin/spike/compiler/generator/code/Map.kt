@@ -1,6 +1,5 @@
 package spike.compiler.generator.code
 
-import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.withIndent
 import spike.compiler.generator.FileGeneratorContext
@@ -31,17 +30,17 @@ private fun mapEntryKey(key: Any?) = when (key) {
 }
 
 context(context: FileGeneratorContext)
-fun CodeBlock.Builder.mapEntries(factoryName: ClassName, entries: Iterable<Map.Entry<Any?, TypeFactory>>) = apply {
+fun CodeBlock.Builder.mapEntries(entries: Iterable<Map.Entry<Any?, TypeFactory>>) = apply {
     for ((index, entry) in entries.withIndex()) context.apply {
         if (index > 0) addStatement(",")
         val (k, v) = entry
         add("%L to ", mapEntryKey(k))
         when (v) {
             is TypeFactory.Memorizes -> addLazy {
-                addDependencyFactoryCall(factoryName, v.factory, v.type.typeArguments.single())
+                addDependencyFactoryCall(v.factory, v.type.typeArguments.single())
             }
             is TypeFactory.Provides -> addProvider {
-                addDependencyFactoryCall(factoryName, v.factory, v.type.typeArguments.single())
+                addDependencyFactoryCall(v.factory, v.type.typeArguments.single())
             }
             else -> addBufferCast(index, v.type)
         }

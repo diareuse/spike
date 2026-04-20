@@ -1,9 +1,11 @@
 package spike.compiler.generator
 
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
@@ -18,17 +20,35 @@ class EntryPointGenerator(
         val ep = graph.entry
         val epcn = resolver.peerClass(graph, "EntryPoint")
         val dfcn = dependencyFactoryClassName
-        val type = TypeSpec.objectBuilder(epcn)
+        val type = TypeSpec.classBuilder(epcn)
             .addSuperinterface(resolver.getTypeName(ep.type))
+            .primaryConstructor(
+                FunSpec.constructorBuilder()
+                    .addParameter("factory", dfcn)
+                    .build()
+            )
+            .addProperty(
+                PropertySpec.builder("factory", dfcn)
+                    .initializer("factory")
+                    .addModifiers(KModifier.PRIVATE)
+                    .build()
+            )
             .addModifiers(KModifier.PRIVATE)
+        type.addFunction(
+            FunSpec.constructorBuilder()
+                .addParameters(ep.factory.method.parameters.map {
+                    ParameterSpec.builder(it.name, resolver.getTypeName(it.type)).build()
+                })
+                .callThisConstructor(CodeBlock.of("%T(${ep.factory.method.parameters.joinToString { it.name }})", dfcn))
+                .build()
+        )
         for (m in ep.methods) {
             type.addFunction(
                 FunSpec.builder(m.name)
                     .addModifiers(KModifier.OVERRIDE)
                     .returns(resolver.getTypeName(m.returns))
                     .addStatement(
-                        "return %T.get(%L(%L))",
-                        dfcn,
+                        "return factory.get(%L(%L))",
                         DependencyId::class.asClassName(),
                         context.getDependencyId(context.ids.find(m.returns))
                     )
@@ -42,8 +62,7 @@ class EntryPointGenerator(
                     .getter(
                         FunSpec.getterBuilder()
                             .addStatement(
-                                "return %T.get(%L(%L))",
-                                dfcn,
+                                "return factory.get(%L(%L))",
                                 DependencyId::class.asClassName(),
                                 context.getDependencyId(context.ids.find(p.returns))
                             )
@@ -59,7 +78,10 @@ class EntryPointGenerator(
                     .addModifiers(KModifier.OPERATOR)
                     .receiver((resolver.getTypeName(ep.type) as ClassName).nestedClass("Companion"))
                     .returns(resolver.getTypeName(ep.type))
-                    .addStatement("return %T", epcn)
+                    .addParameters(ep.factory.method.parameters.map {
+                        ParameterSpec.builder(it.name, resolver.getTypeName(it.type)).build()
+                    })
+                    .addStatement("return %T(${ep.factory.method.parameters.joinToString { it.name }})", epcn)
                     .build()
             )
             .build()
