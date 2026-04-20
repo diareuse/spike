@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1776596105806,
+  "lastUpdate": 1776699037915,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -348,6 +348,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 426.652,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "60cfc8c0b9335479e7151dfe35565c374f6ae03d",
+          "message": "refactor(compiler): modularize method and property generation\n\n- Extracted `generateMethods` and `generateProperties` into private methods in `EntryPointGenerator`.\n- Delegated factory method creation to a new `createFactoryMethod` function.\n- Moved instruction pointer and instantiation logic into dedicated methods in `DependencyFactoryGenerator`.\n- Improved modularity and streamlined code structure in generators.",
+          "timestamp": "2026-04-20T17:22:58+02:00",
+          "tree_id": "582eb14aaf1fdf3d584ad98222c75df79ec1de8b",
+          "url": "https://github.com/diareuse/spike/commit/60cfc8c0b9335479e7151dfe35565c374f6ae03d"
+        },
+        "date": 1776699037543,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 3238.38,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 530.343,
             "unit": "ms"
           }
         ]
