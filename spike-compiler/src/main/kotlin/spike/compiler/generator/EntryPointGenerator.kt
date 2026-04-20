@@ -8,6 +8,7 @@ import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
+import spike.compiler.graph.GraphEntryPoint
 import spike.factory.DependencyId
 
 class EntryPointGenerator(
@@ -34,6 +35,34 @@ class EntryPointGenerator(
             )
             .addModifiers(KModifier.PRIVATE)
         type.addType(createFactory(context, epcn, dfcn))
+        generateMethods(ep, type, resolver, context)
+        generateProperties(ep, type, resolver, context)
+        val file = FileSpec.builder(epcn)
+            .addType(type.build())
+            .addFunction(
+                FunSpec.builder("invoke")
+                    .addModifiers(KModifier.OPERATOR)
+                    .receiver((resolver.getTypeName(ep.type) as ClassName).nestedClass("Companion"))
+                    .returns(resolver.getTypeName(ep.type))
+                    .addParameters(ep.factory.method.parameters.map {
+                        ParameterSpec.builder(it.name, resolver.getTypeName(it.type)).build()
+                    })
+                    .addStatement(
+                        "return %T.Factory.create(${ep.factory.method.parameters.joinToString { it.name }})",
+                        epcn
+                    )
+                    .build()
+            )
+        createFactoryMethod(ep, file, context, resolver, epcn)
+        collector.emit(file.build())
+    }
+
+    private fun generateMethods(
+        ep: GraphEntryPoint,
+        type: TypeSpec.Builder,
+        resolver: TypeResolver,
+        context: FileGeneratorContext
+    ) {
         for (m in ep.methods) {
             type.addFunction(
                 FunSpec.builder(m.name)
@@ -47,6 +76,14 @@ class EntryPointGenerator(
                     .build()
             )
         }
+    }
+
+    private fun generateProperties(
+        ep: GraphEntryPoint,
+        type: TypeSpec.Builder,
+        resolver: TypeResolver,
+        context: FileGeneratorContext
+    ) {
         for (p in ep.properties) {
             type.addProperty(
                 PropertySpec.builder(p.name, resolver.getTypeName(p.returns))
@@ -63,19 +100,15 @@ class EntryPointGenerator(
                     .build()
             )
         }
-        val file = FileSpec.builder(epcn)
-            .addType(type.build())
-            .addFunction(
-                FunSpec.builder("invoke")
-                    .addModifiers(KModifier.OPERATOR)
-                    .receiver((resolver.getTypeName(ep.type) as ClassName).nestedClass("Companion"))
-                    .returns(resolver.getTypeName(ep.type))
-                    .addParameters(ep.factory.method.parameters.map {
-                        ParameterSpec.builder(it.name, resolver.getTypeName(it.type)).build()
-                    })
-                    .addStatement("return %T.Factory.create(${ep.factory.method.parameters.joinToString { it.name }})", epcn)
-                    .build()
-            )
+    }
+
+    private fun createFactoryMethod(
+        ep: GraphEntryPoint,
+        file: FileSpec.Builder,
+        context: FileGeneratorContext,
+        resolver: TypeResolver,
+        epcn: ClassName
+    ) {
         if (!ep.factory.isVirtual) {
             file.addFunction(
                 FunSpec.builder("factory")
@@ -85,7 +118,6 @@ class EntryPointGenerator(
                     .build()
             )
         }
-        collector.emit(file.build())
     }
 
     private fun createFactory(context: FileGeneratorContext, epcn: ClassName, dfcn: ClassName): TypeSpec {
@@ -104,7 +136,9 @@ class EntryPointGenerator(
                 FunSpec.builder(m.name)
                     .returns(context.resolver.getTypeName(m.returns))
                     .addModifiers(KModifier.OVERRIDE)
-                    .addParameters(m.parameters.map { ParameterSpec.builder(it.name, context.resolver.getTypeName(it.type)).build() })
+                    .addParameters(m.parameters.map {
+                        ParameterSpec.builder(it.name, context.resolver.getTypeName(it.type)).build()
+                    })
                     .addCode("return %T(%T(${m.parameters.joinToString { it.name }}))", epcn, dfcn)
                     .build()
             )
