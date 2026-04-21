@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1776783416971,
+  "lastUpdate": 1776787713250,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -416,6 +416,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 522.691,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "c4a36e93df726c2e37bc9610005e27d3c9c0b607",
+          "message": "docs(readme): update usage instructions and add integrations section\n\nUpdates the documentation to reflect current library capabilities and provides a more comprehensive getting started guide.\n\n- Added an **Integrations** section highlighting support for `spike-androidx`, `spike-androidx-compose`, and `spike-ktor`.\n- Updated annotation descriptions to clarify usage of `@Include` on functions and `@Inject` for specific constructor selection.\n- Enhanced the \"Define Your Components\" example to demonstrate:\n    - Interface binding using `bindAs`.\n    - Automatic injection of `Lazy<T>` and `spike.Provider<T>`.\n    - Using `@Include` on functions to provide third-party dependencies.\n- Clarified the requirement of a `companion object` for `@EntryPoint` interfaces to support generated extension factories.",
+          "timestamp": "2026-04-21T18:00:52+02:00",
+          "tree_id": "f99fb3da9a2adea5a4f397d07afe2f24d6a080f2",
+          "url": "https://github.com/diareuse/spike/commit/c4a36e93df726c2e37bc9610005e27d3c9c0b607"
+        },
+        "date": 1776787712892,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 3093.04,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 524.914,
             "unit": "ms"
           }
         ]
