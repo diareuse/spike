@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1776699037915,
+  "lastUpdate": 1776783416971,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -382,6 +382,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 530.343,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "946c43ae4d6f0fd451729eeb4a6a83792a4f06a9",
+          "message": "docs(compose): improve `spikeViewModel` documentation\n\n- Added detailed KDoc with usage example for `spikeViewModel`.\n- Updated parameter descriptions, including `ViewModelStoreOwner`.\n- Enhanced clarity on `CreationExtras` and custom `ViewModel` creation.\n- Fixed formatting inconsistencies in code comments and examples.",
+          "timestamp": "2026-04-21T16:49:33+02:00",
+          "tree_id": "7bc3f98e161c456c5449cef1fa3b294a58d82197",
+          "url": "https://github.com/diareuse/spike/commit/946c43ae4d6f0fd451729eeb4a6a83792a4f06a9"
+        },
+        "date": 1776783416011,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 3125.55,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 522.691,
             "unit": "ms"
           }
         ]
