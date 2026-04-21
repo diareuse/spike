@@ -7,6 +7,7 @@ import androidx.lifecycle.HasDefaultViewModelProviderFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.MutableCreationExtras
@@ -20,10 +21,44 @@ import spike.lifecycle.viewmodel.ViewModelEntryPoint
 import spike.lifecycle.viewmodel.ViewModelProviderFactory
 
 /**
- * Creates new ViewModel instance with Spike.
- * @param extras see [rememberNavigationExtras]
- * @see viewModel
- * */
+ * Provides a `ViewModel` instance by leveraging a custom [ViewModelProvider.Factory] configured with
+ * an `EntryPoint`. This is a reusable utility for integrating [ViewModel] creation with dependency
+ * injection frameworks or customized lifecycles.
+ *
+ * Example usage with input parameters:
+ * ```
+ * @Composable
+ * fun MyScreen(userId: String) {
+ *     val viewModel: MyViewModel = spikeViewModel(
+ *         extras = rememberNavigationExtras {
+ *             args {
+ *                 putString("userId", userId)
+ *                 putInt("screenId", 42)
+ *             }
+ *         }
+ *     )
+ *     // Use viewModel...
+ * }
+ *
+ * class MyViewModel(
+ *     savedStateHandle: SavedStateHandle
+ * ) : ViewModel() {
+ *     private val userId: String = checkNotNull(savedStateHandle["userId"])
+ *     private val screenId: Int = checkNotNull(savedStateHandle["screenId"])
+ * }
+ * ```
+ *
+ * @param VM The type of [ViewModel] to be retrieved.
+ * @param viewModelStoreOwner The [ViewModelStoreOwner] which controls the scope of the [ViewModel]. Defaults
+ *   to the current [LocalViewModelStoreOwner] in the [Composable] context.
+ * @param entryPoint A factory for creating [ViewModelEntryPoint]. This entry point provides the required
+ *   dependencies to create the requested [ViewModel]. Defaults to the current [LocalViewModelEntryPointFactory].
+ * @param key An optional key that uniquely identifies the [ViewModel] in the [ViewModelStore]. If omitted,
+ *   a default key based on the [VM] class is used.
+ * @param extras The [CreationExtras] optional configuration used during [ViewModel] creation. This defaults to
+ *   a value created using [rememberNavigationExtras].
+ * @return The instance of the requested [ViewModel] type.
+ */
 @Composable
 public inline fun <reified VM : ViewModel> spikeViewModel(
     viewModelStoreOwner: ViewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
@@ -55,8 +90,10 @@ internal fun createSpikeViewModelFactory(
 )
 
 /**
- * When using `navigation3` library or generally any other usecase where you'd need to modify [CreationExtras] for you [ViewModel], you may use shit shorthand function.
- * To specifically pass extras to your [ViewModel] via [SavedStateHandle], you should use [args] method in conjuction with this method:
+ * When using `navigation3` library or generally any other usecase where you'd need to modify
+ * [CreationExtras] for you [ViewModel], you may use shit shorthand function. To specifically
+ * pass extras to your [ViewModel] via [SavedStateHandle], you should use [args] method in conjuction
+ * with this method:
  * ```
  * rememberNavigationExtras {
  *   args { putString("key", value) }
