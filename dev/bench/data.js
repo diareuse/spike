@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1776787713250,
+  "lastUpdate": 1776887408090,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -450,6 +450,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 524.914,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "6ab06b68709c590d3a824c411de0482b9d800a24",
+          "message": "fix(deps): bump io.ktor:ktor-server-core from 3.4.2 to 3.4.3\n\nBumps [io.ktor:ktor-server-core](https://github.com/ktorio/ktor) from 3.4.2 to 3.4.3.\n- [Release notes](https://github.com/ktorio/ktor/releases)\n- [Changelog](https://github.com/ktorio/ktor/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/ktorio/ktor/commits)\n\n---\nupdated-dependencies:\n- dependency-name: io.ktor:ktor-server-core\n  dependency-version: 3.4.3\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-04-22T21:42:56+02:00",
+          "tree_id": "294d129cabddf72ddcb2ed1ecf7c1a85fb9ce316",
+          "url": "https://github.com/diareuse/spike/commit/6ab06b68709c590d3a824c411de0482b9d800a24"
+        },
+        "date": 1776887407557,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2970.29,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 472.369,
             "unit": "ms"
           }
         ]
