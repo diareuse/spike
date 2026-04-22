@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1776887408090,
+  "lastUpdate": 1776887459054,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -484,6 +484,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 472.369,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "5dbda333226057089e91df5bc59d0215120c14e3",
+          "message": "chore(deps): bump googleapis/release-please-action from 4 to 5\n\nBumps [googleapis/release-please-action](https://github.com/googleapis/release-please-action) from 4 to 5.\n- [Release notes](https://github.com/googleapis/release-please-action/releases)\n- [Changelog](https://github.com/googleapis/release-please-action/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/googleapis/release-please-action/compare/v4...v5)\n\n---\nupdated-dependencies:\n- dependency-name: googleapis/release-please-action\n  dependency-version: '5'\n  dependency-type: direct:production\n  update-type: version-update:semver-major\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-04-22T21:43:21+02:00",
+          "tree_id": "5771ccaf71ed882463da48920460d526c8214e05",
+          "url": "https://github.com/diareuse/spike/commit/5dbda333226057089e91df5bc59d0215120c14e3"
+        },
+        "date": 1776887458690,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 3130.4,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 524.389,
             "unit": "ms"
           }
         ]
