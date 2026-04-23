@@ -5,7 +5,7 @@ class TypeFactoryCreatorProvider : TypeFactoryCreator {
         val type = type
         if (type is Type.Parametrized && type.envelope == BuiltInTypes.Provider) {
             val dependency = mint(type.typeArguments.single())
-            return TypeFactory.Provides(type, dependency, isPublic = isTopLevel)
+            return TypeFactory.Provides(type, dependency)
         }
         return pass()
     }

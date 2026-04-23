@@ -2,7 +2,7 @@ import kotlin.IntArray
 import spike.factory.InstructionSet
 
 public object NightStand_InstructionSet : InstructionSet {
-  override val memory: IntArray = IntArray(36)
+  override val memory: IntArray = IntArray(27)
 
   init {
     init0()
@@ -36,14 +36,5 @@ public object NightStand_InstructionSet : InstructionSet {
     memory[24] = 5
     memory[25] = 1
     memory[26] = 2
-    memory[27] = 3
-    memory[28] = 1
-    memory[29] = 0
-    memory[30] = 2
-    memory[31] = 1
-    memory[32] = 0
-    memory[33] = 9
-    memory[34] = 1
-    memory[35] = 1
   }
 }

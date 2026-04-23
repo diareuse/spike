@@ -6,6 +6,7 @@ plugins {
     id("base.kotlin.multiplatform")
     id("base.android")
     id("dev.detekt")
+    id("org.jetbrains.kotlinx.atomicfu")
 }
 
 detekt {

@@ -61,7 +61,6 @@ class TypeFactoryCreatorMultiBindMap(
         return TypeFactory.MultibindsMap(
             type = type,
             keyValues = keyValues,
-            isPublic = isTopLevel,
         )
     }
 

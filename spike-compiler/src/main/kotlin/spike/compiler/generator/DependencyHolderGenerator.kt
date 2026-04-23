@@ -15,19 +15,15 @@ import spike.compiler.generator.code.addDependencyFactoryCall
 import spike.compiler.generator.code.addLazy
 import spike.compiler.generator.code.addMap
 import spike.compiler.generator.code.addMember
+import spike.compiler.generator.code.addOptionalSingleton
 import spike.compiler.generator.code.addParameters
 import spike.compiler.generator.code.addProvider
 import spike.compiler.generator.code.addType
 import spike.compiler.generator.code.mapEntries
 import spike.compiler.graph.TypeFactory
-import spike.compiler.graph.TypeFactory.Binds
-import spike.compiler.graph.TypeFactory.Class
-import spike.compiler.graph.TypeFactory.Memorizes
-import spike.compiler.graph.TypeFactory.Method
-import spike.compiler.graph.TypeFactory.MultibindsCollection
-import spike.compiler.graph.TypeFactory.MultibindsMap
-import spike.compiler.graph.TypeFactory.Property
-import spike.compiler.graph.TypeFactory.Provides
+import spike.compiler.graph.TypeFactory.*
+import spike.factory.SingletonHolder
+import java.util.concurrent.atomic.AtomicInteger
 
 class DependencyHolderGenerator(
     private val index: Int,
@@ -48,15 +44,26 @@ class DependencyHolderGenerator(
                 .initializer("factory")
                 .build()
         )
-        type.addFunction(context.run { createCreateMethod(factories) })
+        val singletonCounter = AtomicInteger()
+        type.addFunction(createCreateMethod(context, factories, singletonCounter))
+        if (singletonCounter.get() > 0) {
+            type.addProperty(
+                PropertySpec.builder("singletons", SingletonHolder::class, KModifier.PRIVATE)
+                    .initializer("%T()", SingletonHolder::class.asClassName())
+                    .build()
+            )
+        }
         val file = FileSpec.builder(className)
             .addType(type.build())
             .build()
         collector.emit(file)
     }
 
-    context(context: FileGeneratorContext)
-    private fun createCreateMethod(factories: List<TypeFactory>): FunSpec {
+    private fun createCreateMethod(
+        context: FileGeneratorContext,
+        factories: List<TypeFactory>,
+        singletonCounter: AtomicInteger
+    ): FunSpec {
         val builder = FunSpec.builder("create")
             .addModifiers(KModifier.INTERNAL)
             .addParameter("buffer", ArrayOfAny)
@@ -70,12 +77,18 @@ class DependencyHolderGenerator(
             body.add("$index -> ")
             when (factory) {
                 is Binds -> body.addBufferCast(0, factory.type).addStatement("")
-                is Class -> body.addType(factory.type) {
-                    body.addParameters(factory.invocation)
-                }.addStatement("")
-                is Method -> body.addMember(factory.member) {
-                    body.addParameters(factory.invocation)
-                }.addStatement("")
+                is Class -> body.addOptionalSingleton(index, factory.singleton) {
+                    if (factory.singleton) singletonCounter.incrementAndGet()
+                    addType(factory.type) {
+                        body.addParameters(factory.invocation)
+                    }.addStatement("")
+                }
+                is Method -> body.addOptionalSingleton(index, factory.singleton) {
+                    if (factory.singleton) singletonCounter.incrementAndGet()
+                    body.addMember(factory.member) {
+                        addParameters(factory.invocation)
+                    }.addStatement("")
+                }
                 is Memorizes -> body.addLazy {
                     addDependencyFactoryCall(factory.factory)
                 }.addStatement("")
