@@ -11,8 +11,6 @@ import spike.factory.SingletonHolder
 public class NightStand_DependencyHolder0(
   private val factory: NightStand_Factory,
 ) {
-  private val singletons: SingletonHolder = SingletonHolder()
-
   internal fun create(buffer: Array<Any?>, position: Int): Any = when(position) {
     0 -> buffer[0] as Television
     1 -> lazy { factory.get<SoundSystem>(DependencyId(3)) }
@@ -26,5 +24,9 @@ public class NightStand_DependencyHolder0(
     7 -> Provider { factory.get<Television>(DependencyId(0)) }
     8 -> RemoteControl(buffer[0] as Provider<Television>, buffer[1] as List<Battery>)
     else -> error("Invalid position")
+  }
+
+  public companion object {
+    private val singletons: SingletonHolder = SingletonHolder()
   }
 }

@@ -47,11 +47,13 @@ class DependencyHolderGenerator(
         val singletonCounter = AtomicInteger()
         type.addFunction(createCreateMethod(context, factories, singletonCounter))
         if (singletonCounter.get() > 0) {
-            type.addProperty(
-                PropertySpec.builder("singletons", SingletonHolder::class, KModifier.PRIVATE)
-                    .initializer("%T()", SingletonHolder::class.asClassName())
-                    .build()
-            )
+            val singletons = PropertySpec.builder("singletons", SingletonHolder::class, KModifier.PRIVATE)
+                .initializer("%T()", SingletonHolder::class.asClassName())
+                .build()
+            val companion = TypeSpec.companionObjectBuilder()
+                .addProperty(singletons)
+                .build()
+            type.addType(companion)
         }
         val file = FileSpec.builder(className)
             .addType(type.build())
