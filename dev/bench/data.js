@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1776973905222,
+  "lastUpdate": 1776974033565,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -586,6 +586,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 447.269,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "910ede35c28cc11e53576dfd46652f06baa7b4b9",
+          "message": "fix(deps): bump org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin\n\nBumps [org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin](https://github.com/JetBrains/kotlin) from 2.3.20 to 2.3.21.\n- [Release notes](https://github.com/JetBrains/kotlin/releases)\n- [Changelog](https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md)\n- [Commits](https://github.com/JetBrains/kotlin/compare/v2.3.20...v2.3.21)\n\n---\nupdated-dependencies:\n- dependency-name: org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin\n  dependency-version: 2.3.21\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-04-23T21:46:30+02:00",
+          "tree_id": "3d378dc5e1d52cec7757cc7ecda5b147d2cc536e",
+          "url": "https://github.com/diareuse/spike/commit/910ede35c28cc11e53576dfd46652f06baa7b4b9"
+        },
+        "date": 1776974033071,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2923.69,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 467.982,
             "unit": "ms"
           }
         ]
