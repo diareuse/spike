@@ -21,7 +21,14 @@ import spike.compiler.generator.code.addProvider
 import spike.compiler.generator.code.addType
 import spike.compiler.generator.code.mapEntries
 import spike.compiler.graph.TypeFactory
-import spike.compiler.graph.TypeFactory.*
+import spike.compiler.graph.TypeFactory.Binds
+import spike.compiler.graph.TypeFactory.Class
+import spike.compiler.graph.TypeFactory.Memorizes
+import spike.compiler.graph.TypeFactory.Method
+import spike.compiler.graph.TypeFactory.MultibindsCollection
+import spike.compiler.graph.TypeFactory.MultibindsMap
+import spike.compiler.graph.TypeFactory.Property
+import spike.compiler.graph.TypeFactory.Provides
 import spike.factory.SingletonHolder
 import java.util.concurrent.atomic.AtomicInteger
 
