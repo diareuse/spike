@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1776974084623,
+  "lastUpdate": 1776974410026,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -654,6 +654,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 495.639,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "40cdf13ebfe55fbf48c01a828f64492124efb092",
+          "message": "fix(deps): bump google-ksp from 2.3.6 to 2.3.7\n\nBumps `google-ksp` from 2.3.6 to 2.3.7.\n\nUpdates `com.google.devtools.ksp:symbol-processing-api` from 2.3.6 to 2.3.7\n- [Release notes](https://github.com/google/ksp/releases)\n- [Commits](https://github.com/google/ksp/compare/2.3.6...2.3.7)\n\nUpdates `com.google.devtools.ksp` from 2.3.6 to 2.3.7\n- [Release notes](https://github.com/google/ksp/releases)\n- [Commits](https://github.com/google/ksp/compare/2.3.6...2.3.7)\n\n---\nupdated-dependencies:\n- dependency-name: com.google.devtools.ksp:symbol-processing-api\n  dependency-version: 2.3.7\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: com.google.devtools.ksp\n  dependency-version: 2.3.7\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-04-23T21:52:46+02:00",
+          "tree_id": "a3d8397efc8caf17fa34e0153d796d89e97f9fbb",
+          "url": "https://github.com/diareuse/spike/commit/40cdf13ebfe55fbf48c01a828f64492124efb092"
+        },
+        "date": 1776974409693,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2925.37,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 475.301,
             "unit": "ms"
           }
         ]
