@@ -1,5 +1,5 @@
 [versions]
-google-ksp = "2.3.6"
+google-ksp = "2.3.7"
 kotlin = "2.3.21"
 agp = "8.13.2"
 kotlinpoet = "2.3.0"
