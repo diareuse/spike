@@ -9,8 +9,6 @@ import spike.factory.SingletonHolder
 public class PropertyEntryPoint_DependencyHolder0(
   private val factory: PropertyEntryPoint_Factory,
 ) {
-  private val singletons: SingletonHolder = SingletonHolder()
-
   internal fun create(buffer: Array<Any?>, position: Int): Any = when(position) {
     0 -> singletons.getOrPut(0) {
         Cat(buffer[0] as Provider<Food>)
@@ -20,5 +18,9 @@ public class PropertyEntryPoint_DependencyHolder0(
     3 -> Provider { factory.get<Cat>(DependencyId(0)) }
     4 -> lazy { factory.get<Cat>(DependencyId(0)) }
     else -> error("Invalid position")
+  }
+
+  public companion object {
+    private val singletons: SingletonHolder = SingletonHolder()
   }
 }
