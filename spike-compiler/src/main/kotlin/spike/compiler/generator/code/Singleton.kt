@@ -11,7 +11,11 @@ inline fun CodeBlock.Builder.addSingleton(index: Int, body: CodeBlock.Builder.()
     endControlFlow()
 }
 
-inline fun CodeBlock.Builder.addOptionalSingleton(index: Int, singleton: Boolean, body: CodeBlock.Builder.() -> Unit) = apply {
+inline fun CodeBlock.Builder.addOptionalSingleton(
+    index: Int,
+    singleton: Boolean,
+    body: CodeBlock.Builder.() -> Unit
+) = apply {
     if (singleton) addSingleton(index, body)
     else body()
 }

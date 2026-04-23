@@ -11,7 +11,7 @@ sealed interface TypeFactory {
         override val dependencies: List<TypeFactory>,
     ) : TypeFactory,
         Callable {
-        /*override fun toString(): String {
+        override fun toString(): String {
             var out = ""
             out += "$type("
             var first = true
@@ -34,7 +34,7 @@ sealed interface TypeFactory {
             if (!first) out += "\n"
             out += ")"
             return out
-        }*/
+        }
     }
 
     data class Method(
