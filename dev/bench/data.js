@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1776974033565,
+  "lastUpdate": 1776974084623,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -620,6 +620,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 467.982,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "fa2ebcb52dfacbb52732c542f946acbf93eee6ec",
+          "message": "fix(deps): bump com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin\n\nBumps [com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin](https://github.com/google/ksp) from 2.3.6 to 2.3.7.\n- [Release notes](https://github.com/google/ksp/releases)\n- [Commits](https://github.com/google/ksp/compare/2.3.6...2.3.7)\n\n---\nupdated-dependencies:\n- dependency-name: com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin\n  dependency-version: 2.3.7\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-04-23T21:47:00+02:00",
+          "tree_id": "b5e9766377ff240a3c6fd1c67b6d7f1d97e48014",
+          "url": "https://github.com/diareuse/spike/commit/fa2ebcb52dfacbb52732c542f946acbf93eee6ec"
+        },
+        "date": 1776974084281,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 3045.95,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 495.639,
             "unit": "ms"
           }
         ]
