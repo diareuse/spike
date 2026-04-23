@@ -196,4 +196,16 @@ class EntryPointTest : TestHarness() {
         }
     )
 
+    @Test
+    fun `singletons are static`() = runTest(
+        label = "singleton",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { build("kspKotlin", "compileKotlin", "run") },
+        verify = {
+            assertSuccess(it.compileKotlin)
+            assertSuccess(it.kspKotlin)
+            fixtures.assertContentEquals(outputFiles)
+        }
+    )
+
 }

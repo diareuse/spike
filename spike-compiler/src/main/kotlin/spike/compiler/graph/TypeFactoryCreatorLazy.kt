@@ -5,7 +5,7 @@ class TypeFactoryCreatorLazy : TypeFactoryCreator {
         val type = type
         if (type is Type.Parametrized && type.envelope == BuiltInTypes.Lazy) {
             val dependency = mint(type.typeArguments.single())
-            return TypeFactory.Memorizes(type, dependency, isPublic = isTopLevel)
+            return TypeFactory.Memorizes(type, dependency)
         }
         return pass()
     }

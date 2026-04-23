@@ -6,21 +6,25 @@ import kotlin.collections.List
 import kotlin.lazy
 import spike.Provider
 import spike.factory.DependencyId
+import spike.factory.SingletonHolder
 
 public class NightStand_DependencyHolder0(
   private val factory: NightStand_Factory,
 ) {
+  private val singletons: SingletonHolder = SingletonHolder()
+
   internal fun create(buffer: Array<Any?>, position: Int): Any = when(position) {
     0 -> buffer[0] as Television
     1 -> lazy { factory.get<SoundSystem>(DependencyId(3)) }
-    2 -> SamsungTelevision(buffer[0] as Lazy<SoundSystem>)
+    2 -> singletons.getOrPut(2) {
+        SamsungTelevision(buffer[0] as Lazy<SoundSystem>)
+    }
     3 -> buffer[0] as SoundSystem
     4 -> AmazonFireSoundBar()
     5 -> buffer[0] as Remote
     6 -> batteries()
-    7 -> Provider { factory.get<Television>(DependencyId(9)) }
+    7 -> Provider { factory.get<Television>(DependencyId(0)) }
     8 -> RemoteControl(buffer[0] as Provider<Television>, buffer[1] as List<Battery>)
-    9 -> buffer[0] as Television
     else -> error("Invalid position")
   }
 }

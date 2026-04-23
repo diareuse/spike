@@ -8,9 +8,9 @@ class TypeFactoryIdHolder(
     private val limit: Int = 1000
 ) {
     private val holders = mutableListOf<MutableList<TypeFactory>>(mutableListOf())
-    val indices get()=holders.indices
+    val indices get() = holders.indices
 
-    fun add(typeFactory: TypeFactory): Int {
+    private fun add(typeFactory: TypeFactory): Int {
         var h = holders.last()
         if (h.size >= limit) {
             holders.add(mutableListOf())

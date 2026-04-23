@@ -3,23 +3,15 @@ package spike.compiler.graph
 sealed interface TypeFactory {
     val type: Type
     val dependencies: List<TypeFactory>
-    val isPublic: Boolean
-
-    val canInline: Boolean
-        get() = true
 
     data class Class(
         override val type: Type,
         override val invocation: Invocation,
         override val singleton: Boolean,
         override val dependencies: List<TypeFactory>,
-        override val isPublic: Boolean,
     ) : TypeFactory,
         Callable {
-        override val canInline: Boolean
-            get() = !singleton
-
-        override fun toString(): String {
+        /*override fun toString(): String {
             var out = ""
             out += "$type("
             var first = true
@@ -42,7 +34,7 @@ sealed interface TypeFactory {
             if (!first) out += "\n"
             out += ")"
             return out
-        }
+        }*/
     }
 
     data class Method(
@@ -51,22 +43,15 @@ sealed interface TypeFactory {
         override val invocation: Invocation,
         override val singleton: Boolean,
         override val dependencies: List<TypeFactory>,
-        override val isPublic: Boolean,
     ) : TypeFactory,
-        Callable {
-        override val canInline: Boolean
-            get() = !singleton
-    }
+        Callable
 
     data class Binds(
         override val type: Type,
         val source: TypeFactory,
-        override val isPublic: Boolean,
     ) : TypeFactory {
         override val dependencies: List<TypeFactory>
             get() = listOf(source)
-        override val canInline: Boolean
-            get() = !isPublic && super.canInline
 
         override fun toString(): String = "$source as $type"
     }
@@ -78,7 +63,6 @@ sealed interface TypeFactory {
     data class Provides(
         override val type: Type.Parametrized,
         override val factory: TypeFactory,
-        override val isPublic: Boolean,
     ) : Deferred {
         override val dependencies: List<TypeFactory>
             get() = factory.dependencies
@@ -99,7 +83,6 @@ sealed interface TypeFactory {
     data class Memorizes(
         override val type: Type.Parametrized,
         override val factory: TypeFactory,
-        override val isPublic: Boolean,
     ) : Deferred {
         override val dependencies: List<TypeFactory>
             get() = factory.dependencies
@@ -121,8 +104,6 @@ sealed interface TypeFactory {
         override val type: Type,
         val name: String,
     ) : TypeFactory {
-        override val isPublic: Boolean
-            get() = true
         override val dependencies: List<TypeFactory>
             get() = emptyList()
     }
@@ -130,7 +111,6 @@ sealed interface TypeFactory {
     data class MultibindsCollection(
         override val type: Type,
         val entries: List<TypeFactory>,
-        override val isPublic: Boolean,
         val collectionType: Type,
     ) : TypeFactory {
         override val dependencies: List<TypeFactory> get() = entries
@@ -156,7 +136,6 @@ sealed interface TypeFactory {
     data class MultibindsMap(
         override val type: Type.Parametrized,
         val keyValues: Map<Any?, TypeFactory>,
-        override val isPublic: Boolean,
     ) : TypeFactory {
         override val dependencies get() = keyValues.values.toList()
         override fun toString(): String {
@@ -174,7 +153,6 @@ sealed interface TypeFactory {
         override val type: Type
         val invocation: Invocation
         val singleton: Boolean
-        override val canInline: Boolean
         override val dependencies: List<TypeFactory>
     }
 

@@ -38,7 +38,6 @@ class TypeFactoryCreatorMultiBindCollection(
                     add(mint(b.type, clone(store = b.asGraphStore() + store + instances)))
                 }
             },
-            isPublic = isTopLevel,
             collectionType = collectionType,
         )
     }
