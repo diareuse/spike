@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1776887459054,
+  "lastUpdate": 1776973887195,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -518,6 +518,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 524.389,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "05e57159c53b0fe499fb7fcf7d1890077cf2451d",
+          "message": "fix(deps): bump org.jetbrains.kotlin.multiplatform from 2.3.20 to 2.3.21\n\nBumps [org.jetbrains.kotlin.multiplatform](https://github.com/JetBrains/kotlin) from 2.3.20 to 2.3.21.\n- [Release notes](https://github.com/JetBrains/kotlin/releases)\n- [Changelog](https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md)\n- [Commits](https://github.com/JetBrains/kotlin/compare/v2.3.20...v2.3.21)\n\n---\nupdated-dependencies:\n- dependency-name: org.jetbrains.kotlin.multiplatform\n  dependency-version: 2.3.21\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-04-23T21:45:13+02:00",
+          "tree_id": "3e7293a7388106c284480be6a7d4f222a0a52a10",
+          "url": "https://github.com/diareuse/spike/commit/05e57159c53b0fe499fb7fcf7d1890077cf2451d"
+        },
+        "date": 1776973886776,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2445.3,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 521.246,
             "unit": "ms"
           }
         ]
