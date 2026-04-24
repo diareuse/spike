@@ -3,6 +3,37 @@
 Spike is a Kotlin Multiplatform dependency injection compositor that ensures compile-time safety and fast, incremental compilation through KSP. It is designed to be straightforward to use and universally applicable across all Kotlin platforms.
 
 [![Static Badge](https://img.shields.io/badge/build-benchmark-blue)](https://diareuse.github.io/spike/dev/bench/)
+[![Static Badge](https://img.shields.io/badge/changelog-691337)](CHANGELOG.md)
+![GitHub Tag](https://img.shields.io/github/v/tag/diareuse/spike)
+
+### `gradle/libs.versions.toml`
+
+```toml
+[versions]
+spike = "<see 'tag' above>"
+
+[libraries]
+spike = { module = "io.github.diareuse:spike", version.ref = "spike" }
+spike-ktor = { module = "io.github.diareuse:spike-ktor", version.ref = "spike" }
+spike-compiler = { module = "io.github.diareuse:spike-compiler", version.ref = "spike" }
+spike-androidx = { module = "io.github.diareuse:spike-androidx", version.ref = "spike" }
+spike-androidx-compose = { module = "io.github.diareuse:spike-androidx-compose", version.ref = "spike" }
+```
+
+--- or ---
+
+### `app/build.gradle.kts`
+
+```kotlin
+dependencies {
+    val spike = "see 'tag' above"
+    implementation("io.github.diareuse:spike:$spike")
+    implementation("io.github.diareuse:spike-ktor:$spike")
+    implementation("io.github.diareuse:spike-compiler:$spike")
+    implementation("io.github.diareuse:spike-androidx:$spike")
+    implementation("io.github.diareuse:spike-androidx-compose:$spike")
+}
+```
 
 ## Integrations
 
