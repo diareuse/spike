@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1777054475836,
+  "lastUpdate": 1777054560966,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -824,6 +824,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 523.975,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "d7d88b13c74bbb4cd02f157efe072f375734bb6f",
+          "message": "docs(readme): add version badges and installation instructions\n\nInclude GitHub version and changelog badges to the README. Added comprehensive installation snippets for both Gradle version catalogs (`libs.versions.toml`) and standard Kotlin DSL build scripts, detailing the available Spike modules.",
+          "timestamp": "2026-04-24T20:08:00+02:00",
+          "tree_id": "abc71ce15d5c6b9190c479cfc5115810aa15cf72",
+          "url": "https://github.com/diareuse/spike/commit/d7d88b13c74bbb4cd02f157efe072f375734bb6f"
+        },
+        "date": 1777054560161,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 3008.63,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 531.211,
             "unit": "ms"
           }
         ]
