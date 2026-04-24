@@ -10,13 +10,17 @@ import spike.compiler.generator.DependencyGraphGenerator
 import spike.compiler.graph.GraphStore
 import spike.compiler.graph.MultiBindingStore
 import spike.compiler.processor.util.getSymbolsWithAnnotation
+import java.util.concurrent.atomic.AtomicBoolean
 
 @OptIn(KspExperimental::class)
 class SpikeSymbolProcessor(
     private val environment: SymbolProcessorEnvironment,
 ) : SymbolProcessor {
 
+    private val processed = AtomicBoolean(false)
+
     override fun process(resolver: Resolver): List<KSAnnotated> {
+        if (processed.getAndSet(true)) return emptyList()
         val logger = environment.logger
         val bindAs = IncludeContributorBindTo(
             IncludeContributorChain(
@@ -25,7 +29,7 @@ class SpikeSymbolProcessor(
             ),
         )
         val viewModel = IncludeContributorViewModel()
-        val generator = DependencyGraphGenerator(environment)
+        val generator = DependencyGraphGenerator()
         val contributor = GraphContributor.create {
             this += GraphContributorIncludeViewModel(viewModel)
                 .timed("ViewModel")
@@ -33,10 +37,12 @@ class SpikeSymbolProcessor(
                 .timed("Class")
             this += GraphContributorIncludeFunction(bindAs)
                 .timed("Function")
-            this += GraphContributorEntryPoint(generator, logger) { it.getSymbolsWithAnnotation<EntryPoint>() }
-                .timed("EntryPoint")
-            this += GraphContributorEntryPoint(generator, logger) { it.getSymbolsWithAnnotation<EntryPoint>(ViewModel) }
-                .timed("ViewModelEntryPoint")
+            this += GraphContributorEntryPoint(generator, environment, logger) {
+                it.getSymbolsWithAnnotation<EntryPoint>()
+            }.timed("EntryPoint")
+            this += GraphContributorEntryPoint(generator, environment, logger) {
+                it.getSymbolsWithAnnotation<EntryPoint>(ViewModel)
+            }.timed("ViewModelEntryPoint")
         }
         val root = GraphStore.Builder()
         val multibind = MultiBindingStore.Builder()

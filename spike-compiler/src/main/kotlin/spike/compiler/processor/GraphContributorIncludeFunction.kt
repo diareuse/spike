@@ -1,12 +1,10 @@
 package spike.compiler.processor
 
 import com.google.devtools.ksp.KspExperimental
-import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import spike.Include
-import spike.Singleton
-import spike.compiler.graph.Member
+import spike.compiler.generator.requireKSFile
 
 class GraphContributorIncludeFunction(
     private val bindAs: IncludeContributor,
@@ -18,6 +16,7 @@ class GraphContributorIncludeFunction(
             .filterIsInstance<KSFunctionDeclaration>()
         for (func in functions) {
             bindAs.contribute(context, func)
+            context.originatingFiles.add(func.requireKSFile())
         }
     }
 }

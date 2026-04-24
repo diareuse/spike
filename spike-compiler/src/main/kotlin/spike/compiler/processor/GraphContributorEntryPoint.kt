@@ -8,9 +8,11 @@ import com.google.devtools.ksp.isInternal
 import com.google.devtools.ksp.isPublic
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.squareup.kotlinpoet.ksp.writeTo
 import spike.EntryPoint
 import spike.compiler.generator.DependencyGraphGenerator
 import spike.compiler.graph.DependencyGraph
@@ -21,6 +23,7 @@ import spike.compiler.graph.Parameter
 @OptIn(KspExperimental::class)
 class GraphContributorEntryPoint(
     private val generator: DependencyGraphGenerator,
+    private val environment: SymbolProcessorEnvironment,
     private val logger: KSPLogger,
     private val selector: (Resolver) -> Sequence<KSAnnotated>,
 ) : GraphContributor {
@@ -39,11 +42,19 @@ class GraphContributorEntryPoint(
                 properties = properties,
                 methods = methods,
             )
-            val graph = DependencyGraph.Builder(logger)
-                .addRootGraph(context.builder.build())
-                .addMultibindGraph(context.multibind.build())
-                .build(entry)
-            generator.generate(graph)
+            val graph = DependencyGraph.Factory(
+                entry = entry,
+                root = context.builder.build(),
+                multibinding = context.multibind.build(),
+                logger = logger
+            ).create()
+            generator.generate(graph, context.originatingFiles) { spec ->
+                try {
+                    spec.writeTo(environment.codeGenerator, true)
+                } catch (e: FileAlreadyExistsException) {
+                    spec.writeTo(e.file.parentFile)
+                }
+            }
         }
     }
 

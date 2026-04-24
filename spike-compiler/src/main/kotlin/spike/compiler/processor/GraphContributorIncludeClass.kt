@@ -4,6 +4,7 @@ import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import spike.Include
+import spike.compiler.generator.requireKSFile
 
 @OptIn(KspExperimental::class)
 class GraphContributorIncludeClass(
@@ -15,6 +16,7 @@ class GraphContributorIncludeClass(
             .filterIsInstance<KSClassDeclaration>()
         for (cls in classes) {
             contributor.contribute(context, cls)
+            context.originatingFiles.add(cls.requireKSFile())
         }
     }
 }

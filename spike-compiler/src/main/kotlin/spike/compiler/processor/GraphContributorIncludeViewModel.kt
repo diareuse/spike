@@ -3,6 +3,7 @@ package spike.compiler.processor
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import spike.compiler.generator.requireKSFile
 
 @OptIn(KspExperimental::class)
 class GraphContributorIncludeViewModel(
@@ -14,6 +15,7 @@ class GraphContributorIncludeViewModel(
             .filterIsInstance<KSClassDeclaration>()
         for (cls in classes) {
             contributor.contribute(context, cls)
+            context.originatingFiles.add(cls.requireKSFile())
         }
     }
 }

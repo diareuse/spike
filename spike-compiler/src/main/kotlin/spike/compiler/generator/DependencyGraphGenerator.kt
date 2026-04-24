@@ -2,19 +2,19 @@
 
 package spike.compiler.generator
 
-import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.ksp.writeTo
+import com.google.devtools.ksp.symbol.KSFile
 import spike.compiler.graph.DependencyGraph
 
-class DependencyGraphGenerator(
-    private val environment: SymbolProcessorEnvironment,
-) {
+class DependencyGraphGenerator {
 
     private val resolver = TypeResolver()
 
-    fun generate(graph: DependencyGraph) {
-        val context = FileGeneratorContext(resolver, graph)
+    fun generate(
+        graph: DependencyGraph,
+        originatingFiles: List<KSFile>,
+        collector: FileSpecCollector
+    ) {
+        val context = FileGeneratorContext(resolver, graph, originatingFiles)
         val dependencyFactoryClassName = context.resolver.peerClass(graph, "Factory")
         val entryPoint = EntryPointGenerator(dependencyFactoryClassName)
         val instructionSet = InstructionSetGenerator()
@@ -23,15 +23,8 @@ class DependencyGraphGenerator(
             instructionSet = instructionSet,
             dependencyHolder = { index -> DependencyHolderGenerator(index, dependencyFactoryClassName) },
         )
-        dependencyFactory.generate(context, ::writeToFile)
-        entryPoint.generate(context, ::writeToFile)
+        dependencyFactory.generate(context, collector)
+        entryPoint.generate(context, collector)
     }
 
-    private fun writeToFile(fileSpec: FileSpec) {
-        try {
-            fileSpec.writeTo(environment.codeGenerator, false)
-        } catch (_: FileAlreadyExistsException) {
-            environment.logger.warn("File ${fileSpec.name} already exists")
-        }
-    }
 }

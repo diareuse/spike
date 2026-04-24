@@ -21,6 +21,7 @@ class EntryPointGenerator(
         val epcn = resolver.peerClass(graph, "EntryPoint")
         val dfcn = dependencyFactoryClassName
         val type = TypeSpec.classBuilder(epcn)
+            .addOriginatingFiles(context.originatingFiles)
             .addSuperinterface(resolver.getTypeName(ep.type))
             .primaryConstructor(
                 FunSpec.constructorBuilder()
