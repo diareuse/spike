@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.0.3](https://github.com/diareuse/spike/compare/0.0.2...0.0.3) (2026-04-24)
+
+
+### Features
+
+* **compiler:** implement originating file tracking for KSP incremental processing ([a922e57](https://github.com/diareuse/spike/commit/a922e579186f4c26b86892e664f2acf138d39f88))
+* **compiler:** implement thread-safe singleton support ([709c902](https://github.com/diareuse/spike/commit/709c9022ecd64e5f60c14b56645c7c606db16e54))
+* **compose:** add support for navigation extras in `spikeViewModel` ([f9ceff9](https://github.com/diareuse/spike/commit/f9ceff92c535f4f4a721439bb9f6a1e54d5b2bfc))
+
+
+### Bug Fixes
+
+* **compiler:** handle missing annotations and parameters gracefully ([e077d30](https://github.com/diareuse/spike/commit/e077d300476eccb7b95e06163e3706afc17ac946))
+* **deps:** bump com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin ([fa2ebcb](https://github.com/diareuse/spike/commit/fa2ebcb52dfacbb52732c542f946acbf93eee6ec))
+* **deps:** bump google-ksp from 2.3.6 to 2.3.7 ([40cdf13](https://github.com/diareuse/spike/commit/40cdf13ebfe55fbf48c01a828f64492124efb092))
+* **deps:** bump io.ktor:ktor-server-core from 3.4.2 to 3.4.3 ([6ab06b6](https://github.com/diareuse/spike/commit/6ab06b68709c590d3a824c411de0482b9d800a24))
+* **deps:** bump org.jetbrains.kotlin.multiplatform from 2.3.20 to 2.3.21 ([05e5715](https://github.com/diareuse/spike/commit/05e57159c53b0fe499fb7fcf7d1890077cf2451d))
+* **deps:** bump org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin ([910ede3](https://github.com/diareuse/spike/commit/910ede35c28cc11e53576dfd46652f06baa7b4b9))
+* **deps:** bump org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin ([ecd52d9](https://github.com/diareuse/spike/commit/ecd52d9fb13473cbc052a6f6af6b6e97c480a4ec))
+
 ## [0.0.2](https://github.com/diareuse/spike/compare/0.0.1...0.0.2) (2026-04-19)
 
 
