@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.4](https://github.com/diareuse/spike/compare/0.0.3...0.0.4) (2026-04-24)
+
+
+### Bug Fixes
+
+* **deps:** bump org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin ([7f9af9c](https://github.com/diareuse/spike/commit/7f9af9c089e4d9def7201e63b8b34fe5f3892182))
+
 ## [0.0.3](https://github.com/diareuse/spike/compare/0.0.2...0.0.3) (2026-04-24)
 
 
