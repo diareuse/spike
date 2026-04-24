@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1776974410026,
+  "lastUpdate": 1777043955694,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -688,6 +688,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 475.301,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "0d02297ea4168338257752e78e52ada88d9d7533",
+          "message": "refactor(compiler): clean up code and enable TypeFactory toString\n\n- Uncommented the `toString` implementation in `TypeFactory.Class` to improve debug visibility.\n- Replaced wildcard imports with explicit imports in `DependencyHolderGenerator.kt`.\n- Reformatted parameter lists in `Singleton.kt` for better readability.",
+          "timestamp": "2026-04-24T17:11:08+02:00",
+          "tree_id": "72562bca9ad1535259bdff8df2a05af02858afb2",
+          "url": "https://github.com/diareuse/spike/commit/0d02297ea4168338257752e78e52ada88d9d7533"
+        },
+        "date": 1777043954951,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 3216.77,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 543.951,
             "unit": "ms"
           }
         ]
