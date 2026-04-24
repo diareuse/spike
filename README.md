@@ -4,7 +4,7 @@ Spike is a Kotlin Multiplatform dependency injection compositor that ensures com
 
 [![Static Badge](https://img.shields.io/badge/build-benchmark-blue)](https://diareuse.github.io/spike/dev/bench/)
 [![Static Badge](https://img.shields.io/badge/changelog-691337)](CHANGELOG.md)
-![GitHub Tag](https://img.shields.io/github/v/tag/diareuse/spike)
+[![GitHub Tag](https://img.shields.io/github/v/tag/diareuse/spike)](https://github.com/diareuse/spike/releases)
 
 ### `gradle/libs.versions.toml`
 
