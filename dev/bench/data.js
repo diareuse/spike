@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1777043955694,
+  "lastUpdate": 1777052934557,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -722,6 +722,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 543.951,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "a922e579186f4c26b86892e664f2acf138d39f88",
+          "message": "feat(compiler): implement originating file tracking for KSP incremental processing\n\nThis change enables KSP incremental processing by tracking source files throughout the compilation process and attaching them as originating files to generated KotlinPoet specs.\n\n- Add `KSFile` utilities to resolve and require source files from `KSNode`.\n- Refactor `DependencyGraphFactory` into a nested `DependencyGraph.Factory` to streamline graph creation.\n- Update `GraphContext` and `FileGeneratorContext` to collect and propagate `KSFile` references.\n- Decouple `DependencyGraphGenerator` from the KSP environment by using a functional collector for file writing.\n- Implement an `AtomicBoolean` gate in `SpikeSymbolProcessor` to prevent redundant processing rounds.\n- Ensure all generated entry points and factories include originating files for proper incremental build support.",
+          "timestamp": "2026-04-24T19:41:36+02:00",
+          "tree_id": "81e2dd72cdff5154afcd3b062df1dd57cae1618f",
+          "url": "https://github.com/diareuse/spike/commit/a922e579186f4c26b86892e664f2acf138d39f88"
+        },
+        "date": 1777052934224,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2861.93,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 486.133,
             "unit": "ms"
           }
         ]
