@@ -52,6 +52,43 @@ class GradleTestProject(
 
         fun cloneProjectDir(from: File) = apply {
             from.copyRecursively(projectRoot, true)
+            val absoluteRootDir = File("../").canonicalPath
+            projectRoot.resolve("settings.gradle.kts").writeText(
+                """
+                pluginManagement {
+                    repositories {
+                        gradlePluginPortal()
+                        mavenCentral()
+                        google()
+                    }
+                }
+                
+                dependencyResolutionManagement {
+                    repositories {
+                        mavenCentral()
+                        google()
+                    }
+                    versionCatalogs {
+                        create("libs") {
+                            from(files("$absoluteRootDir/gradle/libs.versions.toml"))
+                        }
+                    }
+                }
+
+                // This is the magic: it treats your local repo as part of the build
+                includeBuild("$absoluteRootDir") {
+                    dependencySubstitution {
+                        substitute(module("io.github.diareuse:spike-compiler")).using(project(":spike-compiler"))
+                        substitute(module("io.github.diareuse:spike")).using(project(":spike-core"))
+                        substitute(module("io.github.diareuse:spike-ktor")).using(project(":spike-ktor"))
+                        substitute(module("io.github.diareuse:spike-androidx")).using(project(":spike-androidx"))
+                        substitute(module("io.github.diareuse:spike-androidx-compose")).using(project(":spike-androidx-compose"))
+                    }
+                }
+                
+                rootProject.name = "project"
+            """.trimIndent()
+            )
         }
 
         fun useFixturesDir(from: File) = apply {
@@ -107,6 +144,14 @@ object BuildResultTasks {
         }
     val BuildResult.test
         get() = requireNotNull(task(":test")) {
+            "Couldn't find test task in build result, but found ${tasks.joinToString { it.path }}"
+        }
+    val BuildResult.assemble
+        get() = requireNotNull(task(":assemble")) {
+            "Couldn't find test task in build result, but found ${tasks.joinToString { it.path }}"
+        }
+    val BuildResult.jvmRun
+        get() = requireNotNull(task(":jvmRun")) {
             "Couldn't find test task in build result, but found ${tasks.joinToString { it.path }}"
         }
 }

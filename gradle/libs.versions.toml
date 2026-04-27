@@ -1,17 +1,28 @@
 [versions]
 atomicfu = "0.32.1"
+publish = "0.36.0"
+detekt = "2.0.0-alpha.3"
 google-ksp = "2.3.7"
 kotlin = "2.3.21"
 agp = "8.13.2"
 kotlinpoet = "2.3.0"
 androidx-lifecycle = "2.10.0"
 ktor = "3.4.3"
+compose = "1.10.3"
 
 [libraries]
 atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version.ref = "atomicfu" }
+android-kotlin-multiplatform-library = { module = "com.android.kotlin.multiplatform.library:com.android.kotlin.multiplatform.library.gradle.plugin", version.ref = "agp" }
+com-google-devtools-ksp-gradle-plugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "google-ksp" }
+com-vanniktech-maven-publish-gradle-plugin = { module = "com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin", version.ref = "publish" }
+dev-detekt-gradle-plugin = { module = "dev.detekt:dev.detekt.gradle.plugin", version.ref = "detekt" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 google-ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "google-ksp" }
+plugin-compose = { module = "org.jetbrains.compose:org.jetbrains.compose.gradle.plugin", version.ref = "compose" }
+plugin-jvm = { module = "org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin", version.ref = "kotlin" }
+plugin-multiplatform = { module = "org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin", version.ref = "kotlin" }
+plugin-kotlin-compose = { module = "org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin", version.ref = "kotlin" }
 squareup-kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 squareup-kotlinpoet-ksp = { module = "com.squareup:kotlinpoet-ksp", version.ref = "kotlinpoet" }
 androidx-lifecycle-viewmodel-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
@@ -20,5 +31,4 @@ ktor-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
-android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 google-ksp = { id = "com.google.devtools.ksp", version.ref = "google-ksp" }
