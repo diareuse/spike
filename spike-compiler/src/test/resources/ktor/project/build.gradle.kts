@@ -1,8 +1,11 @@
-import org.gradle.kotlin.dsl.implementation
-
 plugins {
-    kotlin("jvm") version "2.2.21"
-    id("com.google.devtools.ksp") version "2.3.4"
+    `application`
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.google.ksp)
+}
+
+application {
+    mainClass = "MainKt"
 }
 
 repositories {
@@ -21,18 +24,13 @@ kotlin {
     }
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
-val testClasspath: String by project
-
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("io.ktor:ktor-server-core:3.4.0")
-    implementation("io.ktor:ktor-client-java:3.4.0")
-    testImplementation("io.ktor:ktor-server-test-host:3.4.0")
+    implementation("io.github.diareuse:spike")
+    implementation("io.github.diareuse:spike-ktor")
+    ksp("io.github.diareuse:spike-compiler")
+    implementation(libs.ktor.core)
+    implementation(libs.ktor.client.java)
+    testImplementation(libs.ktor.server.test)
     testImplementation(kotlin("test-junit"))
-    implementation(files(testClasspath.split(";")))
-    ksp(files(testClasspath.split(";")))
 }

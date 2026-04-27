@@ -16,23 +16,22 @@ class GradleTestProject(
     ) {
         val outputFiles
             get() = projectDirectory
-                .resolve("build/generated/ksp/main/kotlin")
-                .walk()
-                .filter { it.isFile }
+                .resolve("build/generated/ksp/")
+                .run { walk().map { it.relativeTo(this) } }
     }
 
     fun build(
         argument: String,
         vararg arguments: String
     ): BuildResult = context.runner
-        .withArguments(*arrayOf("-PtestClasspath=${context.classPath}", argument, *arguments, "--stacktrace"))
+        .withArguments(*arrayOf(argument, *arguments, "--stacktrace"))
         .build()
 
     fun buildAndFail(
         argument: String,
         vararg arguments: String
     ): BuildResult = context.runner
-        .withArguments(*arrayOf("-PtestClasspath=${context.classPath}", argument, *arguments, "--stacktrace"))
+        .withArguments(*arrayOf(argument, *arguments, "--stacktrace"))
         .buildAndFail()
 
     class Builder(
@@ -104,7 +103,7 @@ class GradleTestProject(
                 runner = runner,
                 classPath = checkNotNull(classPath),
                 projectDirectory = projectRoot,
-                fixtures = checkNotNull(fixtures).walk().filter { it.isFile }
+                fixtures = checkNotNull(fixtures).run { walk().map { it.relativeTo(this) } }
             )
             return GradleTestProject(context)
         }

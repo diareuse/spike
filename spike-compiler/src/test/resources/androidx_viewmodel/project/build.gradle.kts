@@ -1,7 +1,7 @@
 plugins {
     `application`
-    kotlin("jvm") version "2.2.21"
-    id("com.google.devtools.ksp") version "2.3.4"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.google.ksp)
 }
 
 application {
@@ -21,10 +21,10 @@ kotlin {
     }
 }
 
-val testClasspath: String by project
-
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation(files(testClasspath.split(";")))
-    ksp(files(testClasspath.split(";")))
+    implementation("io.github.diareuse:spike")
+    implementation("io.github.diareuse:spike-androidx")
+    implementation(libs.androidx.lifecycle.viewmodel.savedstate)
+    ksp("io.github.diareuse:spike-compiler")
 }
