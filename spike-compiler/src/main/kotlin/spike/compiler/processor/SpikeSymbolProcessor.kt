@@ -22,20 +22,21 @@ class SpikeSymbolProcessor(
     override fun process(resolver: Resolver): List<KSAnnotated> {
         if (processed.getAndSet(true)) return emptyList()
         val logger = environment.logger
-        val bindAs = IncludeContributorBindTo(
-            IncludeContributorChain(
-                IncludeContributorBindAs(),
-                IncludeContributorMain(),
-            ),
+        var include: IncludeContributor
+        include = IncludeContributorChain(
+            IncludeContributorBindAs(),
+            IncludeContributorMain(),
         )
+        include = IncludeContributorBindTo(include)
+        include = IncludeContributorMultiplatform(include, resolver)
         val viewModel = IncludeContributorViewModel()
         val generator = DependencyGraphGenerator()
         val contributor = GraphContributor.create {
             this += GraphContributorIncludeViewModel(viewModel)
                 .timed("ViewModel")
-            this += GraphContributorIncludeClass(bindAs)
+            this += GraphContributorIncludeClass(include)
                 .timed("Class")
-            this += GraphContributorIncludeFunction(bindAs)
+            this += GraphContributorIncludeFunction(include)
                 .timed("Function")
             this += GraphContributorEntryPoint(generator, environment, logger) {
                 it.getSymbolsWithAnnotation<EntryPoint>()
