@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1777251905661,
+  "lastUpdate": 1777295010304,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -960,6 +960,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 444.839,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "53bea502b52de837f15b227006532d4ce429d212",
+          "message": "chore: remove lint",
+          "timestamp": "2026-04-27T14:56:07+02:00",
+          "tree_id": "0eb9e396f782d0123bd820b73f500b02ef6b25ea",
+          "url": "https://github.com/diareuse/spike/commit/53bea502b52de837f15b227006532d4ce429d212"
+        },
+        "date": 1777295009391,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2950.27,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 502.689,
             "unit": "ms"
           }
         ]
