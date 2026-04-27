@@ -6,12 +6,12 @@ import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import spike.Include
 import spike.compiler.graph.BuiltInTypes
-import spike.compiler.processor.util.getAnnotationParameter
+import spike.compiler.processor.util.getAnnotationParameterOrDefault
 
 class IncludeContributorBindAs : IncludeContributor {
     override fun contribute(context: GraphContext, annotated: KSClassDeclaration) {
-        val bindAs: KSType = annotated.getAnnotationParameter(Include::bindAs)
-        if (bindAs.toType() == BuiltInTypes.Any) return
+        val bindAs: KSType? = annotated.getAnnotationParameterOrDefault(Include::bindAs, null)
+        if (bindAs == null || bindAs.toType() == BuiltInTypes.Any) return
         check(bindAs.isAssignableFrom(annotated.asStarProjectedType())) {
             errorMessage(annotated, bindAs)
         }
@@ -22,8 +22,8 @@ class IncludeContributorBindAs : IncludeContributor {
     }
 
     override fun contribute(context: GraphContext, annotated: KSFunctionDeclaration) {
-        val bindAs: KSType = annotated.getAnnotationParameter(Include::bindAs)
-        if (bindAs.toType() == BuiltInTypes.Any) return
+        val bindAs: KSType? = annotated.getAnnotationParameterOrDefault(Include::bindAs, null)
+        if (bindAs == null || bindAs.toType() == BuiltInTypes.Any) return
         check(bindAs.isAssignableFrom(annotated.returnType!!.resolve())) {
             errorMessage(annotated, bindAs)
         }
