@@ -8,14 +8,13 @@ repositories {
     google()
 }
 
-//noinspection UseTomlInstead
 dependencies {
-    implementation("org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin:2.3.21")
-    implementation("org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin:2.3.21")
-    implementation("org.jetbrains.compose:org.jetbrains.compose.gradle.plugin:1.10.3")
-    implementation("org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:2.3.21")
-    implementation("com.android.kotlin.multiplatform.library:com.android.kotlin.multiplatform.library.gradle.plugin:8.13.2")
-    implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:2.3.7")
-    implementation("com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin:0.36.0")
-    implementation("dev.detekt:dev.detekt.gradle.plugin:2.0.0-alpha.3")
+    implementation(libs.plugin.jvm)
+    implementation(libs.plugin.kotlin.compose)
+    implementation(libs.plugin.compose)
+    implementation(libs.plugin.multiplatform)
+    implementation(libs.android.kotlin.multiplatform.library)
+    implementation(libs.com.google.devtools.ksp.gradle.plugin)
+    implementation(libs.com.vanniktech.maven.publish.gradle.plugin)
+    implementation(libs.dev.detekt.gradle.plugin)
 }

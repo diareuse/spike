@@ -1,7 +1,9 @@
 package spike.compiler
 
 import spike.compiler.assertion.assertContentEquals
+import spike.compiler.harness.BuildResultTasks.assemble
 import spike.compiler.harness.BuildResultTasks.compileKotlin
+import spike.compiler.harness.BuildResultTasks.jvmRun
 import spike.compiler.harness.BuildResultTasks.kspKotlin
 import spike.compiler.harness.BuildResultTasks.test
 import spike.compiler.harness.TestHarness
@@ -204,6 +206,18 @@ class EntryPointTest : TestHarness() {
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
+            fixtures.assertContentEquals(outputFiles)
+        }
+    )
+
+    @Test
+    fun `expect actual gets resolved`() = runTest(
+        label = "expect_actual",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { build("assemble", "jvmRun") },
+        verify = {
+            assertSuccess(it.assemble)
+            assertSuccess(it.jvmRun)
             fixtures.assertContentEquals(outputFiles)
         }
     )
