@@ -20,7 +20,8 @@ class IncludeContributorMain : IncludeContributor {
             constructors.size > 1 -> checkNotNull(constructors.firstOrNull { it.isAnnotationPresent(Inject::class) }) {
                 "Include class (${annotated.qualifiedName?.asString()}) must have a constructor annotated with @spike.Inject if it has more than one constructor"
             }
-            else -> constructors.singleOrNull() ?: error("Wanted exactly one constructor, but got ${constructors.size} in $annotated")
+            else -> constructors.singleOrNull()
+                ?: error("Wanted exactly one constructor, but got ${constructors.size} in $annotated")
         }
         context.builder.addConstructor(
             type = annotated.toType().qualifiedBy(annotated.findQualifiers()),
