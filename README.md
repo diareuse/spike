@@ -22,16 +22,43 @@ spike-androidx-compose = { module = "io.github.diareuse:spike-androidx-compose",
 
 --- or ---
 
-### `app/build.gradle.kts`
+### `app/build.gradle.kts` (Android)
 
 ```kotlin
 dependencies {
     val spike = "see 'tag' above"
+    ksp("io.github.diareuse:spike-compiler:$spike")
     implementation("io.github.diareuse:spike:$spike")
     implementation("io.github.diareuse:spike-ktor:$spike")
-    implementation("io.github.diareuse:spike-compiler:$spike")
     implementation("io.github.diareuse:spike-androidx:$spike")
     implementation("io.github.diareuse:spike-androidx-compose:$spike")
+}
+```
+
+### `shared/build.gradle.kts` (KMP)
+
+```kotlin
+val spike = "see 'tag' above"
+kotlin {
+    // …
+    sourceSets {
+        androidMain.dependencies {
+            // if not using jetpack compose
+            implementation("io.github.diareuse:spike-androidx:$spike")
+        }
+        commonMain.dependencies {
+            implementation("io.github.diareuse:spike:$spike")
+            // if using jetpack compose
+            implementation("io.github.diareuse:spike-androidx-compose:$spike")
+        }
+    }
+}
+dependencies {
+    add("kspAndroid", "io.github.diareuse:spike-compiler:$spike")
+    add("kspJs", "io.github.diareuse:spike-compiler:$spike")
+    add("kspWasmJs", "io.github.diareuse:spike-compiler:$spike")
+    add("kspJvm", "io.github.diareuse:spike-compiler:$spike")
+    // and all other targets…
 }
 ```
 
