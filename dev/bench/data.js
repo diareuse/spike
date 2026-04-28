@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1777295010304,
+  "lastUpdate": 1777354852784,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -994,6 +994,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 502.689,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "026b3d5b43c62709a6ef951b87cd13194f6414d3",
+          "message": "chore(repo): add CODEOWNERS file\n\nInitialize the CODEOWNERS file to assign global ownership of the repository to @diareuse.",
+          "timestamp": "2026-04-28T07:32:29+02:00",
+          "tree_id": "a1e1b71419877c36607382510a61a71d5dd2a320",
+          "url": "https://github.com/diareuse/spike/commit/026b3d5b43c62709a6ef951b87cd13194f6414d3"
+        },
+        "date": 1777354851929,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 3167.1,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 451.832,
             "unit": "ms"
           }
         ]
