@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1777355058698,
+  "lastUpdate": 1777355788569,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -1062,6 +1062,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 528.047,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "8d07562a921916b75f1e2036c9ca1339c49cde69",
+          "message": "test(harness): update KSP output path tracking and test dependencies\n\n- Update KSP generated output path from `build/generated/ksp/main/kotlin` to the base `build/generated/ksp/` directory.\n- Modify the test harness to track `outputFiles` and `fixtures` using relative paths instead of absolute file filtering.\n- Remove the redundant `-PtestClasspath` property from the Gradle test runner arguments.\n- Add `ktor-client-java`, `ktor-server-test`, and the `kotlin-jvm` plugin to the version catalog.",
+          "timestamp": "2026-04-28T07:48:34+02:00",
+          "tree_id": "6a823a93380a66ca845a7c8954b2bba70f32314c",
+          "url": "https://github.com/diareuse/spike/commit/8d07562a921916b75f1e2036c9ca1339c49cde69"
+        },
+        "date": 1777355787712,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 3258.29,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 463.877,
             "unit": "ms"
           }
         ]
