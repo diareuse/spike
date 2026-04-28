@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.0.5](https://github.com/diareuse/spike/compare/0.0.4...0.0.5) (2026-04-28)
+
+
+### Features
+
+* **processor:** support multiplatform expect/actual symbols in @Include ([222d87d](https://github.com/diareuse/spike/commit/222d87d9ea11cc58fb16f8dda9595f421cce1dc6))
+
+
+### Bug Fixes
+
+* **compiler:** improve error message for missing include class constructors ([4e5a50d](https://github.com/diareuse/spike/commit/4e5a50d1f3dcb1e3f22496eab2b0708138e56730))
+* **compiler:** suppress lint warnings in generated code ([a272554](https://github.com/diareuse/spike/commit/a272554de3dfd365f522b7b686dfa6481b4302a5))
+* **deps:** bump dev.detekt:dev.detekt.gradle.plugin ([341780b](https://github.com/diareuse/spike/commit/341780bf5d8ecc10e77af44cb8c1eac8c1ea79a0))
+* **processor:** handle missing or default annotation parameters ([72a7fc2](https://github.com/diareuse/spike/commit/72a7fc209583484084100110a96926499ee71bc3))
+
 ## [0.0.4](https://github.com/diareuse/spike/compare/0.0.3...0.0.4) (2026-04-24)
 
 
