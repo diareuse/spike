@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1777355788569,
+  "lastUpdate": 1777367132700,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -1096,6 +1096,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 463.877,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "a272554de3dfd365f522b7b686dfa6481b4302a5",
+          "message": "fix(compiler): suppress lint warnings in generated code\n\nAdd `@file:Suppress` annotations to generated Kotlin files to silence warnings for `ClassName`, `RedundantVisibilityModifier`, `UNCHECKED_CAST`, and `unused`. This ensures that code produced by the compiler does not trigger lint or compiler warnings in the consumer project.\n\n- Update `EntryPointGenerator`, `InstructionSetGenerator`, and `DependencyFactoryGenerator` to suppress naming and visibility warnings.\n- Update `DependencyHolderGenerator` to suppress additional unchecked cast and unused member warnings.\n- Refactor string template in `DependencyFactoryGenerator` to use simple variable interpolation.",
+          "timestamp": "2026-04-28T10:58:07+02:00",
+          "tree_id": "e3cb1c4367e35e2add0ea2f72046db028a411a06",
+          "url": "https://github.com/diareuse/spike/commit/a272554de3dfd365f522b7b686dfa6481b4302a5"
+        },
+        "date": 1777367132234,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 3191.94,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 433.703,
             "unit": "ms"
           }
         ]
