@@ -43,7 +43,7 @@ class EntryPointTest : TestHarness() {
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
-            fixtures.assertContentEquals(outputFiles)
+            assertContentEquals(fixturesDir, outputDir)
         }
     )
 
@@ -55,7 +55,7 @@ class EntryPointTest : TestHarness() {
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
-            fixtures.assertContentEquals(outputFiles)
+            assertContentEquals(fixturesDir, outputDir)
         }
     )
 
@@ -67,7 +67,7 @@ class EntryPointTest : TestHarness() {
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
-            fixtures.assertContentEquals(outputFiles)
+            assertContentEquals(fixturesDir, outputDir)
         }
     )
 
@@ -79,7 +79,7 @@ class EntryPointTest : TestHarness() {
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
-            fixtures.assertContentEquals(outputFiles)
+            assertContentEquals(fixturesDir, outputDir)
         }
     )
 
@@ -91,7 +91,7 @@ class EntryPointTest : TestHarness() {
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
-            fixtures.assertContentEquals(outputFiles)
+            assertContentEquals(fixturesDir, outputDir)
         }
     )
 
@@ -103,7 +103,7 @@ class EntryPointTest : TestHarness() {
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
-            fixtures.assertContentEquals(outputFiles)
+            assertContentEquals(fixturesDir, outputDir)
         }
     )
 
@@ -123,7 +123,7 @@ class EntryPointTest : TestHarness() {
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
-            fixtures.assertContentEquals(outputFiles)
+            assertContentEquals(fixturesDir, outputDir)
         }
     )
 
@@ -135,7 +135,7 @@ class EntryPointTest : TestHarness() {
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
-            fixtures.assertContentEquals(outputFiles)
+            assertContentEquals(fixturesDir, outputDir)
         }
     )
 
@@ -147,7 +147,7 @@ class EntryPointTest : TestHarness() {
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
-            fixtures.assertContentEquals(outputFiles)
+            assertContentEquals(fixturesDir, outputDir)
         }
     )
 
@@ -159,7 +159,7 @@ class EntryPointTest : TestHarness() {
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
-            fixtures.assertContentEquals(outputFiles)
+            assertContentEquals(fixturesDir, outputDir)
         }
     )
 
@@ -171,7 +171,7 @@ class EntryPointTest : TestHarness() {
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
-            fixtures.assertContentEquals(outputFiles)
+            assertContentEquals(fixturesDir, outputDir)
         }
     )
 
@@ -206,7 +206,7 @@ class EntryPointTest : TestHarness() {
         verify = {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
-            fixtures.assertContentEquals(outputFiles)
+            assertContentEquals(fixturesDir, outputDir)
         }
     )
 
@@ -218,7 +218,7 @@ class EntryPointTest : TestHarness() {
         verify = {
             assertSuccess(it.assemble)
             assertSuccess(it.jvmRun)
-            fixtures.assertContentEquals(outputFiles)
+            assertContentEquals(fixturesDir, outputDir)
         }
     )
 

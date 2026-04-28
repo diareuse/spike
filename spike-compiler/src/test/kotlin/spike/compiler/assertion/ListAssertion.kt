@@ -3,19 +3,33 @@ package spike.compiler.assertion
 import java.io.File
 import kotlin.test.assertEquals
 
-fun Sequence<File>.assertContentEquals(other: Sequence<File>) {
-    val source = sortedBy { it.path }.toList()
-    val other = other.sortedBy { it.path }.toList()
-    assertEquals(
-        expected = source.map { it.path },
-        actual = other.map { it.path }
-    )
+fun assertContentEquals(expected: File, actual: File) {
+    val expectedFiles = expected.listFiles()?.sortedBy { it.name }.orEmpty()
+    val actualFiles = actual.listFiles()?.sortedBy { it.name }.orEmpty()
 
-    for ((source, other) in source.zip(other).filter { (a, b) -> a.isFile && b.isFile }) {
-        assertEquals(
-            expected = source.readText(),
-            actual = other.readText(),
-            message = "File contents do not match"
-        )
+    assertEquals(expectedFiles.size, actualFiles.size, "File directory")
+
+    for (i in expectedFiles.indices) {
+        val expectedFile = expectedFiles[i]
+        val actualFile = actualFiles[i]
+
+        assertEquals(expectedFile.name, actualFile.name)
+
+        if (expectedFile.isFile && actualFile.isFile) {
+            compareFileContents(expectedFile, actualFile)
+        } else if (expectedFile.isDirectory && actualFile.isDirectory) {
+            assertContentEquals(expectedFile, actualFile)
+        } else {
+            throw AssertionError("$expectedFile was not the same type as $actualFile")
+        }
     }
 }
+
+private fun compareFileContents(
+    expectedFile: File,
+    actualFile: File
+) = assertEquals(
+    expected = expectedFile.readText(),
+    actual = actualFile.readText(),
+    message = "Compared $expectedFile with $actualFile, they don't match"
+)

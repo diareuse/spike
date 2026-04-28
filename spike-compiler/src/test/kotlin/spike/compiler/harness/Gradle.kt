@@ -12,12 +12,10 @@ class GradleTestProject(
         val runner: GradleRunner,
         val classPath: String,
         val projectDirectory: File,
-        val fixtures: Sequence<File>
+        val fixturesDir: File
     ) {
-        val outputFiles
-            get() = projectDirectory
-                .resolve("build/generated/ksp/")
-                .run { walk().map { it.relativeTo(this) } }
+        val outputDir
+            get() = projectDirectory.resolve("build/generated/ksp/")
     }
 
     fun build(
@@ -103,7 +101,7 @@ class GradleTestProject(
                 runner = runner,
                 classPath = checkNotNull(classPath),
                 projectDirectory = projectRoot,
-                fixtures = checkNotNull(fixtures).run { walk().map { it.relativeTo(this) } }
+                fixturesDir = checkNotNull(fixtures)
             )
             return GradleTestProject(context)
         }
