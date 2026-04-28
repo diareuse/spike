@@ -1,6 +1,9 @@
+@file:Suppress("UNCHECKED_CAST", "unused", "RedundantVisibilityModifier", "ClassName")
+
 import kotlin.Any
 import kotlin.Array
 import kotlin.Int
+import kotlin.Suppress
 
 public class CatEP_DependencyHolder0(
   private val factory: CatEP_Factory,

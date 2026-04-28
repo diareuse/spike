@@ -1,5 +1,6 @@
 package spike.compiler.generator
 
+import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
@@ -70,6 +71,16 @@ class DependencyFactoryGenerator(
         val type = spec.build()
         val file = FileSpec.builder(dependencyFactoryClassName)
             .addType(type)
+            .addAnnotation(
+                AnnotationSpec.builder(Suppress::class)
+                    .useSiteTarget(AnnotationSpec.UseSiteTarget.FILE)
+                    .addMember(
+                        "%S, %S",
+                        "ClassName",
+                        "RedundantVisibilityModifier"
+                    )
+                    .build()
+            )
             .build()
         collector.emit(file)
     }
@@ -157,7 +168,7 @@ class DependencyFactoryGenerator(
             block.addStatement("%T(%L, %L)", InstructionSetPointer::class.asClassName(), offset, size)
         }
 
-        block.addStatement($$"else -> error(\"Invalid identifier ${id}\")")
+        block.addStatement($$"else -> error(\"Invalid identifier $id\")")
         block.endControlFlow()
         return block.build()
     }

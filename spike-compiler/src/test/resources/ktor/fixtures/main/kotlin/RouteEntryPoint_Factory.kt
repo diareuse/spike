@@ -1,7 +1,10 @@
+@file:Suppress("ClassName", "RedundantVisibilityModifier")
+
 import kotlin.Any
 import kotlin.Array
 import kotlin.Int
 import kotlin.IntArray
+import kotlin.Suppress
 import spike.factory.DependencyFactory
 import spike.factory.DependencyId
 import spike.factory.InstructionSetPointer
@@ -17,7 +20,7 @@ public class RouteEntryPoint_Factory() : DependencyFactory() {
   override fun getInstructionsPointer(id: DependencyId): InstructionSetPointer? = when (id.id) {
     0 -> InstructionSetPointer(0, 6)
     1 -> InstructionSetPointer(6, 3)
-    else -> error("Invalid identifier ${id}")
+    else -> error("Invalid identifier $id")
   }
 
   override fun instantiate(buffer: Array<Any?>, id: DependencyId): Any = when (id.segment) {

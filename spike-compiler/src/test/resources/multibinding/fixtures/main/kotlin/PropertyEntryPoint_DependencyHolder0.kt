@@ -1,7 +1,10 @@
+@file:Suppress("UNCHECKED_CAST", "unused", "RedundantVisibilityModifier", "ClassName")
+
 import kotlin.Any
 import kotlin.Array
 import kotlin.Int
 import kotlin.String
+import kotlin.Suppress
 import kotlin.collections.listOf
 import kotlin.collections.mapOf
 import kotlin.collections.setOf

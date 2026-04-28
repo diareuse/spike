@@ -1,6 +1,9 @@
+@file:Suppress("ClassName", "RedundantVisibilityModifier")
+
 package benchmark.project.src
 
 import kotlin.IntArray
+import kotlin.Suppress
 import spike.factory.InstructionSet
 
 public object LargeTreeEntryPoint_InstructionSet : InstructionSet {

@@ -1,4 +1,8 @@
+@file:Suppress("ClassName", "RedundantVisibilityModifier")
+
 package benchmark.project.src
+
+import kotlin.Suppress
 
 private class LargeTreeEntryPoint_EntryPoint(
   private val factory: LargeTreeEntryPoint_Factory,

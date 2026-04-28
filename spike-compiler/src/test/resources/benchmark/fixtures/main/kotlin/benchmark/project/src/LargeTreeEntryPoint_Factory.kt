@@ -1,9 +1,12 @@
+@file:Suppress("ClassName", "RedundantVisibilityModifier")
+
 package benchmark.project.src
 
 import kotlin.Any
 import kotlin.Array
 import kotlin.Int
 import kotlin.IntArray
+import kotlin.Suppress
 import spike.factory.DependencyFactory
 import spike.factory.DependencyId
 import spike.factory.InstructionSetPointer
@@ -25,7 +28,7 @@ public class LargeTreeEntryPoint_Factory() : DependencyFactory() {
 
   override fun getInstructionsPointer(id: DependencyId): InstructionSetPointer? = when (id.id) {
     0 -> InstructionSetPointer(0, 8_151)
-    else -> error("Invalid identifier ${id}")
+    else -> error("Invalid identifier $id")
   }
 
   override fun instantiate(buffer: Array<Any?>, id: DependencyId): Any = when (id.segment) {

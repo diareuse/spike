@@ -1,6 +1,9 @@
+@file:Suppress("ClassName", "RedundantVisibilityModifier")
+
 package spike.lifecycle.viewmodel
 
 import kotlin.IntArray
+import kotlin.Suppress
 import spike.factory.InstructionSet
 
 public object ViewModelEntryPoint_InstructionSet : InstructionSet {

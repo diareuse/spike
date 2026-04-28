@@ -1,4 +1,7 @@
+@file:Suppress("ClassName", "RedundantVisibilityModifier")
+
 import kotlin.IntArray
+import kotlin.Suppress
 import spike.factory.InstructionSet
 
 public object RouteEntryPoint_InstructionSet : InstructionSet {

@@ -1,3 +1,6 @@
+@file:Suppress("ClassName", "RedundantVisibilityModifier")
+
+import kotlin.Suppress
 import kotlin.collections.Map
 import kotlin.reflect.KClass
 

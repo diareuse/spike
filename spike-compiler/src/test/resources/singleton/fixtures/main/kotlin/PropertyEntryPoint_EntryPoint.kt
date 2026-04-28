@@ -1,4 +1,7 @@
+@file:Suppress("ClassName", "RedundantVisibilityModifier")
+
 import kotlin.Lazy
+import kotlin.Suppress
 import spike.Provider
 
 private class PropertyEntryPoint_EntryPoint(

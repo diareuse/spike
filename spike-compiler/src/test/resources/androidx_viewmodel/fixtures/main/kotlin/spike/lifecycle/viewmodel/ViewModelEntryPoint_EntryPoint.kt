@@ -1,7 +1,10 @@
+@file:Suppress("ClassName", "RedundantVisibilityModifier")
+
 package spike.lifecycle.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import kotlin.Suppress
 import kotlin.collections.Map
 import kotlin.reflect.KClass
 import spike.Provider

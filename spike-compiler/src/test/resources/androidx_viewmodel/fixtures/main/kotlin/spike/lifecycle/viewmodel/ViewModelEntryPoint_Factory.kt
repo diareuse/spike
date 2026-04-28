@@ -1,3 +1,5 @@
+@file:Suppress("ClassName", "RedundantVisibilityModifier")
+
 package spike.lifecycle.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
@@ -5,6 +7,7 @@ import kotlin.Any
 import kotlin.Array
 import kotlin.Int
 import kotlin.IntArray
+import kotlin.Suppress
 import spike.factory.DependencyFactory
 import spike.factory.DependencyId
 import spike.factory.InstructionSetPointer
@@ -24,7 +27,7 @@ public class ViewModelEntryPoint_Factory(
     0 -> InstructionSetPointer(0, 6)
     1 -> InstructionSetPointer(6, 5)
     3 -> InstructionSetPointer(11, 6)
-    else -> error("Invalid identifier ${id}")
+    else -> error("Invalid identifier $id")
   }
 
   override fun instantiate(buffer: Array<Any?>, id: DependencyId): Any = when (id.segment) {

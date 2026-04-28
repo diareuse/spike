@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST", "unused", "RedundantVisibilityModifier", "ClassName")
+
 package spike.lifecycle.viewmodel
 
 import MyViewModel
@@ -6,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import kotlin.Any
 import kotlin.Array
 import kotlin.Int
+import kotlin.Suppress
 import kotlin.collections.mapOf
 import kotlin.reflect.KClass
 import spike.Provider

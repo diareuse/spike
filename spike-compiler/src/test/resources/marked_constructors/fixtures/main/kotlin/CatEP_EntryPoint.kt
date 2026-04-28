@@ -1,3 +1,7 @@
+@file:Suppress("ClassName", "RedundantVisibilityModifier")
+
+import kotlin.Suppress
+
 private class CatEP_EntryPoint(
   private val factory: CatEP_Factory,
 ) : CatEP {

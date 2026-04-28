@@ -1,7 +1,10 @@
+@file:Suppress("UNCHECKED_CAST", "unused", "RedundantVisibilityModifier", "ClassName")
+
 import kotlin.Any
 import kotlin.Array
 import kotlin.Int
 import kotlin.Lazy
+import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.lazy
 import spike.Provider

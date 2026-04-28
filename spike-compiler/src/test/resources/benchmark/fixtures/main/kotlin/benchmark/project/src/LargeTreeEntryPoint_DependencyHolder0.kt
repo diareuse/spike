@@ -1,8 +1,11 @@
+@file:Suppress("UNCHECKED_CAST", "unused", "RedundantVisibilityModifier", "ClassName")
+
 package benchmark.project.src
 
 import kotlin.Any
 import kotlin.Array
 import kotlin.Int
+import kotlin.Suppress
 
 public class LargeTreeEntryPoint_DependencyHolder0(
   private val factory: LargeTreeEntryPoint_Factory,

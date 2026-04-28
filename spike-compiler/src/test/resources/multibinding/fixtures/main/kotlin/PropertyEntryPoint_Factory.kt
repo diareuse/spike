@@ -1,7 +1,10 @@
+@file:Suppress("ClassName", "RedundantVisibilityModifier")
+
 import kotlin.Any
 import kotlin.Array
 import kotlin.Int
 import kotlin.IntArray
+import kotlin.Suppress
 import spike.factory.DependencyFactory
 import spike.factory.DependencyId
 import spike.factory.InstructionSetPointer
@@ -25,7 +28,7 @@ public class PropertyEntryPoint_Factory() : DependencyFactory() {
     6 -> InstructionSetPointer(30, 9)
     8 -> InstructionSetPointer(39, 3)
     7 -> InstructionSetPointer(42, 3)
-    else -> error("Invalid identifier ${id}")
+    else -> error("Invalid identifier $id")
   }
 
   override fun instantiate(buffer: Array<Any?>, id: DependencyId): Any = when (id.segment) {

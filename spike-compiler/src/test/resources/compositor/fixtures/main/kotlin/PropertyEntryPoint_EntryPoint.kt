@@ -1,3 +1,7 @@
+@file:Suppress("ClassName", "RedundantVisibilityModifier")
+
+import kotlin.Suppress
+
 private class PropertyEntryPoint_EntryPoint(
   private val factory: PropertyEntryPoint_Factory,
 ) : PropertyEntryPoint {

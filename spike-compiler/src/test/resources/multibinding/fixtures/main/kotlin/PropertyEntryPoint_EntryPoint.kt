@@ -1,4 +1,7 @@
+@file:Suppress("ClassName", "RedundantVisibilityModifier")
+
 import kotlin.String
+import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.collections.Map
 import kotlin.collections.Set

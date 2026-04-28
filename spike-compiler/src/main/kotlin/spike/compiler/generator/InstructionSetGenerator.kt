@@ -1,5 +1,6 @@
 package spike.compiler.generator
 
+import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
@@ -45,6 +46,16 @@ class InstructionSetGenerator(
         type.addInitializerBlock(initializer.build())
         val file = FileSpec.builder(instructionSetClassName)
             .addType(type.build())
+            .addAnnotation(
+                AnnotationSpec.builder(Suppress::class)
+                    .useSiteTarget(AnnotationSpec.UseSiteTarget.FILE)
+                    .addMember(
+                        "%S, %S",
+                        "ClassName",
+                        "RedundantVisibilityModifier"
+                    )
+                    .build()
+            )
             .build()
         collector.emit(file)
     }

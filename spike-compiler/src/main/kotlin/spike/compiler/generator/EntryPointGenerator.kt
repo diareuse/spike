@@ -1,5 +1,7 @@
 package spike.compiler.generator
 
+import com.google.devtools.ksp.symbol.AnnotationUseSiteTarget
+import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
@@ -51,6 +53,16 @@ class EntryPointGenerator(
                     .addStatement(
                         "return %T.Factory.create(${ep.factory.method.parameters.joinToString { it.name }})",
                         epcn
+                    )
+                    .build()
+            )
+            .addAnnotation(
+                AnnotationSpec.builder(Suppress::class)
+                    .useSiteTarget(AnnotationSpec.UseSiteTarget.FILE)
+                    .addMember(
+                        "%S, %S",
+                        "ClassName",
+                        "RedundantVisibilityModifier"
                     )
                     .build()
             )

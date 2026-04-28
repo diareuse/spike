@@ -1,5 +1,6 @@
 package spike.compiler.generator
 
+import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
@@ -64,6 +65,16 @@ class DependencyHolderGenerator(
         }
         val file = FileSpec.builder(className)
             .addType(type.build())
+            .addAnnotation(AnnotationSpec.builder(Suppress::class)
+                .useSiteTarget(AnnotationSpec.UseSiteTarget.FILE)
+                .addMember(
+                    "%S, %S, %S, %S",
+                    "UNCHECKED_CAST",
+                    "unused",
+                    "RedundantVisibilityModifier",
+                    "ClassName"
+                )
+                .build())
             .build()
         collector.emit(file)
     }

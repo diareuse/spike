@@ -1,3 +1,6 @@
+@file:Suppress("ClassName", "RedundantVisibilityModifier")
+
+import kotlin.Suppress
 import kotlin.collections.Set
 import spike.ktor.RouteBuilder
 

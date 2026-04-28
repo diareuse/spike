@@ -1,3 +1,7 @@
+@file:Suppress("ClassName", "RedundantVisibilityModifier")
+
+import kotlin.Suppress
+
 private class NightStand_EntryPoint(
   private val factory: NightStand_Factory,
 ) : NightStand {
