@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.6](https://github.com/diareuse/spike/compare/0.0.5...0.0.6) (2026-04-29)
+
+
+### Bug Fixes
+
+* **deps:** bump gradle-wrapper from 9.4.1 to 9.5.0 ([e1ce6d7](https://github.com/diareuse/spike/commit/e1ce6d751d272759a8dff99ff8baaff8e890efa3))
+
 ## [0.0.5](https://github.com/diareuse/spike/compare/0.0.4...0.0.5) (2026-04-28)
 
 
