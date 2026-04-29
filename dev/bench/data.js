@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1777380243922,
+  "lastUpdate": 1777441918195,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -1164,6 +1164,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 431.136,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "e1ce6d751d272759a8dff99ff8baaff8e890efa3",
+          "message": "fix(deps): bump gradle-wrapper from 9.4.1 to 9.5.0\n\nBumps [gradle-wrapper](https://github.com/gradle/gradle) from 9.4.1 to 9.5.0.\n- [Release notes](https://github.com/gradle/gradle/releases)\n- [Commits](https://github.com/gradle/gradle/compare/v9.4.1...v9.5.0)\n\n---\nupdated-dependencies:\n- dependency-name: gradle-wrapper\n  dependency-version: 9.5.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-04-29T07:44:13+02:00",
+          "tree_id": "e3f4dc088e9fc18d5b5e483f00c050e9d6161b76",
+          "url": "https://github.com/diareuse/spike/commit/e1ce6d751d272759a8dff99ff8baaff8e890efa3"
+        },
+        "date": 1777441917295,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2930.03,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 495.758,
             "unit": "ms"
           }
         ]
