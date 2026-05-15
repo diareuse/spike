@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1778703060113,
+  "lastUpdate": 1778819839009,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -1334,6 +1334,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 468.7,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "fb97fb7f3bacafe5a4bb927f5b16bcbdee7a68dd",
+          "message": "fix(deps): bump ktor from 3.4.3 to 3.5.0\n\nBumps `ktor` from 3.4.3 to 3.5.0.\n\nUpdates `io.ktor:ktor-server-core` from 3.4.3 to 3.5.0\n- [Release notes](https://github.com/ktorio/ktor/releases)\n- [Changelog](https://github.com/ktorio/ktor/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/ktorio/ktor/commits)\n\nUpdates `io.ktor:ktor-client-java` from 3.4.3 to 3.5.0\n- [Release notes](https://github.com/ktorio/ktor/releases)\n- [Changelog](https://github.com/ktorio/ktor/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/ktorio/ktor/commits)\n\nUpdates `io.ktor:ktor-server-test-host` from 3.4.3 to 3.5.0\n- [Release notes](https://github.com/ktorio/ktor/releases)\n- [Changelog](https://github.com/ktorio/ktor/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/ktorio/ktor/commits)\n\n---\nupdated-dependencies:\n- dependency-name: io.ktor:ktor-server-core\n  dependency-version: 3.5.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n- dependency-name: io.ktor:ktor-client-java\n  dependency-version: 3.5.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n- dependency-name: io.ktor:ktor-server-test-host\n  dependency-version: 3.5.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-05-15T06:29:51+02:00",
+          "tree_id": "4dd20fc333c4a1f5643804d763780100d0f222ca",
+          "url": "https://github.com/diareuse/spike/commit/fb97fb7f3bacafe5a4bb927f5b16bcbdee7a68dd"
+        },
+        "date": 1778819838665,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2830.15,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 494.202,
             "unit": "ms"
           }
         ]
