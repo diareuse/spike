@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.0.7](https://github.com/diareuse/spike/compare/0.0.6...0.0.7) (2026-05-15)
+
+
+### Bug Fixes
+
+* **deps:** bump google-ksp from 2.3.7 to 2.3.8 ([e270687](https://github.com/diareuse/spike/commit/e2706877f94fc1d85c1f7deb3b5c15499effbdc8))
+* **deps:** bump gradle-wrapper from 9.5.0 to 9.5.1 ([6e44f4d](https://github.com/diareuse/spike/commit/6e44f4dea911e343989ab3d1234937221ec74c2f))
+* **deps:** bump ktor from 3.4.3 to 3.5.0 ([fb97fb7](https://github.com/diareuse/spike/commit/fb97fb7f3bacafe5a4bb927f5b16bcbdee7a68dd))
+* **deps:** bump org.jetbrains.compose:org.jetbrains.compose.gradle.plugin ([bd1ed40](https://github.com/diareuse/spike/commit/bd1ed40c3ead6ee43c5a31667e4e1a41eebe5747))
+
 ## [0.0.6](https://github.com/diareuse/spike/compare/0.0.5...0.0.6) (2026-04-29)
 
 
