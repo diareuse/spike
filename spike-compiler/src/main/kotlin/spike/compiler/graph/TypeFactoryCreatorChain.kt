@@ -5,7 +5,7 @@ data class TypeFactoryCreatorChain(
     private val creators: List<TypeFactoryCreator>,
     override val store: GraphStore,
     override val isTopLevel: Boolean = true,
-    private val chain: List<Type> = emptyList()
+    private val chain: List<Type> = listOf(type)
 ) : TypeFactoryCreator.Context {
 
     fun pass() = with(creators[0]) { create() }
@@ -13,7 +13,7 @@ data class TypeFactoryCreatorChain(
     override fun pass(creator: TypeFactoryCreator): TypeFactory {
         val index = creators.indexOf(creator) + 1
         if (index == creators.size) {
-            val originatingElement = chain.getOrNull(chain.size - 2)?.toString() ?: "<unknown origin>"
+            val originatingElement = chain.asSequence().take(chain.size -1).joinToString(" -> ").ifEmpty { "<unknown origin>" }
             error(
                 """Client error, fix by adding element $type to the graph via @spike.Include:
                 |<expected>
