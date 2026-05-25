@@ -5,6 +5,7 @@ data class TypeFactoryCreatorChain(
     private val creators: List<TypeFactoryCreator>,
     override val store: GraphStore,
     override val isTopLevel: Boolean = true,
+    private val chain: List<Type> = emptyList()
 ) : TypeFactoryCreator.Context {
 
     fun pass() = with(creators[0]) { create() }
@@ -20,7 +21,11 @@ data class TypeFactoryCreatorChain(
         context: TypeFactoryCreator.Context,
     ): TypeFactory {
         context as TypeFactoryCreatorChain
-        return context.copy(type = type, isTopLevel = false).pass()
+        if(type in context.chain) {
+            val chain = chain.joinToString(separator = " -> ")
+            error("Circular dependency detected: $chain")
+        }
+        return context.copy(type = type, isTopLevel = false, chain = context.chain + type).pass()
     }
 
     override fun clone(store: GraphStore) = copy(store = store)
