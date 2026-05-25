@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779706368683,
+  "lastUpdate": 1779706656950,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -1436,6 +1436,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 477.851,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "bd3036dab22e86cb80dc92792712e21e60e9e12f",
+          "message": "fix(build): update Android Gradle Plugin version to 9.2.1\n\nUpdate the Android Gradle Plugin dependency from version 8.13.2 to 9.2.1 to align with the latest stable release and benefit from bug fixes and performance improvements in the build toolchain.\n\nThis change ensures compatibility with newer Android development tools and provides access to the latest features and optimizations available in AGP 9.x series.",
+          "timestamp": "2026-05-25T12:50:12+02:00",
+          "tree_id": "242331f575dd5b92d774d9014eeae048a971c1ca",
+          "url": "https://github.com/diareuse/spike/commit/bd3036dab22e86cb80dc92792712e21e60e9e12f"
+        },
+        "date": 1779706656022,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2993.07,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 517.033,
             "unit": "ms"
           }
         ]
