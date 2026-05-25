@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779716617639,
+  "lastUpdate": 1779716915629,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -1538,6 +1538,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 488.681,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "e641cc83cfa69a290035b25322250b96e239fb9b",
+          "message": "cosmetic(compiler): improve type factory creator chain error handling\n\nWhen a type factory cannot be found in the chain, the error message now includes a more detailed origin tracking mechanism. Instead of using `chain.getOrNull(chain.size - 2)`, we now use `chain.asSequence().take(chain.size - 1).joinToString(\" -> \")` to provide better context about where the missing type originated from. This change ensures that error messages include a meaningful origin identifier (`<unknown origin>`) when the previous approach would have resulted in a fallback to \"EntryPoint\".\n\nThis improvement helps developers quickly identify which part of their type chain is missing a required factory, making it easier to debug and fix configuration issues in the compiler's type resolution process.\n\nThe change also ensures that the chain initialization properly includes the current type in the chain, providing better context for error reporting.",
+          "timestamp": "2026-05-25T15:40:54+02:00",
+          "tree_id": "1b0ac665764edfd696efd2465a6e270e68027067",
+          "url": "https://github.com/diareuse/spike/commit/e641cc83cfa69a290035b25322250b96e239fb9b"
+        },
+        "date": 1779716915137,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 3094.47,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 537.829,
             "unit": "ms"
           }
         ]
