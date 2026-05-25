@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779707452056,
+  "lastUpdate": 1779716617639,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -1504,6 +1504,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 519.294,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "26e6660a1773a69f3c4bfcacf643483089ea052f",
+          "message": "fix(core): update annotation retention policies to BINARY\n\nUpdated @Singleton and @Inject annotation retention policies from SOURCE to BINARY to make them available at runtime. This change enables reflection-based processing and allows downstream libraries to inspect these annotations during execution, while maintaining backward compatibility.\n\nThe change affects:\n- spike.Singleton annotation retention\n- spike.Inject annotation retention\n\nThis aligns with the existing pattern of making Qualifier annotation available at runtime and supports more flexible annotation processing scenarios.",
+          "timestamp": "2026-05-25T15:36:22+02:00",
+          "tree_id": "05c26125c9888d71da408f09f911fbe9ed735d0f",
+          "url": "https://github.com/diareuse/spike/commit/26e6660a1773a69f3c4bfcacf643483089ea052f"
+        },
+        "date": 1779716617230,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2875.79,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 488.681,
             "unit": "ms"
           }
         ]
