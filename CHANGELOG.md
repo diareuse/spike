@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.0.9](https://github.com/diareuse/spike/compare/0.0.8...0.0.9) (2026-05-25)
+
+
+### Bug Fixes
+
+* **compiler:** improve error message for missing type factory origin ([3d50e35](https://github.com/diareuse/spike/commit/3d50e35f71e533237b3daf368f492fedcc71c5ee))
+* **compiler:** improve type factory creator chain error handling ([a173900](https://github.com/diareuse/spike/commit/a173900adaeb35fed7d24ebad993ce098462d1b9))
+* **compiler:** log stack trace for exceptions in symbol processor ([88ba6ac](https://github.com/diareuse/spike/commit/88ba6aca7d6355a69216cea22b4d8b1da1845def))
+* **core:** add delegate support to Provider interface ([66be40b](https://github.com/diareuse/spike/commit/66be40b39430bef7e22addf25883ec48ba319d5e))
+* **core:** change Qualifier annotation retention to BINARY ([04785e8](https://github.com/diareuse/spike/commit/04785e81406200ab8fa0e65cf42940f238591d38))
+* **core:** update annotation retention policies to BINARY ([26e6660](https://github.com/diareuse/spike/commit/26e6660a1773a69f3c4bfcacf643483089ea052f))
+
 ## [0.0.8](https://github.com/diareuse/spike/compare/0.0.7...0.0.8) (2026-05-25)
 
 
