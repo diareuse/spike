@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779066900034,
+  "lastUpdate": 1779706368683,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -1402,6 +1402,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 436.618,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "9d07f169e6db6aef668d889b3a9a92b2f2689e53",
+          "message": "chore(compiler): suppress generic exception catch warning\n\nThe commit adds a @Suppress(\"TooGenericExceptionCaught\") annotation to the catch block in SpikeSymbolProcessor.kt to suppress the lint warning for catching Throwable. This change ensures that the broad exception handling doesn't trigger unnecessary warnings while maintaining the existing error reporting functionality.\n\nThe suppression is applied specifically to the exception handling logic that logs error messages when contributor execution fails, preserving the existing behavior of gracefully handling compilation errors without breaking the build process.",
+          "timestamp": "2026-05-25T12:45:28+02:00",
+          "tree_id": "b681e10f26418699a60f5ba1a1284b2f3c2556f3",
+          "url": "https://github.com/diareuse/spike/commit/9d07f169e6db6aef668d889b3a9a92b2f2689e53"
+        },
+        "date": 1779706368370,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2941.46,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 477.851,
             "unit": "ms"
           }
         ]
