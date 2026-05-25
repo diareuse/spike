@@ -9,7 +9,9 @@ import spike.factory.DependencyFactory
 import spike.factory.DependencyId
 import spike.factory.InstructionSetPointer
 
-public class PropertyEntryPoint_Factory() : DependencyFactory() {
+public class PropertyEntryPoint_Factory(
+  public val food: Food,
+) : DependencyFactory() {
   override val maxConstructorArgs: Int = 1
 
   private val holder0: PropertyEntryPoint_DependencyHolder0 =
@@ -19,8 +21,8 @@ public class PropertyEntryPoint_Factory() : DependencyFactory() {
     get() = PropertyEntryPoint_InstructionSet.memory
 
   override fun getInstructionsPointer(id: DependencyId): InstructionSetPointer? = when (id.id) {
-    0 -> InstructionSetPointer(0, 6)
-    2 -> InstructionSetPointer(6, 6)
+    0 -> InstructionSetPointer(0, 9)
+    3 -> InstructionSetPointer(9, 6)
     else -> error("Invalid identifier $id")
   }
 

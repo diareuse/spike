@@ -9,11 +9,13 @@ private class PropertyEntryPoint_EntryPoint(
     get() = factory.get(spike.factory.DependencyId(0))
 
   override val normalCat: Cat
-    get() = factory.get(spike.factory.DependencyId(2))
+    get() = factory.get(spike.factory.DependencyId(3))
 
-  public object Factory {
-    public fun create(): PropertyEntryPoint_EntryPoint = PropertyEntryPoint_EntryPoint(PropertyEntryPoint_Factory())
+  public object Factory : PropertyEntryPoint.Factory {
+    override fun create(food: Food): PropertyEntryPoint = PropertyEntryPoint_EntryPoint(PropertyEntryPoint_Factory(food))
   }
 }
 
-public operator fun PropertyEntryPoint.Companion.invoke(): PropertyEntryPoint = PropertyEntryPoint_EntryPoint.Factory.create()
+public operator fun PropertyEntryPoint.Companion.invoke(food: Food): PropertyEntryPoint = PropertyEntryPoint_EntryPoint.Factory.create(food)
+
+public fun PropertyEntryPoint.Companion.factory(): PropertyEntryPoint.Factory = PropertyEntryPoint_EntryPoint.Factory

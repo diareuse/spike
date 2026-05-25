@@ -68,7 +68,7 @@ fun KSFunctionDeclaration.toInvocation() = Invocation(
     parameters = this.parameters.map {
         Parameter(
             name = it.name!!.asString(),
-            type = it.type.resolve().toType(),
+            type = it.type.resolve().toType().qualifiedBy(it.findQualifiers()),
             nullable = it.type.resolve().isMarkedNullable,
         )
     },
