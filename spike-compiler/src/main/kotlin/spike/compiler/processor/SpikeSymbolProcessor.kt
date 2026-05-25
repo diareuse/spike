@@ -47,7 +47,13 @@ class SpikeSymbolProcessor(
         }
         val root = GraphStore.Builder()
         val multibind = MultiBindingStore.Builder()
-        contributor.contribute(GraphContext(root, multibind), resolver)
+        try {
+            contributor.contribute(GraphContext(root, multibind), resolver)
+        } catch (e: Throwable) {
+            val m = e.message
+            if (m != null) environment.logger.error(m)
+            else environment.logger.exception(e)
+        }
         return emptyList()
     }
 
