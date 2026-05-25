@@ -53,6 +53,7 @@ class SpikeSymbolProcessor(
             val m = e.message
             if (m != null) environment.logger.error(m)
             else environment.logger.exception(e)
+            environment.logger.logging(e.stackTraceToString())
         }
         return emptyList()
     }
