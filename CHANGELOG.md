@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.0.8](https://github.com/diareuse/spike/compare/0.0.7...0.0.8) (2026-05-25)
+
+
+### Bug Fixes
+
+* **build:** update Android Gradle Plugin version to 9.2.1 ([bd3036d](https://github.com/diareuse/spike/commit/bd3036dab22e86cb80dc92792712e21e60e9e12f))
+* **compiler:** add error handling for contributor execution ([ec76c24](https://github.com/diareuse/spike/commit/ec76c24b57713bb55ff08a4cc5f5ad0229dbaf48))
+* **compiler:** enhance type factory error messages with detailed guidance ([71a9f9c](https://github.com/diareuse/spike/commit/71a9f9c1d02d7e82ac37b8971d0ac8201a41a532))
+* **compiler:** improve entry point validation error messages ([c67973b](https://github.com/diareuse/spike/commit/c67973b2447a5bab1730029a50411edf5b01963f))
+* **compiler:** prevent circular type dependencies in factory chain ([5876719](https://github.com/diareuse/spike/commit/58767193a0060e2a2765e947f29cc14948e3b795))
+* **compiler:** properly qualify parameter types in symbol processing ([5866874](https://github.com/diareuse/spike/commit/5866874e1b1e8058d5cc404081a9610bb584e562))
+
 ## [0.0.7](https://github.com/diareuse/spike/compare/0.0.6...0.0.7) (2026-05-15)
 
 
