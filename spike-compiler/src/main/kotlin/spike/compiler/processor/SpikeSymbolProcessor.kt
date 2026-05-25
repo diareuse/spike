@@ -49,7 +49,7 @@ class SpikeSymbolProcessor(
         val multibind = MultiBindingStore.Builder()
         try {
             contributor.contribute(GraphContext(root, multibind), resolver)
-        } catch (e: Throwable) {
+        } catch (@Suppress("TooGenericExceptionCaught") e: Throwable) {
             val m = e.message
             if (m != null) environment.logger.error(m)
             else environment.logger.exception(e)
