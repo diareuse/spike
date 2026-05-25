@@ -12,7 +12,27 @@ data class TypeFactoryCreatorChain(
 
     override fun pass(creator: TypeFactoryCreator): TypeFactory {
         val index = creators.indexOf(creator) + 1
-        if (index == creators.size) error("Cannot find factory for $type in current context $store")
+        if (index == creators.size) {
+            val originatingElement = chain.lastOrNull()?.toString() ?: "EntryPoint"
+            error(
+                """Client error, fix by adding element $type to the graph via @spike.Include:
+                |<expected>
+                |  @spike.Include
+                |  class $type { /**/ }
+                |</expected>
+                |
+                |<actual>
+                |  Not Found
+                |</actual>
+                |
+                |<description>
+                |  `class $originatingElement(..., $type)` is declared somewhere in your application.
+                |  $type couldn't be found in the graph. You may have forgotten to annotate with 
+                |  a `@spike.Qualifier`-based annotation or `@spike.Include` is missing atop your class
+                |</description>
+            """.trimMargin()
+            )
+        }
         return with(creators[index]) { create() }
     }
 
