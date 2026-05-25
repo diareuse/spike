@@ -60,7 +60,21 @@ class GraphContributorEntryPoint(
 
     private fun verifyInterface(entryPoint: KSClassDeclaration) {
         check(entryPoint.classKind == ClassKind.INTERFACE) {
-            "Entry point must be an interface, but was ${entryPoint.classKind}"
+            """Client error, fix by substituting <actual /> for <expected />; "this" points to the mandatory change:
+                |<expected>
+                |  @spike.EntryPoint
+                |  interface /* <- this */ $entryPoint { /**/ }
+                |</expected>
+                |
+                |<actual>
+                |  @spike.EntryPoint
+                |  ${entryPoint.classKind.type} $entryPoint { /**/ }
+                |</actual>
+                |
+                |<description>
+                |  Interfaces are enforced to allow future features, expandability and inheritance.
+                |</description>
+            """.trimMargin()
         }
     }
 
@@ -71,7 +85,26 @@ class GraphContributorEntryPoint(
             .filter { it.isPublic() || it.isInternal() }
 
         check(companionObjects.any()) {
-            "Entry point must have a public (or internal) companion object"
+            """Client error, fix by substituting <actual /> for <expected />; "this" points to the mandatory change:
+                |<expected>
+                |  @spike.EntryPoint
+                |  interface $entryPoint {
+                |    // ...
+                |    companion object // <- this
+                |  }
+                |</expected>
+                |
+                |<actual>
+                |  @spike.EntryPoint
+                |  interface $entryPoint {
+                |    // ...
+                |  }
+                |</actual>
+                |
+                |<description>
+                |  Companion objects are used as a receiver for factories and implicit builders. Spike doesn't believe in generating uncoupled classes to your original code.
+                |</description>
+            """.trimMargin()
         }
     }
 
@@ -81,7 +114,32 @@ class GraphContributorEntryPoint(
             .singleOrNull { it.isAnnotationPresent(EntryPoint.Factory::class) }
             ?: return null
         val func = checkNotNull(factory.getDeclaredFunctions().singleOrNull()) {
-            "Entry point factory must have a single abstract function"
+            """Client error, fix by substituting <actual /> for <expected />; "this" points to the mandatory change:
+                |<expected>
+                |  @spike.EntryPoint
+                |  interface $entryPoint {
+                |    @spike.EntryPoint.Factory
+                |    interface $factory {
+                |      fun create(/*params*/): $entryPoint // <- this
+                |    }
+                |  }
+                |</expected>
+                |
+                |<actual>
+                |  @spike.EntryPoint
+                |  interface $entryPoint {
+                |    @spike.EntryPoint.Factory
+                |    interface $factory {
+                |      // zero methods or many methods
+                |    }
+                |  }
+                |</actual>
+                |
+                |<description>
+                |  Spike uses factory parameters as static inputs to your dependency graph. You must declare them statically.
+                |  If some of your parameters are optional, declare them as nullable and pass null.
+                |</description>
+            """.trimMargin()
         }
         val factoryType = factory.toType()
         return GraphEntryPoint.Factory(
@@ -112,7 +170,30 @@ class GraphContributorEntryPoint(
 
     private fun findMethods(entryPoint: KSClassDeclaration): List<Member.Method> = entryPoint.getAllFunctions().filter { it.isAbstract }.map {
         check(it.parameters.isEmpty()) {
-            "Entry point methods must not have parameters, prefer properties for concise syntax. Found ${it.simpleName.asString()} in ${it.parentDeclaration?.qualifiedName?.asString()} (${it.parameters.joinToString { "${it.name?.asString()}: ${it.type.resolve().declaration.qualifiedName?.asString()}" }})"
+            """Client error, fix by substituting <actual /> for <expected />; "this" points to the mandatory change:
+                |<expected>
+                |  @spike.EntryPoint
+                |  interface $entryPoint {
+                |    val ${it.simpleName.asString()}: ${it.returnType}
+                |    @spike.EntryPoint.Factory
+                |    interface Factory {
+                |       fun create(<parameters... />): $entryPoint
+                |    }
+                |  }
+                |</expected>
+                |
+                |<actual>
+                |  @spike.EntryPoint
+                |  interface $entryPoint {
+                |    fun ${it.simpleName.asString()}(<parameters... />): ${it.returnType}
+                |  }
+                |</actual>
+                |
+                |<description>
+                |  Spike accepts input parameters only through EntryPoint.Factory member. Move input parameters of these methods
+                |  to the factory member of Factory annotated class
+                |</description>
+            """.trimMargin()
         }
         Member.Method(
             it.packageName.asString(),
