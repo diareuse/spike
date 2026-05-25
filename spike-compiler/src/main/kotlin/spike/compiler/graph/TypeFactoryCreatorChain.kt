@@ -13,7 +13,10 @@ data class TypeFactoryCreatorChain(
     override fun pass(creator: TypeFactoryCreator): TypeFactory {
         val index = creators.indexOf(creator) + 1
         if (index == creators.size) {
-            val originatingElement = chain.asSequence().take(chain.size -1).joinToString(" -> ").ifEmpty { "<unknown origin>" }
+            val originatingElement = chain.asSequence()
+                .take(chain.size -1)
+                .joinToString(" -> ")
+                .ifEmpty { "<unknown origin>" }
             error(
                 """Client error, fix by adding element $type to the graph via @spike.Include:
                 |<expected>
