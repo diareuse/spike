@@ -6,7 +6,7 @@ class TypeFactoryCreatorCache : TypeFactoryCreator {
         return cache[type] ?: return pass()
     }
 
-    fun put(type: Type, property: TypeFactory.Property) {
-        cache[type] = property
+    fun put(type: Type, factory: TypeFactory) {
+        cache[type] = factory
     }
 }
