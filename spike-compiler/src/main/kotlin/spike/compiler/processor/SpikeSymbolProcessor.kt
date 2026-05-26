@@ -6,21 +6,28 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
 import spike.EntryPoint
+import spike.Include
 import spike.compiler.generator.DependencyGraphGenerator
 import spike.compiler.graph.GraphStore
 import spike.compiler.graph.MultiBindingStore
+import spike.compiler.processor.symbol.SymbolProcessorViewModel
 import spike.compiler.processor.util.getSymbolsWithAnnotation
-import java.util.concurrent.atomic.AtomicBoolean
 
 @OptIn(KspExperimental::class)
 class SpikeSymbolProcessor(
+    private val viewModel: SymbolProcessorViewModel,
     private val environment: SymbolProcessorEnvironment,
 ) : SymbolProcessor {
 
-    private val processed = AtomicBoolean(false)
-
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        if (processed.getAndSet(true)) return emptyList()
+        viewModel.process(resolver)
+        when (viewModel.round) {
+            1 -> return buildList {
+                this += resolver.getSymbolsWithAnnotation("spike.lifecycle.viewmodel.SpikeViewModel")
+                this += resolver.getSymbolsWithAnnotation<Include>()
+                this += resolver.getSymbolsWithAnnotation<EntryPoint>()
+            }
+        }
         val logger = environment.logger
         var include: IncludeContributor
         include = IncludeContributorChain(
@@ -41,9 +48,6 @@ class SpikeSymbolProcessor(
             this += GraphContributorEntryPoint(generator, environment, logger) {
                 it.getSymbolsWithAnnotation<EntryPoint>()
             }.timed("EntryPoint")
-            this += GraphContributorEntryPoint(generator, environment, logger) {
-                it.getSymbolsWithAnnotation<EntryPoint>(ViewModel)
-            }.timed("ViewModelEntryPoint")
         }
         val root = GraphStore.Builder()
         val multibind = MultiBindingStore.Builder()

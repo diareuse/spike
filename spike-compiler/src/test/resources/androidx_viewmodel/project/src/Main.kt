@@ -1,7 +1,9 @@
 import spike.lifecycle.viewmodel.invoke
 
 fun main() {
-    val vm = spike.lifecycle.viewmodel.ViewModelEntryPoint(androidx.lifecycle.SavedStateHandle()).viewModels[MyViewModel::class]!!.get() as MyViewModel
+    val vm = spike.lifecycle.viewmodel.ViewModelEntryPointImpl(androidx.lifecycle.SavedStateHandle())
+        .viewModels[MyViewModel::class]
+        ?.get() as MyViewModel
     check(vm.sayYes() == "yes")
 }
 
