@@ -25,7 +25,7 @@ class SymbolProcessorViewModel(
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         // we generate this entry point in the first round only, then other SymbolProcessors take over
-        if (_round.fetchAndIncrement() > 0) return emptyList()
+        if (round > 0) return emptyList()
 
         val entryPointName = resolver.getKSNameFromString("spike.lifecycle.viewmodel.ViewModelEntryPoint")
         val entryPoint = resolver.getClassDeclarationByName(entryPointName)
@@ -50,6 +50,7 @@ class SymbolProcessorViewModel(
                 .build()
             val file = FileSpec.builder(name).addType(type).build()
             file.writeTo(environment.codeGenerator, true)
+            _round.fetchAndIncrement()
         }
         return emptyList()
     }
