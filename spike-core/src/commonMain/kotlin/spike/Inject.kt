@@ -1,5 +1,5 @@
 package spike
 
 @Target(AnnotationTarget.CONSTRUCTOR)
-@Retention(AnnotationRetention.BINARY)
+@Retention(AnnotationRetention.SOURCE)
 public annotation class Inject

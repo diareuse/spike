@@ -1,5 +1,5 @@
 package spike
 
 @Target(AnnotationTarget.ANNOTATION_CLASS)
-@Retention(AnnotationRetention.BINARY)
+@Retention(AnnotationRetention.SOURCE)
 public annotation class Key

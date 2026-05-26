@@ -1,5 +1,5 @@
 package spike
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.BINARY)
+@Retention(AnnotationRetention.SOURCE)
 public annotation class Singleton
