@@ -24,6 +24,8 @@ class SpikeSymbolProcessor(
         viewModel.process(resolver)
         when (viewModel.round) {
             1 -> return buildList {
+                // fixme we need better system for this; this is incredibly fragile
+                viewModel.round++
                 this += resolver.getSymbolsWithAnnotation("spike.lifecycle.viewmodel.SpikeViewModel")
                 this += resolver.getSymbolsWithAnnotation<Include>()
                 this += resolver.getSymbolsWithAnnotation<EntryPoint>()

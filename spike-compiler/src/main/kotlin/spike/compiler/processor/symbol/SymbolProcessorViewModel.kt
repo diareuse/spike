@@ -19,9 +19,7 @@ import kotlin.concurrent.atomics.fetchAndIncrement
 class SymbolProcessorViewModel(
     private val environment: SymbolProcessorEnvironment
 ) : SymbolProcessor {
-    private val _round = AtomicInt(0)
-    val round: Int
-        get() = _round.load()
+    var round: Int = 0
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         // we generate this entry point in the first round only, then other SymbolProcessors take over
@@ -50,7 +48,7 @@ class SymbolProcessorViewModel(
                 .build()
             val file = FileSpec.builder(name).addType(type).build()
             file.writeTo(environment.codeGenerator, true)
-            _round.fetchAndIncrement()
+            round++
         }
         return emptyList()
     }
