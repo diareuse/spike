@@ -8,6 +8,7 @@ import spike.compiler.harness.BuildResultTasks.jvmRun
 import spike.compiler.harness.BuildResultTasks.kspKotlin
 import spike.compiler.harness.BuildResultTasks.test
 import spike.compiler.harness.TestHarness
+import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
 
@@ -230,9 +231,11 @@ class EntryPointTest : TestHarness() {
         prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
         test = { build("assemble", "run") },
         verify = {
+            fun File.app() = resolve("app")
+            fun File.lib() = resolve("library")
             assertContentEquals(emptyList(), it.tasks(TaskOutcome.FAILED))
-            assertContentEquals(fixturesDir.resolve("app"), copy(projectDirectory = projectDirectory.resolve("app")).outputDir)
-            assertContentEquals(fixturesDir.resolve("library"), copy(projectDirectory = projectDirectory.resolve("library")).outputDir)
+            assertContentEquals(fixturesDir.app(), copy(projectDirectory = projectDirectory.app()).outputDir)
+            assertContentEquals(fixturesDir.lib(), copy(projectDirectory = projectDirectory.lib()).outputDir)
         }
     )
 

@@ -45,7 +45,7 @@ abstract class GraphContributorOriginator : GraphContributor {
                 multibinding = context.multibind.build(),
                 logger = logger
             )
-            for (e in findExternal(context, resolver)) {
+            for (e in findExternal(resolver)) {
                 graphFactory.putExternal(e)
             }
             generator.generate(graphFactory.create(), context.originatingFiles) { spec ->
@@ -58,9 +58,8 @@ abstract class GraphContributorOriginator : GraphContributor {
         }
     }
 
-    private fun findExternal(context: GraphContext, resolver: Resolver): Sequence<TypeFactory.External> {
+    private fun findExternal(resolver: Resolver): Sequence<TypeFactory.External> {
         return resolver.getDeclarationsFromPackage("spike.generated")
-            //.onEach { context.originatingFiles += it.containingFile ?: it.requireKSFile() }
             .filterIsInstance<KSClassDeclaration>()
             .flatMap { klass ->
                 sequence {
@@ -84,7 +83,9 @@ abstract class GraphContributorOriginator : GraphContributor {
             }
     }
 
-    private fun findProperties(entryPoint: KSClassDeclaration): List<Member.Property> = entryPoint.getAllProperties().filter { it.isAbstract() }.map {
+    private fun findProperties(
+        entryPoint: KSClassDeclaration
+    ): List<Member.Property> = entryPoint.getAllProperties().filter { it.isAbstract() }.map {
         Member.Property(
             packageName = it.packageName.asString(),
             name = it.simpleName.asString(),
@@ -92,7 +93,9 @@ abstract class GraphContributorOriginator : GraphContributor {
         )
     }.toList()
 
-    private fun findMethods(entryPoint: KSClassDeclaration): List<Member.Method> = entryPoint.getAllFunctions().filter { it.isAbstract }.map {
+    private fun findMethods(
+        entryPoint: KSClassDeclaration
+    ): List<Member.Method> = entryPoint.getAllFunctions().filter { it.isAbstract }.map {
         check(it.parameters.isEmpty()) {
             """Client error, fix by substituting <actual /> for <expected />; "this" points to the mandatory change:
                 |<expected>
