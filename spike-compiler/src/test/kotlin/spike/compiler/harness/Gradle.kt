@@ -50,8 +50,8 @@ class GradleTestProject(
         fun cloneProjectDir(from: File) = apply {
             from.copyRecursively(projectRoot, true)
             val absoluteRootDir = File("../").canonicalPath
-            projectRoot.resolve("settings.gradle.kts").writeText(
-                """
+            val settingsFile = projectRoot.resolve("settings.gradle.kts")
+            var settingsContent = """
                 pluginManagement {
                     repositories {
                         gradlePluginPortal()
@@ -84,8 +84,11 @@ class GradleTestProject(
                 }
                 
                 rootProject.name = "project"
+                
             """.trimIndent()
-            )
+            if (settingsFile.exists())
+                settingsContent += settingsFile.readText()
+            settingsFile.writeText(settingsContent)
         }
 
         fun useFixturesDir(from: File) = apply {
@@ -145,10 +148,14 @@ object BuildResultTasks {
         }
     val BuildResult.assemble
         get() = requireNotNull(task(":assemble")) {
-            "Couldn't find test task in build result, but found ${tasks.joinToString { it.path }}"
+            "Couldn't find assemble task in build result, but found ${tasks.joinToString { it.path }}"
         }
     val BuildResult.jvmRun
         get() = requireNotNull(task(":jvmRun")) {
-            "Couldn't find test task in build result, but found ${tasks.joinToString { it.path }}"
+            "Couldn't find jvmRun task in build result, but found ${tasks.joinToString { it.path }}"
+        }
+    val BuildResult.run
+        get() = requireNotNull(task(":run")) {
+            "Couldn't find run task in build result, but found ${tasks.joinToString { it.path }}"
         }
 }

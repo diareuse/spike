@@ -108,6 +108,16 @@ sealed interface TypeFactory {
             get() = emptyList()
     }
 
+    data class External(
+        override val type: Type,
+        val name: String,
+        val isMethod: Boolean,
+        val origin: Type
+    ) : TypeFactory {
+        override val dependencies: List<TypeFactory>
+            get() = emptyList()
+    }
+
     data class MultibindsCollection(
         override val type: Type,
         val entries: List<TypeFactory>,

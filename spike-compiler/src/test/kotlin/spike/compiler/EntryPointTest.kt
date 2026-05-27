@@ -1,5 +1,6 @@
 package spike.compiler
 
+import org.gradle.testkit.runner.TaskOutcome
 import spike.compiler.assertion.assertContentEquals
 import spike.compiler.harness.BuildResultTasks.assemble
 import spike.compiler.harness.BuildResultTasks.compileKotlin
@@ -8,6 +9,7 @@ import spike.compiler.harness.BuildResultTasks.kspKotlin
 import spike.compiler.harness.BuildResultTasks.test
 import spike.compiler.harness.TestHarness
 import kotlin.test.Test
+import kotlin.test.assertContentEquals
 
 class EntryPointTest : TestHarness() {
 
@@ -219,6 +221,18 @@ class EntryPointTest : TestHarness() {
             assertSuccess(it.assemble)
             assertSuccess(it.jvmRun)
             assertContentEquals(fixturesDir, outputDir)
+        }
+    )
+
+    @Test
+    fun `exports are taken into account`() = runTest(
+        label = "multi_module",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { build("assemble", "run") },
+        verify = {
+            assertContentEquals(emptyList(), it.tasks(TaskOutcome.FAILED))
+            assertContentEquals(fixturesDir.resolve("app"), copy(projectDirectory = projectDirectory.resolve("app")).outputDir)
+            assertContentEquals(fixturesDir.resolve("library"), copy(projectDirectory = projectDirectory.resolve("library")).outputDir)
         }
     )
 

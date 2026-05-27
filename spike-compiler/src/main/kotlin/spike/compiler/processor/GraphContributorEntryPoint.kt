@@ -2,60 +2,31 @@ package spike.compiler.processor
 
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getDeclaredFunctions
-import com.google.devtools.ksp.isAbstract
 import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.isInternal
 import com.google.devtools.ksp.isPublic
 import com.google.devtools.ksp.processing.KSPLogger
-import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.squareup.kotlinpoet.ksp.writeTo
 import spike.EntryPoint
 import spike.compiler.generator.DependencyGraphGenerator
-import spike.compiler.graph.DependencyGraph
 import spike.compiler.graph.GraphEntryPoint
 import spike.compiler.graph.Member
 import spike.compiler.graph.Parameter
 
 @OptIn(KspExperimental::class)
 class GraphContributorEntryPoint(
-    private val generator: DependencyGraphGenerator,
-    private val environment: SymbolProcessorEnvironment,
-    private val logger: KSPLogger,
-    private val selector: (Resolver) -> Sequence<KSAnnotated>,
-) : GraphContributor {
-    override fun contribute(context: GraphContext, resolver: Resolver) {
-        val entryPoints = selector(resolver)
-            .filterIsInstance<KSClassDeclaration>()
-        for (entryPoint in entryPoints) {
-            verifyInterface(entryPoint)
-            verifyHasCompanion(entryPoint)
-            val factory = findFactory(entryPoint)
-            val properties = findProperties(entryPoint)
-            val methods = findMethods(entryPoint)
-            val entry = GraphEntryPoint(
-                type = entryPoint.toType(),
-                factory = factory,
-                properties = properties,
-                methods = methods,
-            )
-            val graph = DependencyGraph.Factory(
-                entry = entry,
-                root = context.builder.build(),
-                multibinding = context.multibind.build(),
-                logger = logger
-            ).create()
-            generator.generate(graph, context.originatingFiles) { spec ->
-                try {
-                    spec.writeTo(environment.codeGenerator, true)
-                } catch (e: FileAlreadyExistsException) {
-                    spec.writeTo(e.file.parentFile)
-                }
-            }
-        }
+    override val generator: DependencyGraphGenerator,
+    override val environment: SymbolProcessorEnvironment,
+    override val logger: KSPLogger,
+    override val origins: Sequence<KSAnnotated>,
+) : GraphContributorOriginator() {
+
+    override fun verifyOrigin(declaration: KSClassDeclaration) {
+        verifyInterface(declaration)
+        verifyHasCompanion(declaration)
     }
 
     private fun verifyInterface(entryPoint: KSClassDeclaration) {
@@ -108,7 +79,7 @@ class GraphContributorEntryPoint(
         }
     }
 
-    private fun findFactory(entryPoint: KSClassDeclaration): GraphEntryPoint.Factory? {
+    override fun findFactory(entryPoint: KSClassDeclaration): GraphEntryPoint.Factory? {
         val factory = entryPoint.declarations
             .filterIsInstance<KSClassDeclaration>()
             .singleOrNull { it.isAnnotationPresent(EntryPoint.Factory::class) }
@@ -160,46 +131,4 @@ class GraphContributorEntryPoint(
         )
     }
 
-    private fun findProperties(entryPoint: KSClassDeclaration): List<Member.Property> = entryPoint.getAllProperties().filter { it.isAbstract() }.map {
-        Member.Property(
-            packageName = it.packageName.asString(),
-            name = it.simpleName.asString(),
-            returns = it.type.resolve().toType().qualifiedBy(it.findQualifiers()),
-        )
-    }.toList()
-
-    private fun findMethods(entryPoint: KSClassDeclaration): List<Member.Method> = entryPoint.getAllFunctions().filter { it.isAbstract }.map {
-        check(it.parameters.isEmpty()) {
-            """Client error, fix by substituting <actual /> for <expected />; "this" points to the mandatory change:
-                |<expected>
-                |  @spike.EntryPoint
-                |  interface $entryPoint {
-                |    val ${it.simpleName.asString()}: ${it.returnType}
-                |    @spike.EntryPoint.Factory
-                |    interface Factory {
-                |       fun create(<parameters... />): $entryPoint
-                |    }
-                |  }
-                |</expected>
-                |
-                |<actual>
-                |  @spike.EntryPoint
-                |  interface $entryPoint {
-                |    fun ${it.simpleName.asString()}(<parameters... />): ${it.returnType}
-                |  }
-                |</actual>
-                |
-                |<description>
-                |  Spike accepts input parameters only through EntryPoint.Factory member. Move input parameters of these methods
-                |  to the factory member of Factory annotated class
-                |</description>
-            """.trimMargin()
-        }
-        Member.Method(
-            it.packageName.asString(),
-            it.simpleName.asString(),
-            it.returnType!!.resolve().toType().qualifiedBy(it.findQualifiers()),
-            it.parentDeclaration?.toType(),
-        )
-    }.toList()
 }

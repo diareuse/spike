@@ -22,14 +22,7 @@ import spike.compiler.generator.code.addProvider
 import spike.compiler.generator.code.addType
 import spike.compiler.generator.code.mapEntries
 import spike.compiler.graph.TypeFactory
-import spike.compiler.graph.TypeFactory.Binds
-import spike.compiler.graph.TypeFactory.Class
-import spike.compiler.graph.TypeFactory.Memorizes
-import spike.compiler.graph.TypeFactory.Method
-import spike.compiler.graph.TypeFactory.MultibindsCollection
-import spike.compiler.graph.TypeFactory.MultibindsMap
-import spike.compiler.graph.TypeFactory.Property
-import spike.compiler.graph.TypeFactory.Provides
+import spike.compiler.graph.TypeFactory.*
 import spike.factory.SingletonHolder
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -125,6 +118,7 @@ class DependencyHolderGenerator(
                     mapEntries(factory.keyValues.entries)
                 }.addStatement("")
                 is Property -> body.addStatement("factory.${factory.name}")
+                is External -> body.addStatement("%T.%L", factory.origin.toClassName(), factory.name)
             }
         }
         body.addStatement("else -> error(\"Invalid position\")")

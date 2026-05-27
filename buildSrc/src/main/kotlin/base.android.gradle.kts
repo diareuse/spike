@@ -5,8 +5,8 @@ plugins {
 
 kotlin {
     explicitApi()
-    androidLibrary {
-        compileSdk = 36
+    android {
+        compileSdk = 37
         minSdk = 1
     }
     compilerOptions {

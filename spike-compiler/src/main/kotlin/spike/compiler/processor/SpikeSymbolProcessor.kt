@@ -6,6 +6,7 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
 import spike.EntryPoint
+import spike.Export
 import spike.Include
 import spike.compiler.generator.DependencyGraphGenerator
 import spike.compiler.graph.GraphStore
@@ -26,6 +27,7 @@ class SpikeSymbolProcessor(
                 this += resolver.getSymbolsWithAnnotation("spike.lifecycle.viewmodel.SpikeViewModel")
                 this += resolver.getSymbolsWithAnnotation<Include>()
                 this += resolver.getSymbolsWithAnnotation<EntryPoint>()
+                this += resolver.getSymbolsWithAnnotation<Export>()
             }
         }
         val logger = environment.logger
@@ -37,7 +39,6 @@ class SpikeSymbolProcessor(
         include = IncludeContributorBindTo(include)
         include = IncludeContributorMultiplatform(include, resolver)
         val viewModel = IncludeContributorViewModel()
-        val generator = DependencyGraphGenerator()
         val contributor = GraphContributor.create {
             this += GraphContributorIncludeViewModel(viewModel)
                 .timed("ViewModel")
@@ -45,9 +46,18 @@ class SpikeSymbolProcessor(
                 .timed("Class")
             this += GraphContributorIncludeFunction(include)
                 .timed("Function")
-            this += GraphContributorEntryPoint(generator, environment, logger) {
-                it.getSymbolsWithAnnotation<EntryPoint>()
-            }.timed("EntryPoint")
+            this += GraphContributorEntryPoint(
+                generator = DependencyGraphGenerator(false),
+                environment = environment,
+                logger = logger,
+                origins = resolver.getSymbolsWithAnnotation<EntryPoint>()
+            ).timed("EntryPoint")
+            this += GraphContributorExport(
+                generator = DependencyGraphGenerator(true),
+                environment = environment,
+                logger = logger,
+                origins = resolver.getSymbolsWithAnnotation<Export>()
+            ).timed("Export")
         }
         val root = GraphStore.Builder()
         val multibind = MultiBindingStore.Builder()

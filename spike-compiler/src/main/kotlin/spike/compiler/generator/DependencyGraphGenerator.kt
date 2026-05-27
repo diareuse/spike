@@ -5,7 +5,7 @@ package spike.compiler.generator
 import com.google.devtools.ksp.symbol.KSFile
 import spike.compiler.graph.DependencyGraph
 
-class DependencyGraphGenerator {
+class DependencyGraphGenerator(private val export: Boolean) {
 
     private val resolver = TypeResolver()
 
@@ -16,7 +16,10 @@ class DependencyGraphGenerator {
     ) {
         val context = FileGeneratorContext(resolver, graph, originatingFiles)
         val dependencyFactoryClassName = context.resolver.peerClass(graph, "Factory")
-        val entryPoint = EntryPointGenerator(dependencyFactoryClassName)
+        val entryPoint = when {
+            export -> ExportGenerator(dependencyFactoryClassName)
+            else -> EntryPointGenerator(dependencyFactoryClassName)
+        }
         val instructionSet = InstructionSetGenerator()
         val dependencyFactory = DependencyFactoryGenerator(
             dependencyFactoryClassName = dependencyFactoryClassName,

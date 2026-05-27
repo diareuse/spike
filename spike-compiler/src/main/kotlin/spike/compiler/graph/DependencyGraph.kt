@@ -27,8 +27,20 @@ class DependencyGraph private constructor(
         private val logger: KSPLogger,
     ) {
 
+        private val cache = TypeFactoryCreatorCache()
+
+        init {
+            val factory = entry.factory
+            for (p in factory.method.parameters) {
+                cache.put(p.type, TypeFactory.Property(p.type, p.name))
+            }
+        }
+
+        fun putExternal(external: TypeFactory.External) {
+            cache.put(external.type, external)
+        }
+
         fun create(): DependencyGraph {
-            val cache = TypeFactoryCreatorCache()
             val creators = listOf(
                 cache,
                 TypeFactoryCreatorConstructor(),
@@ -40,10 +52,6 @@ class DependencyGraph private constructor(
                 TypeFactoryCreatorMultiBindCollection(multibinding, BuiltInTypes.Set),
                 TypeFactoryCreatorMultiBindCollection(multibinding, BuiltInTypes.List),
             )
-            val factory = entry.factory
-            for (p in factory.method.parameters) {
-                cache.put(p.type, TypeFactory.Property(p.type, p.name))
-            }
             val methods = entry.methods.map {
                 createTypeFactory(it.returns, creators)
             }
