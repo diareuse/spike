@@ -15,15 +15,15 @@ import spike.Provider
 import spike.factory.DependencyId
 
 public class ViewModelEntryPointImpl_DependencyHolder0(
-    private val factory: ViewModelEntryPointImpl_Factory,
+  private val factory: ViewModelEntryPointImpl_Factory,
 ) {
-    internal fun create(buffer: Array<Any?>, position: Int): Any = when (position) {
-        0 -> mapOf<KClass<out ViewModel>, Provider<ViewModel>>(
-            MyViewModel::class to Provider { factory.get<MyViewModel>(DependencyId(3)) }
-        )
-        1 -> Provider { factory.get<MyViewModel>(DependencyId(3)) }
-        2 -> factory.handle
-        3 -> MyViewModel(buffer[0] as SavedStateHandle)
-        else -> error("Invalid position")
-    }
+  internal fun create(buffer: Array<Any?>, position: Int): Any = when(position) {
+    0 -> mapOf<KClass<out ViewModel>, Provider<ViewModel>>(
+      MyViewModel::class to Provider { factory.get<MyViewModel>(DependencyId(3)) }
+    )
+    1 -> Provider { factory.get<MyViewModel>(DependencyId(3)) }
+    2 -> factory.handle
+    3 -> MyViewModel(buffer[0] as SavedStateHandle)
+    else -> error("Invalid position")
+  }
 }
