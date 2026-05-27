@@ -48,6 +48,8 @@ class GradleTestProject(
         }
 
         fun cloneProjectDir(from: File) = apply {
+            projectRoot.deleteRecursively()
+            projectRoot.mkdirs()
             from.copyRecursively(projectRoot, true)
             val absoluteRootDir = File("../").canonicalPath
             val settingsFile = projectRoot.resolve("settings.gradle.kts")
