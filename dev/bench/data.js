@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779866380617,
+  "lastUpdate": 1779866693412,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -1674,6 +1674,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 510.831,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "90d6930cac360e1baa8e8e8b5f364afb7b13f27c",
+          "message": "fix(compiler): remove unused context parameter and simplify code formatting\n\nRemoved unused `context` parameter from `findExternal` function in `GraphContributorOriginator` and simplified code formatting in `DependencyHolderGenerator`. The changes improve code readability by eliminating unnecessary parameters and standardizing the formatting of annotation blocks.\n\nThe refactoring also includes minor formatting adjustments in `GraphContributorOriginator` to improve code structure, specifically in the `findProperties` and `findMethods` functions. These changes maintain existing functionality while enhancing code clarity and consistency.\n\nAdditionally, updated import statements in `DependencyHolderGenerator` to use explicit imports instead of wildcard imports for better type visibility and maintainability.",
+          "timestamp": "2026-05-27T09:17:30+02:00",
+          "tree_id": "ecc0aab3509d4fec3aae101e77508d36df0512d8",
+          "url": "https://github.com/diareuse/spike/commit/90d6930cac360e1baa8e8e8b5f364afb7b13f27c"
+        },
+        "date": 1779866692819,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 3183.18,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 540.337,
             "unit": "ms"
           }
         ]
