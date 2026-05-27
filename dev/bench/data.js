@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779776471218,
+  "lastUpdate": 1779866380617,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -1640,6 +1640,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 481.153,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": false,
+          "id": "f3890077df1e71ac8c9b5b585155e73b68b9b316",
+          "message": "fix(compiler): simplify round management in symbol processor\n\nSimplified the round tracking logic in SymbolProcessorViewModel by replacing AtomicInt with a simple var property. This change makes the code more readable while maintaining the same functionality of generating ViewModelEntryPoint only in the first compilation round.\n\nThe round counter is now properly incremented after entry point generation, ensuring correct processing order for subsequent rounds. This also aligns with the existing pattern of using direct property access instead of atomic operations for simple increment scenarios.\n\nThis change improves code clarity and maintainability while preserving the intended behavior of the symbol processor's round handling mechanism.",
+          "timestamp": "2026-05-27T09:11:40+02:00",
+          "tree_id": "07469f120d899b97e15cccc1ac475c8482441d1b",
+          "url": "https://github.com/diareuse/spike/commit/f3890077df1e71ac8c9b5b585155e73b68b9b316"
+        },
+        "date": 1779866380212,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 3131.81,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 510.831,
             "unit": "ms"
           }
         ]
