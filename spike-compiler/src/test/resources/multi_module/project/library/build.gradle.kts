@@ -18,6 +18,6 @@ kotlin {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("io.github.diareuse:spike")
-    ksp("io.github.diareuse:spike-compiler")
+    implementation("local.spike:spike")
+    ksp("local.spike:spike-compiler")
 }

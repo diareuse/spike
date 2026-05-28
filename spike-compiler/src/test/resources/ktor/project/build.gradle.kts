@@ -26,9 +26,9 @@ kotlin {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("io.github.diareuse:spike")
-    implementation("io.github.diareuse:spike-ktor")
-    ksp("io.github.diareuse:spike-compiler")
+    implementation("local.spike:spike")
+    implementation("local.spike:spike-ktor")
+    ksp("local.spike:spike-compiler")
     implementation(libs.ktor.core)
     implementation(libs.ktor.client.java)
     testImplementation(libs.ktor.server.test)

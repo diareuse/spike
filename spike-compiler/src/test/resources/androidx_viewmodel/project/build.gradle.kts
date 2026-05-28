@@ -23,8 +23,8 @@ kotlin {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("io.github.diareuse:spike")
-    implementation("io.github.diareuse:spike-androidx")
+    implementation("local.spike:spike")
+    implementation("local.spike:spike-androidx")
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)
-    ksp("io.github.diareuse:spike-compiler")
+    ksp("local.spike:spike-compiler")
 }

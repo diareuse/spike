@@ -77,11 +77,11 @@ class GradleTestProject(
                 // This is the magic: it treats your local repo as part of the build
                 includeBuild("$absoluteRootDir") {
                     dependencySubstitution {
-                        substitute(module("io.github.diareuse:spike-compiler")).using(project(":spike-compiler"))
-                        substitute(module("io.github.diareuse:spike")).using(project(":spike-core"))
-                        substitute(module("io.github.diareuse:spike-ktor")).using(project(":spike-ktor"))
-                        substitute(module("io.github.diareuse:spike-androidx")).using(project(":spike-androidx"))
-                        substitute(module("io.github.diareuse:spike-androidx-compose")).using(project(":spike-androidx-compose"))
+                        substitute(module("local.spike:spike-compiler")).using(project(":spike-compiler"))
+                        substitute(module("local.spike:spike")).using(project(":spike-core"))
+                        substitute(module("local.spike:spike-ktor")).using(project(":spike-ktor"))
+                        substitute(module("local.spike:spike-androidx")).using(project(":spike-androidx"))
+                        substitute(module("local.spike:spike-androidx-compose")).using(project(":spike-androidx-compose"))
                     }
                 }
                 

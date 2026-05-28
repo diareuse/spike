@@ -21,7 +21,7 @@ kotlin {
     }
     sourceSets {
         commonMain.dependencies {
-            implementation("io.github.diareuse:spike")
+            implementation("local.spike:spike")
             implementation(kotlin("stdlib"))
         }
         jvmMain.dependencies {}
@@ -31,6 +31,6 @@ kotlin {
 
 
 dependencies {
-    add("kspJvm", "io.github.diareuse:spike-compiler")
-    add("kspJs", "io.github.diareuse:spike-compiler")
+    add("kspJvm", "local.spike:spike-compiler")
+    add("kspJs", "local.spike:spike-compiler")
 }
