@@ -4,34 +4,23 @@ import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
-import com.google.devtools.ksp.symbol.KSAnnotated
-import spike.EntryPoint
-import spike.Export
-import spike.Include
 import spike.compiler.generator.DependencyGraphGenerator
 import spike.compiler.graph.GraphStore
 import spike.compiler.graph.MultiBindingStore
 import spike.compiler.processor.symbol.SymbolProcessorViewModel
-import spike.compiler.processor.util.getSymbolsWithAnnotation
+import spike.compiler.processor.symbol.SymbolRegistry
 
 @OptIn(KspExperimental::class)
 class SpikeSymbolProcessor(
     private val viewModel: SymbolProcessorViewModel,
     private val environment: SymbolProcessorEnvironment,
+    private val registry: SymbolRegistry
 ) : SymbolProcessor {
 
-    override fun process(resolver: Resolver): List<KSAnnotated> {
-        viewModel.process(resolver)
-        when (viewModel.round) {
-            1 -> return buildList {
-                // fixme we need better system for this; this is incredibly fragile
-                viewModel.round++
-                this += resolver.getSymbolsWithAnnotation("spike.lifecycle.viewmodel.SpikeViewModel")
-                this += resolver.getSymbolsWithAnnotation<Include>()
-                this += resolver.getSymbolsWithAnnotation<EntryPoint>()
-                this += resolver.getSymbolsWithAnnotation<Export>()
-            }
-        }
+    private var processed = false
+
+    override fun process(resolver: Resolver) = viewModel.process(resolver).ifEmpty {
+        if (processed) return@ifEmpty emptyList()
         val logger = environment.logger
         var include: IncludeContributor
         include = IncludeContributorChain(
@@ -42,23 +31,21 @@ class SpikeSymbolProcessor(
         include = IncludeContributorMultiplatform(include, resolver)
         val viewModel = IncludeContributorViewModel()
         val contributor = GraphContributor.create {
-            this += GraphContributorIncludeViewModel(viewModel)
+            this += GraphContributorIncludeViewModel(viewModel, registry)
                 .timed("ViewModel")
-            this += GraphContributorIncludeClass(include)
-                .timed("Class")
-            this += GraphContributorIncludeFunction(include)
-                .timed("Function")
+            this += GraphContributorInclude(include, registry)
+                .timed("Include")
             this += GraphContributorEntryPoint(
                 generator = DependencyGraphGenerator(false),
                 environment = environment,
                 logger = logger,
-                origins = resolver.getSymbolsWithAnnotation<EntryPoint>()
+                origins = registry.entryPoint(resolver)
             ).timed("EntryPoint")
             this += GraphContributorExport(
                 generator = DependencyGraphGenerator(true),
                 environment = environment,
                 logger = logger,
-                origins = resolver.getSymbolsWithAnnotation<Export>()
+                origins = registry.export(resolver)
             ).timed("Export")
         }
         val root = GraphStore.Builder()
@@ -71,15 +58,12 @@ class SpikeSymbolProcessor(
             else environment.logger.exception(e)
             environment.logger.logging(e.stackTraceToString())
         }
-        return emptyList()
+        processed = true
+        emptyList()
     }
 
     private fun GraphContributor.timed(tag: String): GraphContributor {
         return GraphContributorMeasureTime(this, environment, tag)
-    }
-
-    private companion object {
-        private const val ViewModel = "spike.lifecycle.viewmodel"
     }
 
 }

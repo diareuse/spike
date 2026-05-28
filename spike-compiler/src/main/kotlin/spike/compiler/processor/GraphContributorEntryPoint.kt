@@ -15,6 +15,7 @@ import spike.compiler.generator.DependencyGraphGenerator
 import spike.compiler.graph.GraphEntryPoint
 import spike.compiler.graph.Member
 import spike.compiler.graph.Parameter
+import spike.compiler.processor.symbol.SymbolRegistry
 
 @OptIn(KspExperimental::class)
 class GraphContributorEntryPoint(

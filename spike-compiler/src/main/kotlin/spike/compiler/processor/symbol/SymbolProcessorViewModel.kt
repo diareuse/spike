@@ -11,19 +11,19 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.ksp.writeTo
 import spike.EntryPoint
-import kotlin.concurrent.atomics.AtomicInt
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
-import kotlin.concurrent.atomics.fetchAndIncrement
 
 @OptIn(ExperimentalAtomicApi::class)
 class SymbolProcessorViewModel(
-    private val environment: SymbolProcessorEnvironment
+    private val environment: SymbolProcessorEnvironment,
+    private val registry: SymbolRegistry
 ) : SymbolProcessor {
-    var round: Int = 0
+
+    private var processed = false
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         // we generate this entry point in the first round only, then other SymbolProcessors take over
-        if (round > 0) return emptyList()
+        if (processed) return emptyList()
 
         val entryPointName = resolver.getKSNameFromString("spike.lifecycle.viewmodel.ViewModelEntryPoint")
         val entryPoint = resolver.getClassDeclarationByName(entryPointName)
@@ -48,7 +48,8 @@ class SymbolProcessorViewModel(
                 .build()
             val file = FileSpec.builder(name).addType(type).build()
             file.writeTo(environment.codeGenerator, true)
-            round++
+            processed = true
+            return registry.all(resolver)
         }
         return emptyList()
     }
