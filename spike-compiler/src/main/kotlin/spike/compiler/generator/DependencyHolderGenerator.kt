@@ -11,6 +11,7 @@ import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
+import spike.Include
 import spike.compiler.generator.code.addBufferCast
 import spike.compiler.generator.code.addDependencyFactoryCall
 import spike.compiler.generator.code.addLazy
@@ -34,13 +35,13 @@ import spike.compiler.graph.TypeFactory.Provides
 import spike.factory.SingletonHolder
 import java.util.concurrent.atomic.AtomicInteger
 
-class DependencyHolderGenerator(
+class DependencyHolderGenerator private constructor(
     private val index: Int,
-    private val dependencyFactoryClassName: ClassName
 ) : Generator {
     override fun generate(context: FileGeneratorContext, collector: FileSpecCollector) {
         val factories = context.ids.toList()[index]
         val className = context.resolver.peerClass(context.graph, "DependencyHolder${index}")
+        val dependencyFactoryClassName = context.dependencyFactoryClassName
         val type = TypeSpec.classBuilder(className)
         type.primaryConstructor(
             FunSpec.constructorBuilder()
@@ -136,6 +137,11 @@ class DependencyHolderGenerator(
         builder.addCode(body.build())
 
         return builder.build()
+    }
+
+    @Include
+    class Factory {
+        fun create(index: Int) = DependencyHolderGenerator(index)
     }
 
     private companion object {

@@ -11,6 +11,7 @@ data class FileGeneratorContext(
     val instructions: DependencyFactoryInstructionsSet = DependencyFactoryInstructionsSet(),
     val ids: TypeFactoryIdHolder = TypeFactoryIdHolder()
 ) {
+    val dependencyFactoryClassName = resolver.peerClass(graph, "Factory")
     fun getDependencyId(factory: TypeFactory): Int {
         return ids.getOrAdd(factory)
     }

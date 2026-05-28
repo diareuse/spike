@@ -13,6 +13,7 @@ import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.asTypeName
 import com.squareup.kotlinpoet.withIndent
+import spike.Include
 import spike.compiler.graph.TypeFactory
 import spike.compiler.graph.TypeFactory.Companion.dependencyTree
 import spike.compiler.graph.TypeFactory.Companion.invertDependencyTree
@@ -21,13 +22,13 @@ import spike.factory.DependencyId
 import spike.factory.InstructionSet
 import spike.factory.InstructionSetPointer
 
+@Include
 class DependencyFactoryGenerator(
-    private val dependencyFactoryClassName: ClassName,
     private val instructionSet: InstructionSetGenerator,
-    private val dependencyHolder: (Int) -> DependencyHolderGenerator,
+    private val holderFactory: DependencyHolderGenerator.Factory
 ) : Generator {
     override fun generate(context: FileGeneratorContext, collector: FileSpecCollector) {
-        val spec = TypeSpec.classBuilder(dependencyFactoryClassName)
+        val spec = TypeSpec.classBuilder(context.dependencyFactoryClassName)
         spec.superclass(DependencyFactory::class)
         spec.primaryConstructor(
             FunSpec.constructorBuilder()
@@ -69,7 +70,7 @@ class DependencyFactoryGenerator(
                 .build()
         )
         val type = spec.build()
-        val file = FileSpec.builder(dependencyFactoryClassName)
+        val file = FileSpec.builder(context.dependencyFactoryClassName)
             .addType(type)
             .addAnnotation(
                 AnnotationSpec.builder(Suppress::class)
@@ -125,7 +126,7 @@ class DependencyFactoryGenerator(
         block.withIndent {
             for (index in context.ids.indices) {
                 val holder = buildList {
-                    dependencyHolder(index).generate(context) {
+                    holderFactory.create(index).generate(context) {
                         collector.emit(it)
                         add(it)
                     }

@@ -3,11 +3,14 @@
 package spike.compiler.generator
 
 import com.google.devtools.ksp.symbol.KSFile
+import spike.Include
 import spike.compiler.graph.DependencyGraph
 
-class DependencyGraphGenerator(private val export: Boolean) {
-
-    private val resolver = TypeResolver()
+class DependencyGraphGenerator private constructor(
+    private val resolver: TypeResolver,
+    private val entryPoint: Generator,
+    private val dependencyFactory: DependencyFactoryGenerator
+) {
 
     fun generate(
         graph: DependencyGraph,
@@ -15,19 +18,23 @@ class DependencyGraphGenerator(private val export: Boolean) {
         collector: FileSpecCollector
     ) {
         val context = FileGeneratorContext(resolver, graph, originatingFiles)
-        val dependencyFactoryClassName = context.resolver.peerClass(graph, "Factory")
-        val entryPoint = when {
-            export -> ExportGenerator(dependencyFactoryClassName)
-            else -> EntryPointGenerator(dependencyFactoryClassName)
-        }
-        val instructionSet = InstructionSetGenerator()
-        val dependencyFactory = DependencyFactoryGenerator(
-            dependencyFactoryClassName = dependencyFactoryClassName,
-            instructionSet = instructionSet,
-            dependencyHolder = { index -> DependencyHolderGenerator(index, dependencyFactoryClassName) },
-        )
         dependencyFactory.generate(context, collector)
         entryPoint.generate(context, collector)
+    }
+
+    @Include
+    class Factory(
+        private val resolver: TypeResolver,
+        private val dependencyFactory: DependencyFactoryGenerator
+    ) {
+        fun create(export: Boolean) = DependencyGraphGenerator(
+            resolver = resolver,
+            entryPoint = when (export) {
+                true -> ExportGenerator()
+                else -> EntryPointGenerator()
+            },
+            dependencyFactory = dependencyFactory
+        )
     }
 
 }

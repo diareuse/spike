@@ -15,7 +15,8 @@ fun interface GraphContributor {
             viewModel: IncludeContributorViewModel,
             registry: SymbolRegistry,
             include: IncludeContributor,
-            environment: SymbolProcessorEnvironment
+            environment: SymbolProcessorEnvironment,
+            generator: DependencyGraphGenerator.Factory
         ): GraphContributor = GraphContributorMeta(
             listOf(
                 GraphContributorIncludeViewModel(viewModel, registry)
@@ -23,13 +24,13 @@ fun interface GraphContributor {
                 GraphContributorInclude(include, registry)
                     .timed("Include", environment.logger),
                 GraphContributorEntryPoint(
-                    generator = DependencyGraphGenerator(false),
+                    generator = generator.create(false),
                     environment = environment,
                     logger = environment.logger,
                     registry = registry
                 ).timed("EntryPoint", environment.logger),
                 GraphContributorExport(
-                    generator = DependencyGraphGenerator(true),
+                    generator = generator.create(true),
                     environment = environment,
                     logger = environment.logger,
                     registry = registry

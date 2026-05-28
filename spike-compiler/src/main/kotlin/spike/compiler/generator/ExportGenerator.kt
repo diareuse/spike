@@ -11,15 +11,13 @@ import com.squareup.kotlinpoet.asClassName
 import spike.compiler.graph.GraphEntryPoint
 import spike.factory.DependencyId
 
-class ExportGenerator(
-    private val dependencyFactoryClassName: ClassName
-) : Generator {
+class ExportGenerator : Generator {
     override fun generate(context: FileGeneratorContext, collector: FileSpecCollector) {
         val graph = context.graph
         val resolver = context.resolver
         val ep = graph.entry
         val epcn = ClassName("spike.generated.${graph.entry.type.packageName}", graph.entry.type.simpleName + "Impl")
-        val dfcn = dependencyFactoryClassName
+        val dfcn = context.dependencyFactoryClassName
         val type = TypeSpec.objectBuilder(epcn)
             .addOriginatingFiles(context.originatingFiles)
             .addSuperinterface(resolver.getTypeName(ep.type))

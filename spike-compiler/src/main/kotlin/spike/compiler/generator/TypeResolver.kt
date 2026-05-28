@@ -3,12 +3,16 @@ package spike.compiler.generator
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.TypeName
+import spike.Include
+import spike.Singleton
 import spike.compiler.graph.BuiltInMembers
 import spike.compiler.graph.BuiltInTypes
 import spike.compiler.graph.DependencyGraph
 import spike.compiler.graph.Member
 import spike.compiler.graph.Type
 
+@Singleton
+@Include
 class TypeResolver {
 
     inline val builtInType get() = BuiltInTypes
