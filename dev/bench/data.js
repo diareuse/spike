@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779951862740,
+  "lastUpdate": 1779955407177,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -1742,6 +1742,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 478.894,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "3ccc57a154ce8a9cf6b1a00f0f8d8e9af0223c07",
+          "message": "refactor(compiler): streamline resolver access and simplify contributor signatures\n\nThis change refactors graph contributors to access the resolver through the GraphContext, eliminating redundant resolver parameters. The update simplifies contributor method signatures and centralizes resolver access, improving code maintainability and consistency.\n\nKey changes:\n- Removed resolver parameter from GraphContributor.contribute() method signatures\n- Updated all graph contributor implementations to use context.resolver\n- Added Resolver to GraphContext data class\n- Simplified timing wrapper to accept logger directly instead of environment\n- Updated contributor factories to use the new resolver access pattern\n- Made IncludeContributor and GraphContributor default implementations injectable with @Include\n\nThis refactoring reduces parameter duplication and provides a cleaner, more consistent API for accessing the resolver throughout the compilation process.",
+          "timestamp": "2026-05-28T09:52:31+02:00",
+          "tree_id": "9b40ba39893b8f6f4313a4414224c96a071fdb4b",
+          "url": "https://github.com/diareuse/spike/commit/3ccc57a154ce8a9cf6b1a00f0f8d8e9af0223c07"
+        },
+        "date": 1779955406755,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2908.04,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 476.028,
             "unit": "ms"
           }
         ]
