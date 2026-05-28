@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779866693412,
+  "lastUpdate": 1779951862740,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -1708,6 +1708,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 540.337,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "dec0da44a74eacb61fbbf4d06efd8d045aad81da",
+          "message": "fix(compiler): refactor symbol processing to use shared registry\n\nRefactored symbol processing logic to consolidate annotation resolution into a shared SymbolRegistry. This change simplifies the GraphContributor implementations by delegating symbol retrieval to the registry, improving code reuse and maintainability.\n\nThe SymbolRegistry provides unified methods for retrieving SpikeViewModel, Include, EntryPoint, and Export annotations, reducing code duplication across different contributors. The symbol processor now uses this registry for consistent symbol resolution throughout the compilation process.\n\nThis change also updates the SymbolProcessorViewModel to track processing state more effectively, ensuring proper round handling while maintaining compatibility with existing contributors.\n\n*   Removed duplicated symbol resolution logic from GraphContributorIncludeViewModel, GraphContributorInclude, and GraphContributorEntryPoint\n*   Introduced SymbolRegistry to centralize symbol retrieval for all annotation types\n*   Updated SpikeSymbolProcessorProvider to inject the registry into relevant components\n*   Simplified round tracking in SymbolProcessorViewModel with a boolean flag instead of atomic operations",
+          "timestamp": "2026-05-28T08:56:28+02:00",
+          "tree_id": "9514b9134badd61893b2750c3abbe32aad8d8535",
+          "url": "https://github.com/diareuse/spike/commit/dec0da44a74eacb61fbbf4d06efd8d045aad81da"
+        },
+        "date": 1779951861813,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2920.78,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 478.894,
             "unit": "ms"
           }
         ]
