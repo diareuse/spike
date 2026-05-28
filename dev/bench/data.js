@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779955407177,
+  "lastUpdate": 1779957553778,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -1776,6 +1776,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 476.028,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "20bf79ed487a6b6cf38a834fc4123be7494bfb88",
+          "message": "refactor(compiler): remove unused TypeFactoryHolder\n\nRemoved the unused `TypeFactoryHolder` class that was no longer needed in the compiler plugin. This cleanup eliminates dead code and streamlines the compilation process by removing redundant type factory management logic.\n\nThe removal includes:\n- Elimination of the `TypeFactoryHolder` class implementation\n- Removal of associated imports and dependencies\n- Cleanup of unused symbol processing infrastructure\n\nThis change aligns with ongoing refactoring efforts to simplify the compiler plugin architecture and maintain a more focused codebase.",
+          "timestamp": "2026-05-28T10:31:35+02:00",
+          "tree_id": "000e8b9ecb5d3df0b149d5d4b0226ef357569f3f",
+          "url": "https://github.com/diareuse/spike/commit/20bf79ed487a6b6cf38a834fc4123be7494bfb88"
+        },
+        "date": 1779957553091,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2863.47,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 463.651,
             "unit": "ms"
           }
         ]
