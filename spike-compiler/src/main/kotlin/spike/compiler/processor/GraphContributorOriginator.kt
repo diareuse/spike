@@ -21,13 +21,13 @@ abstract class GraphContributorOriginator : GraphContributor {
     protected abstract val generator: DependencyGraphGenerator
     protected abstract val environment: SymbolProcessorEnvironment
     protected abstract val logger: KSPLogger
-    protected abstract val origins: Sequence<KSAnnotated>
 
     protected open fun verifyOrigin(declaration: KSClassDeclaration) = Unit
     protected open fun findFactory(entryPoint: KSClassDeclaration): GraphEntryPoint.Factory? = null
+    protected abstract fun getOrigins(resolver: Resolver): Sequence<KSClassDeclaration>
 
     final override fun contribute(context: GraphContext, resolver: Resolver) {
-        val entryPoints = origins.filterIsInstance<KSClassDeclaration>()
+        val entryPoints = getOrigins(resolver)
         for (entryPoint in entryPoints) {
             verifyOrigin(entryPoint)
             val factory = findFactory(entryPoint)

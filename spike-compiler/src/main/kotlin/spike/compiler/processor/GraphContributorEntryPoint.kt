@@ -6,6 +6,7 @@ import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.isInternal
 import com.google.devtools.ksp.isPublic
 import com.google.devtools.ksp.processing.KSPLogger
+import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotated
@@ -22,8 +23,10 @@ class GraphContributorEntryPoint(
     override val generator: DependencyGraphGenerator,
     override val environment: SymbolProcessorEnvironment,
     override val logger: KSPLogger,
-    override val origins: Sequence<KSAnnotated>,
+    private val registry: SymbolRegistry
 ) : GraphContributorOriginator() {
+
+    override fun getOrigins(resolver: Resolver) = registry.entryPoint(resolver)
 
     override fun verifyOrigin(declaration: KSClassDeclaration) {
         verifyInterface(declaration)

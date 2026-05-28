@@ -41,13 +41,13 @@ class SpikeSymbolProcessor(
                 generator = DependencyGraphGenerator(false),
                 environment = environment,
                 logger = logger,
-                origins = registry.entryPoint(resolver)
+                registry = registry
             ).timed("EntryPoint")
             this += GraphContributorExport(
                 generator = DependencyGraphGenerator(true),
                 environment = environment,
                 logger = logger,
-                origins = registry.export(resolver)
+                registry = registry
             ).timed("Export")
         }
         val root = GraphStore.Builder()

@@ -22,7 +22,7 @@ class GraphContributorInclude(
                     |$ks
                     |
                     |<description>
-                    | Include must be used only on functions and classes. All other uses are prohibited.
+                    |  Include must be used only on functions and classes. All other uses are prohibited.
                     |</description>
                 """.trimMargin()
                 )
