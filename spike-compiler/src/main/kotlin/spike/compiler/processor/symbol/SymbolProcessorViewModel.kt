@@ -11,8 +11,10 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.ksp.writeTo
 import spike.EntryPoint
+import spike.Include
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
+@Include
 @OptIn(ExperimentalAtomicApi::class)
 class SymbolProcessorViewModel(
     private val environment: SymbolProcessorEnvironment,

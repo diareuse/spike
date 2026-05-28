@@ -2,13 +2,13 @@ package spike.compiler.processor.symbol
 
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.processing.Resolver
-import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import spike.EntryPoint
 import spike.Export
 import spike.Include
 import spike.compiler.processor.util.getSymbolsWithAnnotation
 
+@Include
 @OptIn(KspExperimental::class)
 class SymbolRegistry {
 

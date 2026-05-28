@@ -4,12 +4,14 @@ import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
+import spike.Include
 import spike.compiler.generator.DependencyGraphGenerator
 import spike.compiler.graph.GraphStore
 import spike.compiler.graph.MultiBindingStore
 import spike.compiler.processor.symbol.SymbolProcessorViewModel
 import spike.compiler.processor.symbol.SymbolRegistry
 
+@Include(bindAs = SymbolProcessor::class)
 @OptIn(KspExperimental::class)
 class SpikeSymbolProcessor(
     private val viewModel: SymbolProcessorViewModel,

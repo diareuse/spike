@@ -9,6 +9,7 @@ kotlinpoet = "2.3.0"
 androidx-lifecycle = "2.10.0"
 ktor = "3.5.0"
 compose = "1.11.0"
+spike = "0.0.9"
 
 [libraries]
 atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version.ref = "atomicfu" }
@@ -30,6 +31,7 @@ androidx-lifecycle-viewmodel-savedstate = { module = "org.jetbrains.androidx.lif
 ktor-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
 ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
 ktor-server-test = { module = "io.ktor:ktor-server-test-host", version.ref = "ktor" }
+spike-compiler = { module = "io.github.diareuse:spike-compiler", version.ref= "spike" }
 
 [plugins]
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

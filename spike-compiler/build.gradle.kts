@@ -1,8 +1,8 @@
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("spike.jvm")
+    id(libs.plugins.google.ksp.get().pluginId)
 }
 
 group = "spike.compiler"
@@ -18,6 +18,7 @@ dependencies {
     implementation(libs.squareup.kotlinpoet.ksp)
     implementation(libs.google.ksp.api)
     api(libs.kotlin.reflect)
+    ksp(libs.spike.compiler)
     testImplementation(project(":spike-androidx"))
     testImplementation(project(":spike-ktor"))
     testImplementation(gradleTestKit())
