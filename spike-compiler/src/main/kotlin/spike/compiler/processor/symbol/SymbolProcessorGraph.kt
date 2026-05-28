@@ -1,4 +1,4 @@
-package spike.compiler.processor
+package spike.compiler.processor.symbol
 
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.processing.Resolver
@@ -7,11 +7,12 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import spike.Include
 import spike.compiler.graph.GraphStore
 import spike.compiler.graph.MultiBindingStore
-import spike.compiler.processor.symbol.SymbolProcessorViewModel
+import spike.compiler.processor.GraphContext
+import spike.compiler.processor.GraphContributor
 
 @Include(bindAs = SymbolProcessor::class)
 @OptIn(KspExperimental::class)
-class SpikeSymbolProcessor(
+class SymbolProcessorGraph(
     private val viewModel: SymbolProcessorViewModel,
     private val environment: SymbolProcessorEnvironment,
     private val contributor: GraphContributor
