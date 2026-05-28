@@ -11,8 +11,8 @@ class GraphContributorIncludeViewModel(
     private val contributor: IncludeContributor,
     private val registry: SymbolRegistry
 ) : GraphContributor {
-    override fun contribute(context: GraphContext, resolver: Resolver) {
-        for (cls in registry.spikeViewModel(resolver)) {
+    override fun contribute(context: GraphContext) {
+        for (cls in registry.spikeViewModel(context.resolver)) {
             contributor.contribute(context, cls)
             context.originatingFiles.add(cls.requireKSFile())
         }

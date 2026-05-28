@@ -5,12 +5,11 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 
 class IncludeContributorMultiplatform(
-    private val origin: IncludeContributor,
-    private val resolver: Resolver
+    private val origin: IncludeContributor
 ) : IncludeContributor {
     override fun contribute(context: GraphContext, annotated: KSClassDeclaration) {
         if (annotated.isExpect) {
-            val declaration = resolver.getClassDeclarationByName(annotated.qualifiedName!!)
+            val declaration = context.resolver.getClassDeclarationByName(annotated.qualifiedName!!)
             checkNotNull(declaration) {
                 "Expect class $annotated was annotated with @Include, but actual members couldn't be found"
             }
@@ -21,7 +20,7 @@ class IncludeContributorMultiplatform(
 
     override fun contribute(context: GraphContext, annotated: KSFunctionDeclaration) {
         if (annotated.isExpect) {
-            val member = resolver.getFunctionDeclarationsByName(annotated.qualifiedName!!, true)
+            val member = context.resolver.getFunctionDeclarationsByName(annotated.qualifiedName!!, true)
                 .filter { it.isActual }
                 .firstOrNull {
                     it.parameters.size == annotated.parameters.size && it.parameters

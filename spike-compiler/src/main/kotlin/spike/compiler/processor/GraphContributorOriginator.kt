@@ -26,8 +26,8 @@ abstract class GraphContributorOriginator : GraphContributor {
     protected open fun findFactory(entryPoint: KSClassDeclaration): GraphEntryPoint.Factory? = null
     protected abstract fun getOrigins(resolver: Resolver): Sequence<KSClassDeclaration>
 
-    final override fun contribute(context: GraphContext, resolver: Resolver) {
-        val entryPoints = getOrigins(resolver)
+    final override fun contribute(context: GraphContext) {
+        val entryPoints = getOrigins(context.resolver)
         for (entryPoint in entryPoints) {
             verifyOrigin(entryPoint)
             val factory = findFactory(entryPoint)
@@ -45,7 +45,7 @@ abstract class GraphContributorOriginator : GraphContributor {
                 multibinding = context.multibind.build(),
                 logger = logger
             )
-            for (e in findExternal(resolver)) {
+            for (e in findExternal(context.resolver)) {
                 graphFactory.putExternal(e)
             }
             generator.generate(graphFactory.create(), context.originatingFiles) { spec ->

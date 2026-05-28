@@ -12,8 +12,8 @@ class GraphContributorInclude(
     private val contributor: IncludeContributor,
     private val registry: SymbolRegistry
 ) : GraphContributor {
-    override fun contribute(context: GraphContext, resolver: Resolver) {
-        for (ks in registry.include(resolver)) {
+    override fun contribute(context: GraphContext) {
+        for (ks in registry.include(context.resolver)) {
             when (ks) {
                 is KSClassDeclaration -> contributor.contribute(context, ks)
                 is KSFunctionDeclaration -> contributor.contribute(context, ks)

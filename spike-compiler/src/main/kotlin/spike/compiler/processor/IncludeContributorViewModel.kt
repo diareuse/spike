@@ -6,11 +6,13 @@ import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import spike.Include
 import spike.Inject
 import spike.compiler.graph.Key
 import spike.compiler.graph.Type
 import kotlin.reflect.KClass
 
+@Include
 class IncludeContributorViewModel : IncludeContributor {
     @OptIn(KspExperimental::class)
     override fun contribute(
