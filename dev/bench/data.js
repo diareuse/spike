@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1779957553778,
+  "lastUpdate": 1780117641372,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -1810,6 +1810,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 463.651,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "7949d7a34b02581c165da75208a6aba1e16d9246",
+          "message": "fix(deps): bump org.jetbrains.kotlinx:atomicfu from 0.32.1 to 0.33.0\n\nBumps [org.jetbrains.kotlinx:atomicfu](https://github.com/Kotlin/kotlinx.atomicfu) from 0.32.1 to 0.33.0.\n- [Release notes](https://github.com/Kotlin/kotlinx.atomicfu/releases)\n- [Changelog](https://github.com/Kotlin/kotlinx-atomicfu/blob/master/CHANGES.md)\n- [Commits](https://github.com/Kotlin/kotlinx.atomicfu/compare/0.32.1...0.33.0)\n\n---\nupdated-dependencies:\n- dependency-name: org.jetbrains.kotlinx:atomicfu\n  dependency-version: 0.33.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-05-30T06:59:04+02:00",
+          "tree_id": "aa446817eb56185952525c9eba386dd059c89b91",
+          "url": "https://github.com/diareuse/spike/commit/7949d7a34b02581c165da75208a6aba1e16d9246"
+        },
+        "date": 1780117640468,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2997.03,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 529.648,
             "unit": "ms"
           }
         ]
