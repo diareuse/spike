@@ -15,7 +15,7 @@ class Cat(
     val two: Life
 ) {
 
-    @spike.Inject
+    @spike.Include.Constructor
     constructor(one: Life, two: Life, three: Life): this(one, two)
 
 }

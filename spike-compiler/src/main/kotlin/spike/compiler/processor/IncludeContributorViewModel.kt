@@ -7,7 +7,6 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import spike.Include
-import spike.Inject
 import spike.compiler.graph.Key
 import spike.compiler.graph.Type
 import kotlin.reflect.KClass
@@ -21,8 +20,8 @@ class IncludeContributorViewModel : IncludeContributor {
     ) {
         val constructors = annotated.getConstructors().toList()
         val constructor = when {
-            constructors.size > 1 -> checkNotNull(constructors.firstOrNull { it.isAnnotationPresent(Inject::class) }) {
-                "Include class (${annotated.qualifiedName?.asString()}) must have a constructor annotated with @spike.Inject if it has more than one constructor"
+            constructors.size > 1 -> checkNotNull(constructors.firstOrNull { it.isAnnotationPresent(Include.Constructor::class) }) {
+                "Include class (${annotated.qualifiedName?.asString()}) must have a constructor annotated with @spike.Include.Constructor if it has more than one constructor"
             }
             else -> constructors.single()
         }
