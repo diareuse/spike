@@ -27,10 +27,12 @@ class SymbolProcessorViewModel(
         // we generate this entry point in the first round only, then other SymbolProcessors take over
         if (processed) return emptyList()
 
+        val enabled = environment.options["spike.viewmodel.enabled"]?.toBoolean() ?: true
         val entryPointName = resolver.getKSNameFromString("spike.lifecycle.viewmodel.ViewModelEntryPoint")
         val entryPoint = resolver.getClassDeclarationByName(entryPointName)
-        if (entryPoint != null) {
-            val name = ClassName("spike.lifecycle.viewmodel", "ViewModelEntryPointImpl")
+        if (entryPoint != null && enabled) {
+            val packageName = environment.options["spike.viewmodel.package"] ?: "spike.lifecycle.viewmodel"
+            val name = ClassName(packageName, "ViewModelEntryPointImpl")
             val factory = TypeSpec.interfaceBuilder(name.nestedClass("Factory"))
                 .addSuperinterface(name.peerClass("ViewModelEntryPoint").nestedClass("Factory"))
                 .addAnnotation(EntryPoint.Factory::class)
