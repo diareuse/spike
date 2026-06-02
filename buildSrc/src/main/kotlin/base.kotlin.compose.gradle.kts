@@ -11,7 +11,7 @@ kotlin {
     iosSimulatorArm64()
     sourceSets {
         commonMain.dependencies {
-            implementation("org.jetbrains.compose.runtime:runtime:1.10.1")
+            implementation("org.jetbrains.compose.runtime:runtime:1.11.0")
         }
     }
 }

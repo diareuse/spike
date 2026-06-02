@@ -3,7 +3,7 @@ plugins { id("spike.multiplatform") }
 group = "spike"
 
 kotlin {
-    androidLibrary { namespace = "spike" }
+    android { namespace = "spike" }
     sourceSets {
         commonMain.dependencies {
             implementation(libs.atomicfu)
