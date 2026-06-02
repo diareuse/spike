@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.0.10](https://github.com/diareuse/spike/compare/0.0.9...0.0.10) (2026-06-02)
+
+
+### Features
+
+* **compiler:** add export annotation support and enhance dependency graph generation ([3be8dfa](https://github.com/diareuse/spike/commit/3be8dfa1635101334438d85a5a87b94597686227))
+* **compiler:** implement ViewModelEntryPoint generation with symbol processor ([e8b7c92](https://github.com/diareuse/spike/commit/e8b7c92854338314c69c970b79857b0876c8e536))
+* **compiler:** introduce Include.Constructor annotation and deprecate Inject ([8132d9e](https://github.com/diareuse/spike/commit/8132d9e4fb1ad9eadb02e6e8c6521e48a532c014))
+
+
+### Bug Fixes
+
+* **compiler:** align code formatting in ViewModelEntryPoint generated files ([940d312](https://github.com/diareuse/spike/commit/940d31288b48e5189e49dbbe58d6f38a611d4de0))
+* **compiler:** cleanup project root before cloning in Gradle harness ([08e704b](https://github.com/diareuse/spike/commit/08e704b764598beada72806330913b1636b48df5))
+* **compiler:** refactor symbol processing to use shared registry ([dec0da4](https://github.com/diareuse/spike/commit/dec0da44a74eacb61fbbf4d06efd8d045aad81da))
+* **compiler:** remove unused context parameter and simplify code formatting ([90d6930](https://github.com/diareuse/spike/commit/90d6930cac360e1baa8e8e8b5f364afb7b13f27c))
+* **compiler:** rename TypeFactory.Property to TypeFactory in cache ([4ce89e7](https://github.com/diareuse/spike/commit/4ce89e72cf0732b754c0b8fabebe4496fff3b905))
+* **compiler:** simplify round checking in SymbolProcessorViewModel ([4161410](https://github.com/diareuse/spike/commit/4161410f920e2c1ad71e7a943a29fea9f206f3f4))
+* **compiler:** simplify round management in symbol processor ([f389007](https://github.com/diareuse/spike/commit/f3890077df1e71ac8c9b5b585155e73b68b9b316))
+* **core:** change annotation retention policies to SOURCE ([6911aa1](https://github.com/diareuse/spike/commit/6911aa138ef9809c542586776829d03a23eaa0da))
+* **core:** update annotation retention policies to BINARY ([9c85ef3](https://github.com/diareuse/spike/commit/9c85ef3490d3f76323f369dbbe81a3750e04853e))
+* **deps:** bump google-ksp from 2.3.8 to 2.3.9 ([2a99884](https://github.com/diareuse/spike/commit/2a9988427464bb3e9aa0cdfb091f36e658254f09))
+* **deps:** bump org.jetbrains.kotlinx:atomicfu from 0.32.1 to 0.33.0 ([7949d7a](https://github.com/diareuse/spike/commit/7949d7a34b02581c165da75208a6aba1e16d9246))
+* remove tvos and watchos x64 targets and update compose runtime version ([200cc00](https://github.com/diareuse/spike/commit/200cc00f618a983b1beb7fbca0473860ea999b31))
+* **test:** update module references to local.spike group ([c99a3ca](https://github.com/diareuse/spike/commit/c99a3ca905d0703ed3c3b385b7ef1a5ec7875e6b))
+* update kotlin and ksp versions in spike-benchmark ([4c29a43](https://github.com/diareuse/spike/commit/4c29a4380ae9057d52cc53aa94b3299cd79a6fc9))
+
 ## [0.0.9](https://github.com/diareuse/spike/compare/0.0.8...0.0.9) (2026-05-25)
 
 
