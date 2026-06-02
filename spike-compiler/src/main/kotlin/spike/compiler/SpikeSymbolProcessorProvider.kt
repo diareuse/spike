@@ -5,5 +5,5 @@ import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 
 class SpikeSymbolProcessorProvider : SymbolProcessorProvider {
-    override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor = Spike(environment).processor
+    override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor = Spike.invoke(environment).processor
 }
