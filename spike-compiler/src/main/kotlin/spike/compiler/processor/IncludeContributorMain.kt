@@ -18,7 +18,8 @@ class IncludeContributorMain : IncludeContributor {
         val constructors = annotated.getConstructors().toList()
         val constructor = when {
             constructors.size > 1 -> checkNotNull(constructors.firstOrNull { it.isAnnotationPresent(Include.Constructor::class) }) {
-                "Include class (${annotated.qualifiedName?.asString()}) must have a constructor annotated with @spike.Include.Constructor if it has more than one constructor"
+                "Include class (${annotated.qualifiedName?.asString()}) must have a constructor " +
+                        "annotated with @spike.Include.Constructor if it has more than one constructor"
             }
             else -> constructors.singleOrNull()
                 ?: error("Wanted exactly one constructor, but got ${constructors.size} in $annotated")
