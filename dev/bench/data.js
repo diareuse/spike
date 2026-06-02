@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780388693738,
+  "lastUpdate": 1780390883329,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -1946,6 +1946,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 478.451,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "122291809ef9f2f55a362bee744d9232bf1abe30",
+          "message": "feat(compiler): add configurable view model entry point generation\n\nAdded support for enabling/disabling view model entry point generation through the `spike.viewmodel.enabled` compiler option, with a default value of true. The view model entry point implementation class name and package can now be customized using the `spike.viewmodel.package` compiler option, with a default package of `spike.lifecycle.viewmodel`.\n\nThis change provides greater flexibility in configuring the view model entry point generation while maintaining backward compatibility with existing configurations. The feature is particularly useful for projects that need to customize the location or enable/disable this functionality entirely.",
+          "timestamp": "2026-06-02T10:54:20+02:00",
+          "tree_id": "589682b84f9ff923aa8f363c9999cad1c75f9295",
+          "url": "https://github.com/diareuse/spike/commit/122291809ef9f2f55a362bee744d9232bf1abe30"
+        },
+        "date": 1780390882750,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 1975.7,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 533.371,
             "unit": "ms"
           }
         ]
