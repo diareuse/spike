@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780386673974,
+  "lastUpdate": 1780388212369,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -1878,6 +1878,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 542.556,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "db6745b67b9e2b500e54c649bbe01492da4be4d2",
+          "message": "ci(workflow): add build job to pull request workflow\n\nAdded a new build job to the pull request workflow that runs on ubuntu-latest and executes the ./gradlew assemble command. The build job depends on the existing test and lint jobs, ensuring that code is properly built before merging. This change enhances the CI pipeline by including an additional verification step to catch potential build issues early in the development process.\n\nThe new workflow includes:\n- Checkout action to retrieve the code\n- Java setup with version 17 and temurin distribution\n- Assembly build execution\n\nThis addition helps maintain code quality by ensuring that the project builds successfully across different environments before changes are merged.",
+          "timestamp": "2026-06-02T10:10:00+02:00",
+          "tree_id": "a1e7c00d79f0a3408560ea5d205eb8339f6e9b68",
+          "url": "https://github.com/diareuse/spike/commit/db6745b67b9e2b500e54c649bbe01492da4be4d2"
+        },
+        "date": 1780388211816,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 1870.7,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 501.823,
             "unit": "ms"
           }
         ]
