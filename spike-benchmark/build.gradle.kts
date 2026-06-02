@@ -1,7 +1,7 @@
 plugins {
     `application`
-    kotlin("jvm") version "2.3.20"
-    id("com.google.devtools.ksp") version "2.3.4"
+    kotlin("jvm") version "2.3.21"
+    id("com.google.devtools.ksp") version "2.3.9"
 }
 
 repositories {
