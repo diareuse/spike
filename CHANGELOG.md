@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.0.11](https://github.com/diareuse/spike/compare/0.0.10...0.0.11) (2026-06-03)
+
+
+### Features
+
+* **compiler:** add configurable view model entry point generation ([1222918](https://github.com/diareuse/spike/commit/122291809ef9f2f55a362bee744d9232bf1abe30))
+
+
+### Bug Fixes
+
+* **deps:** bump org.jetbrains.compose:org.jetbrains.compose.gradle.plugin ([c8120b4](https://github.com/diareuse/spike/commit/c8120b4a847a2dacc26d6ba14ee7bf9817bba8d4))
+
 ## [0.0.10](https://github.com/diareuse/spike/compare/0.0.9...0.0.10) (2026-06-02)
 
 
