@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1781851849653,
+  "lastUpdate": 1781853261937,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -2116,6 +2116,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 524.542,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "55442672889a629be65cb6eeef0ddf66e60710b1",
+          "message": "fix(deps): bump kotlin from 2.3.21 to 2.4.0\n\nBumps `kotlin` from 2.3.21 to 2.4.0.\n\nUpdates `org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin` from 2.3.21 to 2.4.0\n- [Release notes](https://github.com/JetBrains/kotlin/releases)\n- [Changelog](https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md)\n- [Commits](https://github.com/JetBrains/kotlin/compare/v2.3.21...v2.4.0)\n\nUpdates `org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin` from 2.3.21 to 2.4.0\n- [Release notes](https://github.com/JetBrains/kotlin/releases)\n- [Changelog](https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md)\n- [Commits](https://github.com/JetBrains/kotlin/compare/v2.3.21...v2.4.0)\n\nUpdates `org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin` from 2.3.21 to 2.4.0\n- [Release notes](https://github.com/JetBrains/kotlin/releases)\n- [Changelog](https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md)\n- [Commits](https://github.com/JetBrains/kotlin/compare/v2.3.21...v2.4.0)\n\nUpdates `org.jetbrains.kotlin.multiplatform` from 2.3.21 to 2.4.0\n- [Release notes](https://github.com/JetBrains/kotlin/releases)\n- [Changelog](https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md)\n- [Commits](https://github.com/JetBrains/kotlin/compare/v2.3.21...v2.4.0)\n\nUpdates `org.jetbrains.kotlin.jvm` from 2.3.21 to 2.4.0\n- [Release notes](https://github.com/JetBrains/kotlin/releases)\n- [Changelog](https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md)\n- [Commits](https://github.com/JetBrains/kotlin/compare/v2.3.21...v2.4.0)\n\n---\nupdated-dependencies:\n- dependency-name: org.jetbrains.kotlin.jvm\n  dependency-version: 2.4.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n- dependency-name: org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin\n  dependency-version: 2.4.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n- dependency-name: org.jetbrains.kotlin.multiplatform\n  dependency-version: 2.4.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n- dependency-name: org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin\n  dependency-version: 2.4.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n- dependency-name: org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin\n  dependency-version: 2.4.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-06-19T09:07:37+02:00",
+          "tree_id": "63f891762faf8841e45fe6f7f46d363f240d5fe9",
+          "url": "https://github.com/diareuse/spike/commit/55442672889a629be65cb6eeef0ddf66e60710b1"
+        },
+        "date": 1781853261014,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 1986.47,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 527.964,
             "unit": "ms"
           }
         ]
