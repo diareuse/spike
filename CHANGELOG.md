@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.0.12](https://github.com/diareuse/spike/compare/0.0.11...0.0.12) (2026-06-19)
+
+
+### Bug Fixes
+
+* **deps:** bump dev.detekt:dev.detekt.gradle.plugin ([060b48f](https://github.com/diareuse/spike/commit/060b48f6ce37c0f9aa74a983528cdc5f4c58503d))
+* **deps:** bump gradle-wrapper from 9.5.1 to 9.6.0 ([ee40f84](https://github.com/diareuse/spike/commit/ee40f842e008199e17919981eac51d6f932ab7a8))
+* **deps:** bump io.github.diareuse:spike-compiler from 0.0.9 to 0.0.11 ([5e6b332](https://github.com/diareuse/spike/commit/5e6b332c4cebb66321344a24088dda32943a50eb))
+* **deps:** bump kotlin from 2.3.21 to 2.4.0 ([5544267](https://github.com/diareuse/spike/commit/55442672889a629be65cb6eeef0ddf66e60710b1))
+
 ## [0.0.11](https://github.com/diareuse/spike/compare/0.0.10...0.0.11) (2026-06-03)
 
 
