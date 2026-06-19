@@ -12,6 +12,10 @@ kotlin {
     explicitApi = ExplicitApiMode.Disabled
 }
 
+ksp {
+    arg("spike.viewmodel.enabled", "false")
+}
+
 dependencies {
     implementation(project(":spike-core"))
     implementation(libs.squareup.kotlinpoet)
