@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1781854997752,
+  "lastUpdate": 1781855539489,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -2184,6 +2184,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 481.638,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "f00e2377b5240786a7628398a11c1f2c5ab0e79e",
+          "message": "fixup! chore(dependabot): update configuration to include Gradle and ignore spike-compiler updates",
+          "timestamp": "2026-06-19T09:44:52+02:00",
+          "tree_id": "a63cf3a9283298fb00da02e926b65ca2641da371",
+          "url": "https://github.com/diareuse/spike/commit/f00e2377b5240786a7628398a11c1f2c5ab0e79e"
+        },
+        "date": 1781855538570,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2004.36,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 549.571,
             "unit": "ms"
           }
         ]
