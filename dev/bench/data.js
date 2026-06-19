@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1780881747553,
+  "lastUpdate": 1781851820889,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -2014,6 +2014,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 507.309,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "470a3a061e0b108b50d0e1682ee955faa12dc4bc",
+          "message": "chore(deps): bump actions/checkout from 6 to 7\n\nBumps [actions/checkout](https://github.com/actions/checkout) from 6 to 7.\n- [Release notes](https://github.com/actions/checkout/releases)\n- [Changelog](https://github.com/actions/checkout/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/actions/checkout/compare/v6...v7)\n\n---\nupdated-dependencies:\n- dependency-name: actions/checkout\n  dependency-version: '7'\n  dependency-type: direct:production\n  update-type: version-update:semver-major\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-06-19T08:43:19+02:00",
+          "tree_id": "d96c664fc461fa80f4c62d764f39de6691de5cf7",
+          "url": "https://github.com/diareuse/spike/commit/470a3a061e0b108b50d0e1682ee955faa12dc4bc"
+        },
+        "date": 1781851820530,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 1973.51,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 532.977,
             "unit": "ms"
           }
         ]
