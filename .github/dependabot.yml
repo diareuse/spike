@@ -12,6 +12,17 @@ updates:
     commit-message:
       prefix: "fix"
       include: "scope"
+    ignore:
+      - dependency-name: "spike-compiler"
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    allow:
+      - dependency-name: "spike-compiler"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
