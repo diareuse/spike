@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1781853261937,
+  "lastUpdate": 1781854997752,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -2150,6 +2150,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 527.964,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "5528a4c80fcbb54dd292248cec4acc6068e15f53",
+          "message": "chore(dependabot): update configuration to include Gradle and ignore spike-compiler updates\n\nAdded Gradle dependency management to the Dependabot configuration with a daily update schedule and \"chore\" commit prefix. Ignored updates for \"spike-compiler\" dependencies to prevent undesired version changes.",
+          "timestamp": "2026-06-19T09:36:15+02:00",
+          "tree_id": "5b7ee30cf0ebaccffab0c546635162a297e9e4e1",
+          "url": "https://github.com/diareuse/spike/commit/5528a4c80fcbb54dd292248cec4acc6068e15f53"
+        },
+        "date": 1781854997339,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 1845.46,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 481.638,
             "unit": "ms"
           }
         ]
