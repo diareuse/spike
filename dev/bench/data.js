@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1781851820889,
+  "lastUpdate": 1781851822698,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -2048,6 +2048,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 532.977,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "c0b22bf9164bb45eff5a11ebe1c7b4008c1c7bfe",
+          "message": "ci(workflow): enable auto-merge in pull request workflow\n\nUpdated the `gh pr merge` command in the pull request workflow to include the `--auto` flag, allowing pull requests to be automatically merged once all required checks pass. This improves the CI process by streamlining the merge workflow and reducing manual intervention.",
+          "timestamp": "2026-06-19T08:43:29+02:00",
+          "tree_id": "647e42e8c63c83525a58b16a327cf759cc1f97dd",
+          "url": "https://github.com/diareuse/spike/commit/c0b22bf9164bb45eff5a11ebe1c7b4008c1c7bfe"
+        },
+        "date": 1781851821812,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2014.24,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 525.152,
             "unit": "ms"
           }
         ]
