@@ -9,7 +9,7 @@ kotlinpoet = "2.3.0"
 androidx-lifecycle = "2.10.0"
 ktor = "3.5.0"
 compose = "1.11.1"
-spike = "0.0.11"
+spike = "0.0.12"
 
 [libraries]
 atomicfu = { module = "org.jetbrains.kotlinx:atomicfu", version.ref = "atomicfu" }
