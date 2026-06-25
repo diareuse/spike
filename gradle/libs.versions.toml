@@ -7,7 +7,7 @@ kotlin = "2.4.0"
 agp = "9.2.1"
 kotlinpoet = "2.3.0"
 androidx-lifecycle = "2.10.0"
-ktor = "3.5.0"
+ktor = "3.5.1"
 compose = "1.11.1"
 spike = "0.0.11"
 
