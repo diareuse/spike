@@ -68,14 +68,18 @@ class TypeFactoryCreatorMultiBindMap(
         is Type.Parametrized -> when (valueType.envelope) {
             BuiltInTypes.Provider,
             BuiltInTypes.Lazy,
-                -> Type.Parametrized(valueType.envelope, listOf(this))
+                -> Type.Parametrized(valueType.envelope, listOf(this), false)
             else -> this
         }
         else -> this
     }
 
     private fun Type.unwrapParametrized() = when (this) {
-        is Type.Parametrized -> typeArguments.single()
+        is Type.Parametrized -> when (envelope) {
+            BuiltInTypes.Provider,
+            BuiltInTypes.Lazy -> typeArguments.single()
+            else -> this
+        }
         else -> this
     }
 }
