@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.0.13](https://github.com/diareuse/spike/compare/0.0.12...0.0.13) (2026-07-03)
+
+
+### Features
+
+* **compiler:** add multi bind support with tuple generics ([c780f14](https://github.com/diareuse/spike/commit/c780f142d6c7d367986e34ffddb982fa4d5928a8))
+* **compiler:** add support for nullable type handling in symbol processing ([f367bd0](https://github.com/diareuse/spike/commit/f367bd02355b42af55ed07892f4044abf90fa10f))
+
+
+### Bug Fixes
+
+* **compiler:** add nullable type handling in symbol processing ([b8dbe53](https://github.com/diareuse/spike/commit/b8dbe53e11e54ecd55a842e2bdbce4416d4c43e9))
+* **deps:** bump com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin ([2d07228](https://github.com/diareuse/spike/commit/2d072288d9204e84a8443ccc50942950b3d0c2a1))
+* **deps:** bump io.github.diareuse:spike-compiler from 0.0.11 to 0.0.12 ([47d930b](https://github.com/diareuse/spike/commit/47d930bba1c22913f364c8a872eae9c1df894601))
+* **symbol-processor:** handle enum entries as MemberNames in Key annotation processing ([781ee45](https://github.com/diareuse/spike/commit/781ee45d7e8914f9034341208db77a0f754eb89f))
+* **symbol-processor:** replace exception logging with warning for stack trace output ([ff8300f](https://github.com/diareuse/spike/commit/ff8300f905aec71d4577a8e51d086dd7d757d449))
+
 ## [0.0.12](https://github.com/diareuse/spike/compare/0.0.11...0.0.12) (2026-06-19)
 
 
