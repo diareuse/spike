@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1783075824112,
+  "lastUpdate": 1783088019128,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -2592,6 +2592,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 509.021,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "d9254808df739e71b138e4d008b2a283b8948466",
+          "message": "chore: update baseline",
+          "timestamp": "2026-07-03T16:06:44+02:00",
+          "tree_id": "6d850a2bf2ac28cd3eda629c919c46bb4000ed4a",
+          "url": "https://github.com/diareuse/spike/commit/d9254808df739e71b138e4d008b2a283b8948466"
+        },
+        "date": 1783088018789,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2028.89,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 539.045,
             "unit": "ms"
           }
         ]
