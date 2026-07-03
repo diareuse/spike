@@ -15,21 +15,8 @@ import spike.compiler.graph.Type
 @Include
 class TypeResolver {
 
-    inline val builtInType get() = BuiltInTypes
     inline fun builtInType(block: BuiltInTypes.() -> Type) = getTypeName(BuiltInTypes.block())
     inline fun builtInMember(block: BuiltInMembers.() -> Member) = getMemberName(BuiltInMembers.block())
-
-    // ---
-
-    private val className = mutableMapOf<Type, ClassName>()
-
-    fun transformClassName(type: Type) = className.getOrPut(type) {
-        type.toClassName()
-            .peerClass { "Spike${it.simpleNames.joinToString("")}" }
-            .asRootClass()
-    }
-
-    fun getDependencyContainerClassName(entryPoint: Type) = transformClassName(Type.Simple(entryPoint.packageName, "DependencyContainer"))
 
     // ---
 
@@ -39,7 +26,6 @@ class TypeResolver {
 
     // ---
 
-    private val fieldName = mutableMapOf<Type, String>()
     private val Type.descriptor: String
         get() = when (this) {
             is Type.Inner -> parent.descriptor + "In" + simpleName
@@ -55,10 +41,6 @@ class TypeResolver {
             is Type.Simple -> simpleName
             is Type.WithVariance -> variance.toString() + type?.descriptor?.replaceFirstChar { it.uppercase() }.orEmpty()
         }
-
-    fun getFieldName(type: Type) = fieldName.getOrPut(type) {
-        type.descriptor.replaceFirstChar { it.lowercase() }
-    }
 
     // ---
 
