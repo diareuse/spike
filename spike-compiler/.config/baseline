@@ -7,21 +7,15 @@
     <ID>MaxLineLength:BuiltInMembers.kt:BuiltInMembers$val setOf = Member.Method(packageName = "kotlin.collections", name = "setOf", returns = BuiltInTypes.Set, parent = null)</ID>
     <ID>MaxLineLength:GraphEntryPoint.kt:GraphEntryPoint$fun isRootProperty: Boolean</ID>
     <ID>MaxLineLength:IncludeContributorBindAs.kt:IncludeContributorBindAs$private fun errorMessage: String</ID>
-    <ID>MaxLineLength:IncludeContributorMain.kt:IncludeContributorMain$"Include class (${annotated.qualifiedName?.asString()}) must have a constructor annotated with @spike.Inject if it has more than one constructor"</ID>
     <ID>MaxLineLength:IncludeContributorMain.kt:IncludeContributorMain$constructors.size &gt; 1</ID>
-    <ID>MaxLineLength:IncludeContributorViewModel.kt:IncludeContributorViewModel$"Include class (${annotated.qualifiedName?.asString()}) must have a constructor annotated with @spike.Inject if it has more than one constructor"</ID>
     <ID>MaxLineLength:IncludeContributorViewModel.kt:IncludeContributorViewModel$constructors.size &gt; 1</ID>
-    <ID>MaxLineLength:IncludeContributorViewModel.kt:IncludeContributorViewModel$val keyType = Type.Parametrized(KClass::class.toType(), listOf(Type.WithVariance(Type.Simple("androidx.lifecycle", "ViewModel"), Type.WithVariance.Variance.OUT)))</ID>
     <ID>MaxLineLength:Invocation.kt:Invocation$override fun toString: String</ID>
     <ID>MaxLineLength:MultiBindingStore.kt:MultiBindingStore.Builder$fun addToList</ID>
     <ID>MaxLineLength:MultiBindingStore.kt:MultiBindingStore.Builder$fun addToMap</ID>
     <ID>MaxLineLength:MultiBindingStore.kt:MultiBindingStore.Builder$fun addToSet</ID>
     <ID>MaxLineLength:Resolver.kt:inline</ID>
-    <ID>MaxLineLength:Symbol.kt:fun KClass&lt;*&gt;.toType</ID>
-    <ID>MaxLineLength:Type.kt:Type.Companion$operator fun invoke</ID>
     <ID>MaxLineLength:TypeFactoryCreatorMultiBindMap.kt:TypeFactoryCreatorMultiBindMap$?:</ID>
     <ID>MaxLineLength:TypeFactoryCreatorMultiBindMap.kt:TypeFactoryCreatorMultiBindMap$error("No definition found for $type whilst being multi-bound, this is however most likely a spike inference error.")</ID>
-    <ID>MaxLineLength:TypeResolver.kt:TypeResolver$fun getDependencyContainerClassName</ID>
     <ID>MaxLineLength:TypeResolver.kt:TypeResolver$is Type.WithVariance -&gt; variance.toString() + type?.descriptor?.replaceFirstChar { it.uppercase() }.orEmpty()</ID>
     <ID>NewLineAtEndOfFile:Spike.kt:spike.compiler.Spike.kt</ID>
     <ID>NewLineAtEndOfFile:SymbolProcessorGraph.kt:spike.compiler.processor.symbol.SymbolProcessorGraph.kt</ID>
