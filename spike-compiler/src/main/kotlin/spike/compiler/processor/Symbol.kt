@@ -1,6 +1,7 @@
 package spike.compiler.processor
 
 import com.google.devtools.ksp.KspExperimental
+import com.google.devtools.ksp.closestClassDeclaration
 import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotated
@@ -12,6 +13,8 @@ import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeAlias
 import com.google.devtools.ksp.symbol.Nullability
 import com.google.devtools.ksp.symbol.Variance
+import com.squareup.kotlinpoet.MemberName
+import com.squareup.kotlinpoet.ksp.toClassName
 import spike.compiler.graph.Invocation
 import spike.compiler.graph.Key
 import spike.compiler.graph.Parameter
@@ -58,7 +61,16 @@ fun KSAnnotated.findKey() = annotations
         val value = when (val v = argument.value) {
             null -> error("spike.Key annotation argument must not be null")
             is KSType -> v.toType()
-            is KSClassDeclaration -> v.toType(false)
+            is KSClassDeclaration -> when(v.classKind) {
+                // rationalization:
+                // we're cheating a little here, because we're able to pass MemberName as "any"
+                // which is in turn then written using kotlinpoet, so it works out fine…
+                ClassKind.ENUM_ENTRY -> MemberName(
+                    enclosingClassName = v.parentDeclaration?.closestClassDeclaration()!!.toClassName(),
+                    simpleName = v.simpleName.asString()
+                )
+                else -> v.toType(false)
+            }
             else -> v
         }
         Key(param.type.resolve().toType(), value)

@@ -23,6 +23,8 @@ public class PropertyEntryPoint_Factory(
   override fun getInstructionsPointer(id: DependencyId): InstructionSetPointer? = when (id.id) {
     0 -> InstructionSetPointer(0, 9)
     3 -> InstructionSetPointer(9, 6)
+    5 -> InstructionSetPointer(15, 6)
+    6 -> InstructionSetPointer(21, 3)
     else -> error("Invalid identifier $id")
   }
 

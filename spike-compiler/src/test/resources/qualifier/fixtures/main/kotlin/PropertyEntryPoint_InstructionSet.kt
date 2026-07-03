@@ -5,7 +5,7 @@ import kotlin.Suppress
 import spike.factory.InstructionSet
 
 public object PropertyEntryPoint_InstructionSet : InstructionSet {
-  override val memory: IntArray = IntArray(15)
+  override val memory: IntArray = IntArray(24)
 
   init {
     init0()
@@ -27,5 +27,14 @@ public object PropertyEntryPoint_InstructionSet : InstructionSet {
     memory[12] = 3
     memory[13] = 1
     memory[14] = 0
+    memory[15] = 2
+    memory[16] = 6
+    memory[17] = 0
+    memory[18] = 5
+    memory[19] = 1
+    memory[20] = 0
+    memory[21] = 1
+    memory[22] = 6
+    memory[23] = 0
   }
 }

@@ -10,6 +10,7 @@ interface PropertyEntryPoint {
     @Kind("sphynx")
     val cat: Cat
     val normalCat: Cat
+    val catt: Map<CatType, Cat>
 
     @spike.EntryPoint.Factory
     interface Factory {
@@ -23,6 +24,13 @@ annotation class All
 
 @spike.Qualifier
 annotation class Kind(val name: String)
+
+@spike.Key
+annotation class EnumKind(val type: CatType)
+
+enum class CatType {
+    Red, Green
+}
 
 class Food
 
@@ -44,3 +52,7 @@ fun nyanCat(@All food: Food) = SomeCat("nyan")
 
 @spike.Include(bindAs = Cat::class)
 fun defaultCat() = SomeCat("black")
+
+@EnumKind(CatType.Red)
+@spike.Include(bindTo = spike.BindTarget.Map, bindAs = Cat::class)
+fun redCat() = SomeCat("red")
