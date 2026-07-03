@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1783075803054,
+  "lastUpdate": 1783075822943,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -2524,6 +2524,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 546.353,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "47d930bba1c22913f364c8a872eae9c1df894601",
+          "message": "fix(deps): bump io.github.diareuse:spike-compiler from 0.0.11 to 0.0.12\n\nBumps [io.github.diareuse:spike-compiler](https://github.com/diareuse/spike) from 0.0.11 to 0.0.12.\n- [Release notes](https://github.com/diareuse/spike/releases)\n- [Changelog](https://github.com/diareuse/spike/blob/master/CHANGELOG.md)\n- [Commits](https://github.com/diareuse/spike/compare/0.0.11...0.0.12)\n\n---\nupdated-dependencies:\n- dependency-name: io.github.diareuse:spike-compiler\n  dependency-version: 0.0.12\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-07-03T12:43:47+02:00",
+          "tree_id": "ac5d14ad04fe56c8b6d0e6d2f0d7f7d599f63677",
+          "url": "https://github.com/diareuse/spike/commit/47d930bba1c22913f364c8a872eae9c1df894601"
+        },
+        "date": 1783075822641,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 1928.85,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 517.177,
             "unit": "ms"
           }
         ]
