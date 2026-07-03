@@ -17,7 +17,7 @@ class IncludeContributorBindTo(
         context: GraphContext,
         annotated: KSClassDeclaration,
     ) {
-        fun toType() = annotated.findBindAsOrSelf { this.toType() }
+        fun toType() = annotated.findBindAsOrSelf { this.toType(false) }
         origin.contribute(context, annotated)
         when (annotated.findBindToTarget()) {
             BindTarget.None -> {}

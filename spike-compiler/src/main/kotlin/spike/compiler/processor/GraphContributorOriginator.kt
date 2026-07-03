@@ -34,7 +34,7 @@ abstract class GraphContributorOriginator : GraphContributor {
             val properties = findProperties(entryPoint)
             val methods = findMethods(entryPoint)
             val entry = GraphEntryPoint.Companion(
-                type = entryPoint.toType(),
+                type = entryPoint.toType(false),
                 factory = factory,
                 properties = properties,
                 methods = methods,
@@ -65,7 +65,7 @@ abstract class GraphContributorOriginator : GraphContributor {
                 sequence {
                     for (f in klass.getDeclaredFunctions()) {
                         val tf = TypeFactory.External(
-                            type = f.returnType!!.resolve().toType(), origin = klass.toType(),
+                            type = f.returnType!!.resolve().toType(), origin = klass.toType(false),
                             name = f.simpleName.asString(),
                             isMethod = true
                         )
@@ -73,7 +73,7 @@ abstract class GraphContributorOriginator : GraphContributor {
                     }
                     for (p in klass.getDeclaredProperties()) {
                         val tf = TypeFactory.External(
-                            type = p.type.resolve().toType(), origin = klass.toType(),
+                            type = p.type.resolve().toType(), origin = klass.toType(false),
                             name = p.simpleName.asString(),
                             isMethod = false
                         )
@@ -126,7 +126,7 @@ abstract class GraphContributorOriginator : GraphContributor {
             it.packageName.asString(),
             it.simpleName.asString(),
             it.returnType!!.resolve().toType().qualifiedBy(it.findQualifiers()),
-            it.parentDeclaration?.toType(),
+            it.parentDeclaration?.toType(false),
         )
     }.toList()
 }

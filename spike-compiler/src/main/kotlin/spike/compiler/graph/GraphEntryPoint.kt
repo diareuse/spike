@@ -46,7 +46,7 @@ data class GraphEntryPoint private constructor(
         )
 
         private fun Type.defaultFactory(): Factory {
-            val factoryType = Type.Simple(packageName, "${simpleName}Factory")
+            val factoryType = Type.Simple(packageName, "${simpleName}Factory", false)
             return Factory(
                 type = factoryType,
                 method = Member.Method(

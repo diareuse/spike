@@ -9,6 +9,8 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.KSTypeAlias
+import com.google.devtools.ksp.symbol.Nullability
 import com.google.devtools.ksp.symbol.Variance
 import spike.compiler.graph.Invocation
 import spike.compiler.graph.Key
@@ -26,7 +28,7 @@ fun KSAnnotated.findQualifiers() = annotations
             it.arguments.map {
                 val value = when (val v = it.value) {
                     is KSType -> v.toType()
-                    is KSClassDeclaration -> v.toType()
+                    is KSClassDeclaration -> v.toType(false)
                     is KSAnnotation -> v.annotationType.resolve().toType()
                     else -> v
                 }
@@ -44,7 +46,7 @@ fun KSAnnotated.findKey() = annotations
         val argument = it.arguments.singleOrNull()
         checkNotNull(argument) {
             val klass = when (val k = this@findKey) {
-                is KSDeclaration -> k.toType().toString()
+                is KSDeclaration -> k.toType(false).toString()
                 else -> k.toString()
             }
             "spike.Key annotation must have a single argument, but found none or too many $klass"
@@ -56,7 +58,7 @@ fun KSAnnotated.findKey() = annotations
         val value = when (val v = argument.value) {
             null -> error("spike.Key annotation argument must not be null")
             is KSType -> v.toType()
-            is KSClassDeclaration -> v.toType()
+            is KSClassDeclaration -> v.toType(false)
             else -> v
         }
         Key(param.type.resolve().toType(), value)
@@ -77,14 +79,19 @@ fun KSFunctionDeclaration.toInvocation() = Invocation(
     } == true,
 )
 
-fun KClass<*>.toType() = Type.Simple(packageName = qualifiedName!!.substringBefore("." + simpleName!!), simpleName = simpleName!!)
+fun KClass<*>.toType() = Type.Simple(
+    packageName = qualifiedName!!.substringBefore("." + simpleName!!),
+    simpleName = simpleName!!,
+    nullable = false
+)
 
-fun KSDeclaration.toType(): Type {
+fun KSDeclaration.toType(nullable: Boolean): Type {
     val pd = parentDeclaration
-    if (pd != null) return Type.Inner(pd.toType(), simpleName.asString())
+    if (pd != null) return Type.Inner(pd.toType(false), simpleName.asString(), nullable)
     return Type.Simple(
         packageName = packageName.asString(),
         simpleName = simpleName.asString(),
+        nullable = nullable
     )
 }
 
@@ -94,7 +101,7 @@ fun Type.qualifiedBy(qualifiers: List<Qualifier>): Type {
 }
 
 fun KSType.toType(variance: Variance = Variance.INVARIANT): Type {
-    val rootType = declaration.toType()
+    val rootType = declaration.toType(nullable = nullability != Nullability.NOT_NULL)
     val variance = when (variance) {
         Variance.STAR -> Type.WithVariance.Variance.STAR
         Variance.INVARIANT -> return when {
@@ -102,6 +109,7 @@ fun KSType.toType(variance: Variance = Variance.INVARIANT): Type {
             else -> Type.Parametrized(
                 envelope = rootType,
                 typeArguments = arguments.map { it.type!!.resolve().toType(it.variance) },
+                nullable = rootType.nullable,
             )
         }
         Variance.COVARIANT -> Type.WithVariance.Variance.OUT

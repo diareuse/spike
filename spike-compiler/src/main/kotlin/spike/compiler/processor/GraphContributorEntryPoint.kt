@@ -116,7 +116,7 @@ class GraphContributorEntryPoint(
                 |</description>
             """.trimMargin()
         }
-        val factoryType = factory.toType()
+        val factoryType = factory.toType(false)
         return GraphEntryPoint.Factory(
             type = factoryType,
             method = Member.Method(

@@ -25,7 +25,7 @@ class IncludeContributorMain : IncludeContributor {
                 ?: error("Wanted exactly one constructor, but got ${constructors.size} in $annotated")
         }
         context.builder.addConstructor(
-            type = annotated.toType().qualifiedBy(annotated.findQualifiers()),
+            type = annotated.toType(false).qualifiedBy(annotated.findQualifiers()),
             invocation = constructor.toInvocation(),
             singleton = annotated.isAnnotationPresent(Singleton::class),
         )
@@ -37,7 +37,7 @@ class IncludeContributorMain : IncludeContributor {
     ) {
         val qualifiers = annotated.findQualifiers()
         val returnType = annotated.returnType!!.resolve().toType().qualifiedBy(qualifiers)
-        val parentType = annotated.parentDeclaration?.toType()?.qualifiedBy(qualifiers)
+        val parentType = annotated.parentDeclaration?.toType(false)?.qualifiedBy(qualifiers)
         context.builder.addFactory(
             type = returnType,
             member = Member.Method(

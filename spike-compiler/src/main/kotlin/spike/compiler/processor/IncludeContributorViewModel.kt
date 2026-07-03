@@ -26,13 +26,13 @@ class IncludeContributorViewModel : IncludeContributor {
             }
             else -> constructors.single()
         }
-        val type = annotated.toType().qualifiedBy(annotated.findQualifiers())
-        val keyType = Type.Parametrized(KClass::class.toType(), listOf(Type.WithVariance(Type.Simple("androidx.lifecycle", "ViewModel"), Type.WithVariance.Variance.OUT)))
+        val type = annotated.toType(false).qualifiedBy(annotated.findQualifiers())
+        val keyType = Type.Parametrized(KClass::class.toType(), listOf(Type.WithVariance(Type.Simple("androidx.lifecycle", "ViewModel", false), Type.WithVariance.Variance.OUT)), false)
         val key = Key(keyType, type)
-        val commonType = Type.Simple("androidx.lifecycle", "ViewModel")
+        val commonType = Type.Simple("androidx.lifecycle", "ViewModel", false)
         context.multibind.addToMap(commonType, key) {
             addConstructor(
-                type = annotated.toType().qualifiedBy(annotated.findQualifiers()),
+                type = annotated.toType(false).qualifiedBy(annotated.findQualifiers()),
                 invocation = constructor.toInvocation(),
                 singleton = false,
             )

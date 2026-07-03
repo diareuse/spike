@@ -17,7 +17,7 @@ class IncludeContributorBindAs : IncludeContributor {
         }
         val qualifiers = annotated.findQualifiers()
         val targetType = bindAs.toType().qualifiedBy(qualifiers)
-        val sourceType = annotated.toType().qualifiedBy(qualifiers)
+        val sourceType = annotated.toType(false).qualifiedBy(qualifiers)
         context.builder.addBinder(from = sourceType, to = targetType)
     }
 
