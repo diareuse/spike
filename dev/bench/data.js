@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782193646120,
+  "lastUpdate": 1783073796792,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -2388,6 +2388,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 563.436,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "c780f142d6c7d367986e34ffddb982fa4d5928a8",
+          "message": "feat(compiler): add multi bind support with tuple generics\n\nThis change introduces a new test case verifying that multi binds work correctly with tuple-generics in the compiler. The test ensures proper handling of multiple bindings when used with generic tuples, improving compatibility and type safety in complex binding scenarios.",
+          "timestamp": "2026-07-03T12:09:56+02:00",
+          "tree_id": "a52f8762ac93af4086e71250ff2565b74f03e228",
+          "url": "https://github.com/diareuse/spike/commit/c780f142d6c7d367986e34ffddb982fa4d5928a8"
+        },
+        "date": 1783073796476,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2006.31,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 542.312,
             "unit": "ms"
           }
         ]
