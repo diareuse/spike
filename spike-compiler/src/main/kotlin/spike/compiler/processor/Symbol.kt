@@ -105,7 +105,7 @@ fun KSType.toType(variance: Variance = Variance.INVARIANT): Type {
     val variance = when (variance) {
         Variance.STAR -> Type.WithVariance.Variance.STAR
         Variance.INVARIANT -> return when {
-            arguments.isEmpty() -> rootType
+            this is KSTypeAlias || declaration is KSTypeAlias || arguments.isEmpty() -> rootType
             else -> Type.Parametrized(
                 envelope = rootType,
                 typeArguments = arguments.map { it.type!!.resolve().toType(it.variance) },

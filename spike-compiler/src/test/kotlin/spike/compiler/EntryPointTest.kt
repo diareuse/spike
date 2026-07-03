@@ -143,6 +143,18 @@ class EntryPointTest : TestHarness() {
     )
 
     @Test
+    fun `multi binds work with tuple-generics`() = runTest(
+        label = "multibinding_interfaces",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { build("kspKotlin", "compileKotlin", "run") },
+        verify = {
+            assertSuccess(it.compileKotlin)
+            assertSuccess(it.kspKotlin)
+            assertContentEquals(fixturesDir, outputDir)
+        }
+    )
+
+    @Test
     fun `objects are composed`() = runTest(
         label = "compositor",
         prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
