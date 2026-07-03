@@ -3,7 +3,6 @@ package spike.compiler.processor
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getConstructors
 import com.google.devtools.ksp.isAnnotationPresent
-import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import spike.Include
@@ -27,7 +26,13 @@ class IncludeContributorViewModel : IncludeContributor {
             else -> constructors.single()
         }
         val type = annotated.toType(false).qualifiedBy(annotated.findQualifiers())
-        val keyType = Type.Parametrized(KClass::class.toType(), listOf(Type.WithVariance(Type.Simple("androidx.lifecycle", "ViewModel", false), Type.WithVariance.Variance.OUT)), false)
+        val keyType = Type.Parametrized(
+            envelope = KClass::class.toType(),
+            typeArguments = Type.Simple("androidx.lifecycle", "ViewModel", false)
+                .let { Type.WithVariance(it, Type.WithVariance.Variance.OUT) }
+                .let(::listOf),
+            nullable = false
+        )
         val key = Key(keyType, type)
         val commonType = Type.Simple("androidx.lifecycle", "ViewModel", false)
         context.multibind.addToMap(commonType, key) {

@@ -17,7 +17,8 @@ fun Type.toClassName(): ClassName = when (this) {
 }
 
 fun Type.toTypeName(): TypeName = when (this) {
-    is Type.Parametrized -> envelope.toClassName().parameterizedBy(typeArguments.map { it.toTypeName() }).copy(nullable = nullable)
+    is Type.Parametrized -> envelope.toClassName().parameterizedBy(typeArguments.map { it.toTypeName() })
+        .copy(nullable = nullable)
     is Type.Qualified -> type.toClassName().copy(nullable = nullable)
     is Type.Simple -> ClassName(packageName, simpleName).copy(nullable = nullable)
     is Type.Inner -> ClassName(packageName, names).copy(nullable = nullable)
