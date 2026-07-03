@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1783075822943,
+  "lastUpdate": 1783075824112,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -2558,6 +2558,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 517.177,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "2d072288d9204e84a8443ccc50942950b3d0c2a1",
+          "message": "fix(deps): bump com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin\n\nBumps [com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin](https://github.com/vanniktech/gradle-maven-publish-plugin) from 0.36.0 to 0.37.0.\n- [Release notes](https://github.com/vanniktech/gradle-maven-publish-plugin/releases)\n- [Changelog](https://github.com/vanniktech/gradle-maven-publish-plugin/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/vanniktech/gradle-maven-publish-plugin/compare/0.36.0...0.37.0)\n\n---\nupdated-dependencies:\n- dependency-name: com.vanniktech.maven.publish:com.vanniktech.maven.publish.gradle.plugin\n  dependency-version: 0.37.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-07-03T12:43:27+02:00",
+          "tree_id": "1bf8f5cd53ff26ff7c48a4170f3374d022463755",
+          "url": "https://github.com/diareuse/spike/commit/2d072288d9204e84a8443ccc50942950b3d0c2a1"
+        },
+        "date": 1783075822389,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 1863.21,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 509.021,
             "unit": "ms"
           }
         ]
