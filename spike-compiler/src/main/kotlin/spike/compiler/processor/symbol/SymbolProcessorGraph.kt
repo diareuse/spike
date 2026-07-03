@@ -30,7 +30,7 @@ class SymbolProcessorGraph(
             val m = e.message
             if (m != null) environment.logger.error(m)
             else environment.logger.exception(e)
-            environment.logger.logging(e.stackTraceToString())
+            environment.logger.warn(e.stackTraceToString())
         }
         processed = true
         emptyList()
