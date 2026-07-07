@@ -7,7 +7,6 @@ import com.google.devtools.ksp.isAbstract
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
-import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.squareup.kotlinpoet.ksp.writeTo
 import spike.compiler.generator.DependencyGraphGenerator
@@ -49,11 +48,7 @@ abstract class GraphContributorOriginator : GraphContributor {
                 graphFactory.putExternal(e)
             }
             generator.generate(graphFactory.create(), context.originatingFiles) { spec ->
-                try {
-                    spec.writeTo(environment.codeGenerator, true)
-                } catch (e: FileAlreadyExistsException) {
-                    spec.writeTo(e.file.parentFile)
-                }
+                spec.writeTo(environment.codeGenerator, true)
             }
         }
     }

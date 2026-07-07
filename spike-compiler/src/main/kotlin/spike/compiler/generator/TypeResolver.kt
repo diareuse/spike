@@ -1,6 +1,5 @@
 package spike.compiler.generator
 
-import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.TypeName
 import spike.Include
@@ -57,4 +56,12 @@ class TypeResolver {
     fun getMemberName(member: Member) = memberName.getOrPut(member) {
         member.toMemberName()
     }
+
+    // ---
+
+    fun clear() {
+        typeName.clear()
+        memberName.clear()
+    }
+
 }
