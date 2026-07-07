@@ -1,7 +1,6 @@
 package spike.compiler.generator
 
 import com.squareup.kotlinpoet.AnnotationSpec
-import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
@@ -43,6 +42,7 @@ class DependencyHolderGenerator private constructor(
         val className = context.resolver.peerClass(context.graph, "DependencyHolder${index}")
         val dependencyFactoryClassName = context.dependencyFactoryClassName
         val type = TypeSpec.classBuilder(className)
+        type.addOriginatingFiles(context.originatingFiles)
         type.primaryConstructor(
             FunSpec.constructorBuilder()
                 .addParameter("factory", dependencyFactoryClassName)

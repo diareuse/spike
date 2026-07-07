@@ -16,6 +16,7 @@ class InstructionSetGenerator : Generator {
         val instructionSetClassName = context.resolver.peerClass(context.graph, "InstructionSet")
         val dfis = context.instructions
         val type = TypeSpec.objectBuilder(instructionSetClassName)
+            .addOriginatingFiles(context.originatingFiles)
             .addSuperinterface(InstructionSet::class)
         type.addProperty(
             PropertySpec.builder(InstructionSet::memory.name, IntArray::class)

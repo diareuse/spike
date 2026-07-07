@@ -29,6 +29,7 @@ class DependencyFactoryGenerator(
 ) : Generator {
     override fun generate(context: FileGeneratorContext, collector: FileSpecCollector) {
         val spec = TypeSpec.classBuilder(context.dependencyFactoryClassName)
+        spec.addOriginatingFiles(context.originatingFiles)
         spec.superclass(DependencyFactory::class)
         spec.primaryConstructor(
             FunSpec.constructorBuilder()
