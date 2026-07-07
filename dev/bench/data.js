@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1783402452621,
+  "lastUpdate": 1783442393135,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -2694,6 +2694,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 564.296,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "85146967272ecc68c2aadc4e981843fea28d9cef",
+          "message": "fix(compiler): clear TypeResolver cache in SpikeSymbolProcessorProvider\n\nThe `TypeResolver` cache is now cleared at the start of each symbol processing run to prevent stale type resolutions. This ensures accurate type handling across multiple compilation cycles and improves reliability in complex binding scenarios.\n\n- spike-compiler/src/main/kotlin/spike/compiler/SpikeSymbolProcessorProvider.kt: Added `resolver.clear()` call\n- spike-compiler/src/main/kotlin/spike/compiler/generator/TypeResolver.kt: Implemented `clear()` method to reset internal caches",
+          "timestamp": "2026-07-07T18:32:40+02:00",
+          "tree_id": "6bc3a578dc7e0d8147f6f2f6b09e8fcc6b5b99ae",
+          "url": "https://github.com/diareuse/spike/commit/85146967272ecc68c2aadc4e981843fea28d9cef"
+        },
+        "date": 1783442392166,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2004.57,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 543.675,
             "unit": "ms"
           }
         ]
