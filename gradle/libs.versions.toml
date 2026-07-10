@@ -2,7 +2,7 @@
 atomicfu = "0.33.0"
 publish = "0.37.0"
 detekt = "2.0.0-alpha.5"
-google-ksp = "2.3.9"
+google-ksp = "2.3.10"
 kotlin = "2.4.0"
 agp = "9.2.1"
 kotlinpoet = "2.3.0"
