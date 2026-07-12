@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1783442393135,
+  "lastUpdate": 1783838479740,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -2728,6 +2728,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 543.675,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "c685cd98ce03c26dcd5ab955147bdb5f9008e176",
+          "message": "chore(deps): bump google-ksp from 2.3.9 to 2.3.10\n\nBumps `google-ksp` from 2.3.9 to 2.3.10.\n\nUpdates `com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin` from 2.3.9 to 2.3.10\n- [Release notes](https://github.com/google/ksp/releases)\n- [Commits](https://github.com/google/ksp/compare/2.3.9...2.3.10)\n\nUpdates `com.google.devtools.ksp:symbol-processing-api` from 2.3.9 to 2.3.10\n- [Release notes](https://github.com/google/ksp/releases)\n- [Commits](https://github.com/google/ksp/compare/2.3.9...2.3.10)\n\nUpdates `com.google.devtools.ksp` from 2.3.9 to 2.3.10\n- [Release notes](https://github.com/google/ksp/releases)\n- [Commits](https://github.com/google/ksp/compare/2.3.9...2.3.10)\n\n---\nupdated-dependencies:\n- dependency-name: com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin\n  dependency-version: 2.3.10\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: com.google.devtools.ksp:symbol-processing-api\n  dependency-version: 2.3.10\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: com.google.devtools.ksp\n  dependency-version: 2.3.10\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-07-12T08:34:12+02:00",
+          "tree_id": "03b2106962a8d534e45b6337e39a55643db4261e",
+          "url": "https://github.com/diareuse/spike/commit/c685cd98ce03c26dcd5ab955147bdb5f9008e176"
+        },
+        "date": 1783838479406,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2179.55,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 567.697,
             "unit": "ms"
           }
         ]
