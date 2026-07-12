@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.14](https://github.com/diareuse/spike/compare/0.0.13...0.0.14) (2026-07-12)
+
+
+### Bug Fixes
+
+* **compiler:** add originating files tracking to generated code ([0f23acd](https://github.com/diareuse/spike/commit/0f23acdd4511927523c35d9cc5bfd0f0d48c4963))
+* **compiler:** clear TypeResolver cache in SpikeSymbolProcessorProvider ([8514696](https://github.com/diareuse/spike/commit/85146967272ecc68c2aadc4e981843fea28d9cef))
+
 ## [0.0.13](https://github.com/diareuse/spike/compare/0.0.12...0.0.13) (2026-07-03)
 
 
