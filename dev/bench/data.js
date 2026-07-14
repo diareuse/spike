@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784059278692,
+  "lastUpdate": 1784059321671,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -2864,6 +2864,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 529.119,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "9d089c27ad2fee7977a3e8643da3fc8ac5b6c012",
+          "message": "chore(deps): bump androidx-lifecycle from 2.10.0 to 2.11.0\n\nBumps `androidx-lifecycle` from 2.10.0 to 2.11.0.\n\nUpdates `org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose` from 2.10.0 to 2.11.0\n- [Release notes](https://github.com/JetBrains/compose-multiplatform/releases)\n- [Changelog](https://github.com/JetBrains/compose-multiplatform/blob/master/CHANGELOG.md)\n- [Commits](https://github.com/JetBrains/compose-multiplatform/commits)\n\nUpdates `org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-savedstate` from 2.10.0 to 2.11.0\n- [Release notes](https://github.com/JetBrains/compose-multiplatform/releases)\n- [Changelog](https://github.com/JetBrains/compose-multiplatform/blob/master/CHANGELOG.md)\n- [Commits](https://github.com/JetBrains/compose-multiplatform/commits)\n\n---\nupdated-dependencies:\n- dependency-name: org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose\n  dependency-version: 2.11.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n- dependency-name: org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-savedstate\n  dependency-version: 2.11.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-07-14T21:54:49+02:00",
+          "tree_id": "db3907e8290fbe5adbcec0b9b78391dc811cefac",
+          "url": "https://github.com/diareuse/spike/commit/9d089c27ad2fee7977a3e8643da3fc8ac5b6c012"
+        },
+        "date": 1784059320754,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2114.25,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 575.925,
             "unit": "ms"
           }
         ]
