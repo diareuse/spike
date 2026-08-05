@@ -59,6 +59,10 @@ class TypeResolver {
 
     // ---
 
+    fun getVariableName(type: Type) = type.simpleName.replaceFirstChar { it.lowercase() }
+
+    // ---
+
     fun clear() {
         typeName.clear()
         memberName.clear()

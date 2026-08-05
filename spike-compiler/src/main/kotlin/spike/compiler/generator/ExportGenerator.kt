@@ -2,13 +2,20 @@ package spike.compiler.generator
 
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.ParameterSpec
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
 import spike.compiler.graph.GraphEntryPoint
+import spike.compiler.graph.Parameter
+import spike.compiler.graph.TypeFactory
+import spike.compiler.graph.TypeFactory.Companion.dependencyTree
+import spike.compiler.graph.TypeFactory.Companion.invertDependencyTree
 import spike.factory.DependencyId
 
 class ExportGenerator : Generator {
@@ -18,15 +25,34 @@ class ExportGenerator : Generator {
         val ep = graph.entry
         val epcn = ClassName("spike.generated.${graph.entry.type.packageName}", graph.entry.type.simpleName + "Impl")
         val dfcn = context.dependencyFactoryClassName
-        val type = TypeSpec.objectBuilder(epcn)
+        // fixme this is a brute force find, highly discouraged to ship
+        val params = graph.toSequence().flatMap { it.dependencyTree() }
+            .filterIsInstance<TypeFactory.Imported>()
+        val type = TypeSpec.classBuilder(epcn)
             .addOriginatingFiles(context.originatingFiles)
             .addSuperinterface(resolver.getTypeName(ep.type))
             .addProperty(
                 PropertySpec.builder("factory", dfcn)
-                    .initializer("%T()", dfcn)
+                    .initializer(CodeBlock.builder()
+                        .add("%T(", dfcn)
+                        .apply {
+                            for((index, param) in params.withIndex()) {
+                                if(index > 0)
+                                    add(", ")
+                                add("_%L = %L", param.name, param.name)
+                            }
+                        }
+                        .add(")")
+                        .build())
                     .addModifiers(KModifier.PRIVATE)
                     .build()
             )
+        type.primaryConstructor(FunSpec.constructorBuilder()
+            .addParameters(params.map {
+                val type = (resolver.builtInType { Provider } as ClassName).parameterizedBy(it.type.toClassName())
+                ParameterSpec.builder(it.name, type).build()
+            }.toList())
+            .build())
         generateMethods(ep, type, resolver, context)
         generateProperties(ep, type, resolver, context)
         val file = FileSpec.builder(epcn)
@@ -54,6 +80,7 @@ class ExportGenerator : Generator {
             type.addFunction(
                 FunSpec.builder(m.name)
                     .addModifiers(KModifier.OVERRIDE)
+                    .addParameters(m.parameters.map { it.toParameterSpec() })
                     .returns(resolver.getTypeName(m.returns))
                     .addStatement(
                         "return factory.get(%L(%L))",
@@ -88,4 +115,7 @@ class ExportGenerator : Generator {
             )
         }
     }
+
+    private fun Parameter.toParameterSpec() = ParameterSpec.builder(name, type.toTypeName())
+        .build()
 }

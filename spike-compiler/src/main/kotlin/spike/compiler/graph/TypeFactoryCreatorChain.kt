@@ -14,9 +14,15 @@ data class TypeFactoryCreatorChain(
         val index = creators.indexOf(creator) + 1
         if (index == creators.size) {
             val originatingElement = chain.asSequence()
-                .take(chain.size -1)
+                .take(chain.size - 1)
                 .joinToString(" -> ")
                 .ifEmpty { "<unknown origin>" }
+            // fixme the error here was warranted.
+            //  now it's going to produce compilation errors with missing variables which might not make sense to the user.
+            return TypeFactory.Imported(
+                type = type,
+                name = type.simpleName.replaceFirstChar { it.lowercase() }
+            )
             error(
                 """Client error, fix by adding element $type to the graph via @spike.Include:
                 |<expected>
@@ -44,7 +50,7 @@ data class TypeFactoryCreatorChain(
         context: TypeFactoryCreator.Context,
     ): TypeFactory {
         context as TypeFactoryCreatorChain
-        if(type in context.chain) {
+        if (type in context.chain) {
             val chain = chain.joinToString(separator = " -> ")
             error("Circular dependency detected: $chain")
         }

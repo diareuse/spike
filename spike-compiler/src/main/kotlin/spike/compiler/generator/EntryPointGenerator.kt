@@ -1,6 +1,5 @@
 package spike.compiler.generator
 
-import com.google.devtools.ksp.symbol.AnnotationUseSiteTarget
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
@@ -98,7 +97,10 @@ class EntryPointGenerator : Generator {
         for (p in ep.properties) {
             type.addProperty(
                 PropertySpec.builder(p.name, resolver.getTypeName(p.returns))
-                    .addModifiers(KModifier.OVERRIDE)
+                    .apply {
+                        if (!p.synthetic)
+                            addModifiers(KModifier.OVERRIDE)
+                    }
                     .getter(
                         FunSpec.getterBuilder()
                             .addStatement(
@@ -120,7 +122,7 @@ class EntryPointGenerator : Generator {
         resolver: TypeResolver,
         epcn: ClassName
     ) {
-        if (!ep.factory.isVirtual) {
+        if (ep.factory.method.parameters.isNotEmpty()) {
             file.addFunction(
                 FunSpec.builder("factory")
                     .returns(context.resolver.getTypeName(ep.factory.type))
@@ -132,7 +134,7 @@ class EntryPointGenerator : Generator {
     }
 
     private fun createFactory(context: FileGeneratorContext, epcn: ClassName, dfcn: ClassName): TypeSpec {
-        if (context.graph.entry.factory.isVirtual) return TypeSpec.objectBuilder("Factory")
+        if (context.graph.entry.factory.method.parameters.isEmpty()) return TypeSpec.objectBuilder("Factory")
             .addFunction(
                 FunSpec.builder("create")
                     .returns(epcn)

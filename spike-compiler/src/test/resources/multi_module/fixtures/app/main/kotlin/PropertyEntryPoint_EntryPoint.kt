@@ -1,12 +1,17 @@
 @file:Suppress("ClassName", "RedundantVisibilityModifier")
 
+import kotlin.String
 import kotlin.Suppress
+import spike.Provider
 
 private class PropertyEntryPoint_EntryPoint(
   private val factory: PropertyEntryPoint_Factory,
 ) : PropertyEntryPoint {
   override val lib: Lib
     get() = factory.get(spike.factory.DependencyId(0))
+
+  public val string: Provider<String>
+    get() = factory.get(spike.factory.DependencyId(1))
 
   public object Factory {
     public fun create(): PropertyEntryPoint_EntryPoint = PropertyEntryPoint_EntryPoint(PropertyEntryPoint_Factory())

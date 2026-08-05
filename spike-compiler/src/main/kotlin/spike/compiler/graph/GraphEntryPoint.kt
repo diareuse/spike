@@ -27,7 +27,6 @@ data class GraphEntryPoint private constructor(
     data class Factory(
         val type: Type,
         val method: Member.Method,
-        val isVirtual: Boolean = false,
     )
 
     companion object {
@@ -35,17 +34,17 @@ data class GraphEntryPoint private constructor(
         @JvmName("invokeWithNull")
         operator fun invoke(
             type: Type,
-            factory: Factory?,
+            factory: Factory,
             properties: List<Member.Property>,
             methods: List<Member.Method>,
         ) = GraphEntryPoint(
             type = type,
-            factory = factory ?: type.defaultFactory(),
+            factory = factory,
             properties = properties,
             methods = methods,
         )
 
-        private fun Type.defaultFactory(): Factory {
+        fun Type.virtualFactory(parameters: List<Parameter>): Factory {
             val factoryType = Type.Simple(packageName, "${simpleName}Factory", false)
             return Factory(
                 type = factoryType,
@@ -54,8 +53,8 @@ data class GraphEntryPoint private constructor(
                     name = "create",
                     returns = this,
                     parent = factoryType,
+                    parameters = parameters
                 ),
-                isVirtual = true,
             )
         }
     }

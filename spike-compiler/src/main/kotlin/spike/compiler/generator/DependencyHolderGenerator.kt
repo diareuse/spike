@@ -25,6 +25,7 @@ import spike.compiler.graph.TypeFactory
 import spike.compiler.graph.TypeFactory.Binds
 import spike.compiler.graph.TypeFactory.Class
 import spike.compiler.graph.TypeFactory.External
+import spike.compiler.graph.TypeFactory.Imported
 import spike.compiler.graph.TypeFactory.Memorizes
 import spike.compiler.graph.TypeFactory.Method
 import spike.compiler.graph.TypeFactory.MultibindsCollection
@@ -129,7 +130,8 @@ class DependencyHolderGenerator private constructor(
                     mapEntries(factory.keyValues.entries)
                 }.addStatement("")
                 is Property -> body.addStatement("factory.${factory.name}")
-                is External -> body.addStatement("%T.%L", factory.origin.toClassName(), factory.name)
+                is External -> body.addStatement("factory.%L.%L", resolver.getVariableName(factory.origin), factory.name)
+                is Imported -> body.addStatement("factory.%L", factory.name)
             }
         }
         body.addStatement("else -> error(\"Invalid position\")")

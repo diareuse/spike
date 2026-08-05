@@ -118,6 +118,14 @@ sealed interface TypeFactory {
             get() = emptyList()
     }
 
+    data class Imported(
+        override val type: Type,
+        val name: String
+    ): TypeFactory {
+        override val dependencies: List<TypeFactory>
+            get() = emptyList()
+    }
+
     data class MultibindsCollection(
         override val type: Type,
         val entries: List<TypeFactory>,

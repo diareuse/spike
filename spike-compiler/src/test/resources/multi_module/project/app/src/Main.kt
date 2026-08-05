@@ -1,6 +1,6 @@
 fun main() {
     val ep: PropertyEntryPoint = PropertyEntryPoint.invoke()
-    check(ep.lib.run() == "rary")
+    check(ep.lib.run() == "library")
 }
 
 @spike.EntryPoint
@@ -9,3 +9,6 @@ interface PropertyEntryPoint {
 
     companion object
 }
+
+@spike.Include
+fun prefix() = "lib"

@@ -36,4 +36,8 @@ class TypeFactoryIdHolder(
 
     operator fun iterator(): Iterator<List<TypeFactory>> = holders.iterator()
     fun toList(): List<List<TypeFactory>> = holders
+
+    override fun toString(): String {
+        return "TypeFactoryIdHolder(holders=${holders.flatten().map { it.type to it.type::class }.joinToString()})"
+    }
 }

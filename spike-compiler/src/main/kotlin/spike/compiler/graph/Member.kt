@@ -6,6 +6,7 @@ sealed class Member {
         val name: String,
         val returns: Type,
         val parent: Type? = null,
+        val synthetic: Boolean = false
     ) : Member()
 
     data class Method(

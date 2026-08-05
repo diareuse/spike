@@ -6,6 +6,7 @@ class DependencyGraph private constructor(
     val entry: GraphEntryPoint,
     val methods: List<TypeFactory>,
     val properties: List<TypeFactory>,
+    val imports: List<TypeFactory.Class>,
 ) {
 
     operator fun iterator() = iterator {
@@ -25,6 +26,7 @@ class DependencyGraph private constructor(
         private val root: GraphStore,
         private val multibinding: MultiBindingStore,
         private val logger: KSPLogger,
+        private val imports: Sequence<TypeFactory.Class>,
     ) {
 
         private val cache = TypeFactoryCreatorCache()
@@ -36,7 +38,7 @@ class DependencyGraph private constructor(
             }
         }
 
-        fun putExternal(external: TypeFactory.External) {
+        fun putExternal(external: TypeFactory) {
             cache.put(external.type, external)
         }
 
@@ -62,6 +64,7 @@ class DependencyGraph private constructor(
                 entry = entry,
                 methods = methods,
                 properties = properties,
+                imports = imports.toList()
             )
         }
 

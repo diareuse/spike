@@ -4,6 +4,6 @@ interface Exported {
 }
 
 @spike.Include
-class Lib {
-    fun run() = "rary"
+class Lib(val prefix: String) {
+    fun run() = "${prefix}rary"
 }

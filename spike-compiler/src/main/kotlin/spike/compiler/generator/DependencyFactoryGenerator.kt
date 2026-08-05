@@ -31,15 +31,13 @@ class DependencyFactoryGenerator(
         val spec = TypeSpec.classBuilder(context.dependencyFactoryClassName)
         spec.addOriginatingFiles(context.originatingFiles)
         spec.superclass(DependencyFactory::class)
-        spec.primaryConstructor(
-            FunSpec.constructorBuilder()
-                .addParameters(
-                    context.graph.entry.factory.method.parameters.map {
-                        ParameterSpec.builder(it.name, context.resolver.getTypeName(it.type)).build()
-                    }
-                )
-                .build()
-        )
+        context.imports.clear()
+        val primaryConstructor = FunSpec.constructorBuilder()
+            .addParameters(
+                context.graph.entry.factory.method.parameters.map {
+                    ParameterSpec.builder(it.name, context.resolver.getTypeName(it.type)).build()
+                }
+            )
         spec.addProperties(context.graph.entry.factory.method.parameters.map {
             PropertySpec.builder(it.name, context.resolver.getTypeName(it.type))
                 .initializer(it.name)
@@ -70,6 +68,44 @@ class DependencyFactoryGenerator(
                 .getter(instructionSetGetter)
                 .build()
         )
+        spec.addProperties(context.graph.imports.map {
+            val cn = it.type.toClassName()
+
+            PropertySpec.builder(it.type.simpleName.replaceFirstChar { it.lowercase() }, cn)
+                .initializer(
+                    CodeBlock.builder()
+                    .add("%T(", cn)
+                    .apply {
+                        for ((index, p) in it.invocation.parameters.withIndex()) {
+                            if (index > 0) add(", ")
+                            add("%L = get(%T(%L))", p.name, DependencyId::class, context.getDependencyId(context.ids.find(p.type)))
+                        }
+                    }
+                    .add(")")
+                    .build())
+                .build()
+        })
+        for (import in context.imports) {
+            val name = context.resolver.getVariableName(import.type)
+            val type = import.type.toClassName()
+            val providerType = (context.resolver.builtInType { Provider } as ClassName).parameterizedBy(type)
+            primaryConstructor.addParameter("_$name", providerType)
+            spec.addProperty(
+                PropertySpec.builder("_$name", providerType, KModifier.PRIVATE)
+                    .initializer("_$name")
+                    .build()
+            )
+            spec.addProperty(
+                PropertySpec.builder(name, type, KModifier.PUBLIC)
+                    .getter(
+                        FunSpec.getterBuilder()
+                            .addCode("return _%L.get()", name)
+                            .build()
+                    )
+                    .build()
+            )
+        }
+        spec.primaryConstructor(primaryConstructor.build())
         val type = spec.build()
         val file = FileSpec.builder(context.dependencyFactoryClassName)
             .addType(type)
@@ -184,6 +220,9 @@ class DependencyFactoryGenerator(
         var contextSize = 0
 
         for (dependency in type.invertDependencyTree()) {
+            if (dependency is TypeFactory.Imported) {
+                context.imports += dependency
+            }
             enqueueNestedTypes(dependency, queue)
 
             val dependencyHash = dependency.hashCode()

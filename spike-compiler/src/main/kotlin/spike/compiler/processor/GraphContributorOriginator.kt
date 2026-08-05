@@ -12,7 +12,9 @@ import com.squareup.kotlinpoet.ksp.writeTo
 import spike.compiler.generator.DependencyGraphGenerator
 import spike.compiler.graph.DependencyGraph
 import spike.compiler.graph.GraphEntryPoint
+import spike.compiler.graph.GraphEntryPoint.Companion.virtualFactory
 import spike.compiler.graph.Member
+import spike.compiler.graph.Parameter
 import spike.compiler.graph.TypeFactory
 
 @OptIn(KspExperimental::class)
@@ -30,11 +32,14 @@ abstract class GraphContributorOriginator : GraphContributor {
         for (entryPoint in entryPoints) {
             verifyOrigin(entryPoint)
             val factory = findFactory(entryPoint)
-            val properties = findProperties(entryPoint)
-            val methods = findMethods(entryPoint)
+            val properties = findProperties(entryPoint).toMutableList()
+            val virtualFactoryParameters = mutableListOf<Parameter>()
+            val methods = findMethods(entryPoint).toMutableList()
+            val external = findExternal(context.resolver, properties)
+            val type = entryPoint.toType(false)
             val entry = GraphEntryPoint.Companion(
-                type = entryPoint.toType(false),
-                factory = factory,
+                type = type,
+                factory = factory ?: type.virtualFactory(virtualFactoryParameters),
                 properties = properties,
                 methods = methods,
             )
@@ -42,9 +47,14 @@ abstract class GraphContributorOriginator : GraphContributor {
                 entry = entry,
                 root = context.builder.build(),
                 multibinding = context.multibind.build(),
+                imports = context.resolver.getDeclarationsFromPackage("spike.generated")
+                    .filterIsInstance<KSClassDeclaration>()
+                    .map {
+                        TypeFactory.Class(it.toType(false), it.primaryConstructor!!.toInvocation(), false, emptyList())
+                    },
                 logger = logger
             )
-            for (e in findExternal(context.resolver)) {
+            for (e in external) {
                 graphFactory.putExternal(e)
             }
             generator.generate(graphFactory.create(), context.originatingFiles) { spec ->
@@ -53,7 +63,10 @@ abstract class GraphContributorOriginator : GraphContributor {
         }
     }
 
-    private fun findExternal(resolver: Resolver): Sequence<TypeFactory.External> {
+    private fun findExternal(
+        resolver: Resolver,
+        properties: MutableList<Member.Property>
+    ): Sequence<TypeFactory> {
         return resolver.getDeclarationsFromPackage("spike.generated")
             .filterIsInstance<KSClassDeclaration>()
             .flatMap { klass ->
@@ -73,6 +86,10 @@ abstract class GraphContributorOriginator : GraphContributor {
                             isMethod = false
                         )
                         yield(tf)
+                    }
+                    for (p in klass.primaryConstructor?.parameters.orEmpty()) {
+                        val type = p.type.resolve().toType()
+                        properties.add(Member.Property(type.packageName, p.name!!.asString(), type, synthetic = true))
                     }
                 }
             }
