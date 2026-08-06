@@ -25,9 +25,7 @@ class ExportGenerator : Generator {
         val ep = graph.entry
         val epcn = ClassName("spike.generated.${graph.entry.type.packageName}", graph.entry.type.simpleName + "Impl")
         val dfcn = context.dependencyFactoryClassName
-        // fixme this is a brute force find, highly discouraged to ship
-        val params = graph.toSequence().flatMap { it.dependencyTree() }
-            .filterIsInstance<TypeFactory.Imported>()
+        val params = graph.importFactories
         val type = TypeSpec.classBuilder(epcn)
             .addOriginatingFiles(context.originatingFiles)
             .addSuperinterface(resolver.getTypeName(ep.type))

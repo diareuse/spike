@@ -7,6 +7,7 @@ class DependencyGraph private constructor(
     val methods: List<TypeFactory>,
     val properties: List<TypeFactory>,
     val imports: List<TypeFactory.Class>,
+    val importFactories: List<TypeFactory.Imported>,
 ) {
 
     operator fun iterator() = iterator {
@@ -43,7 +44,9 @@ class DependencyGraph private constructor(
         }
 
         fun create(): DependencyGraph {
+            val importCollector = TypeFactoryCreatorImportCollector()
             val creators = listOf(
+                importCollector,
                 cache,
                 TypeFactoryCreatorConstructor(),
                 TypeFactoryCreatorMethod(),
@@ -64,7 +67,8 @@ class DependencyGraph private constructor(
                 entry = entry,
                 methods = methods,
                 properties = properties,
-                imports = imports.toList()
+                imports = imports.toList(),
+                importFactories = importCollector.imports.toList()
             )
         }
 
@@ -76,4 +80,14 @@ class DependencyGraph private constructor(
         }
     }
 
+}
+
+class TypeFactoryCreatorImportCollector : TypeFactoryCreator {
+    val imports: Set<TypeFactory.Imported>
+        field = mutableSetOf()
+
+    override fun TypeFactoryCreator.Context.create() = pass().also { tf ->
+        if (tf is TypeFactory.Imported)
+            imports += tf
+    }
 }
