@@ -63,11 +63,31 @@ class DependencyGraph private constructor(
             val properties = entry.properties.map {
                 createTypeFactory(it.returns, creators)
             }
+            val imports = imports.toList()
+            if (!entry.isModule && importCollector.imports.isNotEmpty()) {
+                val types = importCollector.imports.joinToString("\n") {
+                    """<expected>
+                    |  @spike.Include
+                    |  class ${it.type} { /**/ }
+                    |</expected>
+                    |
+                    |<actual>
+                    |  Not Found
+                    |</actual>
+                    |
+                    |<description>
+                    |  `class ${it.originatingElement}(..., ${it.type})` is declared somewhere in your application.
+                    |  ${it.type} couldn't be found in the graph. You may have forgotten to annotate with 
+                    |  a `@spike.Qualifier`-based annotation or `@spike.Include` is missing atop your class
+                    |</description>""".trimMargin()
+                }
+                error("Client error, your build is missing dependencies in graph:\n$types")
+            }
             return DependencyGraph(
                 entry = entry,
                 methods = methods,
                 properties = properties,
-                imports = imports.toList(),
+                imports = imports,
                 importFactories = importCollector.imports.toList()
             )
         }

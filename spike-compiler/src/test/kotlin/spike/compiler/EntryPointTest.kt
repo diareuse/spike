@@ -23,6 +23,14 @@ class EntryPointTest : TestHarness() {
     )
 
     @Test
+    fun `missing dependency fails`() = runTest(
+        label = "missing_dependency",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { buildAndFail("kspKotlin") },
+        verify = { assertFailure(it.kspKotlin) }
+    )
+
+    @Test
     fun `circular dependency fails`() = runTest(
         label = "circular",
         prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },

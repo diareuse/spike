@@ -17,29 +17,10 @@ data class TypeFactoryCreatorChain(
                 .take(chain.size - 1)
                 .joinToString(" -> ")
                 .ifEmpty { "<unknown origin>" }
-            // fixme the error here was warranted.
-            //  now it's going to produce compilation errors with missing variables which might not make sense to the user.
             return TypeFactory.Imported(
                 type = type,
-                name = type.simpleName.replaceFirstChar { it.lowercase() }
-            )
-            error(
-                """Client error, fix by adding element $type to the graph via @spike.Include:
-                |<expected>
-                |  @spike.Include
-                |  class $type { /**/ }
-                |</expected>
-                |
-                |<actual>
-                |  Not Found
-                |</actual>
-                |
-                |<description>
-                |  `class $originatingElement(..., $type)` is declared somewhere in your application.
-                |  $type couldn't be found in the graph. You may have forgotten to annotate with 
-                |  a `@spike.Qualifier`-based annotation or `@spike.Include` is missing atop your class
-                |</description>
-            """.trimMargin()
+                name = type.simpleName.replaceFirstChar { it.lowercase() },
+                originatingElement = originatingElement
             )
         }
         return with(creators[index]) { create() }

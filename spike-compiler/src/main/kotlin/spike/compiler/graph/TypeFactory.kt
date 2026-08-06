@@ -120,7 +120,8 @@ sealed interface TypeFactory {
 
     data class Imported(
         override val type: Type,
-        val name: String
+        val name: String,
+        val originatingElement: String
     ): TypeFactory {
         override val dependencies: List<TypeFactory>
             get() = emptyList()

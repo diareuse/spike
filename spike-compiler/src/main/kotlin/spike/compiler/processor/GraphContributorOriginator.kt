@@ -4,11 +4,13 @@ import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getDeclaredFunctions
 import com.google.devtools.ksp.getDeclaredProperties
 import com.google.devtools.ksp.isAbstract
+import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.squareup.kotlinpoet.ksp.writeTo
+import spike.Export
 import spike.compiler.generator.DependencyGraphGenerator
 import spike.compiler.graph.DependencyGraph
 import spike.compiler.graph.GraphEntryPoint
@@ -37,11 +39,12 @@ abstract class GraphContributorOriginator : GraphContributor {
             val methods = findMethods(entryPoint).toMutableList()
             val external = findExternal(context.resolver, properties)
             val type = entryPoint.toType(false)
-            val entry = GraphEntryPoint.Companion(
+            val entry = GraphEntryPoint(
                 type = type,
                 factory = factory ?: type.virtualFactory(virtualFactoryParameters),
                 properties = properties,
                 methods = methods,
+                isModule = entryPoint.isAnnotationPresent(Export::class)
             )
             val graphFactory = DependencyGraph.Factory(
                 entry = entry,
