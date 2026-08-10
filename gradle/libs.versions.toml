@@ -1,7 +1,7 @@
 [versions]
 atomicfu = "0.33.0"
 publish = "0.37.0"
-detekt = "2.0.0-alpha.5"
+detekt = "2.0.0-alpha.6"
 google-ksp = "2.3.11"
 kotlin = "2.4.10"
 agp = "9.2.1"
