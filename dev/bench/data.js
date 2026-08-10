@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784059321671,
+  "lastUpdate": 1786343484446,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -2898,6 +2898,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 575.925,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "af3ce6261e9db9536218bc31c65e36dfd853758f",
+          "message": "chore(deps): bump google-ksp from 2.3.10 to 2.3.11\n\nBumps `google-ksp` from 2.3.10 to 2.3.11.\n\nUpdates `com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin` from 2.3.10 to 2.3.11\n- [Release notes](https://github.com/google/ksp/releases)\n- [Commits](https://github.com/google/ksp/compare/2.3.10...2.3.11)\n\nUpdates `com.google.devtools.ksp:symbol-processing-api` from 2.3.10 to 2.3.11\n- [Release notes](https://github.com/google/ksp/releases)\n- [Commits](https://github.com/google/ksp/compare/2.3.10...2.3.11)\n\nUpdates `com.google.devtools.ksp` from 2.3.10 to 2.3.11\n- [Release notes](https://github.com/google/ksp/releases)\n- [Commits](https://github.com/google/ksp/compare/2.3.10...2.3.11)\n\n---\nupdated-dependencies:\n- dependency-name: com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin\n  dependency-version: 2.3.11\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: com.google.devtools.ksp:symbol-processing-api\n  dependency-version: 2.3.11\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: com.google.devtools.ksp\n  dependency-version: 2.3.11\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-08-10T08:24:27+02:00",
+          "tree_id": "62b8db07f24aa6de69455b17581504b7966c0668",
+          "url": "https://github.com/diareuse/spike/commit/af3ce6261e9db9536218bc31c65e36dfd853758f"
+        },
+        "date": 1786343483968,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2084.88,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 552.831,
             "unit": "ms"
           }
         ]
