@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786343484446,
+  "lastUpdate": 1786391575289,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -2932,6 +2932,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 552.831,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "5ba5f7a9c1c1defd9dd1c7315a853ff62c03deef",
+          "message": "chore(deps): bump dev.detekt:dev.detekt.gradle.plugin\n\nBumps [dev.detekt:dev.detekt.gradle.plugin](https://github.com/detekt/detekt) from 2.0.0-alpha.5 to 2.0.0-alpha.6.\n- [Release notes](https://github.com/detekt/detekt/releases)\n- [Commits](https://github.com/detekt/detekt/compare/v2.0.0-alpha.5...v2.0.0-alpha.6)\n\n---\nupdated-dependencies:\n- dependency-name: dev.detekt:dev.detekt.gradle.plugin\n  dependency-version: 2.0.0-alpha.6\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-08-10T21:46:26+02:00",
+          "tree_id": "ebe96682e81d499de50638a0329fb34afc6ce9c2",
+          "url": "https://github.com/diareuse/spike/commit/5ba5f7a9c1c1defd9dd1c7315a853ff62c03deef"
+        },
+        "date": 1786391574567,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 1871.63,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 496.329,
             "unit": "ms"
           }
         ]
