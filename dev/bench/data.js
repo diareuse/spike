@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786546128434,
+  "lastUpdate": 1787635892483,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -3034,6 +3034,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 546.93,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "f9799c583536db78897e0057a01a2dfc09881a5f",
+          "message": "chore(deps): bump gradle-wrapper from 9.7.0 to 9.7.1\n\nBumps [gradle-wrapper](https://github.com/gradle/gradle) from 9.7.0 to 9.7.1.\n- [Release notes](https://github.com/gradle/gradle/releases)\n- [Commits](https://github.com/gradle/gradle/compare/v9.7.0...v9.7.1)\n\n---\nupdated-dependencies:\n- dependency-name: gradle-wrapper\n  dependency-version: 9.7.1\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-08-25T07:24:15+02:00",
+          "tree_id": "adaa8c4e6adeda8c4c626657c91babfcf96317e8",
+          "url": "https://github.com/diareuse/spike/commit/f9799c583536db78897e0057a01a2dfc09881a5f"
+        },
+        "date": 1787635891462,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 1842.68,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 424.216,
             "unit": "ms"
           }
         ]
