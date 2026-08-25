@@ -35,6 +35,7 @@ import spike.compiler.graph.TypeFactory.Provides
 import spike.factory.SingletonHolder
 import java.util.concurrent.atomic.AtomicInteger
 
+@Suppress("TooManyFunctions")
 class DependencyHolderGenerator private constructor(
     private val index: Int,
 ) : Generator {
@@ -101,37 +102,16 @@ class DependencyHolderGenerator private constructor(
         for ((index, factory) in factories.withIndex()) context.apply {
             body.add("$index -> ")
             when (factory) {
-                is Binds -> body.addBufferCast(0, factory.type).addStatement("")
-                is Class -> body.addOptionalSingleton(index, factory.singleton) {
-                    if (factory.singleton) singletonCounter.incrementAndGet()
-                    addType(factory.type) {
-                        body.addParameters(factory.invocation)
-                    }.addStatement("")
-                }
-                is Method -> body.addOptionalSingleton(index, factory.singleton) {
-                    if (factory.singleton) singletonCounter.incrementAndGet()
-                    body.addMember(factory.member) {
-                        addParameters(factory.invocation)
-                    }.addStatement("")
-                }
-                is Memorizes -> body.addLazy {
-                    addDependencyFactoryCall(factory.factory)
-                }.addStatement("")
-                is Provides -> body.addProvider {
-                    addDependencyFactoryCall(factory.factory)
-                }.addStatement("")
-                is MultibindsCollection -> body.addMember(factory.collectionMemberFactory) {
-                    addParameters(factory.entries)
-                }.addStatement("")
-                is MultibindsMap -> body.addMap(
-                    key = factory.type.typeArguments[0],
-                    value = factory.type.typeArguments[1]
-                ) {
-                    mapEntries(factory.keyValues.entries)
-                }.addStatement("")
-                is Property -> body.addStatement("factory.${factory.name}")
-                is External -> body.addStatement("factory.%L.%L", resolver.getVariableName(factory.origin), factory.name)
-                is Imported -> body.addStatement("factory.%L", factory.name)
+                is Binds -> generateBindsCase(body, factory)
+                is Class -> generateClassCase(body, index, factory, singletonCounter)
+                is Method -> generateMethodCase(body, index, factory, singletonCounter)
+                is Memorizes -> generateMemorizesCase(body, factory)
+                is Provides -> generateProvidesCase(body, factory)
+                is MultibindsCollection -> generateMultibindsCollectionCase(body, factory)
+                is MultibindsMap -> generateMultibindsMapCase(body, factory)
+                is Property -> generatePropertyCase(body, factory)
+                is External -> generateExternalCase(body, factory)
+                is Imported -> generateImportedCase(body, factory)
             }
         }
         body.addStatement("else -> error(\"Invalid position\")")
@@ -139,6 +119,83 @@ class DependencyHolderGenerator private constructor(
         builder.addCode(body.build())
 
         return builder.build()
+    }
+
+    private fun FileGeneratorContext.generateBindsCase(body: CodeBlock.Builder, factory: Binds) {
+        body.addBufferCast(0, factory.type).addStatement("")
+    }
+
+    private fun FileGeneratorContext.generateClassCase(
+        body: CodeBlock.Builder,
+        index: Int,
+        factory: Class,
+        singletonCounter: AtomicInteger
+    ) {
+        body.addOptionalSingleton(index, factory.singleton) {
+            if (factory.singleton) singletonCounter.incrementAndGet()
+            addType(factory.type) {
+                body.addParameters(factory.invocation)
+            }.addStatement("")
+        }
+    }
+
+    private fun FileGeneratorContext.generateMethodCase(
+        body: CodeBlock.Builder,
+        index: Int,
+        factory: Method,
+        singletonCounter: AtomicInteger
+    ) {
+        body.addOptionalSingleton(index, factory.singleton) {
+            if (factory.singleton) singletonCounter.incrementAndGet()
+            body.addMember(factory.member) {
+                addParameters(factory.invocation)
+            }.addStatement("")
+        }
+    }
+
+    private fun FileGeneratorContext.generateMemorizesCase(body: CodeBlock.Builder, factory: Memorizes) {
+        body.addLazy {
+            addDependencyFactoryCall(factory.factory)
+        }.addStatement("")
+    }
+
+    private fun FileGeneratorContext.generateProvidesCase(body: CodeBlock.Builder, factory: Provides) {
+        body.addProvider {
+            addDependencyFactoryCall(factory.factory)
+        }.addStatement("")
+    }
+
+    private fun FileGeneratorContext.generateMultibindsCollectionCase(
+        body: CodeBlock.Builder,
+        factory: MultibindsCollection
+    ) {
+        body.addMember(factory.collectionMemberFactory) {
+            addParameters(factory.entries)
+        }.addStatement("")
+    }
+
+    private fun FileGeneratorContext.generateMultibindsMapCase(
+        body: CodeBlock.Builder,
+        factory: MultibindsMap
+    ) {
+        body.addMap(
+            key = factory.type.typeArguments[0],
+            value = factory.type.typeArguments[1]
+        ) {
+            mapEntries(factory.keyValues.entries)
+        }.addStatement("")
+    }
+
+    private fun FileGeneratorContext.generatePropertyCase(body: CodeBlock.Builder, factory: Property) {
+        body.addStatement("factory.${factory.name}")
+    }
+
+    private fun FileGeneratorContext.generateExternalCase(body: CodeBlock.Builder, factory: External) {
+        body.addStatement("factory.%L.%L", resolver.getVariableName(factory.origin), factory.name)
+    }
+
+    private fun FileGeneratorContext.generateImportedCase(body: CodeBlock.Builder, factory: Imported) {
+        body.addStatement("factory.%L", factory.name)
     }
 
     @Include

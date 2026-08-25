@@ -22,6 +22,7 @@ import spike.factory.DependencyId
 import spike.factory.InstructionSet
 import spike.factory.InstructionSetPointer
 
+@Suppress("TooManyFunctions")
 @Include
 class DependencyFactoryGenerator(
     private val instructionSet: InstructionSetGenerator,
@@ -29,66 +30,118 @@ class DependencyFactoryGenerator(
 ) : Generator {
     override fun generate(context: FileGeneratorContext, collector: FileSpecCollector) {
         val spec = TypeSpec.classBuilder(context.dependencyFactoryClassName)
-        spec.addOriginatingFiles(context.originatingFiles)
-        spec.superclass(DependencyFactory::class)
+            .addOriginatingFiles(context.originatingFiles)
+            .superclass(DependencyFactory::class)
+
         context.imports.clear()
         val primaryConstructor = FunSpec.constructorBuilder()
-            .addParameters(
-                context.graph.entry.factory.method.parameters.map {
-                    ParameterSpec.builder(it.name, context.resolver.getTypeName(it.type)).build()
-                }
+
+        addEntryFactoryProperties(spec, primaryConstructor, context)
+        addOverrideProperties(spec, context)
+        createInstructionPointer(context, spec)
+        createInstantiate(context, spec, collector)
+        addInstructionSetProperty(spec, context, collector)
+        addImportProperties(spec, context)
+        addProviderProperties(spec, primaryConstructor, context)
+
+        spec.primaryConstructor(primaryConstructor.build())
+
+        val file = FileSpec.builder(context.dependencyFactoryClassName)
+            .addType(spec.build())
+            .addAnnotation(
+                AnnotationSpec.builder(Suppress::class)
+                    .useSiteTarget(AnnotationSpec.UseSiteTarget.FILE)
+                    .addMember("%S, %S", "ClassName", "RedundantVisibilityModifier")
+                    .build()
             )
-        spec.addProperties(context.graph.entry.factory.method.parameters.map {
-            PropertySpec.builder(it.name, context.resolver.getTypeName(it.type))
-                .initializer(it.name)
-                .addModifiers(KModifier.PUBLIC)
-                .build()
-        })
-        val graph = context.graph
-        val maxConstructorArgs = graph.toSequence().flatMap { it.dependencyTree() }.maxOf { it.dependencies.size }
+            .build()
+        collector.emit(file)
+    }
+
+    private fun addEntryFactoryProperties(
+        spec: TypeSpec.Builder,
+        primaryConstructor: FunSpec.Builder,
+        context: FileGeneratorContext
+    ) {
+        val parameters = context.graph.entry.factory.method.parameters
+        primaryConstructor.addParameters(
+            parameters.map { ParameterSpec.builder(it.name, context.resolver.getTypeName(it.type)).build() }
+        )
+        spec.addProperties(
+            parameters.map {
+                PropertySpec.builder(it.name, context.resolver.getTypeName(it.type))
+                    .initializer(it.name)
+                    .addModifiers(KModifier.PUBLIC)
+                    .build()
+            }
+        )
+    }
+
+    private fun addOverrideProperties(spec: TypeSpec.Builder, context: FileGeneratorContext) {
+        val maxConstructorArgs = context.graph.toSequence()
+            .flatMap { it.dependencyTree() }
+            .maxOf { it.dependencies.size }
+
         spec.addProperty(
             PropertySpec.builder("maxConstructorArgs", Int::class)
                 .initializer("$maxConstructorArgs")
                 .addModifiers(KModifier.OVERRIDE)
                 .build()
         )
-        // ---
-        createInstructionPointer(context, spec)
-        createInstantiate(context, spec, collector)
-        val instructionSetGetter = FunSpec.getterBuilder()
-            .addStatement(
-                "return %T.%L",
-                createInstructionSet(context, collector),
-                InstructionSet::memory.name
-            )
-            .build()
+    }
+
+    private fun addInstructionSetProperty(
+        spec: TypeSpec.Builder,
+        context: FileGeneratorContext,
+        collector: FileSpecCollector
+    ) {
+        val instructionSetClassName = createInstructionSet(context, collector)
         spec.addProperty(
             PropertySpec.builder("instructionSet", IntArray::class)
                 .addModifiers(KModifier.OVERRIDE)
-                .getter(instructionSetGetter)
+                .getter(FunSpec.getterBuilder()
+                    .addStatement("return %T.%L", instructionSetClassName, InstructionSet::memory.name)
+                    .build())
                 .build()
         )
-        spec.addProperties(context.graph.imports.map {
-            val cn = it.type.toClassName()
+    }
 
-            PropertySpec.builder(it.type.simpleName.replaceFirstChar { it.lowercase() }, cn)
-                .initializer(
-                    CodeBlock.builder()
+    private fun addImportProperties(spec: TypeSpec.Builder, context: FileGeneratorContext) {
+        spec.addProperties(context.graph.imports.map { import ->
+            val cn = import.type.toClassName()
+            PropertySpec.builder(
+                import.type.simpleName.replaceFirstChar { it.lowercase() },
+                cn
+            ).initializer(
+                CodeBlock.builder()
                     .add("%T(", cn)
                     .apply {
-                        for ((index, p) in it.invocation.parameters.withIndex()) {
+                        import.invocation.parameters.forEachIndexed { index, param ->
                             if (index > 0) add(", ")
-                            add("%L = get(%T(%L))", p.name, DependencyId::class, context.getDependencyId(context.ids.find(p.type)))
+                            add(
+                                "%L = get(%T(%L))",
+                                param.name,
+                                DependencyId::class,
+                                context.getDependencyId(context.ids.find(param.type))
+                            )
                         }
                     }
                     .add(")")
-                    .build())
-                .build()
+                    .build()
+            ).build()
         })
+    }
+
+    private fun addProviderProperties(
+        spec: TypeSpec.Builder,
+        primaryConstructor: FunSpec.Builder,
+        context: FileGeneratorContext
+    ) {
         for (import in context.imports) {
             val name = context.resolver.getVariableName(import.type)
             val type = import.type.toClassName()
             val providerType = (context.resolver.builtInType { Provider } as ClassName).parameterizedBy(type)
+
             primaryConstructor.addParameter("_$name", providerType)
             spec.addProperty(
                 PropertySpec.builder("_$name", providerType, KModifier.PRIVATE)
@@ -97,30 +150,12 @@ class DependencyFactoryGenerator(
             )
             spec.addProperty(
                 PropertySpec.builder(name, type, KModifier.PUBLIC)
-                    .getter(
-                        FunSpec.getterBuilder()
-                            .addCode("return _%L.get()", name)
-                            .build()
-                    )
-                    .build()
+                    .getter(FunSpec.getterBuilder()
+                        .addCode("return _%L.get()", name)
+                        .build())
+                .build()
             )
         }
-        spec.primaryConstructor(primaryConstructor.build())
-        val type = spec.build()
-        val file = FileSpec.builder(context.dependencyFactoryClassName)
-            .addType(type)
-            .addAnnotation(
-                AnnotationSpec.builder(Suppress::class)
-                    .useSiteTarget(AnnotationSpec.UseSiteTarget.FILE)
-                    .addMember(
-                        "%S, %S",
-                        "ClassName",
-                        "RedundantVisibilityModifier"
-                    )
-                    .build()
-            )
-            .build()
-        collector.emit(file)
     }
 
     private fun createInstructionPointer(
