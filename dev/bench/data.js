@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787635892483,
+  "lastUpdate": 1787639390513,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -3068,6 +3068,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 424.216,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "40147b4b79ac6325024237a4940598335366da40",
+          "message": "refactor(compiler): extract case logic in DependencyHolder and Factory generators\n\nExtracted specific `when` branch logic for dependency generation into dedicated private functions in `DependencyHolderGenerator`. Similarly, refactored `DependencyFactoryGenerator` to separate property and method generation into distinct helper methods. Added `@Suppress(\"TooManyFunctions\")` annotations to address lint warnings resulting from the increased number of private helper functions.",
+          "timestamp": "2026-08-25T08:23:23+02:00",
+          "tree_id": "3bf58321cd19fac580bc59bf62a84f1a0387fe7f",
+          "url": "https://github.com/diareuse/spike/commit/40147b4b79ac6325024237a4940598335366da40"
+        },
+        "date": 1787639389398,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 1378.39,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 360.834,
             "unit": "ms"
           }
         ]
