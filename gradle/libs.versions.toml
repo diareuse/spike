@@ -8,7 +8,7 @@ agp = "9.2.1"
 kotlinpoet = "2.3.0"
 androidx-lifecycle = "2.11.0"
 ktor = "3.5.2"
-compose = "1.11.1"
+compose = "1.12.0"
 spike = "0.0.14"
 
 [libraries]
