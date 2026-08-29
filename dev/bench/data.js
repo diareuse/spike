@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787639390513,
+  "lastUpdate": 1787986024623,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -3102,6 +3102,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 360.834,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "9d70916573fe6dcf4b0ec2f902e6b5de9e7c138f",
+          "message": "chore(deps): bump org.jetbrains.compose:org.jetbrains.compose.gradle.plugin\n\nBumps [org.jetbrains.compose:org.jetbrains.compose.gradle.plugin](https://github.com/JetBrains/compose-multiplatform) from 1.11.1 to 1.12.0.\n- [Release notes](https://github.com/JetBrains/compose-multiplatform/releases)\n- [Changelog](https://github.com/JetBrains/compose-multiplatform/blob/master/CHANGELOG.md)\n- [Commits](https://github.com/JetBrains/compose-multiplatform/compare/v1.11.1...v1.12.0)\n\n---\nupdated-dependencies:\n- dependency-name: org.jetbrains.compose:org.jetbrains.compose.gradle.plugin\n  dependency-version: 1.12.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-08-29T08:39:37+02:00",
+          "tree_id": "467fab9419651b63acb7e20d8f16dce11019f770",
+          "url": "https://github.com/diareuse/spike/commit/9d70916573fe6dcf4b0ec2f902e6b5de9e7c138f"
+        },
+        "date": 1787986023563,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2108.65,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 553.317,
             "unit": "ms"
           }
         ]
