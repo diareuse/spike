@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.0.15](https://github.com/diareuse/spike/compare/0.0.14...0.0.15) (2026-08-31)
+
+
+### Features
+
+* **compiler:** add support for imported dependencies in entry points ([21f640b](https://github.com/diareuse/spike/commit/21f640b2441faa55c1cccb2ff11e2a0c59b8825d))
+
+
+### Bug Fixes
+
+* **compiler:** add support for import collector and factory referencing ([ab09efa](https://github.com/diareuse/spike/commit/ab09efa8071f3c74ffd358027b071e6c8d7eb209))
+* **compiler:** improve error reporting for missing imports in dependency graph ([dac4c0f](https://github.com/diareuse/spike/commit/dac4c0f10af575479bece8dc84004d1e2b42c649))
+
 ## [0.0.14](https://github.com/diareuse/spike/compare/0.0.13...0.0.14) (2026-07-12)
 
 
