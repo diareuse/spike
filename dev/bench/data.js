@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1787986024623,
+  "lastUpdate": 1788156280435,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -3136,6 +3136,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 553.317,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "04de8f6b09a77ec950790b3edf7447f7b65ecfe2",
+          "message": "chore(deps): bump actions/setup-java from 5 to 6\n\nBumps [actions/setup-java](https://github.com/actions/setup-java) from 5 to 6.\n- [Release notes](https://github.com/actions/setup-java/releases)\n- [Commits](https://github.com/actions/setup-java/compare/v5...v6)\n\n---\nupdated-dependencies:\n- dependency-name: actions/setup-java\n  dependency-version: '6'\n  dependency-type: direct:production\n  update-type: version-update:semver-major\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-08-31T07:57:45+02:00",
+          "tree_id": "2833533d4381f03f9cc17a171e12f75aa8bc1796",
+          "url": "https://github.com/diareuse/spike/commit/04de8f6b09a77ec950790b3edf7447f7b65ecfe2"
+        },
+        "date": 1788156279183,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 1901.8,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 499.131,
             "unit": "ms"
           }
         ]
