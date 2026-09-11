@@ -7,7 +7,7 @@ fun assertContentEquals(expected: File, actual: File) {
     val expectedFiles = expected.listFiles()?.sortedBy { it.name }.orEmpty()
     val actualFiles = actual.listFiles()?.sortedBy { it.name }.orEmpty()
 
-    assertEquals(expectedFiles.size, actualFiles.size, "File directory")
+    assertEquals(expectedFiles.size, actualFiles.size, "expected=${expectedFiles.joinToString { it.toRelativeString(File(".")) }}, actual=${actualFiles.joinToString { it.toRelativeString(File(".")) }}")
 
     for (i in expectedFiles.indices) {
         val expectedFile = expectedFiles[i]
