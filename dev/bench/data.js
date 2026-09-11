@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789102130054,
+  "lastUpdate": 1789137439259,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -3238,6 +3238,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 569.278,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "6e9bff35439f3aa2e913d24863fdc7074cb33cc8",
+          "message": "chore(ci): enable verbose output for gradle tests\n\nThe test step in the pull-request workflow now includes `--info` and `--stacktrace` flags when running `./gradlew test`. This improves debugging capabilities by providing detailed logs and error traces when tests fail.",
+          "timestamp": "2026-09-11T16:30:01+02:00",
+          "tree_id": "9b366eaeb69ee895a5e752d686a57d6cb54cc56d",
+          "url": "https://github.com/diareuse/spike/commit/6e9bff35439f3aa2e913d24863fdc7074cb33cc8"
+        },
+        "date": 1789137438673,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2158.87,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 565.454,
             "unit": "ms"
           }
         ]
