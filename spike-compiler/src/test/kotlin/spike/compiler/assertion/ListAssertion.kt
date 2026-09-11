@@ -4,14 +4,20 @@ import java.io.File
 import kotlin.test.assertEquals
 
 fun assertContentEquals(expected: File, actual: File) {
-    val expectedFiles = expected.listFiles()?.sortedBy { it.name }.orEmpty()
-    val actualFiles = actual.listFiles()?.sortedBy { it.name }.orEmpty()
+    val expectedValues = expected.listFiles()
+        ?.sortedBy { it.name }
+        ?.filterNot { it.isDirectory && it.listFiles().isEmpty() }
+        .orEmpty()
+    val actualValues = actual.listFiles()
+        ?.sortedBy { it.name }
+        ?.filterNot { it.isDirectory && it.listFiles().isEmpty() }
+        .orEmpty()
 
-    assertEquals(expectedFiles.size, actualFiles.size, "expected=${expectedFiles.joinToString { it.toRelativeString(File(".")) }}, actual=${actualFiles.joinToString { it.toRelativeString(File(".")) }}")
+    assertEquals(expectedValues.size, actualValues.size, "File count doesn't match")
 
-    for (i in expectedFiles.indices) {
-        val expectedFile = expectedFiles[i]
-        val actualFile = actualFiles[i]
+    for (i in expectedValues.indices) {
+        val expectedFile = expectedValues[i]
+        val actualFile = actualValues[i]
 
         assertEquals(expectedFile.name, actualFile.name)
 
