@@ -15,7 +15,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - run: ./gradlew test
+      - run: ./gradlew test --info --stacktrace
 
   lint:
     runs-on: ubuntu-latest
