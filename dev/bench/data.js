@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1788156280435,
+  "lastUpdate": 1789102087000,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -3170,6 +3170,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 499.131,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "91d84f1dcc3c9576846308fbbae7c2c7e23fe4aa",
+          "message": "chore(deps): bump kotlinpoet from 2.3.0 to 2.4.0\n\nBumps `kotlinpoet` from 2.3.0 to 2.4.0.\n\nUpdates `com.squareup:kotlinpoet` from 2.3.0 to 2.4.0\n- [Release notes](https://github.com/square/kotlinpoet/releases)\n- [Changelog](https://github.com/square/kotlinpoet/blob/main/docs/changelog.md)\n- [Commits](https://github.com/square/kotlinpoet/compare/2.3.0...2.4.0)\n\nUpdates `com.squareup:kotlinpoet-ksp` from 2.3.0 to 2.4.0\n- [Release notes](https://github.com/square/kotlinpoet/releases)\n- [Changelog](https://github.com/square/kotlinpoet/blob/main/docs/changelog.md)\n- [Commits](https://github.com/square/kotlinpoet/compare/2.3.0...2.4.0)\n\n---\nupdated-dependencies:\n- dependency-name: com.squareup:kotlinpoet\n  dependency-version: 2.4.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n- dependency-name: com.squareup:kotlinpoet-ksp\n  dependency-version: 2.4.0\n  dependency-type: direct:production\n  update-type: version-update:semver-minor\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-09-11T06:41:54+02:00",
+          "tree_id": "c810a9da60a7e2bb08cba8d9ea8113e66c8003fb",
+          "url": "https://github.com/diareuse/spike/commit/91d84f1dcc3c9576846308fbbae7c2c7e23fe4aa"
+        },
+        "date": 1789102085931,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 1579.39,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 415.634,
             "unit": "ms"
           }
         ]
