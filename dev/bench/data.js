@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789102087000,
+  "lastUpdate": 1789102130054,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -3204,6 +3204,40 @@ window.BENCHMARK_DATA = {
           {
             "name": "Run Time",
             "value": 415.634,
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "a44d69621e8f560814b2466f912a22806010b10c",
+          "message": "chore(deps): bump kotlin from 2.4.10 to 2.4.20\n\nBumps `kotlin` from 2.4.10 to 2.4.20.\n\nUpdates `org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin` from 2.4.10 to 2.4.20\n- [Release notes](https://github.com/JetBrains/kotlin/releases)\n- [Changelog](https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md)\n- [Commits](https://github.com/JetBrains/kotlin/compare/v2.4.10...v2.4.20)\n\nUpdates `org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin` from 2.4.10 to 2.4.20\n- [Release notes](https://github.com/JetBrains/kotlin/releases)\n- [Changelog](https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md)\n- [Commits](https://github.com/JetBrains/kotlin/compare/v2.4.10...v2.4.20)\n\nUpdates `org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin` from 2.4.10 to 2.4.20\n- [Release notes](https://github.com/JetBrains/kotlin/releases)\n- [Changelog](https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md)\n- [Commits](https://github.com/JetBrains/kotlin/compare/v2.4.10...v2.4.20)\n\nUpdates `org.jetbrains.kotlin.multiplatform` from 2.4.10 to 2.4.20\n- [Release notes](https://github.com/JetBrains/kotlin/releases)\n- [Changelog](https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md)\n- [Commits](https://github.com/JetBrains/kotlin/compare/v2.4.10...v2.4.20)\n\nUpdates `org.jetbrains.kotlin.jvm` from 2.4.10 to 2.4.20\n- [Release notes](https://github.com/JetBrains/kotlin/releases)\n- [Changelog](https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md)\n- [Commits](https://github.com/JetBrains/kotlin/compare/v2.4.10...v2.4.20)\n\n---\nupdated-dependencies:\n- dependency-name: org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin\n  dependency-version: 2.4.20\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin\n  dependency-version: 2.4.20\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin\n  dependency-version: 2.4.20\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: org.jetbrains.kotlin.multiplatform\n  dependency-version: 2.4.20\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: org.jetbrains.kotlin.jvm\n  dependency-version: 2.4.20\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-09-11T06:41:34+02:00",
+          "tree_id": "5b2a02838e1fdb1dff5bc637d31a3ac17806f364",
+          "url": "https://github.com/diareuse/spike/commit/a44d69621e8f560814b2466f912a22806010b10c"
+        },
+        "date": 1789102128883,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Build Time",
+            "value": 2122.99,
+            "unit": "ms"
+          },
+          {
+            "name": "Run Time",
+            "value": 569.278,
             "unit": "ms"
           }
         ]
