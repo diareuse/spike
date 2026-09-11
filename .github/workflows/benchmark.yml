@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    paths:
+      - spike-compiler/src/main/**
 
 permissions:
   contents: write
