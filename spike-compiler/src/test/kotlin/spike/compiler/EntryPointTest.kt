@@ -402,4 +402,24 @@ class EntryPointTest : TestHarness() {
         }
     )
 
+    @Test
+    fun `multibindings without contributions resolve to empty collections`() = runTest(
+        label = "empty_multibinding",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { build("kspKotlin", "compileKotlin", "run") },
+        verify = { assertSuccess(it.run) }
+    )
+
+    @Test
+    fun `map requested with a key type no entry uses fails naming the key types`() = runTest(
+        label = "multibinding_key_mismatch",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { buildAndFail("kspKotlin") },
+        verify = {
+            assertFailure(it.kspKotlin)
+            assertContains(it.output, "kotlin.Int")
+            assertContains(it.output, "kotlin.String")
+        }
+    )
+
 }

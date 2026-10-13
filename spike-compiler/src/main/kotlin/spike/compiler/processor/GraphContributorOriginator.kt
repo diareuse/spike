@@ -54,8 +54,7 @@ abstract class GraphContributorOriginator : GraphContributor {
                     .filterIsInstance<KSClassDeclaration>()
                     .map {
                         TypeFactory.Class(it.toType(false), it.primaryConstructor!!.toInvocation(), false, emptyList())
-                    },
-                logger = logger
+                    }
             )
             for (e in external) {
                 graphFactory.putExternal(e)

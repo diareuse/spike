@@ -20,9 +20,7 @@ class TypeFactoryCreatorMultiBindCollection(
         var valueType = type.typeArguments.single()
         if (valueType is Type.Parametrized && valueType.envelope == BuiltInTypes.Provider)
             valueType = valueType.typeArguments.single()
-        val instances = checkNotNull(multibinding[valueType]) {
-            "Multibinding for $valueType($type) not found in $multibinding"
-        }
+        val instances = multibinding[valueType] ?: GraphStore()
         return TypeFactory.MultibindsCollection(
             type = type,
             entries = buildList {

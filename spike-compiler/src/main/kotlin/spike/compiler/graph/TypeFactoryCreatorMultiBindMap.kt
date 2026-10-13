@@ -1,10 +1,7 @@
 package spike.compiler.graph
 
-import com.google.devtools.ksp.processing.KSPLogger
-
 class TypeFactoryCreatorMultiBindMap(
     private val multibinding: MultiBindingStore,
-    private val logger: KSPLogger
 ) : TypeFactoryCreator {
     override fun TypeFactoryCreator.Context.create(): TypeFactory {
         val type = type
@@ -12,21 +9,15 @@ class TypeFactoryCreatorMultiBindMap(
             return pass()
         }
         val (keyType, valueType) = type.typeArguments
-        var instanceMap = multibinding.map[valueType.unwrapParametrized()]
-        if (instanceMap == null) {
-            val unwrapped = valueType.unwrapParametrized()
-            val keys = multibinding.map.keys
-            logger.warn(
-                "[soft-err] Multibinding for $type($unwrapped) not found in $keys. " +
-                        "(This sometimes happens with Androidx ViewModels, nothing to worry about there)"
-            )
-            instanceMap = emptyMap()
-        }
+        val instanceMap = multibinding.map[valueType.unwrapParametrized()].orEmpty()
         val instances = instanceMap
             .filterKeys { it.type == keyType }
             .mapKeys { it.key.value }
-        if (instances.isEmpty())
-            logger.warn("Wanted $keyType, but that was not present in ${instanceMap.map { it.key }}")
+        check(instanceMap.isEmpty() || instances.isNotEmpty()) {
+            val keyTypes = instanceMap.keys.map { it.type.displayName }.distinct().joinToString()
+            "${type.displayName} has no entries keyed by ${keyType.displayName}; " +
+                "entries for ${valueType.unwrapParametrized().displayName} are keyed by $keyTypes"
+        }
         val keyValues = buildMap {
             for ((k, v) in instances) {
                 val definitions = (v.constructors + v.factories).distinct()

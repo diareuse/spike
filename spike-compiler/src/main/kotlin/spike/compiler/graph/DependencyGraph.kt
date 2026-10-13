@@ -1,7 +1,5 @@
 package spike.compiler.graph
 
-import com.google.devtools.ksp.processing.KSPLogger
-
 class DependencyGraph private constructor(
     val entry: GraphEntryPoint,
     val methods: List<TypeFactory>,
@@ -33,7 +31,6 @@ class DependencyGraph private constructor(
         private val entry: GraphEntryPoint,
         private val root: GraphStore,
         private val multibinding: MultiBindingStore,
-        private val logger: KSPLogger,
         private val imports: Sequence<TypeFactory.Class>,
     ) {
 
@@ -61,7 +58,7 @@ class DependencyGraph private constructor(
                 TypeFactoryCreatorBinder(),
                 TypeFactoryCreatorLazy(),
                 TypeFactoryCreatorProvider(),
-                TypeFactoryCreatorMultiBindMap(multibinding, logger),
+                TypeFactoryCreatorMultiBindMap(multibinding),
                 TypeFactoryCreatorMultiBindCollection(multibinding, BuiltInTypes.Set),
                 TypeFactoryCreatorMultiBindCollection(multibinding, BuiltInTypes.List),
             )

@@ -21,6 +21,7 @@ import spike.compiler.generator.code.addParameters
 import spike.compiler.generator.code.addProvider
 import spike.compiler.generator.code.addType
 import spike.compiler.generator.code.mapEntries
+import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
 import spike.compiler.graph.TypeFactory.Binds
 import spike.compiler.graph.TypeFactory.Class
@@ -150,9 +151,13 @@ class DependencyHolderGenerator private constructor(
         body: CodeBlock.Builder,
         factory: MultibindsCollection
     ) {
-        body.addMember(factory.collectionMemberFactory) {
-            addParameters(factory.entries)
-        }.addStatement("")
+        body.add(
+            "%M<%T>(",
+            resolver.getMemberName(factory.collectionMemberFactory),
+            resolver.getTypeName((factory.type as Type.Parametrized).typeArguments.single()),
+        )
+        body.addParameters(factory.entries)
+        body.add(")").addStatement("")
     }
 
     private fun FileGeneratorContext.generateMultibindsMapCase(
