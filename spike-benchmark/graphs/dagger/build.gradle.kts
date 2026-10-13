@@ -5,6 +5,10 @@ plugins {
 
 kotlin { jvmToolchain(17) }
 
+ksp {
+    arg("dagger.formatGeneratedSource", "disabled")
+}
+
 dependencies {
     implementation(bench.dagger)
     ksp(bench.dagger.compiler)

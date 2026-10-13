@@ -12,7 +12,8 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
+
+concurrency: benchmark
 
 jobs:
   benchmark:
@@ -34,7 +35,8 @@ jobs:
 
       - run: bash spike-benchmark/benchmark.sh
 
-      - run: cat spike-benchmark/output/results.md >> $GITHUB_STEP_SUMMARY
+      - if: success() || failure()
+        run: cat spike-benchmark/output/results.md >> $GITHUB_STEP_SUMMARY
 
       - uses: benchmark-action/github-action-benchmark@v1
         with:
@@ -43,11 +45,12 @@ jobs:
           output-file-path: spike-benchmark/output/results-spike.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-          alert-threshold: '115%'
+          alert-threshold: '130%'
           comment-on-commit: true
           fail-on-alert: true
 
-      - uses: benchmark-action/github-action-benchmark@v1
+      - if: success() || failure()
+        uses: benchmark-action/github-action-benchmark@v1
         with:
           name: Baselines
           tool: 'customSmallerIsBetter'

@@ -10,7 +10,8 @@ cd "$(dirname "$0")/.."
   -PsignAllPublications=false
 
 rm -rf spike-benchmark/output
-./gradlew -p spike-benchmark :generator:run :runtime:test jar
+./gradlew -p spike-benchmark :generator:run
+./gradlew -p spike-benchmark :runtime:test jar
 
 gradle_version=$(sed -n 's#.*gradle-\(.*\)-bin.zip#\1#p' gradle/wrapper/gradle-wrapper.properties)
 gradle-profiler --benchmark \
@@ -19,7 +20,7 @@ gradle-profiler --benchmark \
   --output-dir spike-benchmark/output/build \
   --scenario-file spike-benchmark/scenarios.conf \
   --gradle-version "$gradle_version" \
-  --warmups 3 \
+  --warmups 10 \
   --iterations 10
 
 ./gradlew -p spike-benchmark :runtime:mainBenchmark :runtime:coldBenchmark

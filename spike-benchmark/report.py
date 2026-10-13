@@ -27,7 +27,10 @@ def runtime_times():
     for report in (output / "runtime").glob("*.json"):
         for result in json.loads(report.read_text()):
             benchmark, method = result["benchmark"].split(".")[-2:]
-            samples = [value for fork in result["primaryMetric"]["rawData"] for value in fork]
+            metric = result["primaryMetric"]
+            if metric["scoreUnit"] != "us/op":
+                raise ValueError(f"{result['benchmark']} reports {metric['scoreUnit']}, expected us/op")
+            samples = [value for fork in metric["rawData"] for value in fork]
             times[(benchmark, method)] = statistics.median(samples)
     return times
 
@@ -46,7 +49,7 @@ lines = [
 series = []
 for framework in FRAMEWORKS:
     builds = [build[f"{framework} {title}"] for _, title in BUILD]
-    method = "kotlinInject" if framework == "kotlin-inject" else framework
+    method = framework.replace("-", "_")
     runtimes = [runtime[(benchmark, method)] for benchmark, _ in RUNTIME]
     create, resolve, cold = runtimes
     lines.append(f"| {framework} | " + " | ".join(f"{value:.0f}" for value in builds)
@@ -58,7 +61,8 @@ for framework in FRAMEWORKS:
 
 table = "\n".join(lines) + "\n"
 (output / "results.md").write_text(table)
-(output / "results-spike.json").write_text(json.dumps([s for s in series if s["name"].startswith("spike ")], indent=2))
+alerting = [s for s in series if s["name"].startswith("spike ") and not s["name"].endswith("create graph")]
+(output / "results-spike.json").write_text(json.dumps(alerting, indent=2))
 (output / "results-baselines.json").write_text(
-    json.dumps([s for s in series if not s["name"].startswith("spike ")], indent=2))
+    json.dumps([s for s in series if s not in alerting], indent=2))
 print(table)

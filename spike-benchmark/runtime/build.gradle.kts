@@ -30,7 +30,7 @@ benchmark {
             iterations = 10
             iterationTime = 1
             iterationTimeUnit = "s"
-            advanced("jvmForks", 2)
+            advanced("jvmForks", 3)
         }
         register("cold") {
             include("GraphBenchmarkColdStart")

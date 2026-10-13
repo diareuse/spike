@@ -6,8 +6,10 @@ import kotlinx.benchmark.Mode
 import kotlinx.benchmark.Scope
 import kotlinx.benchmark.Setup
 import kotlinx.benchmark.State
+import org.openjdk.jmh.annotations.Fork
 
 @State(Scope.Benchmark)
+@Fork(jvmArgsAppend = ["-Xms1g", "-Xmx1g", "-XX:+UseParallelGC"])
 class GraphBenchmarkCreate {
 
     @Benchmark
@@ -23,7 +25,7 @@ class GraphBenchmarkCreate {
     fun metro() = bench.metro.createGraph()
 
     @Benchmark
-    fun kotlinInject() = bench.kotlininject.createGraph()
+    fun kotlin_inject() = bench.kotlininject.createGraph()
 
     @Benchmark
     fun koin() = bench.koin.createGraph()
@@ -31,47 +33,32 @@ class GraphBenchmarkCreate {
 }
 
 @State(Scope.Benchmark)
+@Fork(jvmArgsAppend = ["-Xms1g", "-Xmx1g", "-XX:+UseParallelGC"])
 class GraphBenchmarkResolve {
 
-    lateinit var manual: bench.manual.Graph
-    lateinit var spike: bench.spike.Graph
-    lateinit var dagger: bench.dagger.Graph
-    lateinit var metro: bench.metro.Graph
-    lateinit var kotlinInject: bench.kotlininject.Graph
-    lateinit var koin: bench.koin.Graph
-
-    @Setup
-    fun createGraphs() {
-        manual = bench.manual.createGraph()
-        spike = bench.spike.createGraph()
-        dagger = bench.dagger.createGraph()
-        metro = bench.metro.createGraph()
-        kotlinInject = bench.kotlininject.createGraph()
-        koin = bench.koin.createGraph()
-    }
+    @Benchmark
+    fun manual(state: GraphStateManual) = bench.manual.resolve(state.graph)
 
     @Benchmark
-    fun manual() = bench.manual.resolve(manual)
+    fun spike(state: GraphStateSpike) = bench.spike.resolve(state.graph)
 
     @Benchmark
-    fun spike() = bench.spike.resolve(spike)
+    fun dagger(state: GraphStateDagger) = bench.dagger.resolve(state.graph)
 
     @Benchmark
-    fun dagger() = bench.dagger.resolve(dagger)
+    fun metro(state: GraphStateMetro) = bench.metro.resolve(state.graph)
 
     @Benchmark
-    fun metro() = bench.metro.resolve(metro)
+    fun kotlin_inject(state: GraphStateKotlinInject) = bench.kotlininject.resolve(state.graph)
 
     @Benchmark
-    fun kotlinInject() = bench.kotlininject.resolve(kotlinInject)
-
-    @Benchmark
-    fun koin() = bench.koin.resolve(koin)
+    fun koin(state: GraphStateKoin) = bench.koin.resolve(state.graph)
 
 }
 
 @State(Scope.Benchmark)
 @BenchmarkMode(Mode.SingleShotTime)
+@Fork(jvmArgsAppend = ["-Xms1g", "-Xmx1g", "-XX:+UseParallelGC"])
 class GraphBenchmarkColdStart {
 
     @Benchmark
@@ -87,9 +74,69 @@ class GraphBenchmarkColdStart {
     fun metro() = bench.metro.resolve()
 
     @Benchmark
-    fun kotlinInject() = bench.kotlininject.resolve()
+    fun kotlin_inject() = bench.kotlininject.resolve()
 
     @Benchmark
     fun koin() = bench.koin.resolve()
 
+}
+
+@State(Scope.Benchmark)
+class GraphStateManual {
+    lateinit var graph: bench.manual.Graph
+
+    @Setup
+    fun create() {
+        graph = bench.manual.createGraph()
+    }
+}
+
+@State(Scope.Benchmark)
+class GraphStateSpike {
+    lateinit var graph: bench.spike.Graph
+
+    @Setup
+    fun create() {
+        graph = bench.spike.createGraph()
+    }
+}
+
+@State(Scope.Benchmark)
+class GraphStateDagger {
+    lateinit var graph: bench.dagger.Graph
+
+    @Setup
+    fun create() {
+        graph = bench.dagger.createGraph()
+    }
+}
+
+@State(Scope.Benchmark)
+class GraphStateMetro {
+    lateinit var graph: bench.metro.Graph
+
+    @Setup
+    fun create() {
+        graph = bench.metro.createGraph()
+    }
+}
+
+@State(Scope.Benchmark)
+class GraphStateKotlinInject {
+    lateinit var graph: bench.kotlininject.Graph
+
+    @Setup
+    fun create() {
+        graph = bench.kotlininject.createGraph()
+    }
+}
+
+@State(Scope.Benchmark)
+class GraphStateKoin {
+    lateinit var graph: bench.koin.Graph
+
+    @Setup
+    fun create() {
+        graph = bench.koin.createGraph()
+    }
 }

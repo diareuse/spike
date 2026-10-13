@@ -29,7 +29,7 @@ class ProfilerScenariosTest {
         for (key in listOf("clean_spike", "abi_spike", "nonabi_spike", "clean_dagger", "abi_dagger", "nonabi_dagger")) {
             assertContains(text, "$key {")
         }
-        assertContains(text, "tasks = [\":graphs:dagger:compileKotlin\"]")
+        assertContains(text, "tasks = [\":graphs:dagger:classes\"]")
     }
 
 }

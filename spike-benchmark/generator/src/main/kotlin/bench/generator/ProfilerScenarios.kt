@@ -10,7 +10,7 @@ class ProfilerScenarios(private val sources: SourceTree) {
 
     private fun scenariosOf(dialect: Dialect): String {
         val key = dialect.id.filter(Char::isLetterOrDigit)
-        val task = "\":graphs:${dialect.id}:compileKotlin\""
+        val task = "\":graphs:${dialect.id}:classes\""
         val leaf = "graphs/${dialect.id}/src/main/kotlin/${sources.packageOf(dialect).replace('.', '/')}/" +
             sources.lastNodesFile
         return """
