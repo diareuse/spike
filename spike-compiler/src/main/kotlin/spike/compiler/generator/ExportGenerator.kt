@@ -84,7 +84,7 @@ class ExportGenerator : Generator {
                     .addStatement(
                         "return factory.get(%L(%L))",
                         DependencyId::class.asClassName(),
-                        context.getDependencyId(context.ids.find(m.returns))
+                        context.getDependencyId(context.graph.factoryOf(m))
                     )
                     .build()
             )
@@ -106,7 +106,7 @@ class ExportGenerator : Generator {
                             .addStatement(
                                 "return factory.get(%L(%L))",
                                 DependencyId::class.asClassName(),
-                                context.getDependencyId(context.ids.find(p.returns))
+                                context.getDependencyId(context.graph.factoryOf(p))
                             )
                             .build()
                     )

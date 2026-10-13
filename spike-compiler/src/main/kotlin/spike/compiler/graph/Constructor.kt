@@ -7,4 +7,6 @@ data class Constructor(
 ) : Binding {
     override val description: String
         get() = "constructor of ${type.displayName}"
+
+    override fun asGraphStore() = GraphStore(constructors = listOf(this))
 }

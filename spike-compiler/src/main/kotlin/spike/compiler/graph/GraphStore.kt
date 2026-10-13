@@ -48,11 +48,4 @@ data class GraphStore(
             binders = binders.toList(),
         )
     }
-
-    companion object {
-
-        fun Constructor.asGraphStore() = GraphStore(constructors = listOf(this))
-        fun Factory.asGraphStore() = GraphStore(factories = listOf(this))
-        fun Binder.asGraphStore() = GraphStore(binders = listOf(this))
-    }
 }

@@ -1,7 +1,6 @@
 package spike.compiler.graph
 
 import com.google.devtools.ksp.processing.KSPLogger
-import spike.compiler.graph.GraphStore.Companion.asGraphStore
 
 class TypeFactoryCreatorMultiBindMap(
     private val multibinding: MultiBindingStore,
@@ -30,32 +29,15 @@ class TypeFactoryCreatorMultiBindMap(
             logger.warn("Wanted $keyType, but that was not present in ${instanceMap.map { it.key }}")
         val keyValues = buildMap {
             for ((k, v) in instances) {
-                if (v.factories.isNotEmpty()) {
-                    val definition = v.factories.singleOrNull()
-                        ?: error("Multiple factories found for the same type $type. You must define only one per key ($k).")
-                    val newType = mint(
-                        type = definition.type.overrideType(valueType),
-                        context = clone(store = store.overriddenBy(definition.asGraphStore()))
-                    )
-                    put(k, newType)
-                } else if (v.constructors.isNotEmpty()) {
-                    val definition = v.constructors.singleOrNull()
-                        ?: error("Multiple classes found for the same $type. You must define only one per key ($k).")
-                    val newType = mint(
-                        type = definition.type.overrideType(valueType),
-                        context = clone(store = store.overriddenBy(definition.asGraphStore()))
-                    )
-                    put(k, newType)
-                } else if (v.binders.isNotEmpty()) {
-                    val definition = v.binders.singleOrNull()
-                        ?: error("Multiple bindings found for the same type $type. You must define only one per key ($k).")
-                    val newType = mint(
-                        type = definition.type.overrideType(valueType),
-                        context = clone(store = store.overriddenBy(definition.asGraphStore()))
-                    )
-                    put(k, newType)
-                } else
-                    error("No definition found for $type whilst being multi-bound, this is however most likely a spike inference error.")
+                val definitions = (v.constructors + v.factories).distinct()
+                if (definitions.size > 1) failOnDuplicateBindings("$type key $k", definitions)
+                val definition = definitions.singleOrNull() ?: v.binders.singleOrNull()
+                    ?: error("No definition found for $type whilst being multi-bound, this is however most likely a spike inference error.")
+                val newType = mint(
+                    type = definition.type.overrideType(valueType),
+                    context = clone(store = store.overriddenBy(definition.asGraphStore()))
+                )
+                put(k, newType)
             }
         }
         return TypeFactory.MultibindsMap(

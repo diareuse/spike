@@ -11,4 +11,6 @@ data class Factory(
             val owner = member.parent?.displayName ?: member.packageName
             return "function " + listOf(owner, member.name).filter { it.isNotEmpty() }.joinToString(".")
         }
+
+    override fun asGraphStore() = GraphStore(factories = listOf(this))
 }

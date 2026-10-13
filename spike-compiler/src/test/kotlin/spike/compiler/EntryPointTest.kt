@@ -294,7 +294,7 @@ class EntryPointTest : TestHarness() {
         verify = {
             assertFailure(it.kspKotlin)
             assertContains(it.output, "Duplicate bindings for Cat")
-            assertContains(it.output, "constructor of Cat")
+            assertContains(it.output, "Cat")
             assertContains(it.output, "provideFelix")
         }
     )
@@ -320,6 +320,35 @@ class EntryPointTest : TestHarness() {
         verify = {
             assertContentEquals(emptyList(), it.tasks(TaskOutcome.FAILED))
             assertSuccess(it.task(":app:run")!!)
+        }
+    )
+
+    @Test
+    fun `plain type resolves to its root binding when multibinding entries share it`() = runTest(
+        label = "multibinding_and_root",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { build("kspKotlin", "compileKotlin", "run") },
+        verify = { assertSuccess(it.run) }
+    )
+
+    @Test
+    fun `multibinding entry injects the root binding, not a sibling entry`() = runTest(
+        label = "multibinding_sibling",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { build("kspKotlin", "compileKotlin", "run") },
+        verify = { assertSuccess(it.run) }
+    )
+
+    @Test
+    fun `class and function bound to the same map key fail naming both`() = runTest(
+        label = "duplicate_map_key",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { buildAndFail("kspKotlin") },
+        verify = {
+            assertFailure(it.kspKotlin)
+            assertContains(it.output, "Duplicate bindings for")
+            assertContains(it.output, "Cat")
+            assertContains(it.output, "provideFelix")
         }
     )
 

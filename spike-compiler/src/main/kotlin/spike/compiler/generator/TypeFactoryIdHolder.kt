@@ -1,6 +1,5 @@
 package spike.compiler.generator
 
-import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
 import spike.factory.DependencyId
 
@@ -31,8 +30,6 @@ class TypeFactoryIdHolder(
         }
         return add(typeFactory)
     }
-
-    fun find(type: Type) = holders.flatten().first { it.type == type }
 
     operator fun iterator(): Iterator<List<TypeFactory>> = holders.iterator()
     fun toList(): List<List<TypeFactory>> = holders

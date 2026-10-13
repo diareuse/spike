@@ -122,7 +122,7 @@ class DependencyFactoryGenerator(
                                 "%L = get(%T(%L))",
                                 param.name,
                                 DependencyId::class,
-                                context.getDependencyId(context.ids.find(param.type))
+                                context.getDependencyId(context.graph.importedFactoryOf(param.type))
                             )
                         }
                     }

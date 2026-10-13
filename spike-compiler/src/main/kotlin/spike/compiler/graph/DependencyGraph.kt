@@ -15,6 +15,13 @@ class DependencyGraph private constructor(
         yieldAll(properties)
     }
 
+    fun factoryOf(method: Member.Method): TypeFactory = methods[entry.methods.indexOf(method)]
+
+    fun factoryOf(property: Member.Property): TypeFactory = properties[entry.properties.indexOf(property)]
+
+    fun importedFactoryOf(type: Type): TypeFactory =
+        properties[entry.properties.indexOfFirst { it.synthetic && it.returns == type }]
+
     fun toSequence() = sequence {
         for (m in methods)
             yield(m)

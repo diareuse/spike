@@ -1,6 +1,5 @@
 package spike.compiler.graph
 
-import spike.compiler.graph.GraphStore.Companion.asGraphStore
 import spike.compiler.graph.TypeFactory.Companion.contains
 
 class TypeFactoryCreatorMultiBindCollection(
@@ -28,14 +27,14 @@ class TypeFactoryCreatorMultiBindCollection(
             type = type,
             entries = buildList {
                 for (c in instances.constructors) {
-                    add(mint(c.type, clone(store = (store + instances).overriddenBy(c.asGraphStore()))))
+                    add(mint(c.type, clone(store = store.overriddenBy(c.asGraphStore()))))
                 }
                 for (f in instances.factories) {
-                    add(mint(f.type, clone(store = (store + instances).overriddenBy(f.asGraphStore()))))
+                    add(mint(f.type, clone(store = store.overriddenBy(f.asGraphStore()))))
                 }
                 for (b in instances.binders) {
                     if (b.source in this) continue
-                    add(mint(b.type, clone(store = (store + instances).overriddenBy(b.asGraphStore()))))
+                    add(mint(b.type, clone(store = store.overriddenBy(b.asGraphStore()))))
                 }
             },
             collectionType = collectionType,
