@@ -1,9 +1,9 @@
 package spike.compiler
 
-import spike.compiler.harness.GradleHarness
+import spike.compiler.harness.HarnessGradle
 import kotlin.test.Test
 
-class GradleBuildTest : GradleHarness() {
+class GradleBuildTest : HarnessGradle() {
 
     @Test
     fun `ktor plugin handles requests`() = assertBuilds("ktor", tasks = listOf(":test"))

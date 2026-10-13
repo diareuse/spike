@@ -9,7 +9,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-abstract class CompilerHarness {
+abstract class HarnessCompiler {
 
     protected fun assertMatchesGolden(name: String, libraries: Libraries = Libraries.Kotlin) {
         val modules = modules(name, libraries)

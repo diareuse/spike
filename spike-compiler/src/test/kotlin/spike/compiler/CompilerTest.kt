@@ -1,10 +1,10 @@
 package spike.compiler
 
-import spike.compiler.harness.CompilerHarness
+import spike.compiler.harness.HarnessCompiler
 import spike.compiler.harness.Libraries.Androidx
 import kotlin.test.Test
 
-class CompilerTest : CompilerHarness() {
+class CompilerTest : HarnessCompiler() {
 
     @Test
     fun `EntryPoint without companion fails`() = assertProcessingFails("no_companion")

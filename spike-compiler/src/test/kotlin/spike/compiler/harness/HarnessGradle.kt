@@ -5,7 +5,7 @@ import org.gradle.testkit.runner.TaskOutcome
 import spike.compiler.assertion.assertContentEquals
 import kotlin.test.assertEquals
 
-abstract class GradleHarness {
+abstract class HarnessGradle {
 
     protected fun assertMatchesGolden(
         name: String,
