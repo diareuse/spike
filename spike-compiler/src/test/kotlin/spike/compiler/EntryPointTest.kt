@@ -10,6 +10,7 @@ import spike.compiler.harness.BuildResultTasks.run
 import spike.compiler.harness.BuildResultTasks.test
 import spike.compiler.harness.TestHarness
 import java.io.File
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertContentEquals
@@ -361,6 +362,15 @@ class EntryPointTest : TestHarness() {
             assertContentEquals(emptyList(), it.tasks(TaskOutcome.FAILED))
             assertSuccess(it.task(":app:run")!!)
         }
+    )
+
+    @Ignore("FAULT: every ViewModel gets its own entry point and therefore its own singletons; needs ViewModelEntryPoint as a child of the app entry point")
+    @Test
+    fun `viewmodels share singletons with each other and with the app`() = runTest(
+        label = "androidx_viewmodel_singleton",
+        prepare = { useClassPath { it.whitelistModules(Kotlin + Androidx) }.build() },
+        test = { build("kspKotlin", "compileKotlin", "run") },
+        verify = { assertSuccess(it.run) }
     )
 
 }
