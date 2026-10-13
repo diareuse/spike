@@ -52,3 +52,6 @@ kotlin {
     mingwX64()
 
 }
+tasks.register("test") {
+    dependsOn(tasks.matching { it.name == "jvmTest" })
+}
