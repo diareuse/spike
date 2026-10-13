@@ -1,4 +1,3 @@
-// "Aa" and "BB" share String.hashCode(), so every generated identity derived from these names collides.
 fun main() {
     val ep = PropertyEntryPoint()
     require(ep.aa.name == "Aa") { "aa resolved to ${ep.aa.name}" }
