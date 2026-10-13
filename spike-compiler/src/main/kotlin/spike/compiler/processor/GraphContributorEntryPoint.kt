@@ -1,3 +1,5 @@
+@file:OptIn(spike.InternalSpikeApi::class)
+
 package spike.compiler.processor
 
 import com.google.devtools.ksp.KspExperimental

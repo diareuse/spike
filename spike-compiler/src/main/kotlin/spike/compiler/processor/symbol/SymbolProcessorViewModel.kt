@@ -1,9 +1,12 @@
+@file:OptIn(spike.InternalSpikeApi::class)
+
 package spike.compiler.processor.symbol
 
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
+import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
@@ -51,7 +54,15 @@ class SymbolProcessorViewModel(
                 .addType(factory)
                 .addType(TypeSpec.companionObjectBuilder().build())
                 .build()
-            val file = FileSpec.builder(name).addType(type).build()
+            val file = FileSpec.builder(name)
+                .addAnnotation(
+                    AnnotationSpec.builder(ClassName("kotlin", "OptIn"))
+                        .useSiteTarget(AnnotationSpec.UseSiteTarget.FILE)
+                        .addMember("%T::class", ClassName("spike", "InternalSpikeApi"))
+                        .build()
+                )
+                .addType(type)
+                .build()
             file.writeTo(environment.codeGenerator, true)
             processed = true
             return registry.all(resolver)

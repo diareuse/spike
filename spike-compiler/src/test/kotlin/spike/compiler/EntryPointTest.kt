@@ -463,4 +463,15 @@ class EntryPointTest : TestHarness() {
         verify = { assertSuccess(it.task(":app:run")!!) }
     )
 
+    @Test
+    fun `SharesSingletons on a user factory requires opting in to internal API`() = runTest(
+        label = "shares_singletons_internal",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { buildAndFail("compileKotlin") },
+        verify = {
+            assertFailure(it.compileKotlin)
+            assertContains(it.output, "may change without notice. Do not use it directly.")
+        }
+    )
+
 }
