@@ -1,5 +1,6 @@
 package spike.factory
 
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
@@ -89,5 +90,16 @@ class SingletonHolderTest {
 
         assertNotSame(parent, library)
         assertNotSame(library, other)
+    }
+
+    @Test
+    fun `a singleton factory may wait for another thread creating a different singleton`() {
+        val holder = SingletonHolder()
+
+        val outer = holder.getOrPut(0) {
+            CompletableFuture.supplyAsync { holder.getOrPut(1) { "inner" } }.get(2, TimeUnit.SECONDS)
+        }
+
+        assertEquals("inner", outer)
     }
 }
