@@ -1,5 +1,6 @@
 local.properties
 todo*
+*.md
 .gradle
 .idea
 build/
