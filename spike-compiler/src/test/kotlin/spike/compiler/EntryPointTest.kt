@@ -312,4 +312,15 @@ class EntryPointTest : TestHarness() {
         }
     )
 
+    @Test
+    fun `exports declared in a package are taken into account`() = runTest(
+        label = "multi_module_package",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { build("assemble", "run") },
+        verify = {
+            assertContentEquals(emptyList(), it.tasks(TaskOutcome.FAILED))
+            assertSuccess(it.task(":app:run")!!)
+        }
+    )
+
 }

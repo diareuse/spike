@@ -13,6 +13,7 @@ import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
 import spike.compiler.graph.GraphEntryPoint
 import spike.compiler.graph.Parameter
+import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
 import spike.compiler.graph.TypeFactory.Companion.dependencyTree
 import spike.compiler.graph.TypeFactory.Companion.invertDependencyTree
@@ -23,7 +24,7 @@ class ExportGenerator : Generator {
         val graph = context.graph
         val resolver = context.resolver
         val ep = graph.entry
-        val epcn = ClassName("spike.generated.${graph.entry.type.packageName}", graph.entry.type.simpleName + "Impl")
+        val epcn = ClassName("spike.generated", exportedName(graph.entry.type))
         val dfcn = context.dependencyFactoryClassName
         val params = graph.importFactories
         val type = TypeSpec.classBuilder(epcn)
@@ -112,6 +113,11 @@ class ExportGenerator : Generator {
                     .build()
             )
         }
+    }
+
+    private fun exportedName(type: Type): String {
+        val prefix = type.packageName.split('.').filter { it.isNotEmpty() }.joinToString("") { "${it}_" }
+        return prefix + type.simpleName + "Impl"
     }
 
     private fun Parameter.toParameterSpec() = ParameterSpec.builder(name, type.toTypeName())
