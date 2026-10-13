@@ -15,7 +15,9 @@ Add the `spike-ktor` dependency to your project:
 
 ```kotlin
 dependencies {
-    implementation TODO()
+    ksp("io.github.diareuse:spike-compiler:$spike")
+    implementation("io.github.diareuse:spike:$spike")
+    implementation("io.github.diareuse:spike-ktor:$spike")
 }
 ```
 

@@ -89,8 +89,7 @@ respective documentation for more details:
 Spike uses annotations to define your dependency graph. The core annotations are:
 
 * `@Include`: Includes a class or a provider function in the dependency graph.
-* `@Inject`: Explicitly marks a constructor for dependency injection when multiple constructors are
-  present.
+* `@Include.Constructor`: Marks the constructor Spike uses when an `@Include` class has more than one.
 * `@Singleton`: Marks a class as a singleton (only instantiated once per entry point instance; two entry point instances never share a singleton).
 * `@EntryPoint`: Defines an entry point interface for the dependency graph.
 
@@ -124,8 +123,8 @@ fun provideCoffeeLogger(): CoffeeLogger = ConsoleCoffeeLogger()
 
 @Include
 class Pump {
-    // If a class has multiple constructors, annotate one with @Inject
-    @Inject
+    // If a class has multiple constructors, annotate one with @Include.Constructor
+    @Include.Constructor
     constructor()
 
     constructor(capacity: Int)
