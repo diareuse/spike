@@ -69,6 +69,8 @@ When `ViewModelProviderFactory` is used:
 2. It uses the `ViewModelEntryPoint.Factory` to create an entry point scoped with that `SavedStateHandle`.
 3. It looks up the requested `ViewModel` in the entry point's `viewModels` map and returns the injected instance.
 
+All ViewModels share one set of `@Singleton` instances, so a `@Singleton` repository is the same object in every ViewModel. That set is separate from the singletons of any `@EntryPoint` you create yourself: each entry point instance owns its own. A `@Singleton` cannot depend on `SavedStateHandle`, because it would otherwise keep the handle of the first ViewModel; Spike reports this at compile time.
+
 ## Compose Support
 
 If you are using Jetpack Compose or Compose Multiplatform, check out `spike-androidx-compose` for even simpler integration:

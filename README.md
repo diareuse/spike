@@ -91,7 +91,7 @@ Spike uses annotations to define your dependency graph. The core annotations are
 * `@Include`: Includes a class or a provider function in the dependency graph.
 * `@Inject`: Explicitly marks a constructor for dependency injection when multiple constructors are
   present.
-* `@Singleton`: Marks a class as a singleton (only instantiated once per entry point).
+* `@Singleton`: Marks a class as a singleton (only instantiated once per entry point instance; two entry point instances never share a singleton).
 * `@EntryPoint`: Defines an entry point interface for the dependency graph.
 
 ### 2. Define Your Components

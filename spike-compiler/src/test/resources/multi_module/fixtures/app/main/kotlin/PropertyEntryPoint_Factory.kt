@@ -8,9 +8,12 @@ import kotlin.Suppress
 import spike.factory.DependencyFactory
 import spike.factory.DependencyId
 import spike.factory.InstructionSetPointer
+import spike.factory.SingletonHolder
 import spike.generated.ExportedImpl
 
-public class PropertyEntryPoint_Factory() : DependencyFactory() {
+public class PropertyEntryPoint_Factory(
+  singletons: SingletonHolder = SingletonHolder(),
+) : DependencyFactory(singletons) {
   override val maxConstructorArgs: Int = 0
 
   private val holder0: PropertyEntryPoint_DependencyHolder0 =

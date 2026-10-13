@@ -71,6 +71,7 @@ class DependencyGraph private constructor(
             val properties = entry.properties.map {
                 createTypeFactory(it.returns, creators)
             }
+            SharedSingletonInputCheck().check(entry, methods + properties)
             val imports = imports.toList()
             if (!entry.isModule && importCollector.imports.isNotEmpty()) {
                 val types = importCollector.imports.joinToString("\n") {

@@ -8,8 +8,11 @@ import kotlin.Suppress
 import spike.factory.DependencyFactory
 import spike.factory.DependencyId
 import spike.factory.InstructionSetPointer
+import spike.factory.SingletonHolder
 
-public class RouteEntryPoint_Factory() : DependencyFactory() {
+public class RouteEntryPoint_Factory(
+  singletons: SingletonHolder = SingletonHolder(),
+) : DependencyFactory(singletons) {
   override val maxConstructorArgs: Int = 1
 
   private val holder0: RouteEntryPoint_DependencyHolder0 = RouteEntryPoint_DependencyHolder0(this)

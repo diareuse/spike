@@ -8,8 +8,11 @@ import kotlin.Suppress
 import spike.factory.DependencyFactory
 import spike.factory.DependencyId
 import spike.factory.InstructionSetPointer
+import spike.factory.SingletonHolder
 
-public class NightStand_Factory() : DependencyFactory() {
+public class NightStand_Factory(
+  singletons: SingletonHolder = SingletonHolder(),
+) : DependencyFactory(singletons) {
   override val maxConstructorArgs: Int = 2
 
   private val holder0: NightStand_DependencyHolder0 = NightStand_DependencyHolder0(this)

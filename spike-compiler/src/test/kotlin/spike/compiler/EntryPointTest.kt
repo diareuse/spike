@@ -10,7 +10,6 @@ import spike.compiler.harness.BuildResultTasks.run
 import spike.compiler.harness.BuildResultTasks.test
 import spike.compiler.harness.TestHarness
 import java.io.File
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertContentEquals
@@ -364,11 +363,30 @@ class EntryPointTest : TestHarness() {
         }
     )
 
-    @Ignore("FAULT: every ViewModel gets its own entry point and therefore its own singletons; needs ViewModelEntryPoint as a child of the app entry point")
     @Test
-    fun `viewmodels share singletons with each other and with the app`() = runTest(
+    fun `viewmodels share singletons with each other`() = runTest(
         label = "androidx_viewmodel_singleton",
         prepare = { useClassPath { it.whitelistModules(Kotlin + Androidx) }.build() },
+        test = { build("kspKotlin", "compileKotlin", "run") },
+        verify = { assertSuccess(it.run) }
+    )
+
+    @Test
+    fun `viewmodel singleton depending on SavedStateHandle fails`() = runTest(
+        label = "androidx_viewmodel_singleton_handle",
+        prepare = { useClassPath { it.whitelistModules(Kotlin + Androidx) }.build() },
+        test = { buildAndFail("kspKotlin") },
+        verify = {
+            assertFailure(it.kspKotlin)
+            assertContains(it.output, "Session")
+            assertContains(it.output, "SavedStateHandle")
+        }
+    )
+
+    @Test
+    fun `entry points created by one factory each get their own singletons`() = runTest(
+        label = "factory_singleton",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
         test = { build("kspKotlin", "compileKotlin", "run") },
         verify = { assertSuccess(it.run) }
     )

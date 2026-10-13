@@ -8,10 +8,12 @@ import kotlin.Suppress
 import spike.factory.DependencyFactory
 import spike.factory.DependencyId
 import spike.factory.InstructionSetPointer
+import spike.factory.SingletonHolder
 
 public class PropertyEntryPoint_Factory(
   public val food: Food,
-) : DependencyFactory() {
+  singletons: SingletonHolder = SingletonHolder(),
+) : DependencyFactory(singletons) {
   override val maxConstructorArgs: Int = 1
 
   private val holder0: PropertyEntryPoint_DependencyHolder0 =

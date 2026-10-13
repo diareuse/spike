@@ -36,6 +36,7 @@ class SymbolProcessorViewModel(
             val factory = TypeSpec.interfaceBuilder(name.nestedClass("Factory"))
                 .addSuperinterface(name.peerClass("ViewModelEntryPoint").nestedClass("Factory"))
                 .addAnnotation(EntryPoint.Factory::class)
+                .addAnnotation(EntryPoint.Factory.SharesSingletons::class)
                 .addFunction(
                     FunSpec.builder("create")
                         .addModifiers(KModifier.OVERRIDE, KModifier.ABSTRACT)

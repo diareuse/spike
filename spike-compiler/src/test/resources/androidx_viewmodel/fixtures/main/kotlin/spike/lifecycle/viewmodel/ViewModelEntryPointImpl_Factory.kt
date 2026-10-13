@@ -11,10 +11,12 @@ import kotlin.Suppress
 import spike.factory.DependencyFactory
 import spike.factory.DependencyId
 import spike.factory.InstructionSetPointer
+import spike.factory.SingletonHolder
 
 public class ViewModelEntryPointImpl_Factory(
   public val handle: SavedStateHandle,
-) : DependencyFactory() {
+  singletons: SingletonHolder = SingletonHolder(),
+) : DependencyFactory(singletons) {
   override val maxConstructorArgs: Int = 1
 
   private val holder0: ViewModelEntryPointImpl_DependencyHolder0 =

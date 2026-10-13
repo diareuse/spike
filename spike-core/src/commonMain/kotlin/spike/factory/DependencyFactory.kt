@@ -1,6 +1,6 @@
 package spike.factory
 
-public abstract class DependencyFactory {
+public abstract class DependencyFactory(public val singletons: SingletonHolder = SingletonHolder()) {
 
     protected abstract val maxConstructorArgs: Int
     protected abstract val instructionSet: IntArray

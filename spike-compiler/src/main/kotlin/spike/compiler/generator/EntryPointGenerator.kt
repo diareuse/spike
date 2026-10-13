@@ -143,8 +143,11 @@ class EntryPointGenerator : Generator {
             )
             .build()
         val m = context.graph.entry.factory.method
+        val ownership = EntryPointSingletonOwnership.of(context.graph.entry.factory)
+        val arguments = ownership.dependencyFactoryArguments(m.parameters.map { it.name })
         return TypeSpec.objectBuilder("Factory")
             .addSuperinterface(context.resolver.getTypeName(context.graph.entry.factory.type))
+            .apply(ownership::addMembers)
             .addFunction(
                 FunSpec.builder(m.name)
                     .returns(context.resolver.getTypeName(m.returns))
@@ -152,7 +155,7 @@ class EntryPointGenerator : Generator {
                     .addParameters(m.parameters.map {
                         ParameterSpec.builder(it.name, context.resolver.getTypeName(it.type)).build()
                     })
-                    .addCode("return %T(%T(${m.parameters.joinToString { it.name }}))", epcn, dfcn)
+                    .addCode("return %T(%T(${arguments.joinToString()}))", epcn, dfcn)
                     .build()
             )
             .build()

@@ -6,6 +6,7 @@ import spike.EntryPoint
 @EntryPoint
 public interface ViewModelEntryPointImpl : ViewModelEntryPoint {
   @EntryPoint.Factory
+  @EntryPoint.Factory.SharesSingletons
   public interface Factory : ViewModelEntryPoint.Factory {
     override fun create(handle: SavedStateHandle): ViewModelEntryPointImpl
   }

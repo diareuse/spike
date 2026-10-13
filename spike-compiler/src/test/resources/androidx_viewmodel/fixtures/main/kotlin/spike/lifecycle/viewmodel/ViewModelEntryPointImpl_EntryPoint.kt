@@ -8,6 +8,7 @@ import kotlin.Suppress
 import kotlin.collections.Map
 import kotlin.reflect.KClass
 import spike.Provider
+import spike.factory.SingletonHolder
 
 private class ViewModelEntryPointImpl_EntryPoint(
   private val factory: ViewModelEntryPointImpl_Factory,
@@ -16,7 +17,9 @@ private class ViewModelEntryPointImpl_EntryPoint(
     get() = factory.get(spike.factory.DependencyId(0))
 
   public object Factory : ViewModelEntryPointImpl.Factory {
-    override fun create(handle: SavedStateHandle): ViewModelEntryPointImpl = ViewModelEntryPointImpl_EntryPoint(ViewModelEntryPointImpl_Factory(handle))
+    private val singletons: SingletonHolder = SingletonHolder()
+
+    override fun create(handle: SavedStateHandle): ViewModelEntryPointImpl = ViewModelEntryPointImpl_EntryPoint(ViewModelEntryPointImpl_Factory(handle, singletons = singletons))
   }
 }
 

@@ -7,15 +7,12 @@ import kotlin.Suppress
 import kotlin.lazy
 import spike.Provider
 import spike.factory.DependencyId
-import spike.factory.SingletonHolder
 
 public class PropertyEntryPoint_DependencyHolder0(
   private val factory: PropertyEntryPoint_Factory,
 ) {
-  private val singletons: SingletonHolder = SingletonHolder()
-
   internal fun create(buffer: Array<Any?>, position: Int): Any = when(position) {
-    0 -> singletons.getOrPut(0) {
+    0 -> factory.singletons.getOrPut(0) {
         Cat(buffer[0] as Provider<Food>)
     }
     1 -> Provider { factory.get<Food>(DependencyId(2)) }

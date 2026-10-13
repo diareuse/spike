@@ -10,10 +10,12 @@ import spike.Provider
 import spike.factory.DependencyFactory
 import spike.factory.DependencyId
 import spike.factory.InstructionSetPointer
+import spike.factory.SingletonHolder
 
 public class Exported_Factory(
   private val _kotlinString: Provider<String>,
-) : DependencyFactory() {
+  singletons: SingletonHolder = SingletonHolder(),
+) : DependencyFactory(singletons) {
   override val maxConstructorArgs: Int = 1
 
   private val holder0: Exported_DependencyHolder0 = Exported_DependencyHolder0(this)

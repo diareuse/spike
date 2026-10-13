@@ -10,8 +10,11 @@ import kotlin.Suppress
 import spike.factory.DependencyFactory
 import spike.factory.DependencyId
 import spike.factory.InstructionSetPointer
+import spike.factory.SingletonHolder
 
-public class LargeTreeEntryPoint_Factory() : DependencyFactory() {
+public class LargeTreeEntryPoint_Factory(
+  singletons: SingletonHolder = SingletonHolder(),
+) : DependencyFactory(singletons) {
   override val maxConstructorArgs: Int = 3
 
   private val holder0: LargeTreeEntryPoint_DependencyHolder0 =

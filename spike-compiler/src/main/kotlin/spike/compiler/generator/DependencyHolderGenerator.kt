@@ -32,8 +32,6 @@ import spike.compiler.graph.TypeFactory.MultibindsCollection
 import spike.compiler.graph.TypeFactory.MultibindsMap
 import spike.compiler.graph.TypeFactory.Property
 import spike.compiler.graph.TypeFactory.Provides
-import spike.factory.SingletonHolder
-import java.util.concurrent.atomic.AtomicInteger
 
 @Suppress("TooManyFunctions")
 class DependencyHolderGenerator private constructor(
@@ -56,14 +54,7 @@ class DependencyHolderGenerator private constructor(
                 .initializer("factory")
                 .build()
         )
-        val singletonCounter = AtomicInteger()
-        type.addFunction(createCreateMethod(context, factories, singletonCounter))
-        if (singletonCounter.get() > 0) {
-            val singletons = PropertySpec.builder("singletons", SingletonHolder::class, KModifier.PRIVATE)
-                .initializer("%T()", SingletonHolder::class.asClassName())
-                .build()
-            type.addProperty(singletons)
-        }
+        type.addFunction(createCreateMethod(context, factories))
         val file = FileSpec.builder(className)
             .addType(type.build())
             .addAnnotation(
@@ -85,7 +76,6 @@ class DependencyHolderGenerator private constructor(
     private fun createCreateMethod(
         context: FileGeneratorContext,
         factories: List<TypeFactory>,
-        singletonCounter: AtomicInteger
     ): FunSpec {
         val builder = FunSpec.builder("create")
             .addModifiers(KModifier.INTERNAL)
@@ -100,8 +90,8 @@ class DependencyHolderGenerator private constructor(
             body.add("$index -> ")
             when (factory) {
                 is Binds -> generateBindsCase(body, factory)
-                is Class -> generateClassCase(body, index, factory, singletonCounter)
-                is Method -> generateMethodCase(body, index, factory, singletonCounter)
+                is Class -> generateClassCase(body, factory)
+                is Method -> generateMethodCase(body, factory)
                 is Memorizes -> generateMemorizesCase(body, factory)
                 is Provides -> generateProvidesCase(body, factory)
                 is MultibindsCollection -> generateMultibindsCollectionCase(body, factory)
@@ -124,12 +114,9 @@ class DependencyHolderGenerator private constructor(
 
     private fun FileGeneratorContext.generateClassCase(
         body: CodeBlock.Builder,
-        index: Int,
         factory: Class,
-        singletonCounter: AtomicInteger
     ) {
-        body.addOptionalSingleton(index, factory.singleton) {
-            if (factory.singleton) singletonCounter.incrementAndGet()
+        body.addOptionalSingleton(getDependencyId(factory), factory.singleton) {
             addType(factory.type) {
                 body.addParameters(factory.invocation)
             }.addStatement("")
@@ -138,12 +125,9 @@ class DependencyHolderGenerator private constructor(
 
     private fun FileGeneratorContext.generateMethodCase(
         body: CodeBlock.Builder,
-        index: Int,
         factory: Method,
-        singletonCounter: AtomicInteger
     ) {
-        body.addOptionalSingleton(index, factory.singleton) {
-            if (factory.singleton) singletonCounter.incrementAndGet()
+        body.addOptionalSingleton(getDependencyId(factory), factory.singleton) {
             body.addMember(factory.member) {
                 addParameters(factory.invocation)
             }.addStatement("")

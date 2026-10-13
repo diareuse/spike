@@ -21,6 +21,7 @@ import spike.factory.DependencyFactory
 import spike.factory.DependencyId
 import spike.factory.InstructionSet
 import spike.factory.InstructionSetPointer
+import spike.factory.SingletonHolder
 
 @Suppress("TooManyFunctions")
 @Include
@@ -43,6 +44,12 @@ class DependencyFactoryGenerator(
         addInstructionSetProperty(spec, context, collector)
         addImportProperties(spec, context)
         addProviderProperties(spec, primaryConstructor, context)
+        primaryConstructor.addParameter(
+            ParameterSpec.builder("singletons", SingletonHolder::class)
+                .defaultValue("%T()", SingletonHolder::class)
+                .build()
+        )
+        spec.addSuperclassConstructorParameter("singletons")
 
         spec.primaryConstructor(primaryConstructor.build())
 
