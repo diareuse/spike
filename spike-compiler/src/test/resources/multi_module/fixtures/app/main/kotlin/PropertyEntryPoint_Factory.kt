@@ -19,7 +19,7 @@ public class PropertyEntryPoint_Factory() : DependencyFactory() {
   override val instructionSet: IntArray
     get() = PropertyEntryPoint_InstructionSet.memory
 
-  public val exportedImpl: ExportedImpl = ExportedImpl(string = get(DependencyId(1)))
+  public val exportedImpl: ExportedImpl = ExportedImpl(kotlinString = get(DependencyId(1)))
 
   override fun getInstructionsPointer(id: DependencyId): InstructionSetPointer? = when (id.id) {
     0 -> InstructionSetPointer(0, 3)

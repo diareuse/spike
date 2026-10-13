@@ -10,9 +10,9 @@ import kotlin.Suppress
 import spike.Provider
 
 public class ExportedImpl(
-  string: Provider<String>,
+  kotlinString: Provider<String>,
 ) : Exported {
-  private val factory: Exported_Factory = Exported_Factory(_string = string)
+  private val factory: Exported_Factory = Exported_Factory(_kotlinString = kotlinString)
 
   override val lib: Lib
     get() = factory.get(spike.factory.DependencyId(0))

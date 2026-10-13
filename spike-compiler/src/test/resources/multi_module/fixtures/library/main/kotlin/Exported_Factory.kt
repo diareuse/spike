@@ -12,7 +12,7 @@ import spike.factory.DependencyId
 import spike.factory.InstructionSetPointer
 
 public class Exported_Factory(
-  private val _string: Provider<String>,
+  private val _kotlinString: Provider<String>,
 ) : DependencyFactory() {
   override val maxConstructorArgs: Int = 1
 
@@ -21,8 +21,8 @@ public class Exported_Factory(
   override val instructionSet: IntArray
     get() = Exported_InstructionSet.memory
 
-  public val string: String
-    get() = _string.get()
+  public val kotlinString: String
+    get() = _kotlinString.get()
 
   override fun getInstructionsPointer(id: DependencyId): InstructionSetPointer? = when (id.id) {
     0 -> InstructionSetPointer(0, 6)

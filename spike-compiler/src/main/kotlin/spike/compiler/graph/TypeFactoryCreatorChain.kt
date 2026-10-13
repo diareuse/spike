@@ -19,7 +19,7 @@ data class TypeFactoryCreatorChain(
                 .ifEmpty { "<unknown origin>" }
             return TypeFactory.Imported(
                 type = type,
-                name = type.simpleName.replaceFirstChar { it.lowercase() },
+                name = type.importName(),
                 originatingElement = originatingElement
             )
         }
@@ -40,3 +40,11 @@ data class TypeFactoryCreatorChain(
 
     override fun clone(store: GraphStore) = copy(store = store)
 }
+
+private fun Type.importName(): String = toString()
+    .split(Regex("[^A-Za-z0-9]+"))
+    .filter { it.isNotEmpty() }
+    .mapIndexed { index, part ->
+        if (index == 0) part.replaceFirstChar { it.lowercase() } else part.replaceFirstChar { it.uppercase() }
+    }
+    .joinToString("")

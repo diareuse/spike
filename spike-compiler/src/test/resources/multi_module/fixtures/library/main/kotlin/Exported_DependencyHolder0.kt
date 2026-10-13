@@ -11,7 +11,7 @@ public class Exported_DependencyHolder0(
 ) {
   internal fun create(buffer: Array<Any?>, position: Int): Any = when(position) {
     0 -> Lib(buffer[0] as String)
-    1 -> factory.string
+    1 -> factory.kotlinString
     else -> error("Invalid position")
   }
 }

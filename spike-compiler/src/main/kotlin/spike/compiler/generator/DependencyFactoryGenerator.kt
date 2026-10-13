@@ -138,7 +138,7 @@ class DependencyFactoryGenerator(
         context: FileGeneratorContext
     ) {
         for (import in context.imports) {
-            val name = context.resolver.getVariableName(import.type)
+            val name = import.name
             val type = import.type.toClassName()
             val providerType = (context.resolver.builtInType { Provider } as ClassName).parameterizedBy(type)
 

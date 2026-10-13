@@ -10,7 +10,7 @@ private class PropertyEntryPoint_EntryPoint(
   override val lib: Lib
     get() = factory.get(spike.factory.DependencyId(0))
 
-  public val string: Provider<String>
+  public val kotlinString: Provider<String>
     get() = factory.get(spike.factory.DependencyId(1))
 
   public object Factory {

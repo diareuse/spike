@@ -352,4 +352,15 @@ class EntryPointTest : TestHarness() {
         }
     )
 
+    @Test
+    fun `exported module imports two dependencies sharing a simple name`() = runTest(
+        label = "import_name_clash",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { build("assemble", "run") },
+        verify = {
+            assertContentEquals(emptyList(), it.tasks(TaskOutcome.FAILED))
+            assertSuccess(it.task(":app:run")!!)
+        }
+    )
+
 }
