@@ -139,6 +139,9 @@ class CompilerTest : CompilerHarness() {
     )
 
     @Test
+    fun `viewmodels share singletons of an exported library`() = assertRuns("androidx_viewmodel_export", Androidx)
+
+    @Test
     fun `exported module classes sharing one imported dependency compile`() = assertRuns("import_shared")
 
     @Test

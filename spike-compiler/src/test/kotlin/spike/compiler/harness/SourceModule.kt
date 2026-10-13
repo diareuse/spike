@@ -3,30 +3,33 @@ package spike.compiler.harness
 import com.google.devtools.ksp.impl.KotlinSymbolProcessing
 import com.google.devtools.ksp.processing.KSPJvmConfig
 import com.google.devtools.ksp.processing.KSPLogger
+import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import com.google.devtools.ksp.symbol.KSNode
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import spike.compiler.SpikeSymbolProcessorProvider
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
+import java.util.ServiceLoader
 
 class SourceModule(
+    private val name: String,
     private val sources: File,
     private val libraries: List<File>,
     private val workDirectory: File
 ) {
 
-    val generatedSources: File = workDirectory.resolve("ksp/kotlin")
+    val generated: File = workDirectory.resolve("ksp")
+    val generatedSources: File = generated.resolve("kotlin")
     val classes: File = workDirectory.resolve("classes")
 
-    fun process(): Outcome {
-        val errors = ErrorCollector()
-        val exitCode = KotlinSymbolProcessing(kspConfig(), listOf(SpikeSymbolProcessorProvider()), errors).execute()
-        return Outcome(exitCode == KotlinSymbolProcessing.ExitCode.OK, errors.messages.joinToString("\n"))
+    fun process(): Processing {
+        val log = ProcessingLog()
+        val exitCode = KotlinSymbolProcessing(kspConfig(), processors, log).execute()
+        return Processing(exitCode == KotlinSymbolProcessing.ExitCode.OK, log.errors, log.exceptions)
     }
 
-    fun compile(): Outcome {
+    fun compile(): Compilation {
         val messages = ByteArrayOutputStream()
         val exitCode = K2JVMCompiler().exec(
             PrintStream(messages),
@@ -34,50 +37,63 @@ class SourceModule(
             generatedSources.path,
             "-d", classes.path,
             "-classpath", libraries.joinToString(File.pathSeparator),
+            "-module-name", name,
+            "-language-version", LanguageVersion,
+            "-api-version", LanguageVersion,
+            "-jvm-target", JvmTarget,
             "-no-stdlib",
-            "-no-reflect",
-            "-jvm-target", JvmTarget
+            "-no-reflect"
         )
-        return Outcome(exitCode == ExitCode.OK, messages.toString())
+        return Compilation(exitCode == ExitCode.OK, messages.toString())
     }
 
     private fun kspConfig() = KSPJvmConfig.Builder().apply {
-        moduleName = sources.parentFile.name
+        moduleName = name
         sourceRoots = listOf(sources)
         javaSourceRoots = emptyList()
         commonSourceRoots = emptyList()
         libraries = this@SourceModule.libraries
         jdkHome = File(System.getProperty("java.home"))
         jvmTarget = JvmTarget
-        languageVersion = KotlinVersion.CURRENT.run { "$major.$minor" }
-        apiVersion = languageVersion
+        languageVersion = LanguageVersion
+        apiVersion = LanguageVersion
         projectBaseDir = workDirectory
         outputBaseDir = workDirectory
         cachesDir = workDirectory.resolve("caches")
-        classOutputDir = workDirectory.resolve("ksp/classes")
+        classOutputDir = generated.resolve("classes")
         kotlinOutputDir = generatedSources
-        javaOutputDir = workDirectory.resolve("ksp/java")
-        resourceOutputDir = workDirectory.resolve("ksp/resources")
+        javaOutputDir = generated.resolve("java")
+        resourceOutputDir = generated.resolve("resources")
     }.build()
 
-    data class Outcome(val succeeded: Boolean, val messages: String)
+    data class Error(val message: String, val symbol: KSNode?)
 
-    private class ErrorCollector : KSPLogger {
-        val messages = mutableListOf<String>()
+    data class Processing(val succeeded: Boolean, val errors: List<Error>, val exceptions: List<Throwable>) {
+        val report: String
+            get() = (errors.map { it.message } + exceptions.map { it.stackTraceToString() }).joinToString("\n")
+    }
+
+    data class Compilation(val succeeded: Boolean, val messages: String)
+
+    private class ProcessingLog : KSPLogger {
+        val errors = mutableListOf<Error>()
+        val exceptions = mutableListOf<Throwable>()
         override fun logging(message: String, symbol: KSNode?) = Unit
         override fun info(message: String, symbol: KSNode?) = Unit
         override fun warn(message: String, symbol: KSNode?) = Unit
         override fun error(message: String, symbol: KSNode?) {
-            messages += message
+            errors += Error(message, symbol)
         }
 
         override fun exception(e: Throwable) {
-            messages += e.stackTraceToString()
+            exceptions += e
         }
     }
 
     private companion object {
         const val JvmTarget = "17"
+        const val LanguageVersion = "2.4"
+        val processors = ServiceLoader.load(SymbolProcessorProvider::class.java).toList()
     }
 
 }

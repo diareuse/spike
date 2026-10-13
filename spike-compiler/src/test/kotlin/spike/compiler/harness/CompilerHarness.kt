@@ -5,24 +5,29 @@ import java.io.File
 import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 import kotlin.test.assertContains
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 abstract class CompilerHarness {
 
     protected fun assertMatchesGolden(name: String, libraries: Libraries = Libraries.Kotlin) {
-        val module = modules(name, libraries).single()
-        assertProcesses(module)
-        assertContentEquals(resources.resolve("$name/fixtures/main/kotlin"), module.generatedSources)
-        assertCompiles(module)
-        runMain(listOf(module))
+        val modules = modules(name, libraries)
+        for (module in modules) {
+            assertProcesses(module)
+            val golden = testResources.resolve("$name/fixtures/${module.golden}")
+            assertContentEquals(golden, module.source.generatedSources)
+            assertEquals(emptyList(), module.source.generatedOutsideKotlin(), "Unexpected generated files")
+            assertCompiles(module.source)
+        }
+        runMain(modules)
     }
 
     protected fun assertRuns(name: String, libraries: Libraries = Libraries.Kotlin) {
         val modules = modules(name, libraries)
         for (module in modules) {
             assertProcesses(module)
-            assertCompiles(module)
+            assertCompiles(module.source)
         }
         runMain(modules)
     }
@@ -30,7 +35,7 @@ abstract class CompilerHarness {
     protected fun assertCompiles(name: String, libraries: Libraries = Libraries.Kotlin) {
         val module = modules(name, libraries).single()
         assertProcesses(module)
-        assertCompiles(module)
+        assertCompiles(module.source)
     }
 
     protected fun assertProcessingFails(
@@ -38,11 +43,12 @@ abstract class CompilerHarness {
         vararg messages: String,
         libraries: Libraries = Libraries.Kotlin
     ) {
-        val outcome = modules(name, libraries).single().process()
-        assertFalse(outcome.succeeded, "Processing $name was expected to fail")
-        assertTrue(outcome.messages.isNotBlank(), "Processing $name failed without reporting an error")
+        val processing = modules(name, libraries).single().source.process()
+        assertEquals(emptyList(), processing.exceptions, "Processing $name crashed instead of reporting an error")
+        assertFalse(processing.succeeded, "Processing $name was expected to fail")
+        assertTrue(processing.errors.isNotEmpty(), "Processing $name failed without reporting an error")
         for (message in messages) {
-            assertContains(outcome.messages, message)
+            assertContains(processing.report, message)
         }
     }
 
@@ -53,31 +59,32 @@ abstract class CompilerHarness {
     ) {
         val module = modules(name, libraries).single()
         assertProcesses(module)
-        val outcome = module.compile()
-        assertFalse(outcome.succeeded, "Compiling $name was expected to fail")
+        val compilation = module.source.compile()
+        assertFalse(compilation.succeeded, "Compiling $name was expected to fail")
         for (message in messages) {
-            assertContains(outcome.messages, message)
+            assertContains(compilation.messages, message)
         }
     }
 
-    private fun assertProcesses(module: SourceModule) {
-        val outcome = module.process()
-        assertTrue(outcome.succeeded, outcome.messages)
+    private fun assertProcesses(module: FixtureModule) {
+        val processing = module.source.process()
+        assertTrue(processing.succeeded && processing.exceptions.isEmpty(), processing.report)
     }
 
-    private fun assertCompiles(module: SourceModule) {
-        val outcome = module.compile()
-        assertTrue(outcome.succeeded, outcome.messages)
+    private fun assertCompiles(source: SourceModule) {
+        val compilation = source.compile()
+        assertTrue(compilation.succeeded, compilation.messages)
     }
 
-    private fun runMain(modules: List<SourceModule>) {
-        val classes = modules.map { it.classes }
-        val loader = URLClassLoader(classes.map { it.toURI().toURL() }.toTypedArray(), javaClass.classLoader)
-        val main = loader.loadClass(mainClassIn(classes.last())).getMethod("main")
-        try {
-            main.invoke(null)
-        } catch (e: InvocationTargetException) {
-            throw e.targetException
+    private fun runMain(modules: List<FixtureModule>) {
+        val classes = modules.map { it.source.classes }
+        URLClassLoader(classes.map { it.toURI().toURL() }.toTypedArray(), javaClass.classLoader).use { loader ->
+            val main = loader.loadClass(mainClassIn(classes.last())).getMethod("main")
+            try {
+                main.invoke(null)
+            } catch (e: InvocationTargetException) {
+                throw e.targetException
+            }
         }
     }
 
@@ -87,22 +94,31 @@ abstract class CompilerHarness {
         .removeSuffix(".class")
         .replace(File.separatorChar, '.')
 
-    private fun modules(name: String, libraries: Libraries): List<SourceModule> {
-        val project = resources.resolve("$name/project")
+    private fun SourceModule.generatedOutsideKotlin(): List<File> =
+        generated.walk().filter { it.isFile && !it.startsWith(generatedSources) }.toList()
+
+    private fun modules(name: String, libraries: Libraries): List<FixtureModule> {
+        val project = testResources.resolve("$name/project")
         val work = File("build/tmp/compilations").resolve(name).apply { deleteRecursively() }
-        val names = listOf("library", "app").filter { project.resolve(it).isDirectory }.ifEmpty { listOf("") }
-        val compiled = mutableListOf<File>()
-        return names.map { module ->
-            SourceModule(
-                sources = project.resolve(module).resolve("src"),
-                libraries = libraries.files() + compiled,
-                workDirectory = work.resolve(module)
-            ).also { compiled += it.classes }
+        if (!project.resolve("app").isDirectory) {
+            val main = SourceModule("main", project.resolve("src"), libraries.files(), work)
+            return listOf(FixtureModule(main, "main/kotlin"))
         }
+        val library = SourceModule(
+            name = "library",
+            sources = project.resolve("library/src"),
+            libraries = Libraries.Kotlin.files(),
+            workDirectory = work.resolve("library")
+        )
+        val app = SourceModule(
+            name = "app",
+            sources = project.resolve("app/src"),
+            libraries = libraries.files() + library.classes,
+            workDirectory = work.resolve("app")
+        )
+        return listOf(FixtureModule(library, "library/main/kotlin"), FixtureModule(app, "app/main/kotlin"))
     }
 
-    private companion object {
-        val resources = File("src/test/resources")
-    }
+    private class FixtureModule(val source: SourceModule, val golden: String)
 
 }

@@ -4,16 +4,16 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import java.io.File
 
-class FixtureProject(private val name: String, template: Template) {
+class FixtureProject(private val name: String, template: String?) {
 
     val directory: File = File("build/tmp/projects").resolve(name)
-    val golden: File = resources.resolve("$name/fixtures")
+    val golden: File = testResources.resolve("$name/fixtures")
 
     init {
         directory.deleteRecursively()
-        resources.resolve("templates/gradle.properties").copyTo(directory.resolve("gradle.properties"))
-        template.directory?.let { resources.resolve("templates/$it").copyRecursively(directory) }
-        resources.resolve("$name/project").copyRecursively(directory, overwrite = true)
+        testResources.resolve("templates/gradle.properties").copyTo(directory.resolve("gradle.properties"))
+        template?.let { testResources.resolve("templates/$it").copyRecursively(directory) }
+        testResources.resolve("$name/project").copyRecursively(directory, overwrite = true)
         writeSettings()
     }
 
@@ -23,6 +23,7 @@ class FixtureProject(private val name: String, template: Template) {
 
     private fun runner(tasks: List<String>) = GradleRunner.create()
         .withProjectDir(directory)
+        .forwardOutput()
         .withArguments(tasks + "--stacktrace")
 
     private fun writeSettings() {
@@ -65,10 +66,6 @@ class FixtureProject(private val name: String, template: Template) {
 
             """.trimIndent() + declared
         )
-    }
-
-    private companion object {
-        val resources = File("src/test/resources")
     }
 
 }
