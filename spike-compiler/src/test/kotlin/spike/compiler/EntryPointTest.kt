@@ -6,6 +6,7 @@ import spike.compiler.harness.BuildResultTasks.assemble
 import spike.compiler.harness.BuildResultTasks.compileKotlin
 import spike.compiler.harness.BuildResultTasks.jvmRun
 import spike.compiler.harness.BuildResultTasks.kspKotlin
+import spike.compiler.harness.BuildResultTasks.run
 import spike.compiler.harness.BuildResultTasks.test
 import spike.compiler.harness.TestHarness
 import java.io.File
@@ -256,6 +257,18 @@ class EntryPointTest : TestHarness() {
             assertContentEquals(emptyList(), it.tasks(TaskOutcome.FAILED))
             assertContentEquals(fixturesDir.app(), copy(projectDirectory = projectDirectory.app()).outputDir)
             assertContentEquals(fixturesDir.lib(), copy(projectDirectory = projectDirectory.lib()).outputDir)
+        }
+    )
+
+    @Test
+    fun `types with colliding hash codes resolve to their own instances`() = runTest(
+        label = "hash_collision",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { build("kspKotlin", "compileKotlin", "run") },
+        verify = {
+            assertSuccess(it.compileKotlin)
+            assertSuccess(it.kspKotlin)
+            assertSuccess(it.run)
         }
     )
 

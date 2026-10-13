@@ -222,11 +222,11 @@ class DependencyFactoryGenerator(
         val block = CodeBlock.builder()
             .beginControlFlow("return when (id.%L) {", DependencyId::id.name)
         val queue = ArrayDeque(graph.toSequence().toList())
-        val uniqueTypes = HashSet<Int>()
+        val uniqueTypes = HashSet<TypeFactory>()
 
         while (queue.isNotEmpty()) {
             val type = queue.removeFirst()
-            if (!uniqueTypes.add(type.hashCode())) {
+            if (!uniqueTypes.add(type)) {
                 continue
             }
 
@@ -251,7 +251,7 @@ class DependencyFactoryGenerator(
         queue: ArrayDeque<TypeFactory>,
         context: FileGeneratorContext,
     ): Int {
-        val contextIndexByHash = HashMap<Int, Int>()
+        val contextIndexByFactory = HashMap<TypeFactory, Int>()
         var contextSize = 0
 
         for (dependency in type.invertDependencyTree()) {
@@ -260,13 +260,12 @@ class DependencyFactoryGenerator(
             }
             enqueueNestedTypes(dependency, queue)
 
-            val dependencyHash = dependency.hashCode()
-            if (contextIndexByHash.containsKey(dependencyHash)) {
+            if (dependency in contextIndexByFactory) {
                 continue
             }
 
-            contextIndexByHash[dependencyHash] = contextSize++
-            appendDependencyInstructions(dependency, contextIndexByHash, context)
+            contextIndexByFactory[dependency] = contextSize++
+            appendDependencyInstructions(dependency, contextIndexByFactory, context)
         }
 
         return contextSize
@@ -283,7 +282,7 @@ class DependencyFactoryGenerator(
 
     private fun appendDependencyInstructions(
         dependency: TypeFactory,
-        contextIndexByHash: Map<Int, Int>,
+        contextIndexByFactory: Map<TypeFactory, Int>,
         context: FileGeneratorContext,
     ) {
         val id = context.getDependencyId(dependency)
@@ -294,7 +293,7 @@ class DependencyFactoryGenerator(
 
         if (dependency !is TypeFactory.Deferred) {
             for (argument in dependency.dependencies) {
-                val i = contextIndexByHash[argument.hashCode()]
+                val i = contextIndexByFactory[argument]
                     ?: error("Dependency '$argument' was not found in dependencyTree")
                 context.instructions.add(i)
             }
