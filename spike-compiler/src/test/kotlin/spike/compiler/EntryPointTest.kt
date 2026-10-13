@@ -294,7 +294,7 @@ class EntryPointTest : TestHarness() {
         verify = {
             assertFailure(it.kspKotlin)
             assertContains(it.output, "Duplicate bindings for Cat")
-            assertContains(it.output, "Cat")
+            assertContains(it.output, "constructor of Cat")
             assertContains(it.output, "provideFelix")
         }
     )
