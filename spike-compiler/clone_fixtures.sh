@@ -1,13 +1,15 @@
 #!/bin/zsh
 
-main() {
-  local source target
-  source="build/tmp/projects/$1/build/generated/ksp/"
-  target="src/test/resources/$1/fixtures"
-  rm -rf $target/*
+replace() {
+  local source=$1 target=$2
+  [[ -d $source ]] || return
+  rm -rf $target
+  mkdir -p $target
   cp -r $source/* $target
 }
 
-for dir in src/test/resources/*(/N); do
-  main "${dir##*/}"
+for dir in src/test/resources/*/fixtures(/N); do
+  name=${${dir%/fixtures}##*/}
+  replace "build/tmp/compilations/$name/ksp/kotlin" "$dir/main/kotlin"
+  replace "build/tmp/projects/$name/build/generated/ksp" "$dir"
 done

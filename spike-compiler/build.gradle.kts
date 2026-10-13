@@ -26,4 +26,7 @@ dependencies {
     testImplementation(project(":spike-androidx"))
     testImplementation(project(":spike-ktor"))
     testImplementation(gradleTestKit())
+    testImplementation(libs.google.ksp.standalone)
+    testImplementation(libs.google.ksp.common.deps)
+    testImplementation(libs.kotlin.compiler.embeddable)
 }

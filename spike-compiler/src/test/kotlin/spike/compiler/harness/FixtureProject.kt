@@ -19,8 +19,6 @@ class FixtureProject(private val name: String, template: Template) {
 
     fun build(tasks: List<String>): BuildResult = runner(tasks).build()
 
-    fun buildAndFail(tasks: List<String>): BuildResult = runner(tasks).buildAndFail()
-
     fun generatedSources(module: String): File = directory.resolve(module).resolve("build/generated/ksp")
 
     private fun runner(tasks: List<String>) = GradleRunner.create()
