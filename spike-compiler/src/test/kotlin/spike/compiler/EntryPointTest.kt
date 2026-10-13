@@ -1,5 +1,8 @@
 package spike.compiler
 
+import spike.compiler.harness.Template.Androidx
+import spike.compiler.harness.Template.MultiModule
+import spike.compiler.harness.Template.Standalone
 import spike.compiler.harness.TestHarness
 import kotlin.test.Test
 
@@ -54,10 +57,10 @@ class EntryPointTest : TestHarness() {
     fun `out variance is preserved`() = assertMatchesGolden("out_variance")
 
     @Test
-    fun `androidx viewmodels are found`() = assertMatchesGolden("androidx_viewmodel")
+    fun `androidx viewmodels are found`() = assertMatchesGolden("androidx_viewmodel", Androidx)
 
     @Test
-    fun `ktor plugin handles requests`() = assertBuilds("ktor", tasks = listOf(":test"))
+    fun `ktor plugin handles requests`() = assertBuilds("ktor", Standalone, tasks = listOf(":test"))
 
     @Test
     fun `benchmark compiles`() = assertBuilds("benchmark", tasks = listOf(":compileKotlin"))
@@ -66,11 +69,12 @@ class EntryPointTest : TestHarness() {
     fun `singletons are shared within one entry point instance only`() = assertMatchesGolden("singleton")
 
     @Test
-    fun `expect actual gets resolved`() = assertMatchesGolden("expect_actual", tasks = listOf("assemble", ":jvmRun"))
+    fun `expect actual gets resolved`() =
+        assertMatchesGolden("expect_actual", Standalone, tasks = listOf("assemble", ":jvmRun"))
 
     @Test
     fun `exports are taken into account`() =
-        assertMatchesGolden("multi_module", tasks = listOf(":app:run"), modules = listOf("app", "library"))
+        assertMatchesGolden("multi_module", MultiModule, listOf(":app:run"), modules = listOf("app", "library"))
 
     @Test
     fun `types with colliding hash codes resolve to their own instances`() = assertBuilds("hash_collision")
@@ -81,7 +85,12 @@ class EntryPointTest : TestHarness() {
 
     @Test
     fun `class and function providing the same type fail naming both`() =
-        assertBuildFails("duplicate_class_and_factory", "Duplicate bindings for Cat", "constructor of Cat", "provideFelix")
+        assertBuildFails(
+            "duplicate_class_and_factory",
+            "Duplicate bindings for Cat",
+            "constructor of Cat",
+            "provideFelix"
+        )
 
     @Test
     fun `two classes bound as the same type fail naming both`() =
@@ -89,7 +98,7 @@ class EntryPointTest : TestHarness() {
 
     @Test
     fun `exports declared in a package are taken into account`() =
-        assertBuilds("multi_module_package", tasks = listOf(":app:run"))
+        assertBuilds("multi_module_package", MultiModule, tasks = listOf(":app:run"))
 
     @Test
     fun `plain type resolves to its root binding when multibinding entries share it`() =
@@ -104,14 +113,19 @@ class EntryPointTest : TestHarness() {
 
     @Test
     fun `exported module imports two dependencies sharing a simple name`() =
-        assertBuilds("import_name_clash", tasks = listOf(":app:run"))
+        assertBuilds("import_name_clash", MultiModule, tasks = listOf(":app:run"))
 
     @Test
-    fun `viewmodels share singletons with each other`() = assertBuilds("androidx_viewmodel_singleton")
+    fun `viewmodels share singletons with each other`() = assertBuilds("androidx_viewmodel_singleton", Androidx)
 
     @Test
     fun `viewmodel singleton depending on SavedStateHandle fails`() =
-        assertBuildFails("androidx_viewmodel_singleton_handle", "@Singleton Session depends on", "SavedStateHandle")
+        assertBuildFails(
+            "androidx_viewmodel_singleton_handle",
+            "@Singleton Session depends on",
+            "SavedStateHandle",
+            template = Androidx
+        )
 
     @Test
     fun `entry points created by one factory each get their own singletons`() = assertBuilds("factory_singleton")
@@ -129,19 +143,27 @@ class EntryPointTest : TestHarness() {
 
     @Test
     fun `viewmodels share singletons of an exported library`() =
-        assertBuilds("androidx_viewmodel_export", tasks = listOf(":app:run"))
+        assertBuilds("androidx_viewmodel_export", MultiModule, tasks = listOf(":app:run"))
 
     @Test
     fun `viewmodel singleton depending on a Provider of SavedStateHandle fails`() =
-        assertBuildFails("androidx_viewmodel_singleton_provider_handle", "@Singleton Session depends on")
+        assertBuildFails(
+            "androidx_viewmodel_singleton_provider_handle",
+            "@Singleton Session depends on",
+            template = Androidx
+        )
 
     @Test
     fun `viewmodel reaching a SavedStateHandle singleton through Lazy fails`() =
-        assertBuildFails("androidx_viewmodel_lazy_singleton_handle", "@Singleton Session depends on")
+        assertBuildFails(
+            "androidx_viewmodel_lazy_singleton_handle",
+            "@Singleton Session depends on",
+            template = Androidx
+        )
 
     @Test
     fun `exported module classes sharing one imported dependency compile`() =
-        assertBuilds("import_shared", tasks = listOf(":app:run"))
+        assertBuilds("import_shared", MultiModule, tasks = listOf(":app:run"))
 
     @Test
     fun `SharesSingletons on a user factory requires opting in to internal API`() = assertBuildFails(

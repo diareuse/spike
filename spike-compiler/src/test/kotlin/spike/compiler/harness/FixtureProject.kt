@@ -4,14 +4,16 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import java.io.File
 
-class FixtureProject(private val name: String) {
+class FixtureProject(private val name: String, template: Template) {
 
     val directory: File = File("build/tmp/projects").resolve(name)
     val golden: File = resources.resolve("$name/fixtures")
 
     init {
         directory.deleteRecursively()
-        resources.resolve("$name/project").copyRecursively(directory)
+        resources.resolve("templates/gradle.properties").copyTo(directory.resolve("gradle.properties"))
+        template.directory?.let { resources.resolve("templates/$it").copyRecursively(directory) }
+        resources.resolve("$name/project").copyRecursively(directory, overwrite = true)
         writeSettings()
     }
 
