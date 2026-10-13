@@ -455,4 +455,12 @@ class EntryPointTest : TestHarness() {
         }
     )
 
+    @Test
+    fun `exported module classes sharing one imported dependency compile`() = runTest(
+        label = "import_shared",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { build(":app:run") },
+        verify = { assertSuccess(it.task(":app:run")!!) }
+    )
+
 }

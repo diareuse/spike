@@ -118,13 +118,17 @@ sealed interface TypeFactory {
             get() = emptyList()
     }
 
-    data class Imported(
+    class Imported(
         override val type: Type,
         val name: String,
         val originatingElement: String
     ): TypeFactory {
         override val dependencies: List<TypeFactory>
             get() = emptyList()
+
+        override fun equals(other: Any?) = other is Imported && other.type == type && other.name == name
+        override fun hashCode() = 31 * type.hashCode() + name.hashCode()
+        override fun toString() = "Imported(type=$type, name=$name)"
     }
 
     data class MultibindsCollection(
