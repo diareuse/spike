@@ -378,7 +378,7 @@ class EntryPointTest : TestHarness() {
         test = { buildAndFail("kspKotlin") },
         verify = {
             assertFailure(it.kspKotlin)
-            assertContains(it.output, "Session")
+            assertContains(it.output, "@Singleton Session depends on")
             assertContains(it.output, "SavedStateHandle")
         }
     )
@@ -430,6 +430,28 @@ class EntryPointTest : TestHarness() {
         verify = {
             assertContentEquals(emptyList(), it.tasks(TaskOutcome.FAILED))
             assertSuccess(it.task(":app:run")!!)
+        }
+    )
+
+    @Test
+    fun `viewmodel singleton depending on a Provider of SavedStateHandle fails`() = runTest(
+        label = "androidx_viewmodel_singleton_provider_handle",
+        prepare = { useClassPath { it.whitelistModules(Kotlin + Androidx) }.build() },
+        test = { buildAndFail("kspKotlin") },
+        verify = {
+            assertFailure(it.kspKotlin)
+            assertContains(it.output, "@Singleton Session depends on")
+        }
+    )
+
+    @Test
+    fun `viewmodel reaching a SavedStateHandle singleton through Lazy fails`() = runTest(
+        label = "androidx_viewmodel_lazy_singleton_handle",
+        prepare = { useClassPath { it.whitelistModules(Kotlin + Androidx) }.build() },
+        test = { buildAndFail("kspKotlin") },
+        verify = {
+            assertFailure(it.kspKotlin)
+            assertContains(it.output, "@Singleton Session depends on")
         }
     )
 
