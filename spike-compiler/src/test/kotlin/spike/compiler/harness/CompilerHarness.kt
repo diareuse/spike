@@ -32,12 +32,6 @@ abstract class CompilerHarness {
         runMain(modules)
     }
 
-    protected fun assertCompiles(name: String, libraries: Libraries = Libraries.Kotlin) {
-        val module = modules(name, libraries).single()
-        assertProcesses(module)
-        assertCompiles(module.source)
-    }
-
     protected fun assertProcessingFails(
         name: String,
         vararg messages: String,

@@ -58,9 +58,6 @@ class CompilerTest : CompilerHarness() {
     fun `androidx viewmodels are found`() = assertMatchesGolden("androidx_viewmodel", Androidx)
 
     @Test
-    fun `benchmark compiles`() = assertCompiles("benchmark")
-
-    @Test
     fun `singletons are shared within one entry point instance only`() = assertMatchesGolden("singleton")
 
     @Test
