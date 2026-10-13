@@ -28,14 +28,14 @@ class TypeFactoryCreatorMultiBindCollection(
             type = type,
             entries = buildList {
                 for (c in instances.constructors) {
-                    add(mint(c.type, clone(store = c.asGraphStore() + store + instances)))
+                    add(mint(c.type, clone(store = (store + instances).overriddenBy(c.asGraphStore()))))
                 }
                 for (f in instances.factories) {
-                    add(mint(f.type, clone(store = f.asGraphStore() + store + instances)))
+                    add(mint(f.type, clone(store = (store + instances).overriddenBy(f.asGraphStore()))))
                 }
                 for (b in instances.binders) {
                     if (b.source in this) continue
-                    add(mint(b.type, clone(store = b.asGraphStore() + store + instances)))
+                    add(mint(b.type, clone(store = (store + instances).overriddenBy(b.asGraphStore()))))
                 }
             },
             collectionType = collectionType,

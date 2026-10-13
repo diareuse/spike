@@ -48,6 +48,7 @@ class DependencyGraph private constructor(
             val creators = listOf(
                 importCollector,
                 cache,
+                TypeFactoryCreatorUniqueBinding(),
                 TypeFactoryCreatorConstructor(),
                 TypeFactoryCreatorMethod(),
                 TypeFactoryCreatorBinder(),

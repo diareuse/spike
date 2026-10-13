@@ -12,6 +12,18 @@ data class GraphStore(
         binders = binders + other.binders,
     )
 
+    fun bindingsOf(type: Type): List<Binding> =
+        (constructors + factories + binders).filter { it.type == type }.distinct()
+
+    fun overriddenBy(definition: GraphStore): GraphStore {
+        val types = (definition.constructors + definition.factories + definition.binders).map { it.type }.toSet()
+        return definition + GraphStore(
+            constructors = constructors.filterNot { it.type in types },
+            factories = factories.filterNot { it.type in types },
+            binders = binders.filterNot { it.type in types },
+        )
+    }
+
     class Builder {
 
         private val constructors = mutableSetOf<Constructor>()

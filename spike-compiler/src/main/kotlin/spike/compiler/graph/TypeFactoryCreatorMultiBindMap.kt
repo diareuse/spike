@@ -35,7 +35,7 @@ class TypeFactoryCreatorMultiBindMap(
                         ?: error("Multiple factories found for the same type $type. You must define only one per key ($k).")
                     val newType = mint(
                         type = definition.type.overrideType(valueType),
-                        context = clone(store = definition.asGraphStore() + store)
+                        context = clone(store = store.overriddenBy(definition.asGraphStore()))
                     )
                     put(k, newType)
                 } else if (v.constructors.isNotEmpty()) {
@@ -43,7 +43,7 @@ class TypeFactoryCreatorMultiBindMap(
                         ?: error("Multiple classes found for the same $type. You must define only one per key ($k).")
                     val newType = mint(
                         type = definition.type.overrideType(valueType),
-                        context = clone(store = definition.asGraphStore() + store)
+                        context = clone(store = store.overriddenBy(definition.asGraphStore()))
                     )
                     put(k, newType)
                 } else if (v.binders.isNotEmpty()) {
@@ -51,7 +51,7 @@ class TypeFactoryCreatorMultiBindMap(
                         ?: error("Multiple bindings found for the same type $type. You must define only one per key ($k).")
                     val newType = mint(
                         type = definition.type.overrideType(valueType),
-                        context = clone(store = definition.asGraphStore() + store)
+                        context = clone(store = store.overriddenBy(definition.asGraphStore()))
                     )
                     put(k, newType)
                 } else

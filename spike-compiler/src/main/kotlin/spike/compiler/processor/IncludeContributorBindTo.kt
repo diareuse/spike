@@ -18,9 +18,8 @@ class IncludeContributorBindTo(
         annotated: KSClassDeclaration,
     ) {
         fun toType() = annotated.findBindAsOrSelf { this.toType(false) }
-        origin.contribute(context, annotated)
         when (annotated.findBindToTarget()) {
-            BindTarget.None -> {}
+            BindTarget.None -> origin.contribute(context, annotated)
             BindTarget.Set -> context.multibind.addToSet(toType()) {
                 origin.contribute(context.copy(builder = this), annotated)
             }
@@ -38,9 +37,8 @@ class IncludeContributorBindTo(
         annotated: KSFunctionDeclaration,
     ) {
         fun toType() = annotated.findBindAsOrSelf { returnType!!.resolve().toType() }
-        origin.contribute(context, annotated)
         when (annotated.findBindToTarget()) {
-            BindTarget.None -> {}
+            BindTarget.None -> origin.contribute(context, annotated)
             BindTarget.Set -> context.multibind.addToSet(toType()) {
                 origin.contribute(context.copy(builder = this), annotated)
             }

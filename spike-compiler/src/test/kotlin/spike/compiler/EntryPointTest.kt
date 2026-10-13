@@ -11,6 +11,7 @@ import spike.compiler.harness.BuildResultTasks.test
 import spike.compiler.harness.TestHarness
 import java.io.File
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertContentEquals
 
 class EntryPointTest : TestHarness() {
@@ -269,6 +270,45 @@ class EntryPointTest : TestHarness() {
             assertSuccess(it.compileKotlin)
             assertSuccess(it.kspKotlin)
             assertSuccess(it.run)
+        }
+    )
+
+    @Test
+    fun `two functions providing the same type fail naming both`() = runTest(
+        label = "duplicate_factories",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { buildAndFail("kspKotlin") },
+        verify = {
+            assertFailure(it.kspKotlin)
+            assertContains(it.output, "Duplicate bindings for Cat")
+            assertContains(it.output, "provideTom")
+            assertContains(it.output, "provideFelix")
+        }
+    )
+
+    @Test
+    fun `class and function providing the same type fail naming both`() = runTest(
+        label = "duplicate_class_and_factory",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { buildAndFail("kspKotlin") },
+        verify = {
+            assertFailure(it.kspKotlin)
+            assertContains(it.output, "Duplicate bindings for Cat")
+            assertContains(it.output, "constructor of Cat")
+            assertContains(it.output, "provideFelix")
+        }
+    )
+
+    @Test
+    fun `two classes bound as the same type fail naming both`() = runTest(
+        label = "duplicate_bind_as",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { buildAndFail("kspKotlin") },
+        verify = {
+            assertFailure(it.kspKotlin)
+            assertContains(it.output, "Duplicate bindings for Animal")
+            assertContains(it.output, "Tomcat")
+            assertContains(it.output, "Bulldog")
         }
     )
 
