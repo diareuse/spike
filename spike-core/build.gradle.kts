@@ -8,7 +8,7 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.atomicfu)
         }
-        jvmTest.dependencies {
+        commonTest.dependencies {
             implementation(kotlin("test"))
         }
     }
