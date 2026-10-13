@@ -6,7 +6,8 @@ fun main() {
     require(ep.cat3.value === ep.cat)
     val cat = ep.cat
     ep = PropertyEntryPoint()
-    require(cat === ep.cat)
+    require(cat !== ep.cat)
+    require(ep.cat === ep.cat)
 }
 
 @spike.EntryPoint
