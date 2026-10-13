@@ -32,8 +32,8 @@ data class TypeFactoryCreatorChain(
     ): TypeFactory {
         context as TypeFactoryCreatorChain
         if (type in context.chain) {
-            val chain = chain.joinToString(separator = " -> ")
-            error("Circular dependency detected: $chain")
+            val cycle = context.chain.dropWhile { it != type } + type
+            error("Circular dependency detected: ${cycle.joinToString(" -> ") { it.displayName }}")
         }
         return context.copy(type = type, isTopLevel = false, chain = context.chain + type).pass()
     }

@@ -391,4 +391,15 @@ class EntryPointTest : TestHarness() {
         verify = { assertSuccess(it.run) }
     )
 
+    @Test
+    fun `circular dependency error shows exactly the cycle`() = runTest(
+        label = "circular_nested",
+        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
+        test = { buildAndFail("kspKotlin") },
+        verify = {
+            assertFailure(it.kspKotlin)
+            assertContains(it.output, "Circular dependency detected: Cat -> Dog -> Cat")
+        }
+    )
+
 }
