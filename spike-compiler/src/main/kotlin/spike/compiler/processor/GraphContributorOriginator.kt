@@ -55,7 +55,9 @@ abstract class GraphContributorOriginator : GraphContributor {
                     .filterIsInstance<KSClassDeclaration>()
                     .map {
                         val invocation = it.primaryConstructor!!.toInvocation()
-                        val inputs = invocation.copy(parameters = invocation.parameters.filterNot { p -> p.type == SingletonHolderType })
+                        val inputs = invocation.copy(
+                            parameters = invocation.parameters.filterNot { p -> p.type == SingletonHolderType }
+                        )
                         TypeFactory.Class(it.toType(false), inputs, false, emptyList())
                     }
             )
