@@ -123,15 +123,15 @@ class DependencyFactoryGenerator(
                 CodeBlock.builder()
                     .add("%T(", cn)
                     .apply {
-                        import.invocation.parameters.forEachIndexed { index, param ->
-                            if (index > 0) add(", ")
+                        import.invocation.parameters.forEach { param ->
                             add(
-                                "%L = get(%T(%L))",
+                                "%L = get(%T(%L)), ",
                                 param.name,
                                 DependencyId::class,
                                 context.getDependencyId(context.graph.importedFactoryOf(param.type))
                             )
                         }
+                        add("singletons = singletons.scope(%S)", cn.canonicalName)
                     }
                     .add(")")
                     .build()

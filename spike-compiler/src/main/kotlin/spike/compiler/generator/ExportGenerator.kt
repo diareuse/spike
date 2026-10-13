@@ -18,6 +18,7 @@ import spike.compiler.graph.TypeFactory
 import spike.compiler.graph.TypeFactory.Companion.dependencyTree
 import spike.compiler.graph.TypeFactory.Companion.invertDependencyTree
 import spike.factory.DependencyId
+import spike.factory.SingletonHolder
 
 class ExportGenerator : Generator {
     override fun generate(context: FileGeneratorContext, collector: FileSpecCollector) {
@@ -40,6 +41,8 @@ class ExportGenerator : Generator {
                                     add(", ")
                                 add("_%L = %L", param.name, param.name)
                             }
+                            if (params.isNotEmpty()) add(", ")
+                            add("singletons = singletons")
                         }
                         .add(")")
                         .build())
@@ -51,6 +54,11 @@ class ExportGenerator : Generator {
                 val type = (resolver.builtInType { Provider } as ClassName).parameterizedBy(it.type.toClassName())
                 ParameterSpec.builder(it.name, type).build()
             }.toList())
+            .addParameter(
+                ParameterSpec.builder("singletons", SingletonHolder::class)
+                    .defaultValue("%T()", SingletonHolder::class)
+                    .build()
+            )
             .build())
         generateMethods(ep, type, resolver, context)
         generateProperties(ep, type, resolver, context)

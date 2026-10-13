@@ -17,6 +17,7 @@ import spike.compiler.graph.GraphEntryPoint
 import spike.compiler.graph.GraphEntryPoint.Companion.virtualFactory
 import spike.compiler.graph.Member
 import spike.compiler.graph.Parameter
+import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
 
 @OptIn(KspExperimental::class)
@@ -53,7 +54,9 @@ abstract class GraphContributorOriginator : GraphContributor {
                 imports = context.resolver.getDeclarationsFromPackage("spike.generated")
                     .filterIsInstance<KSClassDeclaration>()
                     .map {
-                        TypeFactory.Class(it.toType(false), it.primaryConstructor!!.toInvocation(), false, emptyList())
+                        val invocation = it.primaryConstructor!!.toInvocation()
+                        val inputs = invocation.copy(parameters = invocation.parameters.filterNot { p -> p.type == SingletonHolderType })
+                        TypeFactory.Class(it.toType(false), inputs, false, emptyList())
                     }
             )
             for (e in external) {
@@ -91,6 +94,7 @@ abstract class GraphContributorOriginator : GraphContributor {
                     }
                     for (p in klass.primaryConstructor?.parameters.orEmpty()) {
                         val type = p.type.resolve().toType()
+                        if (type == SingletonHolderType) continue
                         properties.add(Member.Property(type.packageName, p.name!!.asString(), type, synthetic = true))
                     }
                 }
@@ -144,3 +148,5 @@ abstract class GraphContributorOriginator : GraphContributor {
         )
     }.toList()
 }
+
+private val SingletonHolderType = Type.Simple("spike.factory", "SingletonHolder", false)

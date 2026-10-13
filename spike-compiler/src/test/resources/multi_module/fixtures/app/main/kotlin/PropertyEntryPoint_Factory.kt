@@ -22,7 +22,8 @@ public class PropertyEntryPoint_Factory(
   override val instructionSet: IntArray
     get() = PropertyEntryPoint_InstructionSet.memory
 
-  public val exportedImpl: ExportedImpl = ExportedImpl(kotlinString = get(DependencyId(1)))
+  public val exportedImpl: ExportedImpl =
+      ExportedImpl(kotlinString = get(DependencyId(1)), singletons = singletons.scope("spike.generated.ExportedImpl"))
 
   override fun getInstructionsPointer(id: DependencyId): InstructionSetPointer? = when (id.id) {
     0 -> InstructionSetPointer(0, 3)

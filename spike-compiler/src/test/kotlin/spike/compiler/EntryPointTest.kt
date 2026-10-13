@@ -422,4 +422,15 @@ class EntryPointTest : TestHarness() {
         }
     )
 
+    @Test
+    fun `viewmodels share singletons of an exported library`() = runTest(
+        label = "androidx_viewmodel_export",
+        prepare = { useClassPath { it.whitelistModules(Kotlin + Androidx) }.build() },
+        test = { build(":app:run") },
+        verify = {
+            assertContentEquals(emptyList(), it.tasks(TaskOutcome.FAILED))
+            assertSuccess(it.task(":app:run")!!)
+        }
+    )
+
 }
