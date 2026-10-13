@@ -1,0 +1,21 @@
+[versions]
+spike = "0.0.0-benchmark"
+dagger = "2.60.1"
+metro = "1.4.5"
+kotlin-inject = "0.9.0"
+koin = "4.2.2"
+kotlinx-benchmark = "0.5.0"
+
+[libraries]
+spike = { module = "io.github.diareuse:spike", version.ref = "spike" }
+spike-compiler = { module = "io.github.diareuse:spike-compiler", version.ref = "spike" }
+dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
+kotlin-inject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlin-inject" }
+kotlin-inject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlin-inject" }
+koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
+kotlinx-benchmark-runtime = { module = "org.jetbrains.kotlinx:kotlinx-benchmark-runtime", version.ref = "kotlinx-benchmark" }
+
+[plugins]
+metro = { id = "dev.zacsweers.metro", version.ref = "metro" }
+kotlinx-benchmark = { id = "org.jetbrains.kotlinx.benchmark", version.ref = "kotlinx-benchmark" }

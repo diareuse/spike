@@ -1,29 +1,7 @@
 plugins {
-    `application`
-    kotlin("jvm") version "2.3.21"
-    id("com.google.devtools.ksp") version "2.3.9"
-}
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-    google()
-}
-
-application {
-    mainClass = "MainKt"
-}
-
-kotlin {
-    sourceSets {
-        main {
-            kotlin.setSrcDirs(listOf(project.projectDir.resolve("src")))
-        }
-    }
-}
-
-dependencies {
-    implementation(kotlin("stdlib"))
-    implementation("io.github.diareuse:spike:unspecified")
-    ksp("io.github.diareuse:spike-compiler:unspecified")
+    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.google.ksp) apply false
+    alias(bench.plugins.metro) apply false
+    alias(bench.plugins.kotlinx.benchmark) apply false
+    kotlin("plugin.allopen") version libs.versions.kotlin.get() apply false
 }

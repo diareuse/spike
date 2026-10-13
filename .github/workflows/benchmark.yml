@@ -5,7 +5,10 @@ on:
     branches:
       - master
     paths:
+      - spike-core/src/**
       - spike-compiler/src/main/**
+      - spike-benchmark/**
+      - gradle/libs.versions.toml
 
 permissions:
   contents: write
@@ -29,24 +32,27 @@ jobs:
           echo "SDKMAN_DIR=$HOME/.sdkman" >> $GITHUB_ENV
           echo "$HOME/.sdkman/candidates/gradleprofiler/current/bin" >> $GITHUB_PATH
 
-      - run: |
-          cat spike-benchmark/gradle.properties >> gradle.properties
-          echo "VERSION_NAME=unspecified" >> gradle.properties
-
       - run: bash spike-benchmark/benchmark.sh
 
-      - run: |
-          AVG=$(grep "measured build" spike-benchmark/output/benchmark.csv | cut -d',' -f2 | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; else print 0 }')
-          AVG2=$(grep "measured build" spike-benchmark/output-run/benchmark.csv | cut -d',' -f2 | awk '{ sum += $1; n++ } END { if (n > 0) print sum / n; else print 0 }')
-          git stash
-          echo "[{\"name\": \"Build Time\", \"unit\": \"ms\", \"value\": $AVG}, {\"name\": \"Run Time\", \"unit\": \"ms\", \"value\": $AVG2}]" > results.json
+      - run: cat spike-benchmark/output/results.md >> $GITHUB_STEP_SUMMARY
 
       - uses: benchmark-action/github-action-benchmark@v1
         with:
+          name: Spike
           tool: 'customSmallerIsBetter'
-          output-file-path: 'results.json'
+          output-file-path: spike-benchmark/output/results-spike.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
           alert-threshold: '115%'
           comment-on-commit: true
           fail-on-alert: true
+
+      - uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: Baselines
+          tool: 'customSmallerIsBetter'
+          output-file-path: spike-benchmark/output/results-baselines.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+          comment-on-commit: false
+          fail-on-alert: false

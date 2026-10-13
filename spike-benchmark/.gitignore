@@ -1,0 +1,4 @@
+graphs/*/src/
+output/
+results/
+scenarios.conf
