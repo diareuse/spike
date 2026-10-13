@@ -1,477 +1,153 @@
 package spike.compiler
 
-import org.gradle.testkit.runner.TaskOutcome
-import spike.compiler.assertion.assertContentEquals
-import spike.compiler.harness.BuildResultTasks.assemble
-import spike.compiler.harness.BuildResultTasks.compileKotlin
-import spike.compiler.harness.BuildResultTasks.jvmRun
-import spike.compiler.harness.BuildResultTasks.kspKotlin
-import spike.compiler.harness.BuildResultTasks.run
-import spike.compiler.harness.BuildResultTasks.test
 import spike.compiler.harness.TestHarness
-import java.io.File
 import kotlin.test.Test
-import kotlin.test.assertContains
-import kotlin.test.assertContentEquals
 
 class EntryPointTest : TestHarness() {
 
     @Test
-    fun `EntryPoint without companion fails`() = runTest(
-        label = "no_companion",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { buildAndFail("kspKotlin") },
-        verify = { assertFailure(it.kspKotlin) }
-    )
+    fun `EntryPoint without companion fails`() = assertBuildFails("no_companion")
 
     @Test
-    fun `missing dependency fails`() = runTest(
-        label = "missing_dependency",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { buildAndFail("kspKotlin") },
-        verify = { assertFailure(it.kspKotlin) }
-    )
+    fun `missing dependency fails`() = assertBuildFails("missing_dependency")
 
     @Test
-    fun `circular dependency fails`() = runTest(
-        label = "circular",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { buildAndFail("kspKotlin") },
-        verify = { assertFailure(it.kspKotlin) }
-    )
+    fun `circular dependency fails`() = assertBuildFails("circular")
 
     @Test
-    fun `EntryPoint must not be class`() = runTest(
-        label = "klass",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { buildAndFail("kspKotlin") },
-        verify = { assertFailure(it.kspKotlin) }
-    )
+    fun `EntryPoint must not be class`() = assertBuildFails("klass")
 
     @Test
-    fun `standalone EntryPoint with properties`() = runTest(
-        label = "entrypoint",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "run") },
-        verify = {
-            assertSuccess(it.compileKotlin)
-            assertSuccess(it.kspKotlin)
-            assertContentEquals(fixturesDir, outputDir)
-        }
-    )
+    fun `standalone EntryPoint with properties`() = assertMatchesGolden("entrypoint")
 
     @Test
-    fun `EntryPoint factory is created`() = runTest(
-        label = "entry_factory",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "run") },
-        verify = {
-            assertSuccess(it.compileKotlin)
-            assertSuccess(it.kspKotlin)
-            assertContentEquals(fixturesDir, outputDir)
-        }
-    )
+    fun `EntryPoint factory is created`() = assertMatchesGolden("entry_factory")
 
     @Test
-    fun `complex tree is resolved`() = runTest(
-        label = "complex",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "run") },
-        verify = {
-            assertSuccess(it.compileKotlin)
-            assertSuccess(it.kspKotlin)
-            assertContentEquals(fixturesDir, outputDir)
-        }
-    )
+    fun `complex tree is resolved`() = assertMatchesGolden("complex")
 
     @Test
-    fun `binds interfaces to concrete classes`() = runTest(
-        label = "bind",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "run") },
-        verify = {
-            assertSuccess(it.compileKotlin)
-            assertSuccess(it.kspKotlin)
-            assertContentEquals(fixturesDir, outputDir)
-        }
-    )
+    fun `binds interfaces to concrete classes`() = assertMatchesGolden("bind")
 
     @Test
-    fun `EntryPoint generates providers`() = runTest(
-        label = "provider",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "run") },
-        verify = {
-            assertSuccess(it.compileKotlin)
-            assertSuccess(it.kspKotlin)
-            assertContentEquals(fixturesDir, outputDir)
-        }
-    )
+    fun `EntryPoint generates providers`() = assertMatchesGolden("provider")
 
     @Test
-    fun `entries with qualifiers resolve`() = runTest(
-        label = "qualifier",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "run") },
-        verify = {
-            assertSuccess(it.compileKotlin)
-            assertSuccess(it.kspKotlin)
-            assertContentEquals(fixturesDir, outputDir)
-        }
-    )
+    fun `entries with qualifiers resolve`() = assertMatchesGolden("qualifier")
 
     @Test
-    fun `multiple constructors must be marked`() = runTest(
-        label = "no_marked_constructors",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { buildAndFail("kspKotlin") },
-        verify = { assertFailure(it.kspKotlin) }
-    )
+    fun `multiple constructors must be marked`() = assertBuildFails("no_marked_constructors")
 
     @Test
-    fun `multiple constructors are marked`() = runTest(
-        label = "marked_constructors",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "run") },
-        verify = {
-            assertSuccess(it.compileKotlin)
-            assertSuccess(it.kspKotlin)
-            assertContentEquals(fixturesDir, outputDir)
-        }
-    )
+    fun `multiple constructors are marked`() = assertMatchesGolden("marked_constructors")
 
     @Test
-    fun `multi binds are possible`() = runTest(
-        label = "multibinding",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "run") },
-        verify = {
-            assertSuccess(it.compileKotlin)
-            assertSuccess(it.kspKotlin)
-            assertContentEquals(fixturesDir, outputDir)
-        }
-    )
+    fun `multi binds are possible`() = assertMatchesGolden("multibinding")
 
     @Test
-    fun `multi binds work with tuple-generics`() = runTest(
-        label = "multibinding_interfaces",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "run") },
-        verify = {
-            assertSuccess(it.compileKotlin)
-            assertSuccess(it.kspKotlin)
-            assertContentEquals(fixturesDir, outputDir)
-        }
-    )
+    fun `multi binds work with tuple-generics`() = assertMatchesGolden("multibinding_interfaces")
 
     @Test
-    fun `objects are composed`() = runTest(
-        label = "compositor",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "run") },
-        verify = {
-            assertSuccess(it.compileKotlin)
-            assertSuccess(it.kspKotlin)
-            assertContentEquals(fixturesDir, outputDir)
-        }
-    )
+    fun `objects are composed`() = assertMatchesGolden("compositor")
 
     @Test
-    fun `out variance is preserved`() = runTest(
-        label = "out_variance",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "run") },
-        verify = {
-            assertSuccess(it.compileKotlin)
-            assertSuccess(it.kspKotlin)
-            assertContentEquals(fixturesDir, outputDir)
-        }
-    )
+    fun `out variance is preserved`() = assertMatchesGolden("out_variance")
 
     @Test
-    fun `androidx viewmodels are found`() = runTest(
-        label = "androidx_viewmodel",
-        prepare = { useClassPath { it.whitelistModules(Kotlin + Androidx) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "run") },
-        verify = {
-            assertSuccess(it.compileKotlin)
-            assertSuccess(it.kspKotlin)
-            assertContentEquals(fixturesDir, outputDir)
-        }
-    )
+    fun `androidx viewmodels are found`() = assertMatchesGolden("androidx_viewmodel")
 
     @Test
-    fun `ktor plugin handles requests`() = runTest(
-        label = "ktor",
-        prepare = { useClassPath { it.whitelistModules(Kotlin + Ktor) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "test") },
-        verify = {
-            assertSuccess(it.compileKotlin)
-            assertSuccess(it.kspKotlin)
-            assertSuccess(it.test)
-        }
-    )
+    fun `ktor plugin handles requests`() = assertBuilds("ktor", tasks = listOf(":test"))
 
     @Test
-    fun `benchmark compiles`() = runTest(
-        label = "benchmark",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin") },
-        verify = {
-            assertSuccess(it.compileKotlin)
-            assertSuccess(it.kspKotlin)
-        }
-    )
+    fun `benchmark compiles`() = assertBuilds("benchmark", tasks = listOf(":compileKotlin"))
 
     @Test
-    fun `singletons are shared within one entry point instance only`() = runTest(
-        label = "singleton",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "run") },
-        verify = {
-            assertSuccess(it.compileKotlin)
-            assertSuccess(it.kspKotlin)
-            assertContentEquals(fixturesDir, outputDir)
-        }
-    )
+    fun `singletons are shared within one entry point instance only`() = assertMatchesGolden("singleton")
 
     @Test
-    fun `expect actual gets resolved`() = runTest(
-        label = "expect_actual",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("assemble", "jvmRun") },
-        verify = {
-            assertSuccess(it.assemble)
-            assertSuccess(it.jvmRun)
-            assertContentEquals(fixturesDir, outputDir)
-        }
-    )
+    fun `expect actual gets resolved`() = assertMatchesGolden("expect_actual", tasks = listOf("assemble", ":jvmRun"))
 
     @Test
-    fun `exports are taken into account`() = runTest(
-        label = "multi_module",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("assemble", "run") },
-        verify = {
-            fun File.app() = resolve("app")
-            fun File.lib() = resolve("library")
-            assertContentEquals(emptyList(), it.tasks(TaskOutcome.FAILED))
-            assertContentEquals(fixturesDir.app(), copy(projectDirectory = projectDirectory.app()).outputDir)
-            assertContentEquals(fixturesDir.lib(), copy(projectDirectory = projectDirectory.lib()).outputDir)
-        }
-    )
+    fun `exports are taken into account`() =
+        assertMatchesGolden("multi_module", tasks = listOf(":app:run"), modules = listOf("app", "library"))
 
     @Test
-    fun `types with colliding hash codes resolve to their own instances`() = runTest(
-        label = "hash_collision",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "run") },
-        verify = {
-            assertSuccess(it.compileKotlin)
-            assertSuccess(it.kspKotlin)
-            assertSuccess(it.run)
-        }
-    )
+    fun `types with colliding hash codes resolve to their own instances`() = assertBuilds("hash_collision")
 
     @Test
-    fun `two functions providing the same type fail naming both`() = runTest(
-        label = "duplicate_factories",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { buildAndFail("kspKotlin") },
-        verify = {
-            assertFailure(it.kspKotlin)
-            assertContains(it.output, "Duplicate bindings for Cat")
-            assertContains(it.output, "provideTom")
-            assertContains(it.output, "provideFelix")
-        }
-    )
+    fun `two functions providing the same type fail naming both`() =
+        assertBuildFails("duplicate_factories", "Duplicate bindings for Cat", "provideTom", "provideFelix")
 
     @Test
-    fun `class and function providing the same type fail naming both`() = runTest(
-        label = "duplicate_class_and_factory",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { buildAndFail("kspKotlin") },
-        verify = {
-            assertFailure(it.kspKotlin)
-            assertContains(it.output, "Duplicate bindings for Cat")
-            assertContains(it.output, "constructor of Cat")
-            assertContains(it.output, "provideFelix")
-        }
-    )
+    fun `class and function providing the same type fail naming both`() =
+        assertBuildFails("duplicate_class_and_factory", "Duplicate bindings for Cat", "constructor of Cat", "provideFelix")
 
     @Test
-    fun `two classes bound as the same type fail naming both`() = runTest(
-        label = "duplicate_bind_as",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { buildAndFail("kspKotlin") },
-        verify = {
-            assertFailure(it.kspKotlin)
-            assertContains(it.output, "Duplicate bindings for Animal")
-            assertContains(it.output, "Tomcat")
-            assertContains(it.output, "Bulldog")
-        }
-    )
+    fun `two classes bound as the same type fail naming both`() =
+        assertBuildFails("duplicate_bind_as", "Duplicate bindings for Animal", "Tomcat", "Bulldog")
 
     @Test
-    fun `exports declared in a package are taken into account`() = runTest(
-        label = "multi_module_package",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("assemble", "run") },
-        verify = {
-            assertContentEquals(emptyList(), it.tasks(TaskOutcome.FAILED))
-            assertSuccess(it.task(":app:run")!!)
-        }
-    )
+    fun `exports declared in a package are taken into account`() =
+        assertBuilds("multi_module_package", tasks = listOf(":app:run"))
 
     @Test
-    fun `plain type resolves to its root binding when multibinding entries share it`() = runTest(
-        label = "multibinding_and_root",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "run") },
-        verify = { assertSuccess(it.run) }
-    )
+    fun `plain type resolves to its root binding when multibinding entries share it`() =
+        assertBuilds("multibinding_and_root")
 
     @Test
-    fun `multibinding entry injects the root binding, not a sibling entry`() = runTest(
-        label = "multibinding_sibling",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "run") },
-        verify = { assertSuccess(it.run) }
-    )
+    fun `multibinding entry injects the root binding, not a sibling entry`() = assertBuilds("multibinding_sibling")
 
     @Test
-    fun `class and function bound to the same map key fail naming both`() = runTest(
-        label = "duplicate_map_key",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { buildAndFail("kspKotlin") },
-        verify = {
-            assertFailure(it.kspKotlin)
-            assertContains(it.output, "Duplicate bindings for")
-            assertContains(it.output, "Cat")
-            assertContains(it.output, "provideFelix")
-        }
-    )
+    fun `class and function bound to the same map key fail naming both`() =
+        assertBuildFails("duplicate_map_key", "Duplicate bindings for", "Cat", "provideFelix")
 
     @Test
-    fun `exported module imports two dependencies sharing a simple name`() = runTest(
-        label = "import_name_clash",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("assemble", "run") },
-        verify = {
-            assertContentEquals(emptyList(), it.tasks(TaskOutcome.FAILED))
-            assertSuccess(it.task(":app:run")!!)
-        }
-    )
+    fun `exported module imports two dependencies sharing a simple name`() =
+        assertBuilds("import_name_clash", tasks = listOf(":app:run"))
 
     @Test
-    fun `viewmodels share singletons with each other`() = runTest(
-        label = "androidx_viewmodel_singleton",
-        prepare = { useClassPath { it.whitelistModules(Kotlin + Androidx) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "run") },
-        verify = { assertSuccess(it.run) }
-    )
+    fun `viewmodels share singletons with each other`() = assertBuilds("androidx_viewmodel_singleton")
 
     @Test
-    fun `viewmodel singleton depending on SavedStateHandle fails`() = runTest(
-        label = "androidx_viewmodel_singleton_handle",
-        prepare = { useClassPath { it.whitelistModules(Kotlin + Androidx) }.build() },
-        test = { buildAndFail("kspKotlin") },
-        verify = {
-            assertFailure(it.kspKotlin)
-            assertContains(it.output, "@Singleton Session depends on")
-            assertContains(it.output, "SavedStateHandle")
-        }
-    )
+    fun `viewmodel singleton depending on SavedStateHandle fails`() =
+        assertBuildFails("androidx_viewmodel_singleton_handle", "@Singleton Session depends on", "SavedStateHandle")
 
     @Test
-    fun `entry points created by one factory each get their own singletons`() = runTest(
-        label = "factory_singleton",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "run") },
-        verify = { assertSuccess(it.run) }
-    )
+    fun `entry points created by one factory each get their own singletons`() = assertBuilds("factory_singleton")
 
     @Test
-    fun `circular dependency error shows exactly the cycle`() = runTest(
-        label = "circular_nested",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { buildAndFail("kspKotlin") },
-        verify = {
-            assertFailure(it.kspKotlin)
-            assertContains(it.output, "Circular dependency detected: Cat -> Dog -> Cat")
-        }
-    )
+    fun `circular dependency error shows exactly the cycle`() =
+        assertBuildFails("circular_nested", "Circular dependency detected: Cat -> Dog -> Cat")
 
     @Test
-    fun `multibindings without contributions resolve to empty collections`() = runTest(
-        label = "empty_multibinding",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build("kspKotlin", "compileKotlin", "run") },
-        verify = { assertSuccess(it.run) }
-    )
+    fun `multibindings without contributions resolve to empty collections`() = assertBuilds("empty_multibinding")
 
     @Test
-    fun `map requested with a key type no entry uses fails naming the key types`() = runTest(
-        label = "multibinding_key_mismatch",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { buildAndFail("kspKotlin") },
-        verify = {
-            assertFailure(it.kspKotlin)
-            assertContains(it.output, "kotlin.Int")
-            assertContains(it.output, "kotlin.String")
-        }
-    )
+    fun `map requested with a key type no entry uses fails naming the key types`() =
+        assertBuildFails("multibinding_key_mismatch", "kotlin.Int", "kotlin.String")
 
     @Test
-    fun `viewmodels share singletons of an exported library`() = runTest(
-        label = "androidx_viewmodel_export",
-        prepare = { useClassPath { it.whitelistModules(Kotlin + Androidx) }.build() },
-        test = { build(":app:run") },
-        verify = {
-            assertContentEquals(emptyList(), it.tasks(TaskOutcome.FAILED))
-            assertSuccess(it.task(":app:run")!!)
-        }
-    )
+    fun `viewmodels share singletons of an exported library`() =
+        assertBuilds("androidx_viewmodel_export", tasks = listOf(":app:run"))
 
     @Test
-    fun `viewmodel singleton depending on a Provider of SavedStateHandle fails`() = runTest(
-        label = "androidx_viewmodel_singleton_provider_handle",
-        prepare = { useClassPath { it.whitelistModules(Kotlin + Androidx) }.build() },
-        test = { buildAndFail("kspKotlin") },
-        verify = {
-            assertFailure(it.kspKotlin)
-            assertContains(it.output, "@Singleton Session depends on")
-        }
-    )
+    fun `viewmodel singleton depending on a Provider of SavedStateHandle fails`() =
+        assertBuildFails("androidx_viewmodel_singleton_provider_handle", "@Singleton Session depends on")
 
     @Test
-    fun `viewmodel reaching a SavedStateHandle singleton through Lazy fails`() = runTest(
-        label = "androidx_viewmodel_lazy_singleton_handle",
-        prepare = { useClassPath { it.whitelistModules(Kotlin + Androidx) }.build() },
-        test = { buildAndFail("kspKotlin") },
-        verify = {
-            assertFailure(it.kspKotlin)
-            assertContains(it.output, "@Singleton Session depends on")
-        }
-    )
+    fun `viewmodel reaching a SavedStateHandle singleton through Lazy fails`() =
+        assertBuildFails("androidx_viewmodel_lazy_singleton_handle", "@Singleton Session depends on")
 
     @Test
-    fun `exported module classes sharing one imported dependency compile`() = runTest(
-        label = "import_shared",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { build(":app:run") },
-        verify = { assertSuccess(it.task(":app:run")!!) }
-    )
+    fun `exported module classes sharing one imported dependency compile`() =
+        assertBuilds("import_shared", tasks = listOf(":app:run"))
 
     @Test
-    fun `SharesSingletons on a user factory requires opting in to internal API`() = runTest(
-        label = "shares_singletons_internal",
-        prepare = { useClassPath { it.whitelistModules(Kotlin) }.build() },
-        test = { buildAndFail("compileKotlin") },
-        verify = {
-            assertFailure(it.compileKotlin)
-            assertContains(it.output, "may change without notice. Do not use it directly.")
-        }
+    fun `SharesSingletons on a user factory requires opting in to internal API`() = assertBuildFails(
+        "shares_singletons_internal",
+        "may change without notice. Do not use it directly.",
+        task = ":compileKotlin"
     )
 
 }

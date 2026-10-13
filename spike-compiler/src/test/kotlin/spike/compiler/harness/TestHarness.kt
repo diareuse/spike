@@ -1,33 +1,34 @@
 package spike.compiler.harness
 
-import org.gradle.testkit.runner.BuildResult
-import org.gradle.testkit.runner.BuildTask
 import org.gradle.testkit.runner.TaskOutcome
-import java.io.File
+import spike.compiler.assertion.assertContentEquals
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 abstract class TestHarness {
 
-    protected fun runTest(
-        label: String,
-        prepare: GradleTestProject.Builder.() -> GradleTestProject,
-        test: GradleTestProject.() -> BuildResult,
-        verify: GradleTestProject.Context.(BuildResult) -> Unit = {}
+    protected fun assertMatchesGolden(
+        name: String,
+        tasks: List<String> = listOf(":run"),
+        modules: List<String> = listOf("")
     ) {
-        val resourcesDir = File("src/test/resources")
-        val projectRoot = File("build/tmp/projects").resolve(label)
-        val builder = GradleTestProject.Builder(projectRoot)
-            .cloneProjectDir(resourcesDir.resolve("$label/project"))
-            .useFixturesDir(resourcesDir.resolve("$label/fixtures"))
-        val project = builder.prepare()
-        val result = project.test()
-        project.context.verify(result)
+        val project = FixtureProject(name)
+        project.build(tasks)
+        for (module in modules) {
+            assertContentEquals(project.golden.resolve(module), project.generatedSources(module))
+        }
     }
 
-    protected fun assertSuccess(task: BuildTask) =
-        assertContains(listOf(TaskOutcome.SUCCESS, TaskOutcome.UP_TO_DATE), task.outcome)
+    protected fun assertBuilds(name: String, tasks: List<String> = listOf(":run")) {
+        FixtureProject(name).build(tasks)
+    }
 
-    protected fun assertFailure(task: BuildTask) = assertEquals(TaskOutcome.FAILED, task.outcome)
+    protected fun assertBuildFails(name: String, vararg messages: String, task: String = ":kspKotlin") {
+        val result = FixtureProject(name).buildAndFail(listOf(task))
+        assertEquals(TaskOutcome.FAILED, result.task(task)?.outcome, result.output)
+        for (message in messages) {
+            assertContains(result.output, message)
+        }
+    }
 
 }
