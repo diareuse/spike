@@ -164,3 +164,13 @@ fun main() {
     coffeeMaker.brew()
 }
 ```
+
+## License
+
+Spike is licensed under the [Mozilla Public License 2.0](LICENSE). Changes to Spike's own files must be
+shared under the same license; the code you write with Spike can be under any license, open or closed.
+
+Code that the Spike compiler generates into your project (for example `*_Factory`, `*_InstructionSet`,
+`*_EntryPoint`) is not covered by the MPL-2.0. It belongs to you and you may license it however you like.
+
+Releases up to and including 0.0.15 were published under GPL-v3.
