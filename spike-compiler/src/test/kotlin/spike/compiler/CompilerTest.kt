@@ -2,7 +2,6 @@ package spike.compiler
 
 import spike.compiler.harness.HarnessCompiler
 import spike.compiler.harness.Libraries.Androidx
-import org.junit.jupiter.api.Disabled
 import kotlin.test.Test
 
 class CompilerTest : HarnessCompiler() {
@@ -147,7 +146,6 @@ class CompilerTest : HarnessCompiler() {
         assertMethodsFitJit("large_graph")
 
     @Test
-    @Disabled("FAULT: graph construction recurses per tree level and overflows the stack in TypeFactoryCreatorChain.mint")
     fun `a dependency chain thousands deep resolves on a small thread stack`() = assertRuns("deep_chain")
 
     @Test

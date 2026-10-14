@@ -101,8 +101,11 @@ class DependencyGraph private constructor(
         // ---
 
         private fun createTypeFactory(type: Type, creators: List<TypeFactoryCreator>): TypeFactory {
-            val chain = TypeFactoryCreatorChain(type, creators, root)
-            return chain.pass()
+            return minting(TypeFactoryCreatorChain(type, creators, root))
+        }
+
+        private val minting = DeepRecursiveFunction<TypeFactoryCreator.Context, TypeFactory> { context ->
+            with(context) { resolve() }
         }
     }
 

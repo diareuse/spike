@@ -3,10 +3,10 @@ package spike.compiler.graph
 class TypeFactoryCreatorMultiBindMap(
     private val multibinding: MultiBindingStore,
 ) : TypeFactoryCreator {
-    override fun TypeFactoryCreator.Context.create(): TypeFactory {
-        val type = type
+    override suspend fun Minting.create(context: TypeFactoryCreator.Context): TypeFactory {
+        val type = context.type
         if (!(type is Type.Parametrized && type.envelope == BuiltInTypes.Map)) {
-            return pass()
+            return pass(context)
         }
         val (keyType, valueType) = type.typeArguments
         val instanceMap = multibinding.map[valueType.unwrapParametrized()].orEmpty()
@@ -25,8 +25,8 @@ class TypeFactoryCreatorMultiBindMap(
                 val definition = definitions.singleOrNull() ?: v.binders.singleOrNull()
                     ?: error("No definition found for $type whilst being multi-bound, this is however most likely a spike inference error.")
                 val newType = mint(
+                    context = context.clone(store = context.store.overriddenBy(definition.asGraphStore())),
                     type = definition.type.overrideType(valueType),
-                    context = clone(store = store.overriddenBy(definition.asGraphStore()))
                 )
                 put(k, newType)
             }

@@ -8,9 +8,9 @@ data class TypeFactoryCreatorChain(
     private val chain: List<Type> = listOf(type)
 ) : TypeFactoryCreator.Context {
 
-    fun pass() = with(creators[0]) { create() }
+    override suspend fun Minting.resolve() = with(creators[0]) { create(this@TypeFactoryCreatorChain) }
 
-    override fun pass(creator: TypeFactoryCreator): TypeFactory {
+    override suspend fun Minting.pass(creator: TypeFactoryCreator): TypeFactory {
         val index = creators.indexOf(creator) + 1
         if (index == creators.size) {
             val originatingElement = chain.asSequence()
@@ -23,19 +23,15 @@ data class TypeFactoryCreatorChain(
                 originatingElement = originatingElement
             )
         }
-        return with(creators[index]) { create() }
+        return with(creators[index]) { create(this@TypeFactoryCreatorChain) }
     }
 
-    override fun mint(
-        type: Type,
-        context: TypeFactoryCreator.Context,
-    ): TypeFactory {
-        context as TypeFactoryCreatorChain
-        if (type in context.chain) {
-            val cycle = context.chain.dropWhile { it != type } + type
+    override fun child(type: Type): TypeFactoryCreator.Context {
+        if (type in chain) {
+            val cycle = chain.dropWhile { it != type } + type
             error("Circular dependency detected: ${cycle.joinToString(" -> ") { it.displayName }}")
         }
-        return context.copy(type = type, isTopLevel = false, chain = context.chain + type).pass()
+        return copy(type = type, isTopLevel = false, chain = chain + type)
     }
 
     override fun clone(store: GraphStore) = copy(store = store)

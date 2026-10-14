@@ -1,12 +1,12 @@
 package spike.compiler.graph
 
 class TypeFactoryCreatorBinder : TypeFactoryCreator {
-    override fun TypeFactoryCreator.Context.create(): TypeFactory {
-        val type = type
-        val binder = store.binders.find { it.type == type } ?: return pass()
+    override suspend fun Minting.create(context: TypeFactoryCreator.Context): TypeFactory {
+        val type = context.type
+        val binder = context.store.binders.find { it.type == type } ?: return pass(context)
         return TypeFactory.Binds(
             type = type,
-            source = mint(binder.source),
+            source = mint(context, binder.source),
         )
     }
 }

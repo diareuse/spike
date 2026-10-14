@@ -12,10 +12,11 @@ class TypeFactoryCreatorMultiBindCollection(
         else -> error("Unsupported collection type: $collectionType")
     }
 
-    override fun TypeFactoryCreator.Context.create(): TypeFactory {
-        val type = type
+    override suspend fun Minting.create(context: TypeFactoryCreator.Context): TypeFactory {
+        val type = context.type
+        val store = context.store
         if (!(type is Type.Parametrized && type.envelope == collectionType)) {
-            return pass()
+            return pass(context)
         }
         var valueType = type.typeArguments.single()
         if (valueType is Type.Parametrized && valueType.envelope == BuiltInTypes.Provider)
@@ -25,14 +26,14 @@ class TypeFactoryCreatorMultiBindCollection(
             type = type,
             entries = buildList {
                 for (c in instances.constructors) {
-                    add(mint(c.type, clone(store = store.overriddenBy(c.asGraphStore()))))
+                    add(mint(context.clone(store = store.overriddenBy(c.asGraphStore())), c.type))
                 }
                 for (f in instances.factories) {
-                    add(mint(f.type, clone(store = store.overriddenBy(f.asGraphStore()))))
+                    add(mint(context.clone(store = store.overriddenBy(f.asGraphStore())), f.type))
                 }
                 for (b in instances.binders) {
                     if (b.source in this) continue
-                    add(mint(b.type, clone(store = store.overriddenBy(b.asGraphStore()))))
+                    add(mint(context.clone(store = store.overriddenBy(b.asGraphStore())), b.type))
                 }
             },
             collectionType = collectionType,
