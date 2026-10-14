@@ -2,7 +2,7 @@ package spike.compiler.graph
 
 class TypeFactoryCreatorConstructor : TypeFactoryCreator {
     override suspend fun Minting.create(context: TypeFactoryCreator.Context): TypeFactory {
-        val constructor = context.store.constructors.find { it.type == context.type } ?: return pass(context)
+        val constructor = context.store.constructorOf(context.type) ?: return pass(context)
         return TypeFactory.Class(
             type = context.type,
             invocation = constructor.invocation,

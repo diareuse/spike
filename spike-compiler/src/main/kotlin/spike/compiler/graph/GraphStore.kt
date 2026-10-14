@@ -12,8 +12,21 @@ data class GraphStore(
         binders = binders + other.binders,
     )
 
-    fun bindingsOf(type: Type): List<Binding> =
-        (constructors + factories + binders).filter { it.type == type }.distinct()
+    private val constructorsByType by lazy(LazyThreadSafetyMode.NONE) { constructors.groupBy { it.type } }
+    private val factoriesByType by lazy(LazyThreadSafetyMode.NONE) { factories.groupBy { it.type } }
+    private val bindersByType by lazy(LazyThreadSafetyMode.NONE) { binders.groupBy { it.type } }
+
+    fun constructorOf(type: Type): Constructor? = constructorsByType[type]?.first()
+
+    fun factoryOf(type: Type): Factory? = factoriesByType[type]?.first()
+
+    fun binderOf(type: Type): Binder? = bindersByType[type]?.first()
+
+    fun bindingsOf(type: Type): List<Binding> = buildList {
+        constructorsByType[type]?.let(::addAll)
+        factoriesByType[type]?.let(::addAll)
+        bindersByType[type]?.let(::addAll)
+    }.distinct()
 
     fun overriddenBy(definition: GraphStore): GraphStore {
         val types = (definition.constructors + definition.factories + definition.binders).map { it.type }.toSet()
