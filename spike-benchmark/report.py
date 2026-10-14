@@ -47,7 +47,7 @@ lines = [
     "|---|---:|---:|---:|---:|---:|---:|---:|",
 ]
 series = []
-for framework in FRAMEWORKS:
+for framework in [f for f in FRAMEWORKS if f"{f} clean build" in build]:
     builds = [build[f"{framework} {title}"] for _, title in BUILD]
     method = framework.replace("-", "_")
     runtimes = [runtime[(benchmark, method)] for benchmark, _ in RUNTIME]

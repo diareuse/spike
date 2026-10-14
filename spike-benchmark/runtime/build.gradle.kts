@@ -18,12 +18,15 @@ dependencies {
     implementation(project(":graphs:koin"))
 }
 
+val only = providers.gradleProperty("benchmarkOnly").orNull?.replace("-", "_")
+fun selected(benchmark: String) = if (only == null) benchmark else "$benchmark\\.$only$"
+
 benchmark {
     targets { register("main") }
     configurations {
         named("main") {
-            include("GraphBenchmarkCreate")
-            include("GraphBenchmarkResolve")
+            include(selected("GraphBenchmarkCreate"))
+            include(selected("GraphBenchmarkResolve"))
             mode = "avgt"
             outputTimeUnit = "us"
             warmups = 5
@@ -33,7 +36,7 @@ benchmark {
             advanced("jvmForks", 3)
         }
         register("cold") {
-            include("GraphBenchmarkColdStart")
+            include(selected("GraphBenchmarkColdStart"))
             outputTimeUnit = "us"
             warmups = 0
             iterations = 1

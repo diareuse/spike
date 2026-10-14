@@ -1,6 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
+only=${1:-}
 
 ./gradlew \
   :spike-core:publishJvmPublicationToMavenLocal \
@@ -21,9 +22,10 @@ gradle-profiler --benchmark \
   --scenario-file spike-benchmark/scenarios.conf \
   --gradle-version "$gradle_version" \
   --warmups 10 \
-  --iterations 10
+  --iterations 10 \
+  ${only:+"clean_${only//-/}" "abi_${only//-/}" "nonabi_${only//-/}"}
 
-./gradlew -p spike-benchmark :runtime:mainBenchmark :runtime:coldBenchmark
+./gradlew -p spike-benchmark :runtime:mainBenchmark :runtime:coldBenchmark ${only:+"-PbenchmarkOnly=$only"}
 mkdir -p spike-benchmark/output/runtime
 for configuration in main cold; do
   cp "$(ls -td spike-benchmark/runtime/build/reports/benchmarks/$configuration/*/ | head -1)main.json" \
