@@ -9,6 +9,7 @@ repositories {
 }
 
 dependencies {
+    implementation(libs.plugin.atomicfu)
     implementation(libs.plugin.jvm)
     implementation(libs.plugin.kotlin.compose)
     implementation(libs.plugin.compose)

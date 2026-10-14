@@ -23,6 +23,7 @@ google-ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", ver
 google-ksp-standalone = { module = "com.google.devtools.ksp:symbol-processing-aa-embeddable", version.ref = "google-ksp" }
 google-ksp-common-deps = { module = "com.google.devtools.ksp:symbol-processing-common-deps", version.ref = "google-ksp" }
 kotlin-compiler-embeddable = { module = "org.jetbrains.kotlin:kotlin-compiler-embeddable", version.ref = "kotlin" }
+plugin-atomicfu = { module = "org.jetbrains.kotlinx:atomicfu-gradle-plugin", version.ref = "atomicfu" }
 plugin-compose = { module = "org.jetbrains.compose:org.jetbrains.compose.gradle.plugin", version.ref = "compose" }
 plugin-jvm = { module = "org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin", version.ref = "kotlin" }
 plugin-multiplatform = { module = "org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin", version.ref = "kotlin" }

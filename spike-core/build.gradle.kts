@@ -1,4 +1,7 @@
-plugins { id("spike.multiplatform") }
+plugins {
+    id("spike.multiplatform")
+    id("org.jetbrains.kotlinx.atomicfu")
+}
 
 group = "spike"
 

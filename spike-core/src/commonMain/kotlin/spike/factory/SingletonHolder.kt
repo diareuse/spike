@@ -22,7 +22,7 @@ public class SingletonHolder {
         return value as T
     }
 
-    private fun <K, V> AtomicRef<Map<K, V>>.getOrInsert(key: K, create: () -> V): V {
+    private inline fun <K, V> AtomicRef<Map<K, V>>.getOrInsert(key: K, create: () -> V): V {
         while (true) {
             val current = value
             current[key]?.let { return it }
