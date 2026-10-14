@@ -50,6 +50,7 @@ class DependencyGraph private constructor(
         fun create(): DependencyGraph {
             val importCollector = TypeFactoryCreatorImportCollector()
             val creators = listOf(
+                TypeFactoryCreatorMemo(),
                 importCollector,
                 cache,
                 TypeFactoryCreatorUniqueBinding(),

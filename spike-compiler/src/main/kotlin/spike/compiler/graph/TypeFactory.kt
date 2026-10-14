@@ -1,5 +1,9 @@
 package spike.compiler.graph
 
+import java.util.Collections
+import java.util.IdentityHashMap
+import java.util.Objects
+
 sealed interface TypeFactory {
     val type: Type
     val dependencies: List<TypeFactory>
@@ -11,6 +15,10 @@ sealed interface TypeFactory {
         override val dependencies: List<TypeFactory>,
     ) : TypeFactory,
         Callable {
+        private val hash = Objects.hash(type, invocation, singleton, dependencies)
+
+        override fun hashCode() = hash
+
         override fun toString(): String {
             var out = ""
             out += "$type("
@@ -44,12 +52,20 @@ sealed interface TypeFactory {
         override val singleton: Boolean,
         override val dependencies: List<TypeFactory>,
     ) : TypeFactory,
-        Callable
+        Callable {
+        private val hash = Objects.hash(type, member, invocation, singleton, dependencies)
+
+        override fun hashCode() = hash
+    }
 
     data class Binds(
         override val type: Type,
         val source: TypeFactory,
     ) : TypeFactory {
+        private val hash = Objects.hash(type, source)
+
+        override fun hashCode() = hash
+
         override val dependencies: List<TypeFactory>
             get() = listOf(source)
 
@@ -64,6 +80,10 @@ sealed interface TypeFactory {
         override val type: Type.Parametrized,
         override val factory: TypeFactory,
     ) : Deferred {
+        private val hash = Objects.hash(type, factory)
+
+        override fun hashCode() = hash
+
         override val dependencies: List<TypeFactory>
             get() = factory.dependencies
         init {
@@ -84,6 +104,10 @@ sealed interface TypeFactory {
         override val type: Type.Parametrized,
         override val factory: TypeFactory,
     ) : Deferred {
+        private val hash = Objects.hash(type, factory)
+
+        override fun hashCode() = hash
+
         override val dependencies: List<TypeFactory>
             get() = factory.dependencies
         init {
@@ -136,6 +160,10 @@ sealed interface TypeFactory {
         val entries: List<TypeFactory>,
         val collectionType: Type,
     ) : TypeFactory {
+        private val hash = Objects.hash(type, entries, collectionType)
+
+        override fun hashCode() = hash
+
         override val dependencies: List<TypeFactory> get() = entries
 
         val collectionMemberFactory
@@ -160,6 +188,10 @@ sealed interface TypeFactory {
         override val type: Type.Parametrized,
         val keyValues: Map<Any?, TypeFactory>,
     ) : TypeFactory {
+        private val hash = Objects.hash(type, keyValues)
+
+        override fun hashCode() = hash
+
         override val dependencies get() = keyValues.values.toList()
         override fun toString(): String {
             var out = "Map {"
@@ -182,25 +214,23 @@ sealed interface TypeFactory {
     companion object {
         operator fun List<TypeFactory>.contains(type: Type) = any { it.type == type }
 
-        fun TypeFactory.dependencyTree() = sequence {
-            yield(this@dependencyTree)
-            val queue = dependencies.toMutableList()
-            while (queue.isNotEmpty()) {
-                val dependency = queue.removeFirst().also { yield(it) }
-                queue.addAll(dependency.dependencies)
-            }
-        }
-
-        fun TypeFactory.invertDependencyTree(): List<TypeFactory> = buildList {
-            val queue = mutableListOf(this@invertDependencyTree)
-            while (queue.isNotEmpty()) {
-                val dependency = queue.removeFirst()
-                if (dependency !is Deferred) {
-                    queue.addAll(0, dependency.dependencies)
+        fun TypeFactory.invertDependencyTree(): List<TypeFactory> {
+            val order = ArrayList<TypeFactory>()
+            val visited = Collections.newSetFromMap(IdentityHashMap<TypeFactory, Boolean>())
+            val pending = ArrayDeque<Pair<TypeFactory, Boolean>>()
+            pending.addLast(this to false)
+            while (pending.isNotEmpty()) {
+                val (factory, expanded) = pending.removeLast()
+                if (expanded) {
+                    order += factory
+                    continue
                 }
-                add(0, dependency)
+                if (!visited.add(factory)) continue
+                pending.addLast(factory to true)
+                if (factory is Deferred) continue
+                for (dependency in factory.dependencies) pending.addLast(dependency to false)
             }
+            return order
         }
-
     }
 }

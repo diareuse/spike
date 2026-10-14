@@ -15,8 +15,6 @@ import spike.compiler.graph.GraphEntryPoint
 import spike.compiler.graph.Parameter
 import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
-import spike.compiler.graph.TypeFactory.Companion.dependencyTree
-import spike.compiler.graph.TypeFactory.Companion.invertDependencyTree
 import spike.factory.DependencyId
 import spike.factory.SingletonHolder
 

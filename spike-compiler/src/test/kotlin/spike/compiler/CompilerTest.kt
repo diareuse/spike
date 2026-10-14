@@ -2,6 +2,7 @@ package spike.compiler
 
 import spike.compiler.harness.HarnessCompiler
 import spike.compiler.harness.Libraries.Androidx
+import org.junit.jupiter.api.Timeout
 import kotlin.test.Test
 
 class CompilerTest : HarnessCompiler() {
@@ -156,6 +157,10 @@ class CompilerTest : HarnessCompiler() {
 
     @Test
     fun `entry point members may share names with inputs and generated internals`() = assertRuns("member_names")
+
+    @Test
+    @Timeout(60)
+    fun `a graph whose dependencies are shared along many paths compiles without expanding every path`() = assertRuns("shared_lattice")
 
     @Test
     fun `SharesSingletons on a user factory requires opting in to internal API`() =
