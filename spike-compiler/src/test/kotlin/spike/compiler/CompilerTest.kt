@@ -149,6 +149,12 @@ class CompilerTest : HarnessCompiler() {
     fun `a dependency chain thousands deep resolves on a small thread stack`() = assertRuns("deep_chain")
 
     @Test
+    fun `an entry point exposing a Provider builds nothing until it is called`() = assertRuns("provider_root")
+
+    @Test
+    fun `values shared across a large program reach every consumer`() = assertRuns("split_program")
+
+    @Test
     fun `SharesSingletons on a user factory requires opting in to internal API`() =
         assertCompilationFails("shares_singletons_internal", "may change without notice. Do not use it directly.")
 

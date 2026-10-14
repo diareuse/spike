@@ -192,8 +192,7 @@ sealed interface TypeFactory {
         }
 
         fun TypeFactory.invertDependencyTree(): List<TypeFactory> = buildList {
-            add(this@invertDependencyTree)
-            val queue = dependencies.toMutableList()
+            val queue = mutableListOf(this@invertDependencyTree)
             while (queue.isNotEmpty()) {
                 val dependency = queue.removeFirst()
                 if (dependency !is Deferred) {

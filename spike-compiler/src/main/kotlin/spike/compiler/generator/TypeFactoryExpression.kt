@@ -28,7 +28,7 @@ import spike.compiler.graph.TypeFactory.Provides
 @Include
 class TypeFactoryExpression {
 
-    context(context: FileGeneratorContext, step: LinearStep)
+    context(context: FileGeneratorContext, step: LinearStep, references: LinearReferences)
     fun write(body: CodeBlock.Builder) = context.apply {
         when (val factory = step.factory) {
             is Binds -> generateBindsCase(body, factory)
@@ -44,12 +44,12 @@ class TypeFactoryExpression {
         }
     }
 
-    context(step: LinearStep)
+    context(step: LinearStep, references: LinearReferences)
     private fun FileGeneratorContext.generateBindsCase(body: CodeBlock.Builder, factory: Binds) {
         body.addArgument(0, factory.type).addStatement("")
     }
 
-    context(step: LinearStep)
+    context(step: LinearStep, references: LinearReferences)
     private fun FileGeneratorContext.generateClassCase(
         body: CodeBlock.Builder,
         factory: Class,
@@ -61,7 +61,7 @@ class TypeFactoryExpression {
         }
     }
 
-    context(step: LinearStep)
+    context(step: LinearStep, references: LinearReferences)
     private fun FileGeneratorContext.generateMethodCase(
         body: CodeBlock.Builder,
         factory: Method,
@@ -73,21 +73,21 @@ class TypeFactoryExpression {
         }
     }
 
-    context(step: LinearStep)
+    context(step: LinearStep, references: LinearReferences)
     private fun FileGeneratorContext.generateMemorizesCase(body: CodeBlock.Builder, factory: Memorizes) {
         body.addLazy {
             addDependencyFactoryCall(factory.factory)
         }.addStatement("")
     }
 
-    context(step: LinearStep)
+    context(step: LinearStep, references: LinearReferences)
     private fun FileGeneratorContext.generateProvidesCase(body: CodeBlock.Builder, factory: Provides) {
         body.addProvider {
             addDependencyFactoryCall(factory.factory)
         }.addStatement("")
     }
 
-    context(step: LinearStep)
+    context(step: LinearStep, references: LinearReferences)
     private fun FileGeneratorContext.generateMultibindsCollectionCase(
         body: CodeBlock.Builder,
         factory: MultibindsCollection
@@ -101,7 +101,7 @@ class TypeFactoryExpression {
         body.add(")").addStatement("")
     }
 
-    context(step: LinearStep)
+    context(step: LinearStep, references: LinearReferences)
     private fun FileGeneratorContext.generateMultibindsMapCase(
         body: CodeBlock.Builder,
         factory: MultibindsMap
@@ -112,17 +112,17 @@ class TypeFactoryExpression {
         }.addStatement("")
     }
 
-    context(step: LinearStep)
+    context(step: LinearStep, references: LinearReferences)
     private fun FileGeneratorContext.generatePropertyCase(body: CodeBlock.Builder, factory: Property) {
         body.addStatement("factory.${factory.name}")
     }
 
-    context(step: LinearStep)
+    context(step: LinearStep, references: LinearReferences)
     private fun FileGeneratorContext.generateExternalCase(body: CodeBlock.Builder, factory: External) {
         body.addStatement("factory.%L.%L", resolver.getVariableName(factory.origin), factory.name)
     }
 
-    context(step: LinearStep)
+    context(step: LinearStep, references: LinearReferences)
     private fun FileGeneratorContext.generateImportedCase(body: CodeBlock.Builder, factory: Imported) {
         body.addStatement("factory.%L", factory.name)
     }

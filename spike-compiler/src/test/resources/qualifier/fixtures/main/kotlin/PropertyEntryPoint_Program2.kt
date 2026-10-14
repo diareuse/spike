@@ -1,22 +1,16 @@
-@file:Suppress("UNCHECKED_CAST", "unused", "RedundantVisibilityModifier", "ClassName")
+@file:Suppress("UNCHECKED_CAST", "unused", "RedundantVisibilityModifier", "ClassName", "USELESS_CAST")
 
 import kotlin.Any
-import kotlin.Array
 import kotlin.Suppress
-import kotlin.arrayOfNulls
 import kotlin.collections.mapOf
 
 internal object PropertyEntryPoint_Program2 {
-  public fun resolve(factory: PropertyEntryPoint_Factory): Any {
-    val instances = arrayOfNulls<Any>(2)
-    part0(factory, instances)
-    return instances[1]!!
-  }
+  public fun resolve(factory: PropertyEntryPoint_Factory): Any? = part0(factory)
 
-  private fun part0(factory: PropertyEntryPoint_Factory, instances: Array<Any?>) {
-    instances[0] = redCat()
-    instances[1] = mapOf<CatType, Cat>(
-      CatType.Red to instances[0] as Cat
+  private fun part0(factory: PropertyEntryPoint_Factory): Any? {
+    val v0: SomeCat = redCat()
+    return mapOf<CatType, Cat>(
+      CatType.Red to v0 as Cat
     )
   }
 }

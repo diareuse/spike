@@ -1,23 +1,17 @@
-@file:Suppress("UNCHECKED_CAST", "unused", "RedundantVisibilityModifier", "ClassName")
+@file:Suppress("UNCHECKED_CAST", "unused", "RedundantVisibilityModifier", "ClassName", "USELESS_CAST")
 
 package spike.lifecycle.viewmodel
 
 import MyViewModel
 import androidx.lifecycle.SavedStateHandle
 import kotlin.Any
-import kotlin.Array
 import kotlin.Suppress
-import kotlin.arrayOfNulls
 
 internal object ViewModelEntryPointImpl_Program2 {
-  public fun resolve(factory: ViewModelEntryPointImpl_Factory): Any {
-    val instances = arrayOfNulls<Any>(2)
-    part0(factory, instances)
-    return instances[1]!!
-  }
+  public fun resolve(factory: ViewModelEntryPointImpl_Factory): Any? = part0(factory)
 
-  private fun part0(factory: ViewModelEntryPointImpl_Factory, instances: Array<Any?>) {
-    instances[0] = factory.handle
-    instances[1] = MyViewModel(instances[0] as SavedStateHandle)
+  private fun part0(factory: ViewModelEntryPointImpl_Factory): Any? {
+    val v0: SavedStateHandle = factory.handle
+    return MyViewModel(v0)
   }
 }

@@ -3,6 +3,7 @@ package spike.compiler.generator.code
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.withIndent
 import spike.compiler.generator.FileGeneratorContext
+import spike.compiler.generator.LinearReferences
 import spike.compiler.generator.LinearStep
 import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
@@ -30,12 +31,12 @@ private fun mapEntryKey(key: Any?) = when (key) {
     else -> key
 }
 
-context(context: FileGeneratorContext, step: LinearStep)
+context(context: FileGeneratorContext, step: LinearStep, references: LinearReferences)
 fun CodeBlock.Builder.mapEntries(entries: Iterable<Map.Entry<Any?, TypeFactory>>, value: Type) = apply {
     for ((index, entry) in entries.withIndex()) {
         if (index > 0) addStatement(",")
         add("%L to ", mapEntryKey(entry.key))
-        addArgument(index, value)
+        addCastArgument(index, value)
     }
     addStatement("")
 }
