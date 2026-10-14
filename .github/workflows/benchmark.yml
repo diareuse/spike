@@ -33,7 +33,10 @@ jobs:
           echo "SDKMAN_DIR=$HOME/.sdkman" >> $GITHUB_ENV
           echo "$HOME/.sdkman/candidates/gradleprofiler/current/bin" >> $GITHUB_PATH
 
-      - run: bash spike-benchmark/benchmark.sh
+      - run: python3 -m unittest discover -s spike-benchmark -p 'test_*.py'
+
+      - id: benchmark
+        run: bash spike-benchmark/benchmark.sh
 
       - if: success() || failure()
         run: cat spike-benchmark/output/results.md >> $GITHUB_STEP_SUMMARY
@@ -59,3 +62,10 @@ jobs:
           auto-push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
           comment-on-commit: false
           fail-on-alert: false
+
+      - name: Spike is at least as fast as Dagger at runtime
+        if: (success() || failure()) && steps.benchmark.outcome == 'success'
+        run: |
+          python3 spike-benchmark/parity.py spike-benchmark || status=$?
+          cat spike-benchmark/output/parity.md >> $GITHUB_STEP_SUMMARY
+          exit ${status:-0}
