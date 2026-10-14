@@ -4,7 +4,7 @@ import spike.compiler.graph.TypeFactory
 import spike.factory.DependencyId
 
 class TypeFactoryIdHolder(
-    private val limit: Int = 1000
+    private val limit: Int = 100
 ) {
     private val holders = mutableListOf<MutableList<TypeFactory>>(mutableListOf())
     val indices get() = holders.indices

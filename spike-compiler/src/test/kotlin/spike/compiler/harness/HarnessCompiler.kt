@@ -32,6 +32,23 @@ abstract class HarnessCompiler {
         runMain(modules)
     }
 
+    protected fun assertMethodsFitJit(name: String, libraries: Libraries = Libraries.Kotlin) {
+        val modules = modules(name, libraries)
+        for (module in modules) {
+            assertProcesses(module)
+            assertCompiles(module.source)
+        }
+        runMain(modules)
+        val oversized = modules.flatMap { module ->
+            module.source.classes.walk().filter { it.extension == "class" }.flatMap { file ->
+                BytecodeMethodSizes(file).read()
+                    .filterValues { it > HotSpotHugeMethodLimit }
+                    .map { (method, size) -> "${file.nameWithoutExtension}.$method: $size bytes" }
+            }
+        }
+        assertEquals(emptyList(), oversized, "Methods the JIT refuses to compile")
+    }
+
     protected fun assertProcessingFails(
         name: String,
         vararg messages: String,
@@ -114,5 +131,9 @@ abstract class HarnessCompiler {
     }
 
     private class FixtureModule(val source: SourceModule, val golden: String)
+
+    private companion object {
+        const val HotSpotHugeMethodLimit = 8000
+    }
 
 }

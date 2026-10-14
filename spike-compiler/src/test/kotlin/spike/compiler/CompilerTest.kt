@@ -142,6 +142,10 @@ class CompilerTest : HarnessCompiler() {
     fun `exported module classes sharing one imported dependency compile`() = assertRuns("import_shared")
 
     @Test
+    fun `large graphs generate only methods small enough for the JIT to compile`() =
+        assertMethodsFitJit("large_graph")
+
+    @Test
     fun `SharesSingletons on a user factory requires opting in to internal API`() =
         assertCompilationFails("shares_singletons_internal", "may change without notice. Do not use it directly.")
 

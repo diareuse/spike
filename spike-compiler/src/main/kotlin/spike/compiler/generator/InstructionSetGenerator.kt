@@ -62,6 +62,6 @@ class InstructionSetGenerator : Generator {
     }
 
     companion object {
-        private const val SizeLimit: Int = 1000
+        private const val SizeLimit: Int = 500
     }
 }
