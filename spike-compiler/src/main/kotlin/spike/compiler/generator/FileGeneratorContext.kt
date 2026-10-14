@@ -8,7 +8,6 @@ data class FileGeneratorContext(
     val resolver: TypeResolver,
     val graph: DependencyGraph,
     val originatingFiles: List<KSFile>,
-    val instructions: DependencyFactoryInstructionsSet = DependencyFactoryInstructionsSet(),
     val ids: TypeFactoryIdHolder = TypeFactoryIdHolder()
 ) {
     val imports = mutableSetOf<TypeFactory.Imported>()

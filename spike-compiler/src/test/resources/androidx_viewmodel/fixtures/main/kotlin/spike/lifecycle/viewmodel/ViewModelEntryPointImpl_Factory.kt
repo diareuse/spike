@@ -3,37 +3,19 @@
 package spike.lifecycle.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
-import kotlin.Any
-import kotlin.Array
-import kotlin.Int
-import kotlin.IntArray
 import kotlin.Suppress
-import spike.factory.DependencyFactory
 import spike.factory.DependencyId
-import spike.factory.InstructionSetPointer
 import spike.factory.SingletonHolder
 
 public class ViewModelEntryPointImpl_Factory(
   public val handle: SavedStateHandle,
-  singletons: SingletonHolder = SingletonHolder(),
-) : DependencyFactory(singletons) {
-  override val maxConstructorArgs: Int = 1
-
-  private val holder0: ViewModelEntryPointImpl_DependencyHolder0 =
-      ViewModelEntryPointImpl_DependencyHolder0(this)
-
-  override val instructionSet: IntArray
-    get() = ViewModelEntryPointImpl_InstructionSet.memory
-
-  override fun getInstructionsPointer(id: DependencyId): InstructionSetPointer? = when (id.id) {
-    0 -> InstructionSetPointer(0, 6)
-    1 -> InstructionSetPointer(6, 5)
-    3 -> InstructionSetPointer(11, 6)
+  public val singletons: SingletonHolder = SingletonHolder(),
+) {
+  @Suppress("UNCHECKED_CAST")
+  public fun <T> `get`(id: DependencyId): T = when (id.id) {
+    0 -> ViewModelEntryPointImpl_Program0.resolve(this)
+    2 -> ViewModelEntryPointImpl_Program1.resolve(this)
+    1 -> ViewModelEntryPointImpl_Program2.resolve(this)
     else -> error("Invalid identifier $id")
-  }
-
-  override fun instantiate(buffer: Array<Any?>, id: DependencyId): Any = when (id.segment) {
-      0 -> holder0.create(buffer, id.position)
-      else -> error("Invalid segment")
-  }
+  } as T
 }

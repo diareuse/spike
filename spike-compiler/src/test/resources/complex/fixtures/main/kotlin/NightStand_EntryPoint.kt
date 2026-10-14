@@ -9,7 +9,7 @@ private class NightStand_EntryPoint(
     get() = factory.get(spike.factory.DependencyId(0))
 
   override val remote: Remote
-    get() = factory.get(spike.factory.DependencyId(5))
+    get() = factory.get(spike.factory.DependencyId(4))
 
   public object Factory {
     public fun create(): NightStand_EntryPoint = NightStand_EntryPoint(NightStand_Factory())

@@ -10,38 +10,26 @@ import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.asClassName
-import com.squareup.kotlinpoet.asTypeName
-import com.squareup.kotlinpoet.withIndent
+import com.squareup.kotlinpoet.TypeVariableName
 import spike.Include
 import spike.compiler.graph.TypeFactory
-import spike.compiler.graph.TypeFactory.Companion.dependencyTree
 import spike.compiler.graph.TypeFactory.Companion.invertDependencyTree
-import spike.factory.DependencyFactory
 import spike.factory.DependencyId
-import spike.factory.InstructionSet
-import spike.factory.InstructionSetPointer
 import spike.factory.SingletonHolder
 
-@Suppress("TooManyFunctions")
 @Include
 class DependencyFactoryGenerator(
-    private val instructionSet: InstructionSetGenerator,
-    private val holderFactory: DependencyHolderGenerator.Factory
+    private val programs: LinearProgramGenerator,
 ) : Generator {
     override fun generate(context: FileGeneratorContext, collector: FileSpecCollector) {
         val spec = TypeSpec.classBuilder(context.dependencyFactoryClassName)
             .addOriginatingFiles(context.originatingFiles)
-            .superclass(DependencyFactory::class)
 
         context.imports.clear()
         val primaryConstructor = FunSpec.constructorBuilder()
 
         addEntryFactoryProperties(spec, primaryConstructor, context)
-        addOverrideProperties(spec, context)
-        createInstructionPointer(context, spec)
-        createInstantiate(context, spec, collector)
-        addInstructionSetProperty(spec, context, collector)
+        createGet(context, spec, collector)
         addImportProperties(spec, context)
         addProviderProperties(spec, primaryConstructor, context)
         primaryConstructor.addParameter(
@@ -49,7 +37,11 @@ class DependencyFactoryGenerator(
                 .defaultValue("%T()", SingletonHolder::class)
                 .build()
         )
-        spec.addSuperclassConstructorParameter("singletons")
+        spec.addProperty(
+            PropertySpec.builder("singletons", SingletonHolder::class)
+                .initializer("singletons")
+                .build()
+        )
 
         spec.primaryConstructor(primaryConstructor.build())
 
@@ -81,35 +73,6 @@ class DependencyFactoryGenerator(
                     .addModifiers(KModifier.PUBLIC)
                     .build()
             }
-        )
-    }
-
-    private fun addOverrideProperties(spec: TypeSpec.Builder, context: FileGeneratorContext) {
-        val maxConstructorArgs = context.graph.toSequence()
-            .flatMap { it.dependencyTree() }
-            .maxOf { it.dependencies.size }
-
-        spec.addProperty(
-            PropertySpec.builder("maxConstructorArgs", Int::class)
-                .initializer("$maxConstructorArgs")
-                .addModifiers(KModifier.OVERRIDE)
-                .build()
-        )
-    }
-
-    private fun addInstructionSetProperty(
-        spec: TypeSpec.Builder,
-        context: FileGeneratorContext,
-        collector: FileSpecCollector
-    ) {
-        val instructionSetClassName = createInstructionSet(context, collector)
-        spec.addProperty(
-            PropertySpec.builder("instructionSet", IntArray::class)
-                .addModifiers(KModifier.OVERRIDE)
-                .getter(FunSpec.getterBuilder()
-                    .addStatement("return %T.%L", instructionSetClassName, InstructionSet::memory.name)
-                    .build())
-                .build()
         )
     }
 
@@ -165,70 +128,29 @@ class DependencyFactoryGenerator(
         }
     }
 
-    private fun createInstructionPointer(
-        context: FileGeneratorContext,
-        spec: TypeSpec.Builder
-    ) {
-        spec.addFunction(
-            FunSpec.builder("getInstructionsPointer")
-                .addModifiers(KModifier.OVERRIDE)
-                .returns(InstructionSetPointerNull)
-                .addParameter("id", DependencyId::class)
-                .addCode(createGetInstructionsBody(context))
-                .build()
-        )
-    }
-
-    private fun createInstantiate(
+    private fun createGet(
         context: FileGeneratorContext,
         spec: TypeSpec.Builder,
         collector: FileSpecCollector
     ) {
+        val typeVariable = TypeVariableName("T")
         spec.addFunction(
-            FunSpec.builder("instantiate")
-                .addModifiers(KModifier.OVERRIDE)
-                .returns(Any::class)
-                .addParameter("buffer", ArrayOfAny)
-                .addParameter("id", DependencyId::class)
-                .addCode(createInstantiateBody(context, spec, collector))
-                .build()
-        )
-    }
-
-    private fun createInstantiateBody(
-        context: FileGeneratorContext,
-        spec: TypeSpec.Builder,
-        collector: FileSpecCollector
-    ): CodeBlock {
-        val block = CodeBlock.builder()
-        block.beginControlFlow("return when (id.%L) {", DependencyId::segment.name)
-        block.withIndent {
-            for (index in context.ids.indices) {
-                val holder = buildList {
-                    holderFactory.create(index).generate(context) {
-                        collector.emit(it)
-                        add(it)
-                    }
-                }.single().toClassName()
-                spec.addProperty(
-                    PropertySpec.builder("holder$index", holder)
-                        .initializer("%T(this)", holder)
-                        .addModifiers(KModifier.PRIVATE)
-                        .build()
+            FunSpec.builder("get")
+                .addAnnotation(
+                    AnnotationSpec.builder(Suppress::class).addMember("%S", "UNCHECKED_CAST").build()
                 )
-                addStatement("$index -> holder$index.create(buffer, id.position)")
-            }
-            addStatement("else -> error(\"Invalid segment\")")
-        }
-        block.endControlFlow()
-        return block.build()
+                .addTypeVariable(typeVariable)
+                .returns(typeVariable)
+                .addParameter("id", DependencyId::class)
+                .addCode(createGetBody(context, collector))
+                .build()
+        )
     }
 
-    private fun createGetInstructionsBody(context: FileGeneratorContext): CodeBlock {
-        val graph = context.graph
+    private fun createGetBody(context: FileGeneratorContext, collector: FileSpecCollector): CodeBlock {
         val block = CodeBlock.builder()
             .beginControlFlow("return when (id.%L) {", DependencyId::id.name)
-        val queue = ArrayDeque(graph.toSequence().toList())
+        val queue = ArrayDeque(context.graph.toSequence().toList())
         val uniqueTypes = HashSet<TypeFactory>()
 
         while (queue.isNotEmpty()) {
@@ -236,30 +158,24 @@ class DependencyFactoryGenerator(
             if (!uniqueTypes.add(type)) {
                 continue
             }
-
-            block.add("%L -> ", context.getDependencyId(type))
-            val offset = context.instructions.start()
-            val contextSize = writeDependencies(
-                type = type,
-                queue = queue,
-                context = context
-            )
-            val size = context.instructions.end(contextSize)
-            block.addStatement("%T(%L, %L)", InstructionSetPointer::class.asClassName(), offset, size)
+            val id = context.getDependencyId(type)
+            val program = createProgram(type, queue, context)
+            val className = programs.generate(context, program, uniqueTypes.size - 1, collector)
+            block.addStatement("%L -> %T.resolve(this)", id, className)
         }
 
         block.addStatement($$"else -> error(\"Invalid identifier $id\")")
-        block.endControlFlow()
+        block.unindent().add("} as T\n")
         return block.build()
     }
 
-    private fun writeDependencies(
+    private fun createProgram(
         type: TypeFactory,
         queue: ArrayDeque<TypeFactory>,
         context: FileGeneratorContext,
-    ): Int {
+    ): LinearProgram {
         val contextIndexByFactory = HashMap<TypeFactory, Int>()
-        var contextSize = 0
+        val steps = mutableListOf<LinearStep>()
 
         for (dependency in type.invertDependencyTree()) {
             if (dependency is TypeFactory.Imported) {
@@ -271,11 +187,18 @@ class DependencyFactoryGenerator(
                 continue
             }
 
-            contextIndexByFactory[dependency] = contextSize++
-            appendDependencyInstructions(dependency, contextIndexByFactory, context)
+            steps += LinearStep(dependency, argumentsOf(dependency, contextIndexByFactory))
+            contextIndexByFactory[dependency] = steps.lastIndex
         }
 
-        return contextSize
+        return LinearProgram(steps)
+    }
+
+    private fun argumentsOf(dependency: TypeFactory, contextIndexByFactory: Map<TypeFactory, Int>): List<Int> {
+        if (dependency is TypeFactory.Deferred) return emptyList()
+        return dependency.dependencies.map { argument ->
+            contextIndexByFactory[argument] ?: error("Dependency '$argument' was not found in dependencyTree")
+        }
     }
 
     private fun enqueueNestedTypes(dependency: TypeFactory, queue: ArrayDeque<TypeFactory>) {
@@ -285,41 +208,5 @@ class DependencyFactoryGenerator(
             is TypeFactory.MultibindsMap -> queue.addAll(0, dependency.keyValues.values)
             else -> {}
         }
-    }
-
-    private fun appendDependencyInstructions(
-        dependency: TypeFactory,
-        contextIndexByFactory: Map<TypeFactory, Int>,
-        context: FileGeneratorContext,
-    ) {
-        val id = context.getDependencyId(dependency)
-        context.instructions.add(id)
-
-        val dependencyCount = if (dependency is TypeFactory.Deferred) 0 else dependency.dependencies.size
-        context.instructions.add(dependencyCount)
-
-        if (dependency !is TypeFactory.Deferred) {
-            for (argument in dependency.dependencies) {
-                val i = contextIndexByFactory[argument]
-                    ?: error("Dependency '$argument' was not found in dependencyTree")
-                context.instructions.add(i)
-            }
-        }
-    }
-
-
-    private fun createInstructionSet(context: FileGeneratorContext, collector: FileSpecCollector): ClassName {
-        return buildList {
-            instructionSet.generate(context) {
-                collector.emit(it)
-                add(it)
-            }
-        }.single().toClassName()
-    }
-
-    private companion object {
-        val InstructionSetPointerNull = InstructionSetPointer::class.asClassName().copy(nullable = true)
-        val ArrayOfAny = Array::class.asClassName()
-            .parameterizedBy(Any::class.asTypeName().copy(nullable = true))
     }
 }

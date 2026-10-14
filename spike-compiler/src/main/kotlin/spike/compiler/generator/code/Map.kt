@@ -3,6 +3,7 @@ package spike.compiler.generator.code
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.withIndent
 import spike.compiler.generator.FileGeneratorContext
+import spike.compiler.generator.LinearStep
 import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
 import kotlin.reflect.KClass
@@ -29,21 +30,12 @@ private fun mapEntryKey(key: Any?) = when (key) {
     else -> key
 }
 
-context(context: FileGeneratorContext)
-fun CodeBlock.Builder.mapEntries(entries: Iterable<Map.Entry<Any?, TypeFactory>>) = apply {
-    for ((index, entry) in entries.withIndex()) context.apply {
+context(context: FileGeneratorContext, step: LinearStep)
+fun CodeBlock.Builder.mapEntries(entries: Iterable<Map.Entry<Any?, TypeFactory>>, value: Type) = apply {
+    for ((index, entry) in entries.withIndex()) {
         if (index > 0) addStatement(",")
-        val (k, v) = entry
-        add("%L to ", mapEntryKey(k))
-        when (v) {
-            is TypeFactory.Memorizes -> addLazy {
-                addDependencyFactoryCall(v.factory, v.type.typeArguments.single())
-            }
-            is TypeFactory.Provides -> addProvider {
-                addDependencyFactoryCall(v.factory, v.type.typeArguments.single())
-            }
-            else -> addBufferCast(index, v.type)
-        }
+        add("%L to ", mapEntryKey(entry.key))
+        addArgument(index, value)
     }
     addStatement("")
 }

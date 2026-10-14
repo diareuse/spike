@@ -10,10 +10,10 @@ private class PropertyEntryPoint_EntryPoint(
     get() = factory.get(spike.factory.DependencyId(0))
 
   override val normalCat: Cat
-    get() = factory.get(spike.factory.DependencyId(3))
+    get() = factory.get(spike.factory.DependencyId(2))
 
   override val catt: Map<CatType, Cat>
-    get() = factory.get(spike.factory.DependencyId(5))
+    get() = factory.get(spike.factory.DependencyId(4))
 
   public object Factory : PropertyEntryPoint.Factory {
     override fun create(food: Food): PropertyEntryPoint = PropertyEntryPoint_EntryPoint(PropertyEntryPoint_Factory(food))

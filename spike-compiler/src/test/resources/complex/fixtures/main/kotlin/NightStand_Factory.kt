@@ -1,34 +1,17 @@
 @file:Suppress("ClassName", "RedundantVisibilityModifier")
 
-import kotlin.Any
-import kotlin.Array
-import kotlin.Int
-import kotlin.IntArray
 import kotlin.Suppress
-import spike.factory.DependencyFactory
 import spike.factory.DependencyId
-import spike.factory.InstructionSetPointer
 import spike.factory.SingletonHolder
 
 public class NightStand_Factory(
-  singletons: SingletonHolder = SingletonHolder(),
-) : DependencyFactory(singletons) {
-  override val maxConstructorArgs: Int = 2
-
-  private val holder0: NightStand_DependencyHolder0 = NightStand_DependencyHolder0(this)
-
-  override val instructionSet: IntArray
-    get() = NightStand_InstructionSet.memory
-
-  override fun getInstructionsPointer(id: DependencyId): InstructionSetPointer? = when (id.id) {
-    0 -> InstructionSetPointer(0, 9)
-    3 -> InstructionSetPointer(9, 6)
-    5 -> InstructionSetPointer(15, 12)
+  public val singletons: SingletonHolder = SingletonHolder(),
+) {
+  @Suppress("UNCHECKED_CAST")
+  public fun <T> `get`(id: DependencyId): T = when (id.id) {
+    0 -> NightStand_Program0.resolve(this)
+    1 -> NightStand_Program1.resolve(this)
+    4 -> NightStand_Program2.resolve(this)
     else -> error("Invalid identifier $id")
-  }
-
-  override fun instantiate(buffer: Array<Any?>, id: DependencyId): Any = when (id.segment) {
-      0 -> holder0.create(buffer, id.position)
-      else -> error("Invalid segment")
-  }
+  } as T
 }

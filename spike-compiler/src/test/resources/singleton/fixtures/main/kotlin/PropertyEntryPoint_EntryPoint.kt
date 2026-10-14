@@ -11,10 +11,10 @@ private class PropertyEntryPoint_EntryPoint(
     get() = factory.get(spike.factory.DependencyId(0))
 
   override val cat2: Provider<Cat>
-    get() = factory.get(spike.factory.DependencyId(3))
+    get() = factory.get(spike.factory.DependencyId(2))
 
   override val cat3: Lazy<Cat>
-    get() = factory.get(spike.factory.DependencyId(4))
+    get() = factory.get(spike.factory.DependencyId(3))
 
   public object Factory {
     public fun create(): PropertyEntryPoint_EntryPoint = PropertyEntryPoint_EntryPoint(PropertyEntryPoint_Factory())
