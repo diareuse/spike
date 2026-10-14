@@ -114,7 +114,7 @@ class TypeFactoryExpression {
 
     context(step: LinearStep, references: LinearReferences)
     private fun FileGeneratorContext.generatePropertyCase(body: CodeBlock.Builder, factory: Property) {
-        body.addStatement("factory.${factory.name}")
+        body.addStatement("factory._%L", factory.name)
     }
 
     context(step: LinearStep, references: LinearReferences)

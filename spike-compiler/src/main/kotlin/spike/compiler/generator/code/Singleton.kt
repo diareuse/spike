@@ -4,7 +4,7 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.withIndent
 
 inline fun CodeBlock.Builder.addSingleton(index: Int, body: CodeBlock.Builder.() -> Unit) = apply {
-    beginControlFlow("factory.singletons.getOrPut(%L) {", index)
+    beginControlFlow("factory._singletons.getOrPut(%L) {", index)
     withIndent {
         body()
     }

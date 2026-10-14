@@ -9,6 +9,7 @@ import spike.compiler.graph.DependencyGraph
 class DependencyGraphGenerator private constructor(
     private val resolver: TypeResolver,
     private val entryPoint: Generator,
+    private val members: EntryPointMembers,
     private val dependencyFactory: DependencyFactoryGenerator
 ) {
 
@@ -18,7 +19,7 @@ class DependencyGraphGenerator private constructor(
         collector: FileSpecCollector
     ) {
         val context = FileGeneratorContext(resolver, graph, originatingFiles)
-        dependencyFactory.generate(context, collector)
+        dependencyFactory.generate(context, collector, members)
         entryPoint.generate(context, collector)
     }
 
@@ -32,6 +33,10 @@ class DependencyGraphGenerator private constructor(
             entryPoint = when (export) {
                 true -> ExportGenerator()
                 else -> EntryPointGenerator()
+            },
+            members = when (export) {
+                true -> EntryPointMembersNone()
+                else -> EntryPointMembersOverriding()
             },
             dependencyFactory = dependencyFactory
         )

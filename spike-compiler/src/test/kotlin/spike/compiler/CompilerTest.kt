@@ -155,6 +155,9 @@ class CompilerTest : HarnessCompiler() {
     fun `values shared across a large program reach every consumer`() = assertRuns("split_program")
 
     @Test
+    fun `entry point members may share names with inputs and generated internals`() = assertRuns("member_names")
+
+    @Test
     fun `SharesSingletons on a user factory requires opting in to internal API`() =
         assertCompilationFails("shares_singletons_internal", "may change without notice. Do not use it directly.")
 

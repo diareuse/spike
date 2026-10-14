@@ -11,7 +11,7 @@ internal object ViewModelEntryPointImpl_Program2 {
   public fun resolve(factory: ViewModelEntryPointImpl_Factory): Any? = part0(factory)
 
   private fun part0(factory: ViewModelEntryPointImpl_Factory): Any? {
-    val v0: SavedStateHandle = factory.handle
+    val v0: SavedStateHandle = factory._handle
     return MyViewModel(v0)
   }
 }

@@ -2,14 +2,9 @@
 
 import kotlin.Suppress
 
-private class PropertyEntryPoint_EntryPoint(
-  private val factory: PropertyEntryPoint_Factory,
-) : PropertyEntryPoint {
-  override val cat: Cat
-    get() = factory.get(spike.factory.DependencyId(0))
-
+private object PropertyEntryPoint_EntryPoint {
   public object Factory {
-    public fun create(): PropertyEntryPoint_EntryPoint = PropertyEntryPoint_EntryPoint(PropertyEntryPoint_Factory())
+    public fun create(): PropertyEntryPoint = PropertyEntryPoint_Factory()
   }
 }
 

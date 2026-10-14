@@ -11,17 +11,19 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.TypeVariableName
+import com.squareup.kotlinpoet.asTypeName
 import spike.Include
 import spike.compiler.graph.TypeFactory
 import spike.compiler.graph.TypeFactory.Companion.invertDependencyTree
 import spike.factory.DependencyId
 import spike.factory.SingletonHolder
+import spike.factory.SingletonOwner
 
 @Include
 class DependencyFactoryGenerator(
     private val programs: LinearProgramGenerator,
-) : Generator {
-    override fun generate(context: FileGeneratorContext, collector: FileSpecCollector) {
+) {
+    fun generate(context: FileGeneratorContext, collector: FileSpecCollector, members: EntryPointMembers) {
         val spec = TypeSpec.classBuilder(context.dependencyFactoryClassName)
             .addOriginatingFiles(context.originatingFiles)
 
@@ -33,15 +35,13 @@ class DependencyFactoryGenerator(
         addImportProperties(spec, context)
         addProviderProperties(spec, primaryConstructor, context)
         primaryConstructor.addParameter(
-            ParameterSpec.builder("singletons", SingletonHolder::class)
-                .defaultValue("%T()", SingletonHolder::class)
+            ParameterSpec.builder("singletons", SingletonHolder::class.asTypeName().copy(nullable = true))
+                .defaultValue("null")
                 .build()
         )
-        spec.addProperty(
-            PropertySpec.builder("singletons", SingletonHolder::class)
-                .initializer("singletons")
-                .build()
-        )
+        spec.superclass(SingletonOwner::class)
+        spec.addSuperclassConstructorParameter("singletons")
+        members.addTo(spec, context)
 
         spec.primaryConstructor(primaryConstructor.build())
 
@@ -64,13 +64,13 @@ class DependencyFactoryGenerator(
     ) {
         val parameters = context.graph.entry.factory.method.parameters
         primaryConstructor.addParameters(
-            parameters.map { ParameterSpec.builder(it.name, context.resolver.getTypeName(it.type)).build() }
+            parameters.map { ParameterSpec.builder("_${it.name}", context.resolver.getTypeName(it.type)).build() }
         )
         spec.addProperties(
             parameters.map {
-                PropertySpec.builder(it.name, context.resolver.getTypeName(it.type))
-                    .initializer(it.name)
-                    .addModifiers(KModifier.PUBLIC)
+                PropertySpec.builder("_${it.name}", context.resolver.getTypeName(it.type))
+                    .initializer("_${it.name}")
+                    .addModifiers(KModifier.INTERNAL)
                     .build()
             }
         )
@@ -94,7 +94,7 @@ class DependencyFactoryGenerator(
                                 context.getDependencyId(context.graph.importedFactoryOf(param.type))
                             )
                         }
-                        add("singletons = singletons.scope(%S)", cn.canonicalName)
+                        add("singletons = _singletons.scope(%S)", cn.canonicalName)
                     }
                     .add(")")
                     .build()
