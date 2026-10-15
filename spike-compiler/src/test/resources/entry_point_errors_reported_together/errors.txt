@@ -1,0 +1,16 @@
+Main.kt:2: [SPIKE-ENTRY-POINT-COMPANION] @EntryPoint First has no public or internal companion object
+  - interface First (Main.kt:2)
+Why: Spike adds the entry point's creation functions to its companion object, such as First().
+Fix: Add a companion object to First:
+    @spike.EntryPoint
+    interface First {
+        companion object
+    }
+Main.kt:7: [SPIKE-ENTRY-POINT-COMPANION] @EntryPoint Second has no public or internal companion object
+  - interface Second (Main.kt:7)
+Why: Spike adds the entry point's creation functions to its companion object, such as Second().
+Fix: Add a companion object to Second:
+    @spike.EntryPoint
+    interface Second {
+        companion object
+    }

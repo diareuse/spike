@@ -1,0 +1,6 @@
+EntryPointInput.kt:2: [SPIKE-ENTRY-POINT-INTERFACE] @EntryPoint PropertyEntryPoint is a class, Spike needs an interface
+  - class PropertyEntryPoint (EntryPointInput.kt:2)
+Why: Spike generates the entry point's implementation, so the entry point only declares what it exposes.
+Fix: Declare PropertyEntryPoint as an interface:
+    @spike.EntryPoint
+    interface PropertyEntryPoint

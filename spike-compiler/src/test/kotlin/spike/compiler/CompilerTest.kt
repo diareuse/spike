@@ -11,6 +11,19 @@ class CompilerTest : HarnessCompiler() {
     fun `EntryPoint without companion fails`() = assertProcessingFails("no_companion")
 
     @Test
+    fun `an EntryPoint Factory with two functions fails`() = assertProcessingFails("entry_factory_two_functions")
+
+    @Test
+    fun `an EntryPoint Factory without a function fails`() = assertProcessingFails("entry_factory_no_function")
+
+    @Test
+    fun `an EntryPoint member with parameters fails`() = assertProcessingFails("entry_member_with_parameters")
+
+    @Test
+    fun `every failing EntryPoint is reported, not only the first`() =
+        assertProcessingFails("entry_point_errors_reported_together")
+
+    @Test
     fun `missing dependency fails`() = assertProcessingFails("missing_dependency")
 
     @Test

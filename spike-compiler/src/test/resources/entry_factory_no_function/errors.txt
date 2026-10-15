@@ -1,0 +1,5 @@
+Main.kt:6: [SPIKE-ENTRY-POINT-FACTORY] @EntryPoint.Factory Configured.Factory declares 0 functions, Spike needs exactly one
+  - interface Configured.Factory (Main.kt:6)
+Why: The factory's single function lists the entry point's inputs.
+Fix: Keep one function that takes every input and returns Configured; pass null for an optional input declared nullable:
+    fun create(): Configured

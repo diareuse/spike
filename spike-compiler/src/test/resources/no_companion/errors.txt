@@ -1,0 +1,8 @@
+Main.kt:2: [SPIKE-ENTRY-POINT-COMPANION] @EntryPoint PropertyEntryPoint has no public or internal companion object
+  - interface PropertyEntryPoint (Main.kt:2)
+Why: Spike adds the entry point's creation functions to its companion object, such as PropertyEntryPoint().
+Fix: Add a companion object to PropertyEntryPoint:
+    @spike.EntryPoint
+    interface PropertyEntryPoint {
+        companion object
+    }

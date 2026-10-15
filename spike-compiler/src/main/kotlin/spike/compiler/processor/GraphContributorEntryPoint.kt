@@ -14,6 +14,11 @@ import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import spike.EntryPoint
+import spike.compiler.diagnostic.DiagnosticEntryPointCompanion
+import spike.compiler.diagnostic.DiagnosticEntryPointFactory
+import spike.compiler.diagnostic.DiagnosticEntryPointInterface
+import spike.compiler.diagnostic.DiagnosticException
+import spike.compiler.diagnostic.Involved
 import spike.compiler.generator.DependencyGraphGenerator
 import spike.compiler.graph.GraphEntryPoint
 import spike.compiler.graph.Member
@@ -36,23 +41,10 @@ class GraphContributorEntryPoint(
     }
 
     private fun verifyInterface(entryPoint: KSClassDeclaration) {
-        check(entryPoint.classKind == ClassKind.INTERFACE) {
-            """Client error, fix by substituting <actual /> for <expected />; "this" points to the mandatory change:
-                |<expected>
-                |  @spike.EntryPoint
-                |  interface /* <- this */ $entryPoint { /**/ }
-                |</expected>
-                |
-                |<actual>
-                |  @spike.EntryPoint
-                |  ${entryPoint.classKind.type} $entryPoint { /**/ }
-                |</actual>
-                |
-                |<description>
-                |  Interfaces are enforced to allow future features, expandability and inheritance.
-                |</description>
-            """.trimMargin()
-        }
+        if (entryPoint.classKind == ClassKind.INTERFACE) return
+        throw DiagnosticException(
+            DiagnosticEntryPointInterface(entryPoint.name(), entryPoint.classKind.type, entryPoint.asOrigin())
+        )
     }
 
     private fun verifyHasCompanion(entryPoint: KSClassDeclaration) {
@@ -61,28 +53,8 @@ class GraphContributorEntryPoint(
             .filter { it.isCompanionObject }
             .filter { it.isPublic() || it.isInternal() }
 
-        check(companionObjects.any()) {
-            """Client error, fix by substituting <actual /> for <expected />; "this" points to the mandatory change:
-                |<expected>
-                |  @spike.EntryPoint
-                |  interface $entryPoint {
-                |    // ...
-                |    companion object // <- this
-                |  }
-                |</expected>
-                |
-                |<actual>
-                |  @spike.EntryPoint
-                |  interface $entryPoint {
-                |    // ...
-                |  }
-                |</actual>
-                |
-                |<description>
-                |  Companion objects are used as a receiver for factories and implicit builders. Spike doesn't believe in generating uncoupled classes to your original code.
-                |</description>
-            """.trimMargin()
-        }
+        if (companionObjects.any()) return
+        throw DiagnosticException(DiagnosticEntryPointCompanion(entryPoint.name(), entryPoint.asOrigin()))
     }
 
     override fun findFactory(entryPoint: KSClassDeclaration): GraphEntryPoint.Factory? {
@@ -90,34 +62,18 @@ class GraphContributorEntryPoint(
             .filterIsInstance<KSClassDeclaration>()
             .singleOrNull { it.isAnnotationPresent(EntryPoint.Factory::class) }
             ?: return null
-        val func = checkNotNull(factory.getDeclaredFunctions().singleOrNull()) {
-            """Client error, fix by substituting <actual /> for <expected />; "this" points to the mandatory change:
-                |<expected>
-                |  @spike.EntryPoint
-                |  interface $entryPoint {
-                |    @spike.EntryPoint.Factory
-                |    interface $factory {
-                |      fun create(/*params*/): $entryPoint // <- this
-                |    }
-                |  }
-                |</expected>
-                |
-                |<actual>
-                |  @spike.EntryPoint
-                |  interface $entryPoint {
-                |    @spike.EntryPoint.Factory
-                |    interface $factory {
-                |      // zero methods or many methods
-                |    }
-                |  }
-                |</actual>
-                |
-                |<description>
-                |  Spike uses factory parameters as static inputs to your dependency graph. You must declare them statically.
-                |  If some of your parameters are optional, declare them as nullable and pass null.
-                |</description>
-            """.trimMargin()
-        }
+        val functions = factory.getDeclaredFunctions().toList()
+        val func = functions.singleOrNull() ?: throw DiagnosticException(
+            DiagnosticEntryPointFactory(
+                factory = "${entryPoint.name()}.${factory.name()}",
+                factoryKind = factory.classKind.type,
+                factoryOrigin = factory.asOrigin(),
+                functions = functions.map { Involved(it.described, it.asOrigin()) },
+                entryPoint = entryPoint.name(),
+                suggested = "fun create(${functions.firstOrNull()?.parameters?.rendered().orEmpty()}): " +
+                    entryPoint.name(),
+            )
+        )
         val factoryType = factory.toType(false)
         return GraphEntryPoint.Factory(
             sharesSingletons = factory.isAnnotationPresent(EntryPoint.Factory.SharesSingletons::class),
@@ -138,4 +94,6 @@ class GraphContributorEntryPoint(
         )
     }
 
+
+    private fun KSClassDeclaration.name() = simpleName.asString()
 }

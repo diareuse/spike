@@ -14,6 +14,9 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.squareup.kotlinpoet.ksp.writeTo
 import spike.Export
+import spike.compiler.diagnostic.DiagnosticCollector
+import spike.compiler.diagnostic.DiagnosticEntryPointMember
+import spike.compiler.diagnostic.DiagnosticException
 import spike.compiler.generator.DependencyGraphGenerator
 import spike.compiler.graph.DependencyGraph
 import spike.compiler.graph.GraphEntryPoint
@@ -34,42 +37,45 @@ abstract class GraphContributorOriginator : GraphContributor {
     protected abstract fun getOrigins(resolver: Resolver): Sequence<KSClassDeclaration>
 
     final override fun contribute(context: GraphContext) {
-        val entryPoints = getOrigins(context.resolver)
-        for (entryPoint in entryPoints) {
-            verifyOrigin(entryPoint)
-            val factory = findFactory(entryPoint)
-            val properties = findProperties(entryPoint).toMutableList()
-            val virtualFactoryParameters = mutableListOf<Parameter>()
-            val methods = findMethods(entryPoint).toMutableList()
-            val external = findExternal(context.resolver, properties)
-            val type = entryPoint.toType(false)
-            val entry = GraphEntryPoint(
-                type = type,
-                factory = factory ?: type.virtualFactory(virtualFactoryParameters),
-                properties = properties,
-                methods = methods,
-                isModule = entryPoint.isAnnotationPresent(Export::class)
-            )
-            val graphFactory = DependencyGraph.Factory(
-                entry = entry,
-                root = context.builder.build(),
-                multibinding = context.multibind.build(),
-                imports = context.resolver.getDeclarationsFromPackage("spike.generated")
-                    .filterIsInstance<KSClassDeclaration>()
-                    .map {
-                        val invocation = it.primaryConstructor!!.toInvocation()
-                        val inputs = invocation.copy(
-                            parameters = invocation.parameters.filterNot { p -> p.type == SingletonHolderType }
-                        )
-                        TypeFactory.Class(it.toType(false), inputs, false, emptyList())
-                    }
-            )
-            for ((e, exportedBy) in external) {
-                graphFactory.putExternal(e, exportedBy)
-            }
-            generator.generate(graphFactory.create(), context.originatingFiles) { spec ->
-                spec.writeTo(environment.codeGenerator, true)
-            }
+        val diagnostics = DiagnosticCollector()
+        for (entryPoint in getOrigins(context.resolver)) diagnostics.attempt { contribute(context, entryPoint) }
+        diagnostics.throwCollected()
+    }
+
+    private fun contribute(context: GraphContext, entryPoint: KSClassDeclaration) {
+        verifyOrigin(entryPoint)
+        val factory = findFactory(entryPoint)
+        val properties = findProperties(entryPoint).toMutableList()
+        val virtualFactoryParameters = mutableListOf<Parameter>()
+        val methods = findMethods(entryPoint).toMutableList()
+        val external = findExternal(context.resolver, properties)
+        val type = entryPoint.toType(false)
+        val entry = GraphEntryPoint(
+            type = type,
+            factory = factory ?: type.virtualFactory(virtualFactoryParameters),
+            properties = properties,
+            methods = methods,
+            isModule = entryPoint.isAnnotationPresent(Export::class)
+        )
+        val graphFactory = DependencyGraph.Factory(
+            entry = entry,
+            root = context.builder.build(),
+            multibinding = context.multibind.build(),
+            imports = context.resolver.getDeclarationsFromPackage("spike.generated")
+                .filterIsInstance<KSClassDeclaration>()
+                .map {
+                    val invocation = it.primaryConstructor!!.toInvocation()
+                    val inputs = invocation.copy(
+                        parameters = invocation.parameters.filterNot { p -> p.type == SingletonHolderType }
+                    )
+                    TypeFactory.Class(it.toType(false), inputs, false, emptyList())
+                }
+        )
+        for ((e, exportedBy) in external) {
+            graphFactory.putExternal(e, exportedBy)
+        }
+        generator.generate(graphFactory.create(), context.originatingFiles) { spec ->
+            spec.writeTo(environment.codeGenerator, true)
         }
     }
 
@@ -134,31 +140,16 @@ abstract class GraphContributorOriginator : GraphContributor {
     private fun findMethods(
         entryPoint: KSClassDeclaration
     ): List<Member.Method> = entryPoint.getAllFunctions().filter { it.isAbstract }.map {
-        check(it.parameters.isEmpty()) {
-            """Client error, fix by substituting <actual /> for <expected />; "this" points to the mandatory change:
-                |<expected>
-                |  @spike.EntryPoint
-                |  interface $entryPoint {
-                |    val ${it.simpleName.asString()}: ${it.returnType}
-                |    @spike.EntryPoint.Factory
-                |    interface Factory {
-                |       fun create(<parameters... />): $entryPoint
-                |    }
-                |  }
-                |</expected>
-                |
-                |<actual>
-                |  @spike.EntryPoint
-                |  interface $entryPoint {
-                |    fun ${it.simpleName.asString()}(<parameters... />): ${it.returnType}
-                |  }
-                |</actual>
-                |
-                |<description>
-                |  Spike accepts input parameters only through EntryPoint.Factory member. Move input parameters of these methods
-                |  to the factory member of Factory annotated class
-                |</description>
-            """.trimMargin()
+        if (it.parameters.isNotEmpty()) {
+            throw DiagnosticException(
+                DiagnosticEntryPointMember(
+                    entryPoint = entryPoint.simpleName.asString(),
+                    name = it.simpleName.asString(),
+                    returns = it.returnType!!.resolve().rendered(),
+                    parameters = it.parameters.rendered(),
+                    origin = it.asOrigin(),
+                )
+            )
         }
         Member.Method(
             it.packageName.asString(),

@@ -1,0 +1,13 @@
+Main.kt:3: [SPIKE-ENTRY-POINT-MEMBER] Entry point function Shelter.cat takes parameters, Spike passes inputs only through @EntryPoint.Factory
+  - function cat (Main.kt:3)
+Why: An entry point resolves its members from the graph, and the graph's inputs come from the factory.
+Fix: Move the parameters to the factory function:
+    @spike.EntryPoint
+    interface Shelter {
+        val cat: Cat
+        @spike.EntryPoint.Factory
+        interface Factory {
+            fun create(name: String): Shelter
+        }
+        companion object
+    }
