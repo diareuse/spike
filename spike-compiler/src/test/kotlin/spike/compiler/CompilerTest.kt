@@ -112,6 +112,10 @@ class CompilerTest : HarnessCompiler() {
     fun `entry points created by one factory each get their own singletons`() = assertRuns("factory_singleton")
 
     @Test
+    fun `null passed for a nullable factory parameter reaches every consumer`() =
+        assertRuns("nullable_factory_parameter")
+
+    @Test
     fun `circular dependency error shows exactly the cycle`() =
         assertProcessingFails("circular_nested", "Circular dependency detected: Cat -> Dog -> Cat")
 
