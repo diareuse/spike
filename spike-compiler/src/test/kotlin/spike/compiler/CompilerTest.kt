@@ -112,6 +112,32 @@ class CompilerTest : HarnessCompiler() {
     fun `entry points created by one factory each get their own singletons`() = assertRuns("factory_singleton")
 
     @Test
+    fun `a factory parameter that is also an Include binding fails naming both`() =
+        assertProcessingFails(
+            "factory_parameter_shadows_include",
+            "kotlin.String is both an input of the entry point and an @Include binding",
+            "parameter config of Configured.Factory.create",
+            "function defaultConfig"
+        )
+
+    @Test
+    fun `an exported dependency that is also an Include binding fails naming both`() =
+        assertProcessingFails(
+            "external_shadows_include",
+            "Lib is both an input of the entry point and an @Include binding",
+            "property lib of @Export Exported",
+            "function otherLib"
+        )
+
+    @Test
+    fun `a multibinding entry of an input's type contributes its own value`() =
+        assertRuns("multibinding_entry_of_input_type")
+
+    @Test
+    fun `a qualified input and an unqualified Include binding of one type both resolve`() =
+        assertRuns("qualified_input_beside_include")
+
+    @Test
     fun `null passed for a nullable factory parameter reaches every consumer`() =
         assertRuns("nullable_factory_parameter")
 

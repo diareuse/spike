@@ -9,6 +9,7 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.ksp.writeTo
 import spike.Export
 import spike.compiler.generator.DependencyGraphGenerator
@@ -61,8 +62,8 @@ abstract class GraphContributorOriginator : GraphContributor {
                         TypeFactory.Class(it.toType(false), inputs, false, emptyList())
                     }
             )
-            for (e in external) {
-                graphFactory.putExternal(e)
+            for ((e, exportedBy) in external) {
+                graphFactory.putExternal(e, exportedBy)
             }
             generator.generate(graphFactory.create(), context.originatingFiles) { spec ->
                 spec.writeTo(environment.codeGenerator, true)
@@ -73,26 +74,29 @@ abstract class GraphContributorOriginator : GraphContributor {
     private fun findExternal(
         resolver: Resolver,
         properties: MutableList<Member.Property>
-    ): Sequence<TypeFactory> {
+    ): Sequence<Pair<TypeFactory.External, Type>> {
         return resolver.getDeclarationsFromPackage("spike.generated")
             .filterIsInstance<KSClassDeclaration>()
             .flatMap { klass ->
+                val exportedBy = klass.superTypes.first().resolve().toType()
                 sequence {
                     for (f in klass.getDeclaredFunctions()) {
+                        if (Modifier.OVERRIDE !in f.modifiers) continue
                         val tf = TypeFactory.External(
                             type = f.returnType!!.resolve().toType(), origin = klass.toType(false),
                             name = f.simpleName.asString(),
                             isMethod = true
                         )
-                        yield(tf)
+                        yield(tf to exportedBy)
                     }
                     for (p in klass.getDeclaredProperties()) {
+                        if (Modifier.OVERRIDE !in p.modifiers) continue
                         val tf = TypeFactory.External(
                             type = p.type.resolve().toType(), origin = klass.toType(false),
                             name = p.simpleName.asString(),
                             isMethod = false
                         )
-                        yield(tf)
+                        yield(tf to exportedBy)
                     }
                     for (p in klass.primaryConstructor?.parameters.orEmpty()) {
                         val type = p.type.resolve().toType()

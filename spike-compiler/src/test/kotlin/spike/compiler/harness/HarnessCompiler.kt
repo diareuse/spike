@@ -54,7 +54,12 @@ abstract class HarnessCompiler {
         vararg messages: String,
         libraries: Libraries = Libraries.Kotlin
     ) {
-        val processing = modules(name, libraries).single().source.process()
+        val modules = modules(name, libraries)
+        for (module in modules.dropLast(1)) {
+            assertProcesses(module)
+            assertCompiles(module.source)
+        }
+        val processing = modules.last().source.process()
         assertEquals(emptyList(), processing.exceptions, "Processing $name crashed instead of reporting an error")
         assertFalse(processing.succeeded, "Processing $name was expected to fail")
         assertTrue(processing.errors.isNotEmpty(), "Processing $name failed without reporting an error")

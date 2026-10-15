@@ -34,17 +34,19 @@ class DependencyGraph private constructor(
         private val imports: Sequence<TypeFactory.Class>,
     ) {
 
-        private val cache = TypeFactoryCreatorCache()
+        private val inputs = TypeFactoryCreatorInput(root)
 
         init {
             val factory = entry.factory
             for (p in factory.method.parameters) {
-                cache.put(p.type, TypeFactory.Property(p.type, p.name))
+                val description = "parameter ${p.name} of ${factory.type.displayName}.${factory.method.name}"
+                inputs.put(TypeFactory.Property(p.type, p.name), description)
             }
         }
 
-        fun putExternal(external: TypeFactory) {
-            cache.put(external.type, external)
+        fun putExternal(external: TypeFactory.External, exportedBy: Type) {
+            val kind = if (external.isMethod) "function" else "property"
+            inputs.put(external, "$kind ${external.name} of @Export ${exportedBy.displayName}")
         }
 
         fun create(): DependencyGraph {
@@ -52,7 +54,7 @@ class DependencyGraph private constructor(
             val creators = listOf(
                 TypeFactoryCreatorMemo(),
                 importCollector,
-                cache,
+                inputs,
                 TypeFactoryCreatorUniqueBinding(),
                 TypeFactoryCreatorConstructor(),
                 TypeFactoryCreatorMethod(),
