@@ -127,6 +127,10 @@ class CompilerTest : HarnessCompiler() {
     fun `exported module imports two dependencies sharing a simple name`() = assertRuns("import_name_clash")
 
     @Test
+    fun `nullable and generic imports reach the library from their own bindings`() =
+        assertRuns("import_nullable_generic")
+
+    @Test
     fun `exported module imports types whose names differ only in punctuation`() =
         assertRuns("import_name_escaping")
 

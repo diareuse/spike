@@ -49,7 +49,8 @@ class ExportGenerator : Generator {
             )
         type.primaryConstructor(FunSpec.constructorBuilder()
             .addParameters(params.map {
-                val type = (resolver.builtInType { Provider } as ClassName).parameterizedBy(it.type.toClassName())
+                val type = (resolver.builtInType { Provider } as ClassName)
+                    .parameterizedBy(resolver.getTypeName(it.type))
                 ParameterSpec.builder(it.name, type).build()
             }.toList())
             .addParameter(

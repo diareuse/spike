@@ -109,7 +109,7 @@ class DependencyFactoryGenerator(
     ) {
         for (import in context.imports) {
             val name = import.name
-            val type = import.type.toClassName()
+            val type = context.resolver.getTypeName(import.type)
             val providerType = (context.resolver.builtInType { Provider } as ClassName).parameterizedBy(type)
 
             primaryConstructor.addParameter("_$name", providerType)
