@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1789137439259,
+  "lastUpdate": 1792051044066,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -3273,6 +3273,57 @@ window.BENCHMARK_DATA = {
             "name": "Run Time",
             "value": 565.454,
             "unit": "ms"
+          }
+        ]
+      }
+    ],
+    "Spike": [
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "06432f4eb23d19f4e76aa0d131d225c81f1bc618",
+          "message": "build(benchmark): run the cold-start benchmark only after the main one\n\nOn CI the main and cold-start JMH runs overlapped. The cold run took\n/tmp/jmh.lock first, so the main run stopped with \"Another JMH instance\nmight be running\". kotlinx-benchmark catches that error and still exits\nsuccessfully without writing main.json, so benchmark.sh failed later at\nthe copy step, and the workflow then found no results files.\n\nmainColdBenchmark must now run after mainBenchmark, so the two never\ncompete for the lock.",
+          "timestamp": "2026-10-15T08:47:47+02:00",
+          "tree_id": "7b1d8823746962f5a76eeb0d9aa27910fa59039d",
+          "url": "https://github.com/diareuse/spike/commit/06432f4eb23d19f4e76aa0d131d225c81f1bc618"
+        },
+        "date": 1792051043635,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "spike clean build",
+            "value": 2172.5,
+            "unit": "ms"
+          },
+          {
+            "name": "spike ABI change",
+            "value": 1318.08,
+            "unit": "ms"
+          },
+          {
+            "name": "spike non-ABI change",
+            "value": 1205.815,
+            "unit": "ms"
+          },
+          {
+            "name": "spike resolve from graph",
+            "value": 2.8715657405264885,
+            "unit": "us"
+          },
+          {
+            "name": "spike cold start",
+            "value": 169103.4105,
+            "unit": "us"
           }
         ]
       }
