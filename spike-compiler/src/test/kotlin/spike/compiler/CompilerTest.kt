@@ -171,6 +171,16 @@ class CompilerTest : HarnessCompiler() {
     fun `a qualifier declared in a library qualifies types in the consuming module`() =
         assertRuns("qualifier_from_library")
 
+    @Test
+    fun `qualified exports of one type each reach their own consumer`() = assertRuns("export_qualified_members")
+
+    @Test
+    fun `a member exported by an interface and its exported subinterface fails naming both`() = assertProcessingFails(
+        "export_inherited_members",
+        "Lib is an input of the entry point more than once",
+        "property lib of @Export Base",
+        "property lib of @Export Derived"
+    )
 
     @Test
     fun `a multibinding entry of an input's type contributes its own value`() =
