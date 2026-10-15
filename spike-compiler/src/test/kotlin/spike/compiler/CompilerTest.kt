@@ -41,6 +41,18 @@ class CompilerTest : HarnessCompiler() {
     fun `multiple constructors must be marked`() = assertProcessingFails("no_marked_constructors")
 
     @Test
+    fun `an Include interface fails because it has no constructor`() = assertProcessingFails("include_interface")
+
+    @Test
+    fun `a Map binding without a key fails`() = assertProcessingFails("map_binding_without_key")
+
+    @Test
+    fun `a Map binding with two keys fails`() = assertProcessingFails("map_binding_two_keys")
+
+    @Test
+    fun `a key annotation with two parameters fails`() = assertProcessingFails("map_key_two_arguments")
+
+    @Test
     fun `multiple constructors are marked`() = assertMatchesGolden("marked_constructors")
 
     @Test
@@ -267,7 +279,7 @@ class CompilerTest : HarnessCompiler() {
     fun `an Include property with a backing field fails`() = assertProcessingFails(
         "include_property_with_backing_field",
         "@Include property clock has a backing field",
-        "val clock get() = "
+        "val clock: Clock get() = "
     )
 
     @Test
@@ -292,7 +304,7 @@ class CompilerTest : HarnessCompiler() {
     @Test
     fun `Include with bindAs on a property suggests declaring the bound type`() = assertProcessingFails(
         "bind_as_removed_property",
-        "bindAs was removed from @Include, declare it as Cat",
+        "bindAs was removed from @Include",
         "val sphynx: Cat get() = ..."
     )
 

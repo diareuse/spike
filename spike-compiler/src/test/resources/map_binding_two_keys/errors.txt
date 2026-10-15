@@ -1,0 +1,6 @@
+Main.kt:19: [SPIKE-MAP-KEY] @Include function cat binds into a Map but has 2 keys, Spike cannot pick one
+  - function cat (Main.kt:19)
+  - key @Named("cat")
+  - key @Nickname("kitty")
+Why: Every Map entry needs a key, taken from one annotation marked with @spike.Key.
+Fix: Keep one key annotation on cat.

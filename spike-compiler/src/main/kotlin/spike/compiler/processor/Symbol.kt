@@ -12,9 +12,14 @@ import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeAlias
 import com.google.devtools.ksp.symbol.KSTypeReference
+import com.google.devtools.ksp.symbol.KSValueParameter
 import com.google.devtools.ksp.symbol.Nullability
 import com.google.devtools.ksp.symbol.Variance
 import com.squareup.kotlinpoet.MemberName
+import spike.compiler.diagnostic.DiagnosticException
+import spike.compiler.diagnostic.DiagnosticMapKeyAmbiguous
+import spike.compiler.diagnostic.DiagnosticMapKeyArity
+import spike.compiler.diagnostic.DiagnosticMapKeyMissing
 import com.squareup.kotlinpoet.ksp.toClassName
 import spike.compiler.graph.Invocation
 import spike.compiler.graph.Key
@@ -44,39 +49,52 @@ fun KSAnnotated.findQualifiers() = annotations
     .toList()
 
 @OptIn(KspExperimental::class)
-fun KSAnnotated.findKey() = annotations
-    .filter { it.annotationType.resolve().declaration.isAnnotationPresent(spike.Key::class) }
-    .map {
-        val argument = it.arguments.singleOrNull()
-        checkNotNull(argument) {
-            val klass = when (val k = this@findKey) {
-                is KSDeclaration -> k.toType(false).toString()
-                else -> k.toString()
-            }
-            "spike.Key annotation must have a single argument, but found none or too many $klass"
+fun KSDeclaration.findKey(): Key {
+    val key = keyAnnotation()
+    val param = keyParameter(key.annotationType.resolve().declaration as KSClassDeclaration)
+    val value = when (val v = key.arguments.single().value) {
+        null -> error("spike.Key annotation argument must not be null")
+        is KSType -> v.toType()
+        is KSClassDeclaration -> when(v.classKind) {
+            // rationalization:
+            // we're cheating a little here, because we're able to pass MemberName as "any"
+            // which is in turn then written using kotlinpoet, so it works out fine…
+            ClassKind.ENUM_ENTRY -> MemberName(
+                enclosingClassName = v.parentDeclaration?.closestClassDeclaration()!!.toClassName(),
+                simpleName = v.simpleName.asString()
+            )
+            else -> v.toType(false)
         }
-        val dcl = it.annotationType.resolve().declaration as KSClassDeclaration
-        val param = checkNotNull(dcl.primaryConstructor?.parameters?.singleOrNull()) {
-            "Annotation requires exactly one argument, but found ${dcl.primaryConstructor?.parameters?.size}"
-        }
-        val value = when (val v = argument.value) {
-            null -> error("spike.Key annotation argument must not be null")
-            is KSType -> v.toType()
-            is KSClassDeclaration -> when(v.classKind) {
-                // rationalization:
-                // we're cheating a little here, because we're able to pass MemberName as "any"
-                // which is in turn then written using kotlinpoet, so it works out fine…
-                ClassKind.ENUM_ENTRY -> MemberName(
-                    enclosingClassName = v.parentDeclaration?.closestClassDeclaration()!!.toClassName(),
-                    simpleName = v.simpleName.asString()
-                )
-                else -> v.toType(false)
-            }
-            else -> v
-        }
-        Key(param.type.resolve().toType(), value)
+        else -> v
     }
-    .singleOrNull() ?: error("spike.Key inheritor must be defined in $this")
+    return Key(param.type.resolve().toType(), value)
+}
+
+@OptIn(KspExperimental::class)
+private fun KSDeclaration.keyAnnotation(): KSAnnotation {
+    val keys = annotations
+        .filter { it.annotationType.resolve().declaration.isAnnotationPresent(spike.Key::class) }
+        .toList()
+    val diagnostic = when (keys.size) {
+        1 -> return keys.single()
+        0 -> DiagnosticMapKeyMissing(described, simpleName.asString(), signature(), asOrigin())
+        else -> DiagnosticMapKeyAmbiguous(described, simpleName.asString(), keys.map { it.rendered() }, asOrigin())
+    }
+    throw DiagnosticException(diagnostic)
+}
+
+private fun KSDeclaration.keyParameter(annotation: KSClassDeclaration): KSValueParameter {
+    val parameters = annotation.primaryConstructor?.parameters.orEmpty()
+    return parameters.singleOrNull() ?: throw DiagnosticException(
+        DiagnosticMapKeyArity(
+            annotation = annotation.simpleName.asString(),
+            declaration = described,
+            parameters = parameters.size,
+            origin = asOrigin(),
+            annotationOrigin = annotation.asOrigin(),
+        )
+    )
+}
 
 fun KSTypeReference.toQualifiedType(declaration: KSAnnotated): Type =
     resolve().toType().qualifiedBy(qualifiersWith(declaration))

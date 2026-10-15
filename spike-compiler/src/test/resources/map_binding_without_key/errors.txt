@@ -1,0 +1,9 @@
+Main.kt:11: [SPIKE-MAP-KEY] @Include function cat binds into a Map but has no key
+  - function cat (Main.kt:11)
+Why: Every Map entry needs a key, taken from one annotation marked with @spike.Key.
+Fix: Declare a key annotation and put it on cat:
+    @spike.Key
+    annotation class Named(val name: String)
+    @spike.Include(bindTo = spike.BindTarget.Map)
+    @Named("cat")
+    fun cat(): Cat = ...

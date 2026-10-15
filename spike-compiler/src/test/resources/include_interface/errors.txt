@@ -1,0 +1,8 @@
+Main.kt:9: [SPIKE-INCLUDE-CONSTRUCTOR] @Include interface Cat has no constructor, Spike cannot create it
+  - interface Cat (Main.kt:9)
+Why: Spike creates an @Include class by calling its constructor.
+Fix: Put @Include on a class that implements Cat, and bind it to Cat with an @Include property:
+    @spike.Include
+    class CatImpl : Cat
+    @spike.Include
+    val CatImpl.asCat: Cat get() = this

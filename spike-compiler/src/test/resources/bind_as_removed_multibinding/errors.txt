@@ -1,0 +1,8 @@
+Main.kt:20: [SPIKE-INCLUDE-BIND-AS] bindAs was removed from @Include, used on class LoggingPlugin
+  - class LoggingPlugin (Main.kt:20)
+Why: Every @Include property or function binds its declared type, so a binding is declared as one.
+Fix: Remove bindAs from LoggingPlugin and bind it with an @Include property, moving bindTo, @spike.Key and @spike.Qualifier annotations to it:
+    @spike.Include(bindTo = spike.BindTarget.Map)
+    @StringKey("logging")
+    @Kind("core")
+    val LoggingPlugin.asPlugin: Plugin get() = this

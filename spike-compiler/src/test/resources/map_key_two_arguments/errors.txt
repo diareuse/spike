@@ -1,0 +1,7 @@
+Main.kt:15: [SPIKE-MAP-KEY] Key annotation Named on function cat has 2 parameters, Spike needs exactly one
+  - function cat (Main.kt:15)
+  - annotation class Named (Main.kt:9)
+Why: The key annotation's single parameter is the Map key.
+Fix: Give Named exactly one parameter:
+    @spike.Key
+    annotation class Named(val name: String)

@@ -1,0 +1,6 @@
+Main.kt:11: [SPIKE-INCLUDE-BACKING-FIELD] @Include property clock has a backing field, so every entry point would share one value
+  - property clock (Main.kt:11)
+Why: An entry point owns its values, but a backing field is created once for the whole program.
+Fix: Compute the value in a getter, and add @spike.Singleton if one instance per entry point is wanted:
+    @spike.Include
+    val clock: Clock get() = ...

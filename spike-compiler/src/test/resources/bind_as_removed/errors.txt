@@ -1,0 +1,6 @@
+Main.kt:11: [SPIKE-INCLUDE-BIND-AS] bindAs was removed from @Include, used on class HouseCat
+  - class HouseCat (Main.kt:11)
+Why: Every @Include property or function binds its declared type, so a binding is declared as one.
+Fix: Remove bindAs from HouseCat and bind it with an @Include property:
+    @spike.Include
+    val HouseCat.asCat: Cat get() = this

@@ -1,8 +1,5 @@
 package spike.compiler.processor
 
-import com.google.devtools.ksp.KspExperimental
-import com.google.devtools.ksp.getConstructors
-import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
@@ -13,19 +10,11 @@ import kotlin.reflect.KClass
 
 @Include
 class IncludeContributorViewModel : IncludeContributor {
-    @OptIn(KspExperimental::class)
     override fun contribute(
         context: GraphContext,
         annotated: KSClassDeclaration,
     ) {
-        val constructors = annotated.getConstructors().toList()
-        val constructor = when {
-            constructors.size > 1 -> checkNotNull(constructors.firstOrNull { it.isAnnotationPresent(Include.Constructor::class) }) {
-                "Include class (${annotated.qualifiedName?.asString()}) must have a constructor " +
-                        "annotated with @spike.Include.Constructor if it has more than one constructor"
-            }
-            else -> constructors.single()
-        }
+        val constructor = annotated.includedConstructor()
         val type = annotated.toType(false).qualifiedBy(annotated.findQualifiers())
         val keyType = Type.Parametrized(
             envelope = KClass::class.toType(),

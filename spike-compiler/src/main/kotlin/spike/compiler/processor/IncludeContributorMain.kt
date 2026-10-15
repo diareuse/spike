@@ -1,7 +1,6 @@
 package spike.compiler.processor
 
 import com.google.devtools.ksp.KspExperimental
-import com.google.devtools.ksp.getConstructors
 import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
@@ -19,15 +18,7 @@ class IncludeContributorMain : IncludeContributor {
         context: GraphContext,
         annotated: KSClassDeclaration,
     ) {
-        val constructors = annotated.getConstructors().toList()
-        val constructor = when {
-            constructors.size > 1 -> checkNotNull(constructors.firstOrNull { it.isAnnotationPresent(Include.Constructor::class) }) {
-                "Include class (${annotated.qualifiedName?.asString()}) must have a constructor " +
-                        "annotated with @spike.Include.Constructor if it has more than one constructor"
-            }
-            else -> constructors.singleOrNull()
-                ?: error("Wanted exactly one constructor, but got ${constructors.size} in $annotated")
-        }
+        val constructor = annotated.includedConstructor()
         context.builder.addConstructor(
             type = annotated.toType(false).qualifiedBy(annotated.findQualifiers()),
             invocation = constructor.toInvocation(),

@@ -10,7 +10,10 @@ class DiagnosticFormatText : DiagnosticFormat {
         append("\nWhy: ").append(diagnostic.reason)
         for (fix in diagnostic.fixes) {
             append("\nFix: ").append(fix.description)
-            fix.code?.lines()?.forEach { append("\n    ").append(it) }
+            fix.code?.let { code ->
+                append(":")
+                code.lines().forEach { append("\n    ").append(it) }
+            }
         }
     }
 }

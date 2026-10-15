@@ -1,0 +1,6 @@
+Main.kt:13: [SPIKE-INCLUDE-BIND-AS] bindAs was removed from @Include, used on property sphynx
+  - property sphynx (Main.kt:13)
+Why: Every @Include property or function binds its declared type, so a binding is declared as one.
+Fix: Remove bindAs and declare sphynx as Cat:
+    @spike.Include
+    val sphynx: Cat get() = ...

@@ -1,0 +1,7 @@
+Main.kt:9: [SPIKE-INCLUDE-CONSTRUCTOR] @Include class Cat has 2 constructors, Spike cannot pick one
+  - constructor Cat(one: Life, two: Life) (Main.kt:9)
+  - constructor Cat(one: Life, two: Life, three: Life) (Main.kt:14)
+Why: Spike calls exactly one constructor and never guesses which.
+Fix: Mark the constructor Spike should call with @spike.Include.Constructor:
+    @spike.Include.Constructor
+    constructor(one: Life, two: Life)
