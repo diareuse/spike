@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792057622294,
+  "lastUpdate": 1792097620338,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -3372,6 +3372,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spike cold start",
             "value": 226130.1025,
+            "unit": "us"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "1f144597aad143dcae42ae80f639669b0f76cfcc",
+          "message": "feat(benchmark): dashboard with one chart per metric and a line per framework\n\nThe stock github-action-benchmark page draws one dataset per chart, so\nbenches sharing a name collapse into a single zig-zag line and the\nframework only shows in the tooltip. This static page reads the same\ndata.js and draws every framework as its own line, with a table of the\nlatest values relative to the fastest. The action keeps an existing\nindex.html, so the page is published once and never regenerated.",
+          "timestamp": "2026-10-15T21:46:35+02:00",
+          "tree_id": "5851eab431c50f41b10904af79c976712cee93e4",
+          "url": "https://github.com/diareuse/spike/commit/1f144597aad143dcae42ae80f639669b0f76cfcc"
+        },
+        "date": 1792097619319,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "spike clean build",
+            "value": 1916.395,
+            "unit": "ms"
+          },
+          {
+            "name": "spike ABI change",
+            "value": 1106.2,
+            "unit": "ms"
+          },
+          {
+            "name": "spike non-ABI change",
+            "value": 1093.9650000000001,
+            "unit": "ms"
+          },
+          {
+            "name": "spike resolve from graph",
+            "value": 4.9938299480954225,
+            "unit": "us"
+          },
+          {
+            "name": "spike cold start",
+            "value": 126950.12650000001,
             "unit": "us"
           }
         ]
