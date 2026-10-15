@@ -76,6 +76,7 @@ class GraphContributorEntryPoint(
         )
         val factoryType = factory.toType(false)
         return GraphEntryPoint.Factory(
+            origin = func.asOrigin(),
             sharesSingletons = factory.isAnnotationPresent(EntryPoint.Factory.SharesSingletons::class),
             type = factoryType,
             method = Member.Method(

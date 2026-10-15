@@ -1,5 +1,9 @@
 package spike.compiler.graph
 
+import spike.compiler.diagnostic.DiagnosticDependencyCycle
+import spike.compiler.diagnostic.DiagnosticException
+import spike.compiler.diagnostic.Involved
+
 data class TypeFactoryCreatorChain(
     override val type: Type,
     private val creators: List<TypeFactoryCreator>,
@@ -30,7 +34,10 @@ data class TypeFactoryCreatorChain(
     override fun child(type: Type): TypeFactoryCreator.Context {
         if (type in chain) {
             val cycle = chain.dropWhile { it != type } + type
-            error("Circular dependency detected: ${cycle.joinToString(" -> ") { it.displayName }}")
+            val bindings = cycle.distinct().map {
+                store.bindingsOf(it).firstOrNull()?.involved ?: Involved(it.displayName)
+            }
+            throw DiagnosticException(DiagnosticDependencyCycle(cycle.map { it.displayName }, bindings))
         }
         return copy(type = type, isTopLevel = false, chain = chain + type)
     }

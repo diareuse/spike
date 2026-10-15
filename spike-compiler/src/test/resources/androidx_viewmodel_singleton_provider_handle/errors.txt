@@ -1,0 +1,4 @@
+Main.kt:3: [SPIKE-SINGLETON-INPUT] @Singleton Session depends on androidx.lifecycle.SavedStateHandle, a per-instance input of spike.lifecycle.viewmodel.ViewModelEntryPointImpl.Factory
+  - constructor of Session (Main.kt:3)
+Why: Every entry point created by spike.lifecycle.viewmodel.ViewModelEntryPointImpl.Factory shares its singletons, so Session would keep the androidx.lifecycle.SavedStateHandle of whichever instance created it first.
+Fix: Remove @Singleton from Session, or stop it depending on androidx.lifecycle.SavedStateHandle.

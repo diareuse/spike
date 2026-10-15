@@ -1,10 +1,19 @@
 package spike.compiler.graph
 
-class TypeFactoryCreatorInput(private val root: GraphStore) : TypeFactoryCreator {
+import spike.compiler.diagnostic.DiagnosticException
+import spike.compiler.diagnostic.DiagnosticInputConflict
+import spike.compiler.diagnostic.DiagnosticRepeatedInput
+import spike.compiler.diagnostic.Involved
+import spike.compiler.diagnostic.Origin
+
+class TypeFactoryCreatorInput(
+    private val root: GraphStore,
+    private val entry: Involved? = null,
+) : TypeFactoryCreator {
     private val inputs = mutableMapOf<Type, MutableList<Input>>()
 
-    fun put(factory: TypeFactory, description: String) {
-        inputs.getOrPut(factory.type) { mutableListOf() } += Input(factory, description)
+    fun put(factory: TypeFactory, description: String, origin: Origin? = null) {
+        inputs.getOrPut(factory.type) { mutableListOf() } += Input(factory, description, origin)
     }
 
     override suspend fun Minting.create(context: TypeFactoryCreator.Context): TypeFactory {
@@ -18,25 +27,19 @@ class TypeFactoryCreatorInput(private val root: GraphStore) : TypeFactoryCreator
         return candidates.single().factory
     }
 
-    private fun failOnInputConflict(subject: String, inputs: List<Input>, bindings: List<Binding>): Nothing = error(
-        """$subject is both an input of the entry point and an @Include binding, Spike cannot pick one:
-            |${(inputs.map { it.description } + bindings.map { it.description }).joinToString("\n") { "  - $it" }}
-            |
-            |<description>
-            |  Remove the @Include binding of $subject, or stop passing $subject in, or tell them apart with a
-            |  `@spike.Qualifier`-based annotation and request the qualified type.
-            |</description>""".trimMargin()
-    )
+    private fun failOnInputConflict(subject: String, inputs: List<Input>, bindings: List<Binding>): Nothing =
+        throw DiagnosticException(
+            DiagnosticInputConflict(
+                subject,
+                inputs.map { it.involved },
+                bindings.map { it.involved } + listOfNotNull(entry)
+            )
+        )
 
-    private fun failOnRepeatedInput(subject: String, inputs: List<Input>): Nothing = error(
-        """$subject is an input of the entry point more than once, Spike cannot pick one:
-            |${inputs.joinToString("\n") { "  - ${it.description}" }}
-            |
-            |<description>
-            |  Keep one factory parameter of type $subject, stop requesting $subject, or tell the inputs apart
-            |  with a `@spike.Qualifier`-based annotation and request the qualified type.
-            |</description>""".trimMargin()
-    )
+    private fun failOnRepeatedInput(subject: String, inputs: List<Input>): Nothing =
+        throw DiagnosticException(DiagnosticRepeatedInput(subject, inputs.map { it.involved } + listOfNotNull(entry)))
 
-    private class Input(val factory: TypeFactory, val description: String)
+    private class Input(val factory: TypeFactory, description: String, origin: Origin?) {
+        val involved = Involved(description, origin)
+    }
 }

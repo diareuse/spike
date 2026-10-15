@@ -1,0 +1,9 @@
+Main.kt:7: [SPIKE-INPUT-CONFLICT] kotlin.String is both an input of the entry point and an @Include binding, Spike cannot pick one
+  - parameter config of Configured.Factory.create (Main.kt:7)
+  - function defaultConfig (Main.kt:17)
+  - entry point Configured (Main.kt:2)
+Why: Spike wires each requested type to exactly one source and never picks one silently.
+Fix: Remove the @Include binding of kotlin.String, or stop passing kotlin.String in.
+Fix: Or tell them apart with a @spike.Qualifier-based annotation and request the qualified type:
+    @spike.Qualifier
+    annotation class Named(val name: String)

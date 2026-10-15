@@ -39,13 +39,14 @@ class DependencyGraph private constructor(
         private val imports: Sequence<TypeFactory.Class>,
     ) {
 
-        private val inputs = TypeFactoryCreatorInput(root)
+        private val inputs =
+            TypeFactoryCreatorInput(root, Involved("entry point ${entry.type.displayName}", entry.origin))
 
         init {
             val factory = entry.factory
             for (p in factory.method.parameters) {
                 val description = "parameter ${p.name} of ${factory.type.displayName}.${factory.method.name}"
-                inputs.put(TypeFactory.Property(p.type, p.name), description)
+                inputs.put(TypeFactory.Property(p.type, p.name), description, factory.origin)
             }
         }
 
@@ -75,7 +76,7 @@ class DependencyGraph private constructor(
             val properties = entry.properties.map {
                 createTypeFactory(it.returns, creators)
             }
-            SharedSingletonInputCheck().check(entry, methods + properties)
+            SharedSingletonInputCheck(root).check(entry, methods + properties)
             val imports = imports.toList()
             if (!entry.isModule && importCollector.imports.isNotEmpty()) {
                 throw DiagnosticException(importCollector.imports.map { it.missing() })

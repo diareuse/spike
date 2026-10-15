@@ -1,5 +1,6 @@
 package spike.compiler.graph
 
+import spike.compiler.diagnostic.DiagnosticException
 import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertFailsWith
@@ -14,7 +15,7 @@ class SharedSingletonInputCheckTest {
     fun `a singleton depending on a per-instance input fails naming both`() {
         val singleton = node("Cache", input, singleton = true)
 
-        val error = assertFailsWith<IllegalStateException> { check(listOf(singleton)) }
+        val error = assertFailsWith<DiagnosticException> { check(listOf(singleton)) }
 
         assertContains(error.message!!, "@Singleton test.Cache depends on test.Handle")
     }
@@ -23,7 +24,7 @@ class SharedSingletonInputCheckTest {
     fun `a singleton thousands of levels above a per-instance input still fails`() {
         val singleton = node("Cache", chain(20_000, input), singleton = true)
 
-        val error = assertFailsWith<IllegalStateException> { onSmallStack { check(listOf(singleton)) } }
+        val error = assertFailsWith<DiagnosticException> { onSmallStack { check(listOf(singleton)) } }
 
         assertContains(error.message!!, "@Singleton test.Cache depends on test.Handle")
     }
@@ -42,7 +43,7 @@ class SharedSingletonInputCheckTest {
         val provider = TypeFactory.Provides(providerType, target)
         val singleton = node("Cache", provider, singleton = true)
 
-        val error = assertFailsWith<IllegalStateException> { check(listOf(singleton)) }
+        val error = assertFailsWith<DiagnosticException> { check(listOf(singleton)) }
 
         assertContains(error.message!!, "@Singleton test.Cache depends on test.Handle")
     }
@@ -66,7 +67,7 @@ class SharedSingletonInputCheckTest {
         val first = node("FirstCache", input, singleton = true)
         val second = node("SecondCache", input, singleton = true)
 
-        val error = assertFailsWith<IllegalStateException> { check(listOf(node("Root", first, second))) }
+        val error = assertFailsWith<DiagnosticException> { check(listOf(node("Root", first, second))) }
 
         assertContains(error.message!!, "@Singleton test.FirstCache depends")
     }
@@ -76,7 +77,7 @@ class SharedSingletonInputCheckTest {
         val session = node("Session", input)
         val singleton = node("Cache", session, singleton = true)
 
-        val error = assertFailsWith<IllegalStateException> { check(listOf(node("Screen", session), singleton)) }
+        val error = assertFailsWith<DiagnosticException> { check(listOf(node("Screen", session), singleton)) }
 
         assertContains(error.message!!, "@Singleton test.Cache depends on test.Handle")
     }
@@ -87,7 +88,7 @@ class SharedSingletonInputCheckTest {
         val lazy = TypeFactory.Memorizes(Type.Parametrized(BuiltInTypes.Lazy, listOf(target.type), false), target)
         val singleton = node("Cache", lazy, singleton = true)
 
-        val error = assertFailsWith<IllegalStateException> { check(listOf(singleton)) }
+        val error = assertFailsWith<DiagnosticException> { check(listOf(singleton)) }
 
         assertContains(error.message!!, "@Singleton test.Cache depends on test.Handle")
     }

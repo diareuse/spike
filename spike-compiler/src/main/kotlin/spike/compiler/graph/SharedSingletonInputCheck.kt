@@ -1,8 +1,11 @@
 package spike.compiler.graph
 
+import spike.compiler.diagnostic.DiagnosticException
+import spike.compiler.diagnostic.DiagnosticSingletonInput
+import spike.compiler.diagnostic.Involved
 import java.util.IdentityHashMap
 
-class SharedSingletonInputCheck {
+class SharedSingletonInputCheck(private val bindings: GraphStore = GraphStore()) {
     fun check(entry: GraphEntryPoint, roots: List<TypeFactory>) {
         if (!entry.factory.sharesSingletons) return
         val inputs = IdentityHashMap<TypeFactory, TypeFactory.Property?>()
@@ -45,15 +48,10 @@ class SharedSingletonInputCheck {
         if (this is TypeFactory.Deferred) dependencies + factory else dependencies
 
     private fun failOnSingletonInput(entry: GraphEntryPoint, singleton: TypeFactory, input: TypeFactory): Nothing {
-        val factory = entry.factory.type.displayName
-        error(
-            """@Singleton ${singleton.type.displayName} depends on ${input.type.displayName}, a per-instance input of $factory:
-                |
-                |<description>
-                |  Every entry point created by $factory shares its singletons, so
-                |  ${singleton.type.displayName} would keep the ${input.type.displayName} of whichever instance created it first.
-                |  Remove @Singleton from ${singleton.type.displayName}, or stop it depending on ${input.type.displayName}.
-                |</description>""".trimMargin()
+        val name = singleton.type.displayName
+        val involved = bindings.bindingsOf(singleton.type).firstOrNull()?.involved ?: Involved("@Singleton $name")
+        throw DiagnosticException(
+            DiagnosticSingletonInput(involved, name, input.type.displayName, entry.factory.type.displayName)
         )
     }
 }

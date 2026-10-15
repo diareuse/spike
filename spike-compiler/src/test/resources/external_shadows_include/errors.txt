@@ -1,0 +1,9 @@
+Main.kt:12: [SPIKE-INPUT-CONFLICT] Lib is both an input of the entry point and an @Include binding, Spike cannot pick one
+  - property lib of @Export Exported
+  - function otherLib (Main.kt:12)
+  - entry point PropertyEntryPoint (Main.kt:2)
+Why: Spike wires each requested type to exactly one source and never picks one silently.
+Fix: Remove the @Include binding of Lib, or stop passing Lib in.
+Fix: Or tell them apart with a @spike.Qualifier-based annotation and request the qualified type:
+    @spike.Qualifier
+    annotation class Named(val name: String)

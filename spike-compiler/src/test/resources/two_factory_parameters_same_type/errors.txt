@@ -1,0 +1,9 @@
+Main.kt:7: [SPIKE-REPEATED-INPUT] kotlin.String is an input of the entry point more than once, Spike cannot pick one
+  - parameter primary of Configured.Factory.create (Main.kt:7)
+  - parameter secondary of Configured.Factory.create (Main.kt:7)
+  - entry point Configured (Main.kt:2)
+Why: Spike wires each requested type to exactly one source and never picks one silently.
+Fix: Keep one input of type kotlin.String, or stop requesting kotlin.String.
+Fix: Or tell the inputs apart with a @spike.Qualifier-based annotation and request the qualified type:
+    @spike.Qualifier
+    annotation class Named(val name: String)

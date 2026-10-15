@@ -1,0 +1,9 @@
+Main.kt:2: [SPIKE-REPEATED-INPUT] Lib is an input of the entry point more than once, Spike cannot pick one
+  - function otherLib of @Export Exported
+  - property lib of @Export Exported
+  - entry point PropertyEntryPoint (Main.kt:2)
+Why: Spike wires each requested type to exactly one source and never picks one silently.
+Fix: Keep one input of type Lib, or stop requesting Lib.
+Fix: Or tell the inputs apart with a @spike.Qualifier-based annotation and request the qualified type:
+    @spike.Qualifier
+    annotation class Named(val name: String)

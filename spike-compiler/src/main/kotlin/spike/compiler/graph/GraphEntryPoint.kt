@@ -32,6 +32,7 @@ data class GraphEntryPoint private constructor(
         val type: Type,
         val method: Member.Method,
         val sharesSingletons: Boolean = false,
+        val origin: Origin? = null,
     )
 
     companion object {

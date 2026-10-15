@@ -1,0 +1,5 @@
+Main.kt:12: [SPIKE-DEPENDENCY-CYCLE] Circular dependency detected: Cat -> Dog -> Cat
+  - constructor of Cat (Main.kt:12)
+  - constructor of Dog (Main.kt:15)
+Why: Spike creates every dependency before the type that needs it, so a cycle has no type to create first.
+Fix: Remove one dependency of the cycle, or move what the types share into a new type that both depend on.
