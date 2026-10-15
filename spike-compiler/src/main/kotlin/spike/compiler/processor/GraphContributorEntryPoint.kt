@@ -130,7 +130,7 @@ class GraphContributorEntryPoint(
                 parameters = func.parameters.map {
                     Parameter(
                         name = it.name!!.asString(),
-                        type = it.type.resolve().toType().qualifiedBy(it.findQualifiers()),
+                        type = it.type.toQualifiedType(it),
                         nullable = it.type.resolve().isMarkedNullable,
                     )
                 },

@@ -308,6 +308,10 @@ class CompilerTest : HarnessCompiler() {
         assertRuns("bind_nullable_receiver")
 
     @Test
+    fun `type-use qualifiers qualify bindings, parameters and entry-point requests`() =
+        assertRuns("include_type_use_qualifier")
+
+    @Test
     fun `null passed for a nullable factory parameter reaches every consumer`() =
         assertRuns("nullable_factory_parameter")
 

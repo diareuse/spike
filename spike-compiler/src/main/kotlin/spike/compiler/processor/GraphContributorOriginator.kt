@@ -20,7 +20,6 @@ import spike.compiler.graph.GraphEntryPoint
 import spike.compiler.graph.GraphEntryPoint.Companion.virtualFactory
 import spike.compiler.graph.Member
 import spike.compiler.graph.Parameter
-import spike.compiler.graph.Qualifier
 import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
 
@@ -84,14 +83,16 @@ abstract class GraphContributorOriginator : GraphContributor {
                 val exported = klass.superTypes.first().resolve()
                 val exportedBy = exported.toType()
                 val declaration = exported.declaration as KSClassDeclaration
-                val functionQualifiers = declaration.getAllFunctions().qualifiersByName()
-                val propertyQualifiers = declaration.getAllProperties().qualifiersByName()
+                val functionQualifiers = declaration.getAllFunctions()
+                    .associate { it.name() to it.returnType?.qualifiersWith(it) }
+                val propertyQualifiers = declaration.getAllProperties()
+                    .associate { it.name() to it.type.qualifiersWith(it) }
                 sequence {
                     for (f in klass.getDeclaredFunctions()) {
                         if (!f.isPublic() || f.isConstructor()) continue
                         val tf = TypeFactory.External(
                             type = f.returnType!!.resolve().toType()
-                                .qualifiedBy(functionQualifiers[f.simpleName.asString()].orEmpty()),
+                                .qualifiedBy(functionQualifiers[f.name()].orEmpty()),
                             origin = klass.toType(false),
                             name = f.simpleName.asString(),
                             isMethod = true
@@ -102,7 +103,7 @@ abstract class GraphContributorOriginator : GraphContributor {
                         if (!p.isPublic()) continue
                         val tf = TypeFactory.External(
                             type = p.type.resolve().toType()
-                                .qualifiedBy(propertyQualifiers[p.simpleName.asString()].orEmpty()),
+                                .qualifiedBy(propertyQualifiers[p.name()].orEmpty()),
                             origin = klass.toType(false),
                             name = p.simpleName.asString(),
                             isMethod = false
@@ -118,8 +119,7 @@ abstract class GraphContributorOriginator : GraphContributor {
             }
     }
 
-    private fun Sequence<KSDeclaration>.qualifiersByName(): Map<String, List<Qualifier>> =
-        associate { it.simpleName.asString() to it.findQualifiers() }
+    private fun KSDeclaration.name() = simpleName.asString()
 
     private fun findProperties(
         entryPoint: KSClassDeclaration
@@ -127,7 +127,7 @@ abstract class GraphContributorOriginator : GraphContributor {
         Member.Property(
             packageName = it.packageName.asString(),
             name = it.simpleName.asString(),
-            returns = it.type.resolve().toType().qualifiedBy(it.findQualifiers()),
+            returns = it.type.toQualifiedType(it),
         )
     }.toList()
 
@@ -163,7 +163,7 @@ abstract class GraphContributorOriginator : GraphContributor {
         Member.Method(
             it.packageName.asString(),
             it.simpleName.asString(),
-            it.returnType!!.resolve().toType().qualifiedBy(it.findQualifiers()),
+            it.returnType!!.toQualifiedType(it),
             it.parentDeclaration?.toType(false),
         )
     }.toList()

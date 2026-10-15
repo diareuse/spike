@@ -11,6 +11,7 @@ import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeAlias
+import com.google.devtools.ksp.symbol.KSTypeReference
 import com.google.devtools.ksp.symbol.Nullability
 import com.google.devtools.ksp.symbol.Variance
 import com.squareup.kotlinpoet.MemberName
@@ -77,12 +78,18 @@ fun KSAnnotated.findKey() = annotations
     }
     .singleOrNull() ?: error("spike.Key inheritor must be defined in $this")
 
+fun KSTypeReference.toQualifiedType(declaration: KSAnnotated): Type =
+    resolve().toType().qualifiedBy(qualifiersWith(declaration))
+
+fun KSTypeReference.qualifiersWith(declaration: KSAnnotated): List<Qualifier> =
+    (declaration.findQualifiers() + findQualifiers()).distinct().sorted()
+
 @OptIn(KspExperimental::class)
 fun KSFunctionDeclaration.toInvocation() = Invocation(
     parameters = this.parameters.map {
         Parameter(
             name = it.name!!.asString(),
-            type = it.type.resolve().toType().qualifiedBy(it.findQualifiers()),
+            type = it.type.toQualifiedType(it),
             nullable = it.type.resolve().isMarkedNullable,
         )
     },

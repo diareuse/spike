@@ -39,9 +39,8 @@ class IncludeContributorMain : IncludeContributor {
         context: GraphContext,
         annotated: KSFunctionDeclaration,
     ) {
-        val qualifiers = annotated.findQualifiers()
-        val returnType = annotated.returnType!!.resolve().toType().qualifiedBy(qualifiers)
-        val parentType = annotated.parentDeclaration?.toType(false)?.qualifiedBy(qualifiers)
+        val returnType = annotated.returnType!!.toQualifiedType(annotated)
+        val parentType = annotated.parentDeclaration?.toType(false)?.qualifiedBy(annotated.findQualifiers())
         val method = Member.Method(
             packageName = annotated.packageName.asString(),
             name = annotated.simpleName.asString(),
@@ -62,7 +61,7 @@ class IncludeContributorMain : IncludeContributor {
         context: GraphContext,
         annotated: KSPropertyDeclaration,
     ) {
-        val type = annotated.type.resolve().toType().qualifiedBy(annotated.findQualifiers())
+        val type = annotated.type.toQualifiedType(annotated)
         val property = Member.Property(
             packageName = annotated.packageName.asString(),
             name = annotated.simpleName.asString(),

@@ -13,13 +13,13 @@ class IncludeContributorBindTo(
     private val origin: IncludeContributor,
 ) : IncludeContributor {
     override fun contribute(context: GraphContext, annotated: KSClassDeclaration) =
-        annotated.contributeTo(context, { toType(false) }, origin::contribute)
+        annotated.contributeTo(context, { toType(false).qualifiedBy(findQualifiers()) }, origin::contribute)
 
     override fun contribute(context: GraphContext, annotated: KSFunctionDeclaration) =
-        annotated.contributeTo(context, { returnType!!.resolve().toType() }, origin::contribute)
+        annotated.contributeTo(context, { returnType!!.toQualifiedType(this) }, origin::contribute)
 
     override fun contribute(context: GraphContext, annotated: KSPropertyDeclaration) =
-        annotated.contributeTo(context, { type.resolve().toType() }, origin::contribute)
+        annotated.contributeTo(context, { type.toQualifiedType(this) }, origin::contribute)
 
     private inline fun <T : KSAnnotated> T.contributeTo(
         context: GraphContext,
@@ -27,7 +27,7 @@ class IncludeContributorBindTo(
         crossinline contribute: (GraphContext, T) -> Unit,
     ) {
         val annotated = this
-        val bound = type().qualifiedBy(findQualifiers())
+        val bound = type()
         when (findBindToTarget()) {
             BindTarget.None -> contribute(context, annotated)
             BindTarget.Set -> context.multibind.addToSet(bound) {
