@@ -1,5 +1,7 @@
 package spike.compiler.graph
 
+import spike.compiler.diagnostic.Origin
+
 data class GraphStore(
     val constructors: List<Constructor> = emptyList(),
     val factories: List<Factory> = emptyList(),
@@ -35,12 +37,12 @@ data class GraphStore(
         private val constructors = mutableSetOf<Constructor>()
         private val factories = mutableSetOf<Factory>()
 
-        fun addConstructor(type: Type, invocation: Invocation, singleton: Boolean) {
-            constructors += Constructor(type, invocation, singleton)
+        fun addConstructor(type: Type, invocation: Invocation, singleton: Boolean, origin: Origin? = null) {
+            constructors += Constructor(type, invocation, singleton, origin)
         }
 
-        fun addFactory(type: Type, member: Member, invocation: Invocation, singleton: Boolean) {
-            factories += Factory(type, member, invocation, singleton)
+        fun addFactory(type: Type, member: Member, invocation: Invocation, singleton: Boolean, origin: Origin? = null) {
+            factories += Factory(type, member, invocation, singleton, origin)
         }
 
         fun build() = GraphStore(

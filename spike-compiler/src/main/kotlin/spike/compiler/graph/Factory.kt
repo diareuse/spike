@@ -1,10 +1,13 @@
 package spike.compiler.graph
 
+import spike.compiler.diagnostic.Origin
+
 data class Factory(
     override val type: Type,
     val member: Member,
     val invocation: Invocation,
     val singleton: Boolean,
+    override val origin: Origin? = null,
 ) : Binding {
     override val description: String
         get() = member.description
@@ -20,4 +23,10 @@ data class Factory(
         listOf(parent?.displayName ?: packageName, name).filter { it.isNotEmpty() }.joinToString(".")
 
     override fun asGraphStore() = GraphStore(factories = listOf(this))
+
+    override fun equals(other: Any?) = other is Factory && other.type == type && other.member == member &&
+        other.invocation == invocation && other.singleton == singleton
+
+    override fun hashCode() =
+        ((type.hashCode() * 31 + member.hashCode()) * 31 + invocation.hashCode()) * 31 + singleton.hashCode()
 }

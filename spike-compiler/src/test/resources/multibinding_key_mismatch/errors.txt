@@ -1,0 +1,7 @@
+Main.kt:17: [SPIKE-MAP-KEY-TYPE] kotlin.collections.Map<kotlin.Int, Plugin> is requested, but every Plugin entry is keyed by kotlin.String
+  - function loggingPlugin (Main.kt:17)
+Why: A multibound Map is built from the entries whose key annotation's parameter has the Map's key type.
+Fix: Request a Map keyed by kotlin.String instead.
+Fix: Or key the entries with an annotation whose parameter is kotlin.Int:
+    @spike.Key
+    annotation class IntKey(val value: Int)

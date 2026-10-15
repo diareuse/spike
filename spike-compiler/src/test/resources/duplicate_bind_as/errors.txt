@@ -1,0 +1,8 @@
+Main.kt:14: [SPIKE-DUPLICATE-BINDING] Duplicate bindings for Animal, Spike cannot pick one
+  - property asAnimal on Tomcat (Main.kt:14)
+  - property asAnimal on Bulldog (Main.kt:20)
+Why: Spike wires each requested type to exactly one binding and never picks one silently.
+Fix: Keep exactly one binding for Animal.
+Fix: Or tell them apart with a @spike.Qualifier-based annotation and request the qualified type:
+    @spike.Qualifier
+    annotation class Named(val name: String)

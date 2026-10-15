@@ -1,5 +1,9 @@
 package spike.compiler.graph
 
+import spike.compiler.diagnostic.DiagnosticDuplicateMapKey
+import spike.compiler.diagnostic.DiagnosticException
+import spike.compiler.diagnostic.DiagnosticMapKeyType
+
 class TypeFactoryCreatorMultiBindMap(
     private val multibinding: MultiBindingStore,
 ) : TypeFactoryCreator {
@@ -13,15 +17,15 @@ class TypeFactoryCreatorMultiBindMap(
         val instances = instanceMap
             .filterKeys { it.type == keyType }
             .mapKeys { it.key.value }
-        check(instanceMap.isEmpty() || instances.isNotEmpty()) {
-            val keyTypes = instanceMap.keys.map { it.type.displayName }.distinct().joinToString()
-            "${type.displayName} has no entries keyed by ${keyType.displayName}; " +
-                "entries for ${valueType.unwrapParametrized().displayName} are keyed by $keyTypes"
-        }
+        if (instanceMap.isNotEmpty() && instances.isEmpty()) failOnKeyType(type, keyType, valueType, instanceMap)
         val keyValues = buildMap {
             for ((k, v) in instances) {
                 val definitions = (v.constructors + v.factories).distinct()
-                if (definitions.size > 1) failOnDuplicateBindings("$type key $k", definitions)
+                if (definitions.size > 1) {
+                    throw DiagnosticException(
+                        DiagnosticDuplicateMapKey(type.displayName, k.renderedKey(), definitions.map { it.involved })
+                    )
+                }
                 val definition = definitions.singleOrNull()
                     ?: error("No definition found for $type whilst being multi-bound, this is however most likely a spike inference error.")
                 val newType = mint(
@@ -36,6 +40,20 @@ class TypeFactoryCreatorMultiBindMap(
             keyValues = keyValues,
         )
     }
+
+    private fun failOnKeyType(type: Type, keyType: Type, valueType: Type, entries: Map<Key, GraphStore>): Nothing =
+        throw DiagnosticException(
+            DiagnosticMapKeyType(
+                map = type.displayName,
+                value = valueType.unwrapParametrized().displayName,
+                requestedKey = keyType.displayName,
+                requestedKeySimpleName = keyType.simpleName,
+                keys = entries.keys.map { it.type.displayName }.distinct(),
+                entries = entries.values.flatMap { it.constructors + it.factories }.map { it.involved },
+            )
+        )
+
+    private fun Any?.renderedKey(): String = if (this is String) "\"$this\"" else toString()
 
     private fun Type.overrideType(valueType: Type) = when (valueType) {
         is Type.Parametrized -> when (valueType.envelope) {

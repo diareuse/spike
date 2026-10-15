@@ -23,6 +23,7 @@ class IncludeContributorMain : IncludeContributor {
             type = annotated.toType(false).qualifiedBy(annotated.findQualifiers()),
             invocation = constructor.toInvocation(),
             singleton = annotated.isAnnotationPresent(Singleton::class),
+            origin = annotated.asOrigin(),
         )
     }
 
@@ -45,6 +46,7 @@ class IncludeContributorMain : IncludeContributor {
             member = method.on(receiver),
             invocation = invocation.copy(parameters = receiver.asParameters() + invocation.parameters),
             singleton = annotated.isAnnotationPresent(Singleton::class),
+            origin = annotated.asOrigin(),
         )
     }
 
@@ -65,6 +67,7 @@ class IncludeContributorMain : IncludeContributor {
             member = property.on(receiver),
             invocation = Invocation(receiver.asParameters(), singleton = false),
             singleton = annotated.isAnnotationPresent(Singleton::class),
+            origin = annotated.asOrigin(),
         )
     }
 

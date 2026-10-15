@@ -1,20 +1,24 @@
 package spike.compiler.graph
 
+import spike.compiler.diagnostic.DiagnosticDuplicateBinding
+import spike.compiler.diagnostic.DiagnosticException
+import spike.compiler.diagnostic.Involved
+import spike.compiler.diagnostic.Origin
+
 sealed interface Binding {
     val type: Type
     val description: String
+    val origin: Origin?
     fun asGraphStore(): GraphStore
 }
 
 internal val Type.displayName: String
-    get() = toString().removePrefix(".")
+    get() = toString().replace(RootPackagePrefix, "")
 
-internal fun failOnDuplicateBindings(subject: String, bindings: List<Binding>): Nothing = error(
-    """Duplicate bindings for $subject, Spike cannot pick one:
-        |${bindings.joinToString("\n") { "  - ${it.description}" }}
-        |
-        |<description>
-        |  Keep exactly one binding for $subject, or tell them apart with a
-        |  `@spike.Qualifier`-based annotation and request the qualified type.
-        |</description>""".trimMargin()
-)
+private val RootPackagePrefix = Regex("""(?<![\w.])\.""")
+
+internal val Binding.involved: Involved
+    get() = Involved(description, origin)
+
+internal fun failOnDuplicateBindings(subject: String, bindings: List<Binding>): Nothing =
+    throw DiagnosticException(DiagnosticDuplicateBinding(subject, bindings.map { it.involved }))

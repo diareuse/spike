@@ -127,7 +127,8 @@ sealed interface TypeFactory {
     class Imported(
         override val type: Type,
         val name: String,
-        val originatingElement: String
+        val originatingElement: String,
+        val requiredBy: Type? = null,
     ): TypeFactory {
         override val dependencies: List<TypeFactory>
             get() = emptyList()

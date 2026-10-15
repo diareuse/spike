@@ -30,6 +30,7 @@ class IncludeContributorViewModel : IncludeContributor {
                 type = annotated.toType(false).qualifiedBy(annotated.findQualifiers()),
                 invocation = constructor.toInvocation(),
                 singleton = false,
+                origin = annotated.asOrigin(),
             )
         }
     }

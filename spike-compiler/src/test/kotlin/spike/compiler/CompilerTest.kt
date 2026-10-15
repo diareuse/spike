@@ -27,6 +27,10 @@ class CompilerTest : HarnessCompiler() {
     fun `missing dependency fails`() = assertProcessingFails("missing_dependency")
 
     @Test
+    fun `every missing binding of an entry point is reported`() =
+        assertProcessingFails("missing_dependencies_reported_together")
+
+    @Test
     fun `circular dependency fails`() = assertProcessingFails("circular")
 
     @Test
@@ -117,7 +121,7 @@ class CompilerTest : HarnessCompiler() {
 
     @Test
     fun `class and function bound to the same map key fail naming both`() =
-        assertProcessingFails("duplicate_map_key", "Duplicate bindings for", "Cat", "provideFelix")
+        assertProcessingFails("duplicate_map_key")
 
     @Test
     fun `exported module imports two dependencies sharing a simple name`() = assertRuns("import_name_clash")

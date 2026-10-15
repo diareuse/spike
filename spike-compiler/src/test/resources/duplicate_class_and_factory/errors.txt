@@ -1,0 +1,8 @@
+Main.kt:9: [SPIKE-DUPLICATE-BINDING] Duplicate bindings for Cat, Spike cannot pick one
+  - constructor of Cat (Main.kt:9)
+  - function provideFelix (Main.kt:14)
+Why: Spike wires each requested type to exactly one binding and never picks one silently.
+Fix: Keep exactly one binding for Cat.
+Fix: Or tell them apart with a @spike.Qualifier-based annotation and request the qualified type:
+    @spike.Qualifier
+    annotation class Named(val name: String)

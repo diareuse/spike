@@ -1,0 +1,7 @@
+Main.kt:8: [SPIKE-MISSING-BINDING] kotlin.String has no binding, but constructor of Injectable needs it
+  - constructor of Injectable (Main.kt:8)
+Why: Spike creates only types it has a binding for: an @Include class, function or property, or an entry-point input.
+Fix: Add an @Include binding for kotlin.String:
+    @spike.Include
+    fun string(): String = ...
+Fix: Or pass kotlin.String in through the entry point's @EntryPoint.Factory function.

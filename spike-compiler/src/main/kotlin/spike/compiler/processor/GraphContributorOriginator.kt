@@ -55,7 +55,8 @@ abstract class GraphContributorOriginator : GraphContributor {
             factory = factory ?: type.virtualFactory(virtualFactoryParameters),
             properties = properties,
             methods = methods,
-            isModule = entryPoint.isAnnotationPresent(Export::class)
+            isModule = entryPoint.isAnnotationPresent(Export::class),
+            origin = entryPoint.asOrigin(),
         )
         val graphFactory = DependencyGraph.Factory(
             entry = entry,

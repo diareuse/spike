@@ -1,0 +1,8 @@
+Main.kt:22: [SPIKE-DUPLICATE-BINDING] Duplicate bindings for Cat, Spike cannot pick one
+  - property asCat on StrayCat (Main.kt:22)
+  - property Cat.Companion.asCat on HouseCat (Main.kt:11)
+Why: Spike wires each requested type to exactly one binding and never picks one silently.
+Fix: Keep exactly one binding for Cat.
+Fix: Or tell them apart with a @spike.Qualifier-based annotation and request the qualified type:
+    @spike.Qualifier
+    annotation class Named(val name: String)

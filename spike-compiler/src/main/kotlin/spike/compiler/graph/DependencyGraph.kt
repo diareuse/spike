@@ -1,5 +1,10 @@
 package spike.compiler.graph
 
+import spike.compiler.diagnostic.Diagnostic
+import spike.compiler.diagnostic.DiagnosticException
+import spike.compiler.diagnostic.DiagnosticMissingBinding
+import spike.compiler.diagnostic.Involved
+
 class DependencyGraph private constructor(
     val entry: GraphEntryPoint,
     val methods: List<TypeFactory>,
@@ -73,23 +78,7 @@ class DependencyGraph private constructor(
             SharedSingletonInputCheck().check(entry, methods + properties)
             val imports = imports.toList()
             if (!entry.isModule && importCollector.imports.isNotEmpty()) {
-                val types = importCollector.imports.joinToString("\n") {
-                    """<expected>
-                    |  @spike.Include
-                    |  class ${it.type} { /**/ }
-                    |</expected>
-                    |
-                    |<actual>
-                    |  Not Found
-                    |</actual>
-                    |
-                    |<description>
-                    |  `class ${it.originatingElement}(..., ${it.type})` is declared somewhere in your application.
-                    |  ${it.type} couldn't be found in the graph. You may have forgotten to annotate with 
-                    |  a `@spike.Qualifier`-based annotation or `@spike.Include` is missing atop your class
-                    |</description>""".trimMargin()
-                }
-                error("Client error, your build is missing dependencies in graph:\n$types")
+                throw DiagnosticException(importCollector.imports.map { it.missing() })
             }
             return DependencyGraph(
                 entry = entry,
@@ -101,6 +90,12 @@ class DependencyGraph private constructor(
         }
 
         // ---
+
+        private fun TypeFactory.Imported.missing(): Diagnostic {
+            val requester = requiredBy?.let { root.bindingsOf(it).firstOrNull() }
+            val requiredBy = requester?.involved ?: Involved("entry point ${entry.type.displayName}", entry.origin)
+            return DiagnosticMissingBinding(type.displayName, type.simpleName, requiredBy)
+        }
 
         private fun createTypeFactory(type: Type, creators: List<TypeFactoryCreator>): TypeFactory {
             return minting(TypeFactoryCreatorChain(type, creators, root))

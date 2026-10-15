@@ -1,12 +1,15 @@
 package spike.compiler.graph
 
+import spike.compiler.diagnostic.Origin
+
 @Suppress("DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED_WARNING", "DataClassPrivateConstructor")
 data class GraphEntryPoint private constructor(
     val type: Type,
     val factory: Factory,
     val properties: List<Member.Property>,
     val methods: List<Member.Method>,
-    val isModule: Boolean
+    val isModule: Boolean,
+    val origin: Origin? = null,
 ) {
     override fun toString(): String {
         var out = ""
@@ -39,13 +42,15 @@ data class GraphEntryPoint private constructor(
             factory: Factory,
             properties: List<Member.Property>,
             methods: List<Member.Method>,
-            isModule: Boolean
+            isModule: Boolean,
+            origin: Origin? = null,
         ) = GraphEntryPoint(
             type = type,
             factory = factory,
             properties = properties,
             methods = methods,
-            isModule = isModule
+            isModule = isModule,
+            origin = origin,
         )
 
         fun Type.virtualFactory(parameters: List<Parameter>): Factory {

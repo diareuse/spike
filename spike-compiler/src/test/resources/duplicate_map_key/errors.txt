@@ -1,0 +1,5 @@
+Main.kt:13: [SPIKE-DUPLICATE-MAP-KEY] kotlin.collections.Map<kotlin.String, Cat> has 2 entries with key "tom", Spike cannot pick one
+  - constructor of Cat (Main.kt:13)
+  - function provideFelix (Main.kt:19)
+Why: Each key of a multibound Map maps to exactly one entry.
+Fix: Give each entry its own key, or remove one of them.

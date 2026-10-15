@@ -1,0 +1,14 @@
+Main.kt:2: [SPIKE-MISSING-BINDING] Cat has no binding, but entry point Shelter needs it
+  - entry point Shelter (Main.kt:2)
+Why: Spike creates only types it has a binding for: an @Include class, function or property, or an entry-point input.
+Fix: Add an @Include binding for Cat:
+    @spike.Include
+    fun cat(): Cat = ...
+Fix: Or pass Cat in through the entry point's @EntryPoint.Factory function.
+Main.kt:12: [SPIKE-MISSING-BINDING] Bone has no binding, but constructor of Dog needs it
+  - constructor of Dog (Main.kt:12)
+Why: Spike creates only types it has a binding for: an @Include class, function or property, or an entry-point input.
+Fix: Add an @Include binding for Bone:
+    @spike.Include
+    fun bone(): Bone = ...
+Fix: Or pass Bone in through the entry point's @EntryPoint.Factory function.

@@ -20,7 +20,8 @@ data class TypeFactoryCreatorChain(
             return TypeFactory.Imported(
                 type = type,
                 name = type.importName(),
-                originatingElement = originatingElement
+                originatingElement = originatingElement,
+                requiredBy = chain.getOrNull(chain.size - 2),
             )
         }
         return with(creators[index]) { create(this@TypeFactoryCreatorChain) }
