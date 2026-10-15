@@ -5,11 +5,12 @@ import com.google.devtools.ksp.getDeclaredFunctions
 import com.google.devtools.ksp.getDeclaredProperties
 import com.google.devtools.ksp.isAbstract
 import com.google.devtools.ksp.isAnnotationPresent
+import com.google.devtools.ksp.isConstructor
+import com.google.devtools.ksp.isPublic
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.Modifier
 import com.squareup.kotlinpoet.ksp.writeTo
 import spike.Export
 import spike.compiler.generator.DependencyGraphGenerator
@@ -81,7 +82,7 @@ abstract class GraphContributorOriginator : GraphContributor {
                 val exportedBy = klass.superTypes.first().resolve().toType()
                 sequence {
                     for (f in klass.getDeclaredFunctions()) {
-                        if (Modifier.OVERRIDE !in f.modifiers) continue
+                        if (!f.isPublic() || f.isConstructor()) continue
                         val tf = TypeFactory.External(
                             type = f.returnType!!.resolve().toType(), origin = klass.toType(false),
                             name = f.simpleName.asString(),
@@ -90,7 +91,7 @@ abstract class GraphContributorOriginator : GraphContributor {
                         yield(tf to exportedBy)
                     }
                     for (p in klass.getDeclaredProperties()) {
-                        if (Modifier.OVERRIDE !in p.modifiers) continue
+                        if (!p.isPublic()) continue
                         val tf = TypeFactory.External(
                             type = p.type.resolve().toType(), origin = klass.toType(false),
                             name = p.simpleName.asString(),

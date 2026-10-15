@@ -119,7 +119,8 @@ class TypeFactoryExpression {
 
     context(step: LinearStep, references: LinearReferences)
     private fun FileGeneratorContext.generateExternalCase(body: CodeBlock.Builder, factory: External) {
-        body.addStatement("factory.%L.%L", resolver.getVariableName(factory.origin), factory.name)
+        val call = if (factory.isMethod) "()" else ""
+        body.addStatement("factory.%L.%L%L", resolver.getVariableName(factory.origin), factory.name, call)
     }
 
     context(step: LinearStep, references: LinearReferences)
