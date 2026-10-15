@@ -8,9 +8,11 @@ class TypeFactoryCreatorInput(private val root: GraphStore) : TypeFactoryCreator
     }
 
     override suspend fun Minting.create(context: TypeFactoryCreator.Context): TypeFactory {
-        val candidates = inputs[context.type] ?: return pass(context)
-        val bindings = context.store.bindingsOf(context.type)
-        if (bindings.isNotEmpty() && bindings != root.bindingsOf(context.type)) return pass(context)
+        val candidates = inputs[context.type]
+        val bindings = if (candidates == null) emptyList() else context.store.bindingsOf(context.type)
+        if (candidates == null || bindings.isNotEmpty() && bindings != root.bindingsOf(context.type)) {
+            return pass(context)
+        }
         if (bindings.isNotEmpty()) failOnInputConflict(context.type.displayName, candidates, bindings)
         if (candidates.size > 1) failOnRepeatedInput(context.type.displayName, candidates)
         return candidates.single().factory

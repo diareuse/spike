@@ -90,7 +90,8 @@ abstract class GraphContributorOriginator : GraphContributor {
                     for (f in klass.getDeclaredFunctions()) {
                         if (!f.isPublic() || f.isConstructor()) continue
                         val tf = TypeFactory.External(
-                            type = f.returnType!!.resolve().toType().qualifiedBy(functionQualifiers[f.simpleName.asString()].orEmpty()),
+                            type = f.returnType!!.resolve().toType()
+                                .qualifiedBy(functionQualifiers[f.simpleName.asString()].orEmpty()),
                             origin = klass.toType(false),
                             name = f.simpleName.asString(),
                             isMethod = true
@@ -100,7 +101,8 @@ abstract class GraphContributorOriginator : GraphContributor {
                     for (p in klass.getDeclaredProperties()) {
                         if (!p.isPublic()) continue
                         val tf = TypeFactory.External(
-                            type = p.type.resolve().toType().qualifiedBy(propertyQualifiers[p.simpleName.asString()].orEmpty()),
+                            type = p.type.resolve().toType()
+                                .qualifiedBy(propertyQualifiers[p.simpleName.asString()].orEmpty()),
                             origin = klass.toType(false),
                             name = p.simpleName.asString(),
                             isMethod = false

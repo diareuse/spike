@@ -18,18 +18,26 @@ class SharedSingletonInputCheck {
         pending.addLast(root to false)
         while (pending.isNotEmpty()) {
             val (factory, expanded) = pending.removeLast()
-            if (factory in inputs) continue
-            val children = factory.children()
-            if (!expanded) {
-                pending.addLast(factory to true)
-                for (child in children.asReversed()) pending.addLast(child to false)
-                continue
+            when {
+                factory in inputs -> Unit
+                expanded -> record(entry, factory, inputs)
+                else -> {
+                    pending.addLast(factory to true)
+                    for (child in factory.children().asReversed()) pending.addLast(child to false)
+                }
             }
-            val input = factory as? TypeFactory.Property ?: children.firstNotNullOfOrNull { inputs[it] }
-            inputs[factory] = input
-            if (input != null && factory is TypeFactory.Callable && factory.singleton) {
-                failOnSingletonInput(entry, factory, input)
-            }
+        }
+    }
+
+    private fun record(
+        entry: GraphEntryPoint,
+        factory: TypeFactory,
+        inputs: MutableMap<TypeFactory, TypeFactory.Property?>,
+    ) {
+        val input = factory as? TypeFactory.Property ?: factory.children().firstNotNullOfOrNull { inputs[it] }
+        inputs[factory] = input
+        if (input != null && factory is TypeFactory.Callable && factory.singleton) {
+            failOnSingletonInput(entry, factory, input)
         }
     }
 

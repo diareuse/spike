@@ -352,7 +352,8 @@ class CompilerTest : HarnessCompiler() {
 
     @Test
     @Timeout(60)
-    fun `a graph whose dependencies are shared along many paths compiles without expanding every path`() = assertRuns("shared_lattice")
+    fun `a graph whose dependencies are shared along many paths compiles without expanding every path`() =
+        assertRuns("shared_lattice")
 
     @Test
     fun `SharesSingletons on a user factory requires opting in to internal API`() =

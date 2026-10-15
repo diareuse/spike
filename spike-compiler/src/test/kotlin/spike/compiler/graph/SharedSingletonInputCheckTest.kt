@@ -38,7 +38,8 @@ class SharedSingletonInputCheckTest {
     @Test
     fun `a singleton reaching an input only through a Provider fails`() {
         val target = node("Session", input)
-        val provider = TypeFactory.Provides(Type.Parametrized(BuiltInTypes.Provider, listOf(target.type), false), target)
+        val providerType = Type.Parametrized(BuiltInTypes.Provider, listOf(target.type), false)
+        val provider = TypeFactory.Provides(providerType, target)
         val singleton = node("Cache", provider, singleton = true)
 
         val error = assertFailsWith<IllegalStateException> { check(listOf(singleton)) }

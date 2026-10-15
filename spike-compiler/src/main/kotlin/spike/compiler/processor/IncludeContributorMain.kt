@@ -78,7 +78,9 @@ class IncludeContributorMain : IncludeContributor {
         )
     }
 
-    private fun Member.on(receiver: KSType?): Member = if (receiver == null) this else Member.Receiver(receiver.toType(), this)
+    private fun Member.on(receiver: KSType?): Member =
+        if (receiver == null) this else Member.Receiver(receiver.toType(), this)
 
-    private fun KSType?.asParameters() = listOfNotNull(this?.let { Parameter("receiver", it.toType(), it.isMarkedNullable) })
+    private fun KSType?.asParameters() =
+        listOfNotNull(this?.let { Parameter("receiver", it.toType(), it.isMarkedNullable) })
 }

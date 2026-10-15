@@ -150,7 +150,8 @@ class TypeFactoryTest {
     @Test
     fun `a provider and a lazy over the same factory are not equal`() {
         val target = chain(3)
-        val provider = TypeFactory.Provides(Type.Parametrized(BuiltInTypes.Provider, listOf(target.type), false), target)
+        val providerType = Type.Parametrized(BuiltInTypes.Provider, listOf(target.type), false)
+        val provider = TypeFactory.Provides(providerType, target)
         val lazy = TypeFactory.Memorizes(Type.Parametrized(BuiltInTypes.Lazy, listOf(target.type), false), target)
 
         assertNotEquals<TypeFactory>(provider, lazy)

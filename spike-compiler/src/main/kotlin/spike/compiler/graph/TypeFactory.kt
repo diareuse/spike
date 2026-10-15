@@ -197,27 +197,30 @@ sealed interface TypeFactory {
 
     companion object {
         internal fun structurallyEqual(first: Structured, second: Any?): Boolean {
-            if (first === second) return true
-            if (second !is TypeFactory || first.hashCode() != second.hashCode()) return false
+            if (second !is TypeFactory) return false
             val compared = HashSet<IdentityPair>()
             val pending = ArrayDeque<Pair<TypeFactory, TypeFactory>>()
             pending.addLast(first to second)
-            while (pending.isNotEmpty()) {
+            var equal = true
+            while (equal && pending.isNotEmpty()) {
                 val (left, right) = pending.removeLast()
-                if (left === right) continue
-                if (left.hashCode() != right.hashCode()) return false
-                if (left !is Structured) {
-                    if (left != right) return false
-                    continue
-                }
-                val children = left.pairedChildren(right) ?: return false
-                if (compared.add(IdentityPair(left, right))) pending.addAll(children)
+                val children = left.childrenPairedWith(right)
+                equal = children != null
+                if (!children.isNullOrEmpty() && compared.add(IdentityPair(left, right))) pending.addAll(children)
             }
-            return true
+            return equal
         }
 
-        private fun List<TypeFactory>.pairedWith(other: List<TypeFactory>) = if (size == other.size) zip(other) else null
+        private fun TypeFactory.childrenPairedWith(other: TypeFactory): List<Pair<TypeFactory, TypeFactory>>? = when {
+            this === other -> emptyList()
+            hashCode() != other.hashCode() -> null
+            this is Structured -> pairedChildren(other)
+            this == other -> emptyList()
+            else -> null
+        }
 
+        private fun List<TypeFactory>.pairedWith(other: List<TypeFactory>) =
+            if (size == other.size) zip(other) else null
 
         fun TypeFactory.invertDependencyTree(): List<TypeFactory> {
             val order = ArrayList<TypeFactory>()
@@ -226,14 +229,15 @@ sealed interface TypeFactory {
             pending.addLast(this to false)
             while (pending.isNotEmpty()) {
                 val (factory, expanded) = pending.removeLast()
-                if (expanded) {
-                    order += factory
-                    continue
+                when {
+                    expanded -> order += factory
+                    visited.add(factory) -> {
+                        pending.addLast(factory to true)
+                        if (factory !is Deferred) {
+                            for (dependency in factory.dependencies) pending.addLast(dependency to false)
+                        }
+                    }
                 }
-                if (!visited.add(factory)) continue
-                pending.addLast(factory to true)
-                if (factory is Deferred) continue
-                for (dependency in factory.dependencies) pending.addLast(dependency to false)
             }
             return order
         }

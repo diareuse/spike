@@ -19,7 +19,8 @@ class IncludeContributorBindAsRemoved(
 
     override fun contribute(context: GraphContext, annotated: KSFunctionDeclaration) {
         annotated.bindAsTarget()?.let { target ->
-            val parameters = annotated.parameters.joinToString { "${it.name?.asString()}: ${it.type.resolve().render()}" }
+            val parameters = annotated.parameters
+                .joinToString { "${it.name?.asString()}: ${it.type.resolve().render()}" }
             annotated.failOnBindAs(
                 "fun ${annotated.simpleName.asString()}($parameters): $target = ...",
                 "return $target from ${annotated.simpleName.asString()} instead"
@@ -30,7 +31,10 @@ class IncludeContributorBindAsRemoved(
 
     override fun contribute(context: GraphContext, annotated: KSPropertyDeclaration) {
         annotated.bindAsTarget()?.let { target ->
-            annotated.failOnBindAs("val ${annotated.simpleName.asString()}: $target get() = ...", "declare it as $target")
+            annotated.failOnBindAs(
+                "val ${annotated.simpleName.asString()}: $target get() = ...",
+                "declare it as $target"
+            )
         }
         origin.contribute(context, annotated)
     }
@@ -40,10 +44,9 @@ class IncludeContributorBindAsRemoved(
     }
 
     private fun KSDeclaration.bindAsTarget(): String? {
-        val bindAs = include()?.arguments?.firstOrNull { it.name?.asString() == "bindAs" } ?: return null
-        val declaration = (bindAs.value as? KSType)?.declaration ?: return null
-        if (declaration.qualifiedName?.asString() == "kotlin.Any") return null
-        return declaration.simpleName.asString()
+        val bindAs = include()?.arguments?.firstOrNull { it.name?.asString() == "bindAs" }
+        val declaration = (bindAs?.value as? KSType)?.declaration
+        return declaration?.takeUnless { it.qualifiedName?.asString() == "kotlin.Any" }?.simpleName?.asString()
     }
 
     private fun KSDeclaration.failOnBindAs(
@@ -67,8 +70,11 @@ class IncludeContributorBindAsRemoved(
 
     private fun KSDeclaration.includeLine(): String {
         val bindTo = include()?.arguments?.firstOrNull { it.name?.asString() == "bindTo" }?.value
-        val target = (bindTo as? KSClassDeclaration)?.simpleName?.asString() ?: (bindTo as? KSType)?.declaration?.simpleName?.asString()
-        return if (target == null || target == "None") "@spike.Include" else "@spike.Include(bindTo = spike.BindTarget.$target)"
+        val target = (bindTo as? KSClassDeclaration ?: (bindTo as? KSType)?.declaration)?.simpleName?.asString()
+        return when (target) {
+            null, "None" -> "@spike.Include"
+            else -> "@spike.Include(bindTo = spike.BindTarget.$target)"
+        }
     }
 
     private fun KSDeclaration.carriedAnnotations(): List<String> = annotations
