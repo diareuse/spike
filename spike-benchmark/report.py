@@ -54,15 +54,26 @@ for framework in [f for f in FRAMEWORKS if f"{f} clean build" in build]:
     create, resolve, cold = runtimes
     lines.append(f"| {framework} | " + " | ".join(f"{value:.0f}" for value in builds)
                  + f" | {create:.3f} | {resolve:.1f} | {cold / 1000:.1f} | {jar_kib(framework):.0f} |")
-    series += [{"name": f"{framework} {title}", "unit": "ms", "value": value}
+    series += [{"framework": framework, "metric": title, "unit": "ms", "value": value}
                for (_, title), value in zip(BUILD, builds)]
-    series += [{"name": f"{framework} {title}", "unit": "us", "value": value}
+    series += [{"framework": framework, "metric": title, "unit": "us", "value": value}
                for (_, title), value in zip(RUNTIME, runtimes)]
 
+
+def bench(name, measurement, **extra):
+    return {"name": name, "unit": measurement["unit"], "value": measurement["value"], **extra}
+
+
+def write(name, benches):
+    (output / name).write_text(json.dumps(benches, indent=2))
+
+
+metrics = [title for _, title in BUILD + RUNTIME]
 table = "\n".join(lines) + "\n"
 (output / "results.md").write_text(table)
-alerting = [s for s in series if s["name"].startswith("spike ") and not s["name"].endswith("create graph")]
-(output / "results-spike.json").write_text(json.dumps(alerting, indent=2))
-(output / "results-baselines.json").write_text(
-    json.dumps([s for s in series if s not in alerting], indent=2))
+write("results.json", [bench(f"{s['framework']} {s['metric']}", s) for s in series])
+write("results-spike.json", [bench(f"spike {s['metric']}", s)
+                             for s in series if s["framework"] == "spike" and s["metric"] != "create graph"])
+write("results-baselines.json", [bench(s["metric"], s, extra=s["framework"])
+                                 for s in sorted(series, key=lambda s: metrics.index(s["metric"]))])
 print(table)

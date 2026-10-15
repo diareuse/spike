@@ -17,8 +17,7 @@ def slower_than_baseline(series, candidate="spike", baseline="dagger", tolerance
 
 def main(root):
     output = root / "output"
-    series = [entry for name in ("results-spike.json", "results-baselines.json")
-              for entry in json.loads((output / name).read_text())]
+    series = json.loads((output / "results.json").read_text())
     slower = slower_than_baseline(series)
     lines = ["### Spike vs Dagger at runtime", ""]
     if not any(entry["name"].startswith("dagger ") for entry in series):
