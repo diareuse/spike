@@ -172,6 +172,9 @@ class CompilerTest : HarnessCompiler() {
         assertRuns("qualifier_from_library")
 
     @Test
+    fun `a map key declared in a library keys entries in the consuming module`() = assertRuns("key_from_library")
+
+    @Test
     fun `qualified exports of one type each reach their own consumer`() = assertRuns("export_qualified_members")
 
     @Test
