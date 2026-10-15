@@ -6,7 +6,7 @@ import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
-import com.google.devtools.ksp.symbol.KSType
+import com.google.devtools.ksp.symbol.KSTypeReference
 import spike.Include
 import spike.Singleton
 import spike.compiler.graph.Invocation
@@ -49,7 +49,7 @@ class IncludeContributorMain : IncludeContributor {
             parent = parentType,
         )
         val invocation = annotated.toInvocation()
-        val receiver = annotated.extensionReceiver?.resolve()
+        val receiver = annotated.receiver()
         context.builder.addFactory(
             type = returnType,
             member = method.on(receiver),
@@ -69,7 +69,7 @@ class IncludeContributorMain : IncludeContributor {
             returns = type,
             parent = annotated.parentDeclaration?.toType(false),
         )
-        val receiver = annotated.extensionReceiver?.resolve()
+        val receiver = annotated.receiver()
         context.builder.addFactory(
             type = type,
             member = property.on(receiver),
@@ -78,9 +78,19 @@ class IncludeContributorMain : IncludeContributor {
         )
     }
 
-    private fun Member.on(receiver: KSType?): Member =
-        if (receiver == null) this else Member.Receiver(receiver.toType(), this)
+    private fun KSFunctionDeclaration.receiver() = extensionReceiver?.let(::Receiver)
 
-    private fun KSType?.asParameters() =
-        listOfNotNull(this?.let { Parameter("receiver", it.toType(), it.isMarkedNullable) })
+    private fun KSPropertyDeclaration.receiver() = extensionReceiver?.let(::Receiver)
+
+    private fun Member.on(receiver: Receiver?): Member =
+        if (receiver == null) this else Member.Receiver(receiver.type, this)
+
+    private fun Receiver?.asParameters() =
+        listOfNotNull(this?.let { Parameter("receiver", it.type, it.nullable) })
+
+    private class Receiver(reference: KSTypeReference) {
+        private val resolved = reference.resolve()
+        val type = resolved.toType().qualifiedBy(reference.findQualifiers())
+        val nullable = resolved.isMarkedNullable
+    }
 }
