@@ -45,6 +45,8 @@ benchmark {
     }
 }
 
+tasks.matching { it.name == "mainColdBenchmark" }.configureEach { mustRunAfter("mainBenchmark") }
+
 dependencies { testImplementation(kotlin("test")) }
 
 tasks.test { useJUnitPlatform() }
