@@ -304,6 +304,10 @@ class CompilerTest : HarnessCompiler() {
         assertRuns("bind_qualified_receiver")
 
     @Test
+    fun `a nullable receiver of an Include extension resolves a nullable binding`() =
+        assertRuns("bind_nullable_receiver")
+
+    @Test
     fun `null passed for a nullable factory parameter reaches every consumer`() =
         assertRuns("nullable_factory_parameter")
 

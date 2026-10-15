@@ -12,6 +12,10 @@ class GradleBuildTest : HarnessGradle() {
     fun `expect actual gets resolved`() = assertMatchesGolden("expect_actual", tasks = listOf("assemble", ":jvmRun"))
 
     @Test
+    fun `an expect Include property resolves to its actual`() =
+        assertBuilds("expect_actual_property", tasks = listOf("assemble", ":jvmRun"))
+
+    @Test
     fun `exports are taken into account`() = assertMatchesGolden(
         "multi_module",
         template = "multi_module",
