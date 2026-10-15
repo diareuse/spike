@@ -66,6 +66,8 @@ abstract class HarnessCompiler {
         for (message in messages) {
             assertContains(processing.report, message)
         }
+        val errors = testResources.resolve("$name/errors.txt")
+        if (errors.isFile) assertEquals(errors.readText().trimEnd(), processing.report.trimEnd())
     }
 
     protected fun assertCompilationFails(

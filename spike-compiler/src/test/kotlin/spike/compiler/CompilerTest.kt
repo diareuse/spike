@@ -227,9 +227,13 @@ class CompilerTest : HarnessCompiler() {
     @Test
     fun `an Include member of a class that is not an object fails`() = assertProcessingFails(
         "include_member_of_class",
-        "@Include property asCat is declared in class Bindings",
+        "Main.kt:15: [SPIKE-INCLUDE-OWNER] @Include property asCat is declared in class Bindings",
         "top level or inside an object"
     )
+
+    @Test
+    fun `every failing Include declaration is reported, not only the first`() =
+        assertProcessingFails("include_errors_reported_together")
 
     @Test
     fun `an Include member function of a class that is not an object fails`() = assertProcessingFails(

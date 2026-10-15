@@ -1,0 +1,8 @@
+Main.kt:15: [SPIKE-INCLUDE-OWNER] @Include function cat is declared in class CatBindings, Spike cannot call it
+  - function cat in class CatBindings (Main.kt:15)
+Why: Spike has no instance of CatBindings to call cat on.
+Fix: Declare cat at top level or inside an object, such as a companion object.
+Main.kt:20: [SPIKE-INCLUDE-OWNER] @Include function dog is declared in class DogBindings, Spike cannot call it
+  - function dog in class DogBindings (Main.kt:20)
+Why: Spike has no instance of DogBindings to call dog on.
+Fix: Declare dog at top level or inside an object, such as a companion object.

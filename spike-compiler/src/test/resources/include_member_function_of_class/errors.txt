@@ -1,0 +1,4 @@
+Main.kt:12: [SPIKE-INCLUDE-OWNER] @Include function cat is declared in class Bindings, Spike cannot call it
+  - function cat in class Bindings (Main.kt:12)
+Why: Spike has no instance of Bindings to call cat on.
+Fix: Declare cat at top level or inside an object, such as a companion object.

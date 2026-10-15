@@ -4,6 +4,7 @@ import com.google.devtools.ksp.impl.KotlinSymbolProcessing
 import com.google.devtools.ksp.processing.KSPJvmConfig
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
+import com.google.devtools.ksp.symbol.FileLocation
 import com.google.devtools.ksp.symbol.KSNode
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -66,11 +67,16 @@ class SourceModule(
         resourceOutputDir = generated.resolve("resources")
     }.build()
 
-    data class Error(val message: String, val symbol: KSNode?)
+    data class Error(val message: String, val symbol: KSNode?) {
+        override fun toString(): String {
+            val location = symbol?.location as? FileLocation ?: return message
+            return "${File(location.filePath).name}:${location.lineNumber}: $message"
+        }
+    }
 
     data class Processing(val succeeded: Boolean, val errors: List<Error>, val exceptions: List<Throwable>) {
         val report: String
-            get() = (errors.map { it.message } + exceptions.map { it.stackTraceToString() }).joinToString("\n")
+            get() = (errors.map { it.toString() } + exceptions.map { it.stackTraceToString() }).joinToString("\n")
     }
 
     data class Compilation(val succeeded: Boolean, val messages: String)

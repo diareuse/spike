@@ -1,0 +1,4 @@
+Main.kt:15: [SPIKE-INCLUDE-OWNER] @Include property asCat is declared in class Bindings, Spike cannot call it
+  - property asCat in class Bindings (Main.kt:15)
+Why: Spike has no instance of Bindings to call asCat on.
+Fix: Declare asCat at top level or inside an object, such as a companion object.
