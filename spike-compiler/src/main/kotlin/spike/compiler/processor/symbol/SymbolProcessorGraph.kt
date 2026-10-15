@@ -10,7 +10,7 @@ import spike.compiler.graph.MultiBindingStore
 import spike.compiler.processor.GraphContext
 import spike.compiler.processor.GraphContributor
 
-@Include(bindAs = SymbolProcessor::class)
+@Include
 @OptIn(KspExperimental::class)
 class SymbolProcessorGraph(
     private val viewModel: SymbolProcessorViewModel,
@@ -37,3 +37,6 @@ class SymbolProcessorGraph(
     }
 
 }
+
+@Include
+fun symbolProcessor(graph: SymbolProcessorGraph): SymbolProcessor = graph

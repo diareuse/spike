@@ -6,5 +6,5 @@ import kotlin.Suppress
 internal object PropertyEntryPoint_Program1 {
   public fun resolve(factory: PropertyEntryPoint_Factory): Any? = part0(factory)
 
-  private fun part0(factory: PropertyEntryPoint_Factory): Any? = Primary()
+  private fun part0(factory: PropertyEntryPoint_Factory): Any? = primary()
 }

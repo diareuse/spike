@@ -13,12 +13,11 @@ class GraphStoreTest {
     private val catConstructor = Constructor(cat, Invocation(emptyList(), false), singleton = false)
     private val otherCatConstructor = Constructor(cat, Invocation(emptyList(), false), singleton = true)
     private val petFactory = Factory(pet, Member.Method("test", "pet", pet), Invocation(emptyList(), false), false)
-    private val catAsPet = Binder(source = cat, type = pet)
+    private val petConstructor = Constructor(pet, Invocation(emptyList(), false), singleton = false)
 
     private val store = GraphStore(
-        constructors = listOf(catConstructor, otherCatConstructor),
+        constructors = listOf(catConstructor, otherCatConstructor, petConstructor),
         factories = listOf(petFactory),
-        binders = listOf(catAsPet),
     )
 
     @Test
@@ -27,22 +26,20 @@ class GraphStoreTest {
     }
 
     @Test
-    fun `finds the factory and the binder declared for a type`() {
+    fun `finds the factory declared for a type`() {
         assertEquals(petFactory, store.factoryOf(pet))
-        assertEquals(catAsPet, store.binderOf(pet))
     }
 
     @Test
     fun `finds nothing for a type without bindings`() {
         assertNull(store.constructorOf(dog))
         assertNull(store.factoryOf(dog))
-        assertNull(store.binderOf(dog))
         assertEquals(emptyList(), store.bindingsOf(dog))
     }
 
     @Test
-    fun `lists every distinct binding of a type, constructors first, then factories, then binders`() {
-        assertEquals(listOf(petFactory, catAsPet), store.bindingsOf(pet))
+    fun `lists every distinct binding of a type, constructors first, then factories`() {
+        assertEquals(listOf(petConstructor, petFactory), store.bindingsOf(pet))
         assertEquals(listOf(catConstructor, otherCatConstructor), store.bindingsOf(cat))
     }
 

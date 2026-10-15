@@ -8,10 +8,9 @@ interface RouteEntryPoint : spike.ktor.BaseRouteEntryPoint {
     companion object
 }
 
-@spike.Include(
-    bindAs = spike.ktor.RouteBuilder::class,
-    bindTo = spike.BindTarget.Set
-)
+@spike.Include(bindTo = spike.BindTarget.Set)
+fun getRoot(): spike.ktor.RouteBuilder = GetRoot()
+
 class GetRoot : spike.ktor.RegularRouteBuilder {
     override val path: String = "/"
     override fun Route.build() {

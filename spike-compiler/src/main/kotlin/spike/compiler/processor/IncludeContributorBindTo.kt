@@ -4,10 +4,8 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
-import com.google.devtools.ksp.symbol.KSType
 import spike.BindTarget
 import spike.Include
-import spike.compiler.graph.BuiltInTypes
 import spike.compiler.graph.Type
 import spike.compiler.processor.util.getAnnotationParameterOrDefault
 
@@ -29,15 +27,16 @@ class IncludeContributorBindTo(
         crossinline contribute: (GraphContext, T) -> Unit,
     ) {
         val annotated = this
+        val bound = type().qualifiedBy(findQualifiers())
         when (findBindToTarget()) {
             BindTarget.None -> contribute(context, annotated)
-            BindTarget.Set -> context.multibind.addToSet(findBindAsOrSelf(type)) {
+            BindTarget.Set -> context.multibind.addToSet(bound) {
                 contribute(context.copy(builder = this), annotated)
             }
-            BindTarget.List -> context.multibind.addToList(findBindAsOrSelf(type)) {
+            BindTarget.List -> context.multibind.addToList(bound) {
                 contribute(context.copy(builder = this), annotated)
             }
-            BindTarget.Map -> context.multibind.addToMap(findBindAsOrSelf(type), findKey()) {
+            BindTarget.Map -> context.multibind.addToMap(bound, findKey()) {
                 contribute(context.copy(builder = this), annotated)
             }
         }
@@ -47,13 +46,5 @@ class IncludeContributorBindTo(
         val bindTo: KSClassDeclaration = getAnnotationParameterOrDefault(Include::bindTo, null)
             ?: return BindTarget.None
         return BindTarget.valueOf(bindTo.simpleName.asString())
-    }
-
-    private inline fun <T : KSAnnotated> T.findBindAsOrSelf(type: T.() -> Type): Type {
-        val bindAs: KSType? = getAnnotationParameterOrDefault(Include::bindAs, null)
-        val targetType =
-            if (bindAs == null || bindAs.toType() == BuiltInTypes.Any) type()
-            else bindAs.toType()
-        return targetType.qualifiedBy(findQualifiers())
     }
 }

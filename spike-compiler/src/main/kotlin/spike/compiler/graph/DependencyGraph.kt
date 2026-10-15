@@ -58,7 +58,6 @@ class DependencyGraph private constructor(
                 TypeFactoryCreatorUniqueBinding(),
                 TypeFactoryCreatorConstructor(),
                 TypeFactoryCreatorMethod(),
-                TypeFactoryCreatorBinder(),
                 TypeFactoryCreatorLazy(),
                 TypeFactoryCreatorProvider(),
                 TypeFactoryCreatorMultiBindMap(multibinding),

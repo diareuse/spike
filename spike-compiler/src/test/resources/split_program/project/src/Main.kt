@@ -32,8 +32,11 @@ class Shared
 
 interface Greeter
 
-@spike.Include(bindAs = Greeter::class)
+@spike.Include
 class EnglishGreeter : Greeter
+
+@spike.Include
+val EnglishGreeter.asGreeter: Greeter get() = this
 
 @spike.Singleton
 @spike.Include

@@ -8,6 +8,6 @@ internal object PropertyEntryPoint_Program0 {
 
   private fun part0(factory: PropertyEntryPoint_Factory): Any? {
     val v0: Sphynx = Sphynx()
-    return v0
+    return v0.asCat
   }
 }

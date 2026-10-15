@@ -8,6 +8,6 @@ internal object NightStand_Program1 {
 
   private fun part0(factory: NightStand_Factory): Any? {
     val v0: AmazonFireSoundBar = AmazonFireSoundBar()
-    return v0
+    return v0.asSoundSystem
   }
 }

@@ -18,7 +18,10 @@ interface NightStand {
     companion object
 }
 
-@spike.Include(bindAs = SoundSystem::class)
+@spike.Include
+val AmazonFireSoundBar.asSoundSystem: SoundSystem get() = this
+
+@spike.Include
 class AmazonFireSoundBar: SoundSystem {
     override var sound: Int = 15
         set(value) {
@@ -36,7 +39,10 @@ interface Remote {
     fun volumeDown()
 }
 
-@spike.Include(bindAs = Remote::class)
+@spike.Include
+val RemoteControl.asRemote: Remote get() = this
+
+@spike.Include
 class RemoteControl(
     private val televisionProvider: spike.Provider<Television>,
     @Suppress("unused")
@@ -74,8 +80,11 @@ class RemoteControl(
     }
 }
 
+@spike.Include
+val SamsungTelevision.asTelevision: Television get() = this
+
 @spike.Singleton
-@spike.Include(bindAs = Television::class)
+@spike.Include
 class SamsungTelevision(
     private val soundSystem: Lazy<SoundSystem>
 ) : Television {

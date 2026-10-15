@@ -141,10 +141,9 @@ class TypeFactoryTest {
     }
 
     @Test
-    fun `binds and providers over separately built equal factories are equal`() {
+    fun `providers over separately built equal factories are equal`() {
         val provider = Type.Parametrized(BuiltInTypes.Provider, listOf(type("Link0")), false)
 
-        assertEquals<TypeFactory>(TypeFactory.Binds(type("Pet"), chain(10)), TypeFactory.Binds(type("Pet"), chain(10)))
         assertEquals<TypeFactory>(TypeFactory.Provides(provider, chain(10)), TypeFactory.Provides(provider, chain(10)))
     }
 

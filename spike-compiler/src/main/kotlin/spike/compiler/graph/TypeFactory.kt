@@ -54,25 +54,6 @@ sealed interface TypeFactory {
         override fun toString() = "$member$invocation: $type"
     }
 
-    data class Binds(
-        override val type: Type,
-        val source: TypeFactory,
-    ) : Structured {
-        private val hash = Objects.hash(type, source)
-
-        override fun hashCode() = hash
-
-        override fun equals(other: Any?) = structurallyEqual(this, other)
-
-        override fun pairedChildren(other: TypeFactory) =
-            if (other is Binds && other.type == type) listOf(source to other.source) else null
-
-        override val dependencies: List<TypeFactory>
-            get() = listOf(source)
-
-        override fun toString(): String = "${source.type} as $type"
-    }
-
     sealed interface Deferred : Structured {
         val factory: TypeFactory
     }
@@ -237,7 +218,6 @@ sealed interface TypeFactory {
 
         private fun List<TypeFactory>.pairedWith(other: List<TypeFactory>) = if (size == other.size) zip(other) else null
 
-        operator fun List<TypeFactory>.contains(type: Type) = any { it.type == type }
 
         fun TypeFactory.invertDependencyTree(): List<TypeFactory> {
             val order = ArrayList<TypeFactory>()

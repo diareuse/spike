@@ -13,6 +13,6 @@ internal object NightStand_Program2 {
     val v0: List<Battery> = batteries()
     val v1: Provider<Television> = Provider { factory.get<Television>(DependencyId(0)) }
     val v2: RemoteControl = RemoteControl(v1, v0)
-    return v2
+    return v2.asRemote
   }
 }

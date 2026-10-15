@@ -11,5 +11,8 @@ interface PropertyEntryPoint {
 
 interface Cat
 
-@spike.Include(bindAs = Cat::class)
+@spike.Include
 class Sphynx : Cat
+
+@spike.Include
+val Sphynx.asCat: Cat get() = this

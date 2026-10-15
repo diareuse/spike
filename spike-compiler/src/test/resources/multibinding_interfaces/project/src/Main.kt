@@ -22,8 +22,10 @@ interface Worker<Input, Message, Output> {
 
 typealias IntWorker = Worker<Int, Int, Int?>
 
-@spike.Include(bindTo = spike.BindTarget.Map, bindAs = IntWorker::class)
+@spike.Include(bindTo = spike.BindTarget.Map)
 @StringKey("primary")
+fun primary(): IntWorker = Primary()
+
 class Primary : IntWorker {
     override fun doWork(input: Int, callback: (Int) -> Unit): Int? {
         callback(input - 1)
@@ -31,8 +33,10 @@ class Primary : IntWorker {
     }
 }
 
-@spike.Include(bindTo = spike.BindTarget.Map, bindAs = IntWorker::class)
+@spike.Include(bindTo = spike.BindTarget.Map)
 @StringKey("secondary")
+fun secondary(): IntWorker = Secondary()
+
 class Secondary : IntWorker {
     override fun doWork(input: Int, callback: (Int) -> Unit): Int? {
         callback(input + 1)

@@ -22,7 +22,7 @@ class TypeFactoryCreatorMultiBindMap(
             for ((k, v) in instances) {
                 val definitions = (v.constructors + v.factories).distinct()
                 if (definitions.size > 1) failOnDuplicateBindings("$type key $k", definitions)
-                val definition = definitions.singleOrNull() ?: v.binders.singleOrNull()
+                val definition = definitions.singleOrNull()
                     ?: error("No definition found for $type whilst being multi-bound, this is however most likely a spike inference error.")
                 val newType = mint(
                     context = context.clone(store = context.store.overriddenBy(definition.asGraphStore())),

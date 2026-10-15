@@ -39,7 +39,10 @@ interface Cat {
 }
 
 @Kind("sphynx")
-@spike.Include(bindAs = Cat::class)
+@spike.Include
+val Sphynx.asCat: Cat get() = this
+
+@spike.Include
 class Sphynx(@param:All food: Food) : Cat {
     override val name = "Sphynx"
 }
@@ -47,12 +50,12 @@ class Sphynx(@param:All food: Food) : Cat {
 class SomeCat(override val name: String) : Cat
 
 @Kind("nyan")
-@spike.Include(bindAs = Cat::class)
-fun nyanCat(@All food: Food) = SomeCat("nyan")
+@spike.Include
+fun nyanCat(@All food: Food): Cat = SomeCat("nyan")
 
-@spike.Include(bindAs = Cat::class)
-fun defaultCat() = SomeCat("black")
+@spike.Include
+fun defaultCat(): Cat = SomeCat("black")
 
 @EnumKind(CatType.Red)
-@spike.Include(bindTo = spike.BindTarget.Map, bindAs = Cat::class)
-fun redCat() = SomeCat("red")
+@spike.Include(bindTo = spike.BindTarget.Map)
+fun redCat(): Cat = SomeCat("red")

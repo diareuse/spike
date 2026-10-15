@@ -13,11 +13,9 @@ interface IncludeContributor {
     companion object {
         @Include
         fun default(): IncludeContributor {
-            var out: IncludeContributor = IncludeContributorChain(
-                IncludeContributorBindAs(),
-                IncludeContributorMain(),
-            )
+            var out: IncludeContributor = IncludeContributorMain()
             out = IncludeContributorOwner(out)
+            out = IncludeContributorBindAsRemoved(out)
             out = IncludeContributorBackingField(out)
             out = IncludeContributorBindTo(out)
             out = IncludeContributorMultiplatform(out)

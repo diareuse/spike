@@ -16,6 +16,8 @@ interface Cat
 @spike.Key
 annotation class CatKey(val klass: KClass<out Cat>)
 
-@spike.Include(bindTo = spike.BindTarget.Map, bindAs = Cat::class)
-@CatKey(SomeCat::class)
 class SomeCat : Cat
+
+@spike.Include(bindTo = spike.BindTarget.Map)
+@CatKey(SomeCat::class)
+fun someCat(): Cat = SomeCat()

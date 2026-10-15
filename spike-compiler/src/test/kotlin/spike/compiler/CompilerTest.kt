@@ -232,6 +232,9 @@ class CompilerTest : HarnessCompiler() {
     fun `a Singleton Include property is evaluated once per entry point`() = assertRuns("include_singleton_property")
 
     @Test
+    fun `a qualified Include class resolves only for the qualified type`() = assertRuns("include_qualified_class")
+
+    @Test
     fun `a qualified Include property resolves only for the qualified type`() =
         assertRuns("include_qualified_property")
 
@@ -243,6 +246,39 @@ class CompilerTest : HarnessCompiler() {
         "include_property_with_backing_field",
         "@Include property clock has a backing field",
         "val clock get() = "
+    )
+
+    @Test
+    fun `Include with bindAs on a qualified multibinding entry keeps bindTo, key and qualifier in the replacement`() =
+        assertProcessingFails(
+            "bind_as_removed_multibinding",
+            "bindAs was removed from @Include",
+            "@spike.Include(bindTo = spike.BindTarget.Map)",
+            "@StringKey(\"logging\")",
+            "@Kind(\"core\")",
+            "val LoggingPlugin.asPlugin: Plugin get() = this"
+        )
+
+    @Test
+    fun `Include with bindAs on a function suggests returning the bound type`() = assertProcessingFails(
+        "bind_as_removed_function",
+        "bindAs was removed from @Include",
+        "return Cat from sphynx",
+        "fun sphynx(): Cat"
+    )
+
+    @Test
+    fun `Include with bindAs on a property suggests declaring the bound type`() = assertProcessingFails(
+        "bind_as_removed_property",
+        "bindAs was removed from @Include, declare it as Cat",
+        "val sphynx: Cat get() = ..."
+    )
+
+    @Test
+    fun `Include with bindAs fails explaining the replacement`() = assertProcessingFails(
+        "bind_as_removed",
+        "bindAs was removed from @Include",
+        "val HouseCat.asCat: Cat get() = this"
     )
 
     @Test

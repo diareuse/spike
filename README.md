@@ -88,7 +88,7 @@ respective documentation for more details:
 
 Spike uses annotations to define your dependency graph. The core annotations are:
 
-* `@Include`: Includes a class or a provider function in the dependency graph.
+* `@Include`: Includes a class, a provider function or a provider property in the dependency graph. Functions and properties must be top level or inside an object, such as a companion object.
 * `@Include.Constructor`: Marks the constructor Spike uses when an `@Include` class has more than one.
 * `@Singleton`: Marks a class as a singleton (only instantiated once per entry point instance; two entry point instances never share a singleton).
 * `@EntryPoint`: Defines an entry point interface for the dependency graph.
@@ -100,9 +100,12 @@ Here's an example of how to define your components:
 ```kotlin
 interface Heater
 
-// Use bindAs to bind a class to an interface
-@Include(bindAs = Heater::class)
+@Include
 class ElectricHeater : Heater
+
+// Bind a class to an interface with an @Include extension property or function
+@Include
+val ElectricHeater.asHeater: Heater get() = this
 
 // Spike can inject standard `Lazy<T>` or `spike.Provider<T>` automatically
 @Include

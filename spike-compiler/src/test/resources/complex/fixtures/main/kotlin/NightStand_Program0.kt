@@ -14,6 +14,6 @@ internal object NightStand_Program0 {
     val v1: SamsungTelevision = factory._singletons.getOrPut(2) {
         SamsungTelevision(v0)
     }
-    return v1
+    return v1.asTelevision
   }
 }

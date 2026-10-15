@@ -19,8 +19,10 @@ class Cat : Animal {
     var name = "root"
 }
 
-@spike.Include(bindTo = spike.BindTarget.Set, bindAs = Animal::class)
-fun felix(): Cat = Cat().apply { name = "felix" }
+@spike.Include(bindTo = spike.BindTarget.Set)
+fun felix(): Animal = Cat().apply { name = "felix" }
 
-@spike.Include(bindTo = spike.BindTarget.Set, bindAs = Animal::class)
 class Owner(val cat: Cat) : Animal
+
+@spike.Include(bindTo = spike.BindTarget.Set)
+fun owner(cat: Cat): Animal = Owner(cat)

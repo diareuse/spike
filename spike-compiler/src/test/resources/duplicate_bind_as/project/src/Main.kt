@@ -7,8 +7,14 @@ interface PropertyEntryPoint {
 
 interface Animal
 
-@spike.Include(bindAs = Animal::class)
+@spike.Include
 class Tomcat : Animal
 
-@spike.Include(bindAs = Animal::class)
+@spike.Include
+val Tomcat.asAnimal: Animal get() = this
+
+@spike.Include
 class Bulldog : Animal
+
+@spike.Include
+val Bulldog.asAnimal: Animal get() = this

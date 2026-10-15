@@ -13,7 +13,6 @@ import spike.compiler.generator.code.addProvider
 import spike.compiler.generator.code.addType
 import spike.compiler.generator.code.mapEntries
 import spike.compiler.graph.Type
-import spike.compiler.graph.TypeFactory.Binds
 import spike.compiler.graph.TypeFactory.Class
 import spike.compiler.graph.TypeFactory.External
 import spike.compiler.graph.TypeFactory.Imported
@@ -31,7 +30,6 @@ class TypeFactoryExpression {
     context(context: FileGeneratorContext, step: LinearStep, references: LinearReferences)
     fun write(body: CodeBlock.Builder) = context.apply {
         when (val factory = step.factory) {
-            is Binds -> generateBindsCase(body, factory)
             is Class -> generateClassCase(body, factory)
             is Method -> generateMethodCase(body, factory)
             is Memorizes -> generateMemorizesCase(body, factory)
@@ -42,11 +40,6 @@ class TypeFactoryExpression {
             is External -> generateExternalCase(body, factory)
             is Imported -> generateImportedCase(body, factory)
         }
-    }
-
-    context(step: LinearStep, references: LinearReferences)
-    private fun FileGeneratorContext.generateBindsCase(body: CodeBlock.Builder, factory: Binds) {
-        body.addArgument(0, factory.type).addStatement("")
     }
 
     context(step: LinearStep, references: LinearReferences)

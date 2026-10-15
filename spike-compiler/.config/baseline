@@ -6,7 +6,6 @@
     <ID>MaxLineLength:BuiltInMembers.kt:BuiltInMembers$val mapOf = Member.Method(packageName = "kotlin.collections", name = "mapOf", returns = BuiltInTypes.Map, parent = null)</ID>
     <ID>MaxLineLength:BuiltInMembers.kt:BuiltInMembers$val setOf = Member.Method(packageName = "kotlin.collections", name = "setOf", returns = BuiltInTypes.Set, parent = null)</ID>
     <ID>MaxLineLength:GraphEntryPoint.kt:GraphEntryPoint$fun isRootProperty: Boolean</ID>
-    <ID>MaxLineLength:IncludeContributorBindAs.kt:IncludeContributorBindAs$private fun errorMessage: String</ID>
     <ID>MaxLineLength:IncludeContributorMain.kt:IncludeContributorMain$constructors.size &gt; 1</ID>
     <ID>MaxLineLength:IncludeContributorViewModel.kt:IncludeContributorViewModel$constructors.size &gt; 1</ID>
     <ID>MaxLineLength:Invocation.kt:Invocation$override fun toString: String</ID>

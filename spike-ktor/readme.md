@@ -25,7 +25,7 @@ dependencies {
 
 ### 1. Define a Route Builder
 
-Create a class that implements `RegularRouteBuilder`. Use the `@spike.Include` annotation to tell the Spike compiler to include this route in the routing set.
+Create an `@spike.Include` class that implements `RegularRouteBuilder`, then add it to the routing set with an `@spike.Include` extension property bound to the set. The route keeps its constructor-injected dependencies.
 
 ```kotlin
 import io.ktor.server.application.*
@@ -33,10 +33,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import spike.ktor.RegularRouteBuilder
 
-@spike.Include(
-    bindAs = spike.ktor.RouteBuilder::class,
-    bindTo = spike.BindTarget.Set
-)
+@spike.Include
 class HomeRoute : RegularRouteBuilder {
     override val path = "/"
 
@@ -46,6 +43,9 @@ class HomeRoute : RegularRouteBuilder {
         }
     }
 }
+
+@spike.Include(bindTo = spike.BindTarget.Set)
+val HomeRoute.asRoute: spike.ktor.RouteBuilder get() = this
 ```
 
 ### 2. Create an Entry Point

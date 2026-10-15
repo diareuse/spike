@@ -10,6 +10,8 @@ annotation class StringKey(val name: String)
 
 interface Plugin
 
-@StringKey("logging")
-@spike.Include(bindTo = spike.BindTarget.Map, bindAs = Plugin::class)
 class LoggingPlugin : Plugin
+
+@StringKey("logging")
+@spike.Include(bindTo = spike.BindTarget.Map)
+fun loggingPlugin(): Plugin = LoggingPlugin()
