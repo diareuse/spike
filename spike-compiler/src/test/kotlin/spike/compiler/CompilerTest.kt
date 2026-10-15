@@ -130,6 +130,41 @@ class CompilerTest : HarnessCompiler() {
         )
 
     @Test
+    fun `two factory parameters of one type fail naming both`() = assertProcessingFails(
+        "two_factory_parameters_same_type",
+        "kotlin.String is an input of the entry point more than once",
+        "parameter primary of Configured.Factory.create",
+        "parameter secondary of Configured.Factory.create"
+    )
+
+    @Test
+    fun `a factory parameter of an exported type fails naming both`() = assertProcessingFails(
+        "parameter_and_export_same_type",
+        "Lib is an input of the entry point more than once",
+        "parameter lib of PropertyEntryPoint.Factory.create",
+        "property lib of @Export Exported"
+    )
+
+    @Test
+    fun `two inputs of one type compile while nothing requests that type`() = assertRuns("repeated_input_unrequested")
+
+    @Test
+    fun `qualified factory parameters of one type each reach their own consumer`() =
+        assertRuns("qualified_parameters_of_one_type")
+
+    @Test
+    fun `a multibinding entry of a repeated input's type contributes its own value`() =
+        assertRuns("multibinding_entry_of_repeated_input_type")
+
+    @Test
+    fun `an export exposing one type twice fails when that type is requested`() = assertProcessingFails(
+        "export_property_and_function_same_type",
+        "Lib is an input of the entry point more than once",
+        "property lib of @Export Exported",
+        "function otherLib of @Export Exported"
+    )
+
+    @Test
     fun `a type exported only through a function reaches the consuming module`() = assertRuns("export_function")
 
     @Test
