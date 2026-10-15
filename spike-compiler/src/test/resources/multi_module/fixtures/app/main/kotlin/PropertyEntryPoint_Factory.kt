@@ -13,12 +13,12 @@ public class PropertyEntryPoint_Factory(
 ) : SingletonOwner(singletons),
     PropertyEntryPoint {
   public val exportedImpl: ExportedImpl =
-      ExportedImpl(kotlinString = get(DependencyId(1)), singletons = _singletons.scope("spike.generated.ExportedImpl"))
+      ExportedImpl(kotlin_String = get(DependencyId(1)), singletons = _singletons.scope("spike.generated.ExportedImpl"))
 
   override val lib: Lib
     get() = get(DependencyId(0))
 
-  public val kotlinString: Provider<String>
+  public val kotlin_String: Provider<String>
     get() = get(DependencyId(1))
 
   @Suppress("UNCHECKED_CAST")

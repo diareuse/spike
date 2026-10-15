@@ -8,11 +8,11 @@ import spike.factory.SingletonHolder
 import spike.factory.SingletonOwner
 
 public class Exported_Factory(
-  private val _kotlinString: Provider<String>,
+  private val _kotlin_String: Provider<String>,
   singletons: SingletonHolder? = null,
 ) : SingletonOwner(singletons) {
-  public val kotlinString: String
-    get() = _kotlinString.get()
+  public val kotlin_String: String
+    get() = _kotlin_String.get()
 
   @Suppress("UNCHECKED_CAST")
   public fun <T> `get`(id: DependencyId): T = when (id.id) {
