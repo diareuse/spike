@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Spike Benchmarks</title>
+  <style>
+    :root {
+      --bg: #f7f7f5;
+      --card: #ffffff;
+      --text: #1d1d1b;
+      --muted: #6b6b66;
+      --line: #e3e3de;
+      --best: #2f7d4f;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #161615;
+        --card: #1f1f1d;
+        --text: #ececea;
+        --muted: #9a9a94;
+        --line: #33332f;
+        --best: #6cc58f;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    header, main { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
+    header h1 { margin: 0 0 4px; font-size: 24px; }
+    header p { margin: 0; color: var(--muted); }
+    .controls { margin-top: 12px; display: flex; gap: 16px; flex-wrap: wrap; color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(520px, 1fr)); gap: 16px; }
+    @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+    section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 16px;
+      min-width: 0;
+    }
+    section h2 { margin: 0; font-size: 17px; }
+    section .unit { color: var(--muted); font-size: 13px; }
+    .chart { position: relative; height: 280px; margin: 12px 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+    th, td { text-align: right; padding: 4px 6px; border-top: 1px solid var(--line); }
+    th:first-child, td:first-child { text-align: left; }
+    th { color: var(--muted); font-weight: 500; }
+    tr.spike td { font-weight: 600; }
+    td.best { color: var(--best); }
+    .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+    footer { color: var(--muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Spike benchmarks</h1>
+    <p>Every framework on the same graphs, measured on every push to master. Lower is better.</p>
+    <div class="controls">
+      <label><input type="checkbox" id="log" checked /> Logarithmic scale</label>
+      <span id="updated"></span>
+    </div>
+  </header>
+  <main>
+    <div class="grid" id="charts"></div>
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="data.js"></script>
+  <script>
+    const SUITE = "Baselines";
+    const ORDER = ["spike", "dagger", "metro", "kotlin-inject", "koin", "manual"];
+    const COLORS = {
+      spike: "#d9480f",
+      dagger: "#1c7ed6",
+      metro: "#7048e8",
+      "kotlin-inject": "#0ca678",
+      koin: "#e8a33d",
+      manual: "#868e96",
+    };
+
+    const entries = (window.BENCHMARK_DATA.entries[SUITE] || []).slice().sort((a, b) => a.date - b.date);
+    const commits = entries.map((entry) => entry.commit);
+    const labels = commits.map((commit) => commit.id.slice(0, 7));
+    const metrics = [];
+    const series = new Map();
+    entries.forEach((entry, index) => {
+      for (const bench of entry.benches) {
+        if (!series.has(bench.name)) {
+          metrics.push(bench.name);
+          series.set(bench.name, { unit: bench.unit, frameworks: new Map() });
+        }
+        const frameworks = series.get(bench.name).frameworks;
+        const framework = bench.extra || "unknown";
+        if (!frameworks.has(framework)) frameworks.set(framework, new Array(entries.length).fill(null));
+        frameworks.get(framework)[index] = bench.value;
+      }
+    });
+
+    const rank = (name) => (ORDER.indexOf(name) === -1 ? ORDER.length : ORDER.indexOf(name));
+    const format = (value) => (value >= 100 ? value.toFixed(0) : value >= 1 ? value.toFixed(2) : value.toPrecision(3));
+    const last = commits[commits.length - 1];
+    document.getElementById("updated").textContent = last
+      ? `Latest: ${last.id.slice(0, 7)} · ${new Date(last.timestamp).toLocaleString()}`
+      : "No results yet";
+
+    const charts = [];
+    const container = document.getElementById("charts");
+    for (const metric of metrics) {
+      const { unit, frameworks } = series.get(metric);
+      const names = [...frameworks.keys()].sort((a, b) => rank(a) - rank(b));
+      const section = document.createElement("section");
+      section.innerHTML = `<h2>${metric}</h2><span class="unit">${unit}, lower is better</span><div class="chart"><canvas></canvas></div>`;
+      container.appendChild(section);
+
+      const latest = names
+        .map((name) => {
+          const values = frameworks.get(name);
+          for (let i = values.length - 1; i >= 0; i--) if (values[i] !== null) return { name, value: values[i], at: i };
+          return null;
+        })
+        .filter(Boolean)
+        .sort((a, b) => a.value - b.value);
+      const best = latest.length ? latest[0].value : 0;
+      const table = document.createElement("table");
+      table.innerHTML =
+        `<tr><th>Framework</th><th>Latest (${unit})</th><th>× fastest</th><th>Commit</th></tr>` +
+        latest
+          .map(
+            (row) =>
+              `<tr class="${row.name === "spike" ? "spike" : ""}"><td><span class="swatch" style="background:${COLORS[row.name] || "#999"}"></span>${row.name}</td>` +
+              `<td class="${row.value === best ? "best" : ""}">${format(row.value)}</td>` +
+              `<td>${(row.value / best).toFixed(2)}</td><td>${labels[row.at]}</td></tr>`
+          )
+          .join("");
+      section.appendChild(table);
+
+      charts.push(
+        new Chart(section.querySelector("canvas"), {
+          type: "line",
+          data: {
+            labels,
+            datasets: names.map((name) => ({
+              label: name,
+              data: frameworks.get(name),
+              borderColor: COLORS[name] || "#999",
+              backgroundColor: COLORS[name] || "#999",
+              borderWidth: name === "spike" ? 3 : 1.5,
+              pointRadius: name === "spike" ? 3 : 2,
+              spanGaps: true,
+              tension: 0,
+            })),
+          },
+          options: {
+            maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            scales: { y: { type: "logarithmic", title: { display: true, text: unit } } },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  title: (items) => {
+                    const commit = commits[items[0].dataIndex];
+                    return `${commit.id.slice(0, 7)} ${commit.message.split("\n")[0]}`;
+                  },
+                  label: (item) => `${item.dataset.label}: ${format(item.parsed.y)} ${unit}`,
+                },
+                itemSort: (a, b) => a.parsed.y - b.parsed.y,
+              },
+            },
+            onClick: (_, elements) => {
+              if (elements.length) window.open(commits[elements[0].index].url, "_blank");
+            },
+          },
+        })
+      );
+    }
+
+    document.getElementById("log").addEventListener("change", (event) => {
+      for (const chart of charts) {
+        chart.options.scales.y.type = event.target.checked ? "logarithmic" : "linear";
+        chart.update();
+      }
+    });
+  </script>
+</body>
+</html>
