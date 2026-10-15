@@ -239,6 +239,13 @@ class CompilerTest : HarnessCompiler() {
     fun `an Include extension property can contribute to a keyed map`() = assertRuns("bind_extension_property_map")
 
     @Test
+    fun `an Include property with a backing field fails`() = assertProcessingFails(
+        "include_property_with_backing_field",
+        "@Include property clock has a backing field",
+        "val clock get() = "
+    )
+
+    @Test
     fun `null passed for a nullable factory parameter reaches every consumer`() =
         assertRuns("nullable_factory_parameter")
 

@@ -18,6 +18,7 @@ interface IncludeContributor {
                 IncludeContributorMain(),
             )
             out = IncludeContributorOwner(out)
+            out = IncludeContributorBackingField(out)
             out = IncludeContributorBindTo(out)
             out = IncludeContributorMultiplatform(out)
             return out
