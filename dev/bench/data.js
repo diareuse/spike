@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792051045744,
+  "lastUpdate": 1792057619817,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -3323,6 +3323,55 @@ window.BENCHMARK_DATA = {
           {
             "name": "spike cold start",
             "value": 169103.4105,
+            "unit": "us"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "02da4f5158273dff28a04f8f8932413647c6068b",
+          "message": "build(benchmark): chart each metric once, across every framework\n\nresults-baselines.json named every measurement \"<framework> <metric>\",\nso the dashboard drew one chart per framework and metric, about 30 in\nall. Each measurement is now named by its metric alone, with the\nframework in the extra field, so the dashboard draws one chart per\nmetric with every framework's value for each commit, and the tooltip\nnames the framework.\n\nresults-spike.json keeps its \"spike <metric>\" names, because Spike's\nregression alerts compare them. parity.py can no longer find Dagger by\nname in the baselines, so report.py also writes results.json, every\nmeasurement named \"<framework> <metric>\", and parity.py reads that.",
+          "timestamp": "2026-10-15T10:46:45+02:00",
+          "tree_id": "4efdb3d60d57d459bb6ff3d4ede660635f1559cc",
+          "url": "https://github.com/diareuse/spike/commit/02da4f5158273dff28a04f8f8932413647c6068b"
+        },
+        "date": 1792057618782,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "spike clean build",
+            "value": 2904.215,
+            "unit": "ms"
+          },
+          {
+            "name": "spike ABI change",
+            "value": 1476.73,
+            "unit": "ms"
+          },
+          {
+            "name": "spike non-ABI change",
+            "value": 1516.845,
+            "unit": "ms"
+          },
+          {
+            "name": "spike resolve from graph",
+            "value": 5.064791787144307,
+            "unit": "us"
+          },
+          {
+            "name": "spike cold start",
+            "value": 226130.1025,
             "unit": "us"
           }
         ]
