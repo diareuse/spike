@@ -168,6 +168,11 @@ class CompilerTest : HarnessCompiler() {
     fun `a type exported only through a function reaches the consuming module`() = assertRuns("export_function")
 
     @Test
+    fun `a qualifier declared in a library qualifies types in the consuming module`() =
+        assertRuns("qualifier_from_library")
+
+
+    @Test
     fun `a multibinding entry of an input's type contributes its own value`() =
         assertRuns("multibinding_entry_of_input_type")
 
