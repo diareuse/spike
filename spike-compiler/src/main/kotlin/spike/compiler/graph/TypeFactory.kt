@@ -8,41 +8,28 @@ sealed interface TypeFactory {
     val type: Type
     val dependencies: List<TypeFactory>
 
+    sealed interface Structured : TypeFactory {
+        fun pairedChildren(other: TypeFactory): List<Pair<TypeFactory, TypeFactory>>?
+    }
+
     data class Class(
         override val type: Type,
         override val invocation: Invocation,
         override val singleton: Boolean,
         override val dependencies: List<TypeFactory>,
-    ) : TypeFactory,
+    ) : Structured,
         Callable {
         private val hash = Objects.hash(type, invocation, singleton, dependencies)
 
         override fun hashCode() = hash
 
-        override fun toString(): String {
-            var out = ""
-            out += "$type("
-            var first = true
-            for (parameter in invocation.parameters) {
-                if (!first) out += ","
-                out += "\n"
-                val parametrized = parameter.type as? Type.Parametrized
-                val targetType = if (
-                    parametrized?.envelope == BuiltInTypes.Provider ||
-                    parametrized?.envelope == BuiltInTypes.Lazy
-                ) {
-                    parameter.type.typeArguments.single()
-                } else {
-                    parameter.type
-                }
-                out += dependencies.firstOrNull { dit -> dit.type == targetType }?.toString()?.prependIndent()
-                    ?: "<error cannot resolve ${parameter.type}>"
-                first = false
-            }
-            if (!first) out += "\n"
-            out += ")"
-            return out
+        override fun equals(other: Any?) = structurallyEqual(this, other)
+
+        override fun pairedChildren(other: TypeFactory) = dependencies.pairedWith(other.dependencies).takeIf {
+            other is Class && other.type == type && other.invocation == invocation && other.singleton == singleton
         }
+
+        override fun toString() = "$type$invocation"
     }
 
     data class Method(
@@ -51,28 +38,42 @@ sealed interface TypeFactory {
         override val invocation: Invocation,
         override val singleton: Boolean,
         override val dependencies: List<TypeFactory>,
-    ) : TypeFactory,
+    ) : Structured,
         Callable {
         private val hash = Objects.hash(type, member, invocation, singleton, dependencies)
 
         override fun hashCode() = hash
+
+        override fun equals(other: Any?) = structurallyEqual(this, other)
+
+        override fun pairedChildren(other: TypeFactory) = dependencies.pairedWith(other.dependencies).takeIf {
+            other is Method && other.type == type && other.member == member && other.invocation == invocation &&
+                other.singleton == singleton
+        }
+
+        override fun toString() = "${member.name}$invocation: $type"
     }
 
     data class Binds(
         override val type: Type,
         val source: TypeFactory,
-    ) : TypeFactory {
+    ) : Structured {
         private val hash = Objects.hash(type, source)
 
         override fun hashCode() = hash
 
+        override fun equals(other: Any?) = structurallyEqual(this, other)
+
+        override fun pairedChildren(other: TypeFactory) =
+            if (other is Binds && other.type == type) listOf(source to other.source) else null
+
         override val dependencies: List<TypeFactory>
             get() = listOf(source)
 
-        override fun toString(): String = "$source as $type"
+        override fun toString(): String = "${source.type} as $type"
     }
 
-    sealed interface Deferred : TypeFactory {
+    sealed interface Deferred : Structured {
         val factory: TypeFactory
     }
 
@@ -84,6 +85,11 @@ sealed interface TypeFactory {
 
         override fun hashCode() = hash
 
+        override fun equals(other: Any?) = structurallyEqual(this, other)
+
+        override fun pairedChildren(other: TypeFactory) =
+            if (other is Provides && other.type == type) listOf(factory to other.factory) else null
+
         override val dependencies: List<TypeFactory>
             get() = factory.dependencies
         init {
@@ -92,12 +98,7 @@ sealed interface TypeFactory {
             }
         }
 
-        override fun toString(): String {
-            var out = "Provider {\n"
-            out += factory.toString().prependIndent()
-            out += "\n}"
-            return out
-        }
+        override fun toString() = "$type"
     }
 
     data class Memorizes(
@@ -108,6 +109,11 @@ sealed interface TypeFactory {
 
         override fun hashCode() = hash
 
+        override fun equals(other: Any?) = structurallyEqual(this, other)
+
+        override fun pairedChildren(other: TypeFactory) =
+            if (other is Memorizes && other.type == type) listOf(factory to other.factory) else null
+
         override val dependencies: List<TypeFactory>
             get() = factory.dependencies
         init {
@@ -116,12 +122,7 @@ sealed interface TypeFactory {
             }
         }
 
-        override fun toString(): String {
-            var out = "lazy {\n"
-            out += factory.toString().prependIndent()
-            out += "\n}"
-            return out
-        }
+        override fun toString() = "$type"
     }
 
     data class Property(
@@ -159,10 +160,19 @@ sealed interface TypeFactory {
         override val type: Type,
         val entries: List<TypeFactory>,
         val collectionType: Type,
-    ) : TypeFactory {
+    ) : Structured {
         private val hash = Objects.hash(type, entries, collectionType)
 
         override fun hashCode() = hash
+
+        override fun equals(other: Any?) = structurallyEqual(this, other)
+
+        override fun pairedChildren(other: TypeFactory) =
+            if (other is MultibindsCollection && other.type == type && other.collectionType == collectionType) {
+                entries.pairedWith(other.entries)
+            } else {
+                null
+            }
 
         override val dependencies: List<TypeFactory> get() = entries
 
@@ -173,35 +183,28 @@ sealed interface TypeFactory {
                 else -> error("Unsupported collection type: $collectionType")
             }
 
-        override fun toString(): String {
-            var out = "$collectionType {"
-            for (dependency in dependencies) {
-                out += "\n"
-                out += dependency.toString().prependIndent()
-            }
-            out += "\n}"
-            return out
-        }
+        override fun toString() = "$collectionType of ${entries.map { it.type }}"
     }
 
     data class MultibindsMap(
         override val type: Type.Parametrized,
         val keyValues: Map<Any?, TypeFactory>,
-    ) : TypeFactory {
+    ) : Structured {
         private val hash = Objects.hash(type, keyValues)
 
         override fun hashCode() = hash
 
-        override val dependencies get() = keyValues.values.toList()
-        override fun toString(): String {
-            var out = "Map {"
-            for ((key, value) in keyValues) {
-                out += "\n"
-                out += "$key -> $value"
+        override fun equals(other: Any?) = structurallyEqual(this, other)
+
+        override fun pairedChildren(other: TypeFactory) =
+            if (other is MultibindsMap && other.type == type && other.keyValues.keys == keyValues.keys) {
+                keyValues.map { (key, value) -> value to other.keyValues.getValue(key) }
+            } else {
+                null
             }
-            out += "\n}"
-            return out
-        }
+
+        override val dependencies get() = keyValues.values.toList()
+        override fun toString() = "Map of ${keyValues.mapValues { it.value.type }}"
     }
 
     sealed interface Callable : TypeFactory {
@@ -212,6 +215,28 @@ sealed interface TypeFactory {
     }
 
     companion object {
+        internal fun structurallyEqual(first: Structured, second: Any?): Boolean {
+            if (first === second) return true
+            if (second !is TypeFactory || first.hashCode() != second.hashCode()) return false
+            val compared = HashSet<IdentityPair>()
+            val pending = ArrayDeque<Pair<TypeFactory, TypeFactory>>()
+            pending.addLast(first to second)
+            while (pending.isNotEmpty()) {
+                val (left, right) = pending.removeLast()
+                if (left === right) continue
+                if (left.hashCode() != right.hashCode()) return false
+                if (left !is Structured) {
+                    if (left != right) return false
+                    continue
+                }
+                val children = left.pairedChildren(right) ?: return false
+                if (compared.add(IdentityPair(left, right))) pending.addAll(children)
+            }
+            return true
+        }
+
+        private fun List<TypeFactory>.pairedWith(other: List<TypeFactory>) = if (size == other.size) zip(other) else null
+
         operator fun List<TypeFactory>.contains(type: Type) = any { it.type == type }
 
         fun TypeFactory.invertDependencyTree(): List<TypeFactory> {
@@ -232,5 +257,10 @@ sealed interface TypeFactory {
             }
             return order
         }
+    }
+
+    private class IdentityPair(val left: TypeFactory, val right: TypeFactory) {
+        override fun equals(other: Any?) = other is IdentityPair && other.left === left && other.right === right
+        override fun hashCode() = 31 * System.identityHashCode(left) + System.identityHashCode(right)
     }
 }

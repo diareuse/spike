@@ -1,22 +1,36 @@
 package spike.compiler.graph
 
+import java.util.IdentityHashMap
+
 class SharedSingletonInputCheck {
     fun check(entry: GraphEntryPoint, roots: List<TypeFactory>) {
         if (!entry.factory.sharesSingletons) return
-        val inputs = HashMap<TypeFactory, TypeFactory.Property?>()
+        val inputs = IdentityHashMap<TypeFactory, TypeFactory.Property?>()
+        for (root in roots) inputReachedFrom(entry, root, inputs)
+    }
 
-        fun inputReachedFrom(factory: TypeFactory): TypeFactory.Property? {
-            if (factory in inputs) return inputs[factory]
-            val input = factory as? TypeFactory.Property
-                ?: factory.children().map(::inputReachedFrom).firstOrNull { it != null }
+    private fun inputReachedFrom(
+        entry: GraphEntryPoint,
+        root: TypeFactory,
+        inputs: MutableMap<TypeFactory, TypeFactory.Property?>,
+    ) {
+        val pending = ArrayDeque<Pair<TypeFactory, Boolean>>()
+        pending.addLast(root to false)
+        while (pending.isNotEmpty()) {
+            val (factory, expanded) = pending.removeLast()
+            if (factory in inputs) continue
+            val children = factory.children()
+            if (!expanded) {
+                pending.addLast(factory to true)
+                for (child in children.asReversed()) pending.addLast(child to false)
+                continue
+            }
+            val input = factory as? TypeFactory.Property ?: children.firstNotNullOfOrNull { inputs[it] }
             inputs[factory] = input
             if (input != null && factory is TypeFactory.Callable && factory.singleton) {
                 failOnSingletonInput(entry, factory, input)
             }
-            return input
         }
-
-        roots.forEach(::inputReachedFrom)
     }
 
     private fun TypeFactory.children(): List<TypeFactory> =
