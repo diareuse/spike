@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792051044066,
+  "lastUpdate": 1792051045744,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -3323,6 +3323,187 @@ window.BENCHMARK_DATA = {
           {
             "name": "spike cold start",
             "value": 169103.4105,
+            "unit": "us"
+          }
+        ]
+      }
+    ],
+    "Baselines": [
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "06432f4eb23d19f4e76aa0d131d225c81f1bc618",
+          "message": "build(benchmark): run the cold-start benchmark only after the main one\n\nOn CI the main and cold-start JMH runs overlapped. The cold run took\n/tmp/jmh.lock first, so the main run stopped with \"Another JMH instance\nmight be running\". kotlinx-benchmark catches that error and still exits\nsuccessfully without writing main.json, so benchmark.sh failed later at\nthe copy step, and the workflow then found no results files.\n\nmainColdBenchmark must now run after mainBenchmark, so the two never\ncompete for the lock.",
+          "timestamp": "2026-10-15T08:47:47+02:00",
+          "tree_id": "7b1d8823746962f5a76eeb0d9aa27910fa59039d",
+          "url": "https://github.com/diareuse/spike/commit/06432f4eb23d19f4e76aa0d131d225c81f1bc618"
+        },
+        "date": 1792051045519,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "manual clean build",
+            "value": 1414.8400000000001,
+            "unit": "ms"
+          },
+          {
+            "name": "manual ABI change",
+            "value": 456.29999999999995,
+            "unit": "ms"
+          },
+          {
+            "name": "manual non-ABI change",
+            "value": 472.815,
+            "unit": "ms"
+          },
+          {
+            "name": "manual create graph",
+            "value": 0.0012076089242617663,
+            "unit": "us"
+          },
+          {
+            "name": "manual resolve from graph",
+            "value": 3.451869787843364,
+            "unit": "us"
+          },
+          {
+            "name": "manual cold start",
+            "value": 167550.468,
+            "unit": "us"
+          },
+          {
+            "name": "spike create graph",
+            "value": 0.0028623239968400367,
+            "unit": "us"
+          },
+          {
+            "name": "dagger clean build",
+            "value": 9792.885,
+            "unit": "ms"
+          },
+          {
+            "name": "dagger ABI change",
+            "value": 5087.96,
+            "unit": "ms"
+          },
+          {
+            "name": "dagger non-ABI change",
+            "value": 5138.015,
+            "unit": "ms"
+          },
+          {
+            "name": "dagger create graph",
+            "value": 0.0015489764115747173,
+            "unit": "us"
+          },
+          {
+            "name": "dagger resolve from graph",
+            "value": 3.560436517951776,
+            "unit": "us"
+          },
+          {
+            "name": "dagger cold start",
+            "value": 171486.318,
+            "unit": "us"
+          },
+          {
+            "name": "metro clean build",
+            "value": 4992.4400000000005,
+            "unit": "ms"
+          },
+          {
+            "name": "metro ABI change",
+            "value": 5737.67,
+            "unit": "ms"
+          },
+          {
+            "name": "metro non-ABI change",
+            "value": 5555.125,
+            "unit": "ms"
+          },
+          {
+            "name": "metro create graph",
+            "value": 0.0012294619618619233,
+            "unit": "us"
+          },
+          {
+            "name": "metro resolve from graph",
+            "value": 98.48251624670371,
+            "unit": "us"
+          },
+          {
+            "name": "metro cold start",
+            "value": 161775.6255,
+            "unit": "us"
+          },
+          {
+            "name": "kotlin-inject clean build",
+            "value": 2108.31,
+            "unit": "ms"
+          },
+          {
+            "name": "kotlin-inject ABI change",
+            "value": 1123.5700000000002,
+            "unit": "ms"
+          },
+          {
+            "name": "kotlin-inject non-ABI change",
+            "value": 1129.9099999999999,
+            "unit": "ms"
+          },
+          {
+            "name": "kotlin-inject create graph",
+            "value": 0.00124290172729541,
+            "unit": "us"
+          },
+          {
+            "name": "kotlin-inject resolve from graph",
+            "value": 95.03389984118112,
+            "unit": "us"
+          },
+          {
+            "name": "kotlin-inject cold start",
+            "value": 195643.0885,
+            "unit": "us"
+          },
+          {
+            "name": "koin clean build",
+            "value": 2314.13,
+            "unit": "ms"
+          },
+          {
+            "name": "koin ABI change",
+            "value": 524.15,
+            "unit": "ms"
+          },
+          {
+            "name": "koin non-ABI change",
+            "value": 553.775,
+            "unit": "ms"
+          },
+          {
+            "name": "koin create graph",
+            "value": 309.2518946431684,
+            "unit": "us"
+          },
+          {
+            "name": "koin resolve from graph",
+            "value": 1157.967864238774,
+            "unit": "us"
+          },
+          {
+            "name": "koin cold start",
+            "value": 502200.649,
             "unit": "us"
           }
         ]
