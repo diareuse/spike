@@ -1,281 +1,189 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes" />
-    <style>
-      html {
-        font-family: BlinkMacSystemFont,-apple-system,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
-        -webkit-font-smoothing: antialiased;
-        background-color: #fff;
-        font-size: 16px;
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Spike Benchmarks</title>
+  <style>
+    :root {
+      --bg: #f7f7f5;
+      --card: #ffffff;
+      --text: #1d1d1b;
+      --muted: #6b6b66;
+      --line: #e3e3de;
+      --best: #2f7d4f;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #161615;
+        --card: #1f1f1d;
+        --text: #ececea;
+        --muted: #9a9a94;
+        --line: #33332f;
+        --best: #6cc58f;
       }
-      body {
-        color: #4a4a4a;
-        margin: 8px;
-        font-size: 1em;
-        font-weight: 400;
-      }
-      header {
-        margin-bottom: 8px;
-        display: flex;
-        flex-direction: column;
-      }
-      main {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-      a {
-        color: #3273dc;
-        cursor: pointer;
-        text-decoration: none;
-      }
-      a:hover {
-        color: #000;
-      }
-      button {
-        color: #fff;
-        background-color: #3298dc;
-        border-color: transparent;
-        cursor: pointer;
-        text-align: center;
-      }
-      button:hover {
-        background-color: #2793da;
-        flex: none;
-      }
-      .spacer {
-        flex: auto;
-      }
-      .small {
-        font-size: 0.75rem;
-      }
-      footer {
-        margin-top: 16px;
-        display: flex;
-        align-items: center;
-      }
-      .header-label {
-        margin-right: 4px;
-      }
-      .benchmark-set {
-        margin: 8px 0;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-      .benchmark-title {
-        font-size: 3rem;
-        font-weight: 600;
-        word-break: break-word;
-        text-align: center;
-      }
-      .benchmark-graphs {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-around;
-        align-items: center;
-        flex-wrap: wrap;
-        width: 100%;
-      }
-      .benchmark-chart {
-        max-width: 1000px;
-      }
-    </style>
-    <title>Benchmarks</title>
-  </head>
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font: 15px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    header, main { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
+    header h1 { margin: 0 0 4px; font-size: 24px; }
+    header p { margin: 0; color: var(--muted); }
+    .controls { margin-top: 12px; display: flex; gap: 16px; flex-wrap: wrap; color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(520px, 1fr)); gap: 16px; }
+    @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+    section {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 16px;
+      min-width: 0;
+    }
+    section h2 { margin: 0; font-size: 17px; }
+    section .unit { color: var(--muted); font-size: 13px; }
+    .chart { position: relative; height: 280px; margin: 12px 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; font-variant-numeric: tabular-nums; }
+    th, td { text-align: right; padding: 4px 6px; border-top: 1px solid var(--line); }
+    th:first-child, td:first-child { text-align: left; }
+    th { color: var(--muted); font-weight: 500; }
+    tr.spike td { font-weight: 600; }
+    td.best { color: var(--best); }
+    .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+    footer { color: var(--muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Spike benchmarks</h1>
+    <p>Every framework on the same graphs, measured on every push to master. Lower is better.</p>
+    <div class="controls">
+      <label><input type="checkbox" id="log" checked /> Logarithmic scale</label>
+      <span id="updated"></span>
+    </div>
+  </header>
+  <main>
+    <div class="grid" id="charts"></div>
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="data.js"></script>
+  <script>
+    const SUITE = "Baselines";
+    const ORDER = ["spike", "dagger", "metro", "kotlin-inject", "koin", "manual"];
+    const COLORS = {
+      spike: "#d9480f",
+      dagger: "#1c7ed6",
+      metro: "#7048e8",
+      "kotlin-inject": "#0ca678",
+      koin: "#e8a33d",
+      manual: "#868e96",
+    };
 
-  <body>
-    <header id="header">
-      <div class="header-item">
-        <strong class="header-label">Last Update:</strong>
-        <span id="last-update"></span>
-      </div>
-      <div class="header-item">
-        <strong class="header-label">Repository:</strong>
-        <a id="repository-link" rel="noopener"></a>
-      </div>
-    </header>
-    <main id="main"></main>
-    <footer>
-      <button id="dl-button">Download data as JSON</button>
-      <div class="spacer"></div>
-      <div class="small">Powered by <a rel="noopener" href="https://github.com/marketplace/actions/continuous-benchmark">github-action-benchmark</a></div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.2/dist/Chart.min.js"></script>
-    <script src="data.js"></script>
-    <script id="main-script">
-      'use strict';
-      (function() {
-        // Colors from https://github.com/github/linguist/blob/master/lib/linguist/languages.yml
-        const toolColors = {
-          cargo: '#dea584',
-          go: '#00add8',
-          benchmarkjs: '#f1e05a',
-          benchmarkluau: '#000080',
-          pytest: '#3572a5',
-          googlecpp: '#f34b7d',
-          catch2: '#f34b7d',
-          julia: '#a270ba',
-          jmh: '#b07219',
-          benchmarkdotnet: '#178600',
-          customBiggerIsBetter: '#38ff38',
-          customSmallerIsBetter: '#ff3838',
-          _: '#333333'
-        };
-
-        function init() {
-          function collectBenchesPerTestCase(entries) {
-            const map = new Map();
-            for (const entry of entries) {
-              const {commit, date, tool, benches} = entry;
-              for (const bench of benches) {
-                const result = { commit, date, tool, bench };
-                const arr = map.get(bench.name);
-                if (arr === undefined) {
-                  map.set(bench.name, [result]);
-                } else {
-                  arr.push(result);
-                }
-              }
-            }
-            return map;
-          }
-
-          const data = window.BENCHMARK_DATA;
-
-          // Render header
-          document.getElementById('last-update').textContent = new Date(data.lastUpdate).toString();
-          const repoLink = document.getElementById('repository-link');
-          repoLink.href = data.repoUrl;
-          repoLink.textContent = data.repoUrl;
-
-          // Render footer
-          document.getElementById('dl-button').onclick = () => {
-            const dataUrl = 'data:,' + JSON.stringify(data, null, 2);
-            const a = document.createElement('a');
-            a.href = dataUrl;
-            a.download = 'benchmark_data.json';
-            a.click();
-          };
-
-          // Prepare data points for charts
-          return Object.keys(data.entries).map(name => ({
-            name,
-            dataSet: collectBenchesPerTestCase(data.entries[name]),
-          }));
+    const entries = (window.BENCHMARK_DATA.entries[SUITE] || []).slice().sort((a, b) => a.date - b.date);
+    const commits = entries.map((entry) => entry.commit);
+    const labels = commits.map((commit) => commit.id.slice(0, 7));
+    const metrics = [];
+    const series = new Map();
+    entries.forEach((entry, index) => {
+      for (const bench of entry.benches) {
+        if (!series.has(bench.name)) {
+          metrics.push(bench.name);
+          series.set(bench.name, { unit: bench.unit, frameworks: new Map() });
         }
+        const frameworks = series.get(bench.name).frameworks;
+        const framework = bench.extra || "unknown";
+        if (!frameworks.has(framework)) frameworks.set(framework, new Array(entries.length).fill(null));
+        frameworks.get(framework)[index] = bench.value;
+      }
+    });
 
-        function renderAllChars(dataSets) {
+    const rank = (name) => (ORDER.indexOf(name) === -1 ? ORDER.length : ORDER.indexOf(name));
+    const format = (value) => (value >= 100 ? value.toFixed(0) : value >= 1 ? value.toFixed(2) : value.toPrecision(3));
+    const last = commits[commits.length - 1];
+    document.getElementById("updated").textContent = last
+      ? `Latest: ${last.id.slice(0, 7)} · ${new Date(last.timestamp).toLocaleString()}`
+      : "No results yet";
 
-          function renderGraph(parent, name, dataset) {
-            const canvas = document.createElement('canvas');
-            canvas.className = 'benchmark-chart';
-            parent.appendChild(canvas);
+    const charts = [];
+    const container = document.getElementById("charts");
+    for (const metric of metrics) {
+      const { unit, frameworks } = series.get(metric);
+      const names = [...frameworks.keys()].sort((a, b) => rank(a) - rank(b));
+      const section = document.createElement("section");
+      section.innerHTML = `<h2>${metric}</h2><span class="unit">${unit}, lower is better</span><div class="chart"><canvas></canvas></div>`;
+      container.appendChild(section);
 
-            const color = toolColors[dataset.length > 0 ? dataset[0].tool : '_'];
-            const data = {
-              labels: dataset.map(d => d.commit.id.slice(0, 7)),
-              datasets: [
-                {
-                  label: name,
-                  data: dataset.map(d => d.bench.value),
-                  borderColor: color,
-                  backgroundColor: color + '60', // Add alpha for #rrggbbaa
-                }
-              ],
-            };
-            const options = {
-              scales: {
-                xAxes: [
-                  {
-                    scaleLabel: {
-                      display: true,
-                      labelString: 'commit',
-                    },
-                  }
-                ],
-                yAxes: [
-                  {
-                    scaleLabel: {
-                      display: true,
-                      labelString: dataset.length > 0 ? dataset[0].bench.unit : '',
-                    },
-                    ticks: {
-                      beginAtZero: true,
-                    }
-                  }
-                ],
-              },
-              tooltips: {
+      const latest = names
+        .map((name) => {
+          const values = frameworks.get(name);
+          for (let i = values.length - 1; i >= 0; i--) if (values[i] !== null) return { name, value: values[i], at: i };
+          return null;
+        })
+        .filter(Boolean)
+        .sort((a, b) => a.value - b.value);
+      const best = latest.length ? latest[0].value : 0;
+      const table = document.createElement("table");
+      table.innerHTML =
+        `<tr><th>Framework</th><th>Latest (${unit})</th><th>× fastest</th><th>Commit</th></tr>` +
+        latest
+          .map(
+            (row) =>
+              `<tr class="${row.name === "spike" ? "spike" : ""}"><td><span class="swatch" style="background:${COLORS[row.name] || "#999"}"></span>${row.name}</td>` +
+              `<td class="${row.value === best ? "best" : ""}">${format(row.value)}</td>` +
+              `<td>${(row.value / best).toFixed(2)}</td><td>${labels[row.at]}</td></tr>`
+          )
+          .join("");
+      section.appendChild(table);
+
+      charts.push(
+        new Chart(section.querySelector("canvas"), {
+          type: "line",
+          data: {
+            labels,
+            datasets: names.map((name) => ({
+              label: name,
+              data: frameworks.get(name),
+              borderColor: COLORS[name] || "#999",
+              backgroundColor: COLORS[name] || "#999",
+              borderWidth: name === "spike" ? 3 : 1.5,
+              pointRadius: name === "spike" ? 3 : 2,
+              spanGaps: true,
+              tension: 0,
+            })),
+          },
+          options: {
+            maintainAspectRatio: false,
+            interaction: { mode: "index", intersect: false },
+            scales: { y: { type: "logarithmic", title: { display: true, text: unit } } },
+            plugins: {
+              tooltip: {
                 callbacks: {
-                  afterTitle: items => {
-                    const {index} = items[0];
-                    const data = dataset[index];
-                    return '\n' + data.commit.message + '\n\n' + data.commit.timestamp + ' committed by @' + data.commit.committer.username + '\n';
+                  title: (items) => {
+                    const commit = commits[items[0].dataIndex];
+                    return `${commit.id.slice(0, 7)} ${commit.message.split("\n")[0]}`;
                   },
-                  label: item => {
-                    let label = item.value;
-                    const { range, unit } = dataset[item.index].bench;
-                    label += ' ' + unit;
-                    if (range) {
-                      label += ' (' + range + ')';
-                    }
-                    return label;
-                  },
-                  afterLabel: item => {
-                    const { extra } = dataset[item.index].bench;
-                    return extra ? '\n' + extra : '';
-                  }
-                }
+                  label: (item) => `${item.dataset.label}: ${format(item.parsed.y)} ${unit}`,
+                },
+                itemSort: (a, b) => a.parsed.y - b.parsed.y,
               },
-              onClick: (_mouseEvent, activeElems) => {
-                if (activeElems.length === 0) {
-                  return;
-                }
-                // XXX: Undocumented. How can we know the index?
-                const index = activeElems[0]._index;
-                const url = dataset[index].commit.url;
-                window.open(url, '_blank');
-              },
-            };
+            },
+            onClick: (_, elements) => {
+              if (elements.length) window.open(commits[elements[0].index].url, "_blank");
+            },
+          },
+        })
+      );
+    }
 
-            new Chart(canvas, {
-              type: 'line',
-              data,
-              options,
-            });
-          }
-
-          function renderBenchSet(name, benchSet, main) {
-            const setElem = document.createElement('div');
-            setElem.className = 'benchmark-set';
-            main.appendChild(setElem);
-
-            const nameElem = document.createElement('h1');
-            nameElem.className = 'benchmark-title';
-            nameElem.textContent = name;
-            setElem.appendChild(nameElem);
-
-            const graphsElem = document.createElement('div');
-            graphsElem.className = 'benchmark-graphs';
-            setElem.appendChild(graphsElem);
-
-            for (const [benchName, benches] of benchSet.entries()) {
-              renderGraph(graphsElem, benchName, benches)
-            }
-          }
-
-          const main = document.getElementById('main');
-          for (const {name, dataSet} of dataSets) {
-            renderBenchSet(name, dataSet, main);
-          }
-        }
-
-        renderAllChars(init()); // Start
-      })();
-    </script>
-  </body>
+    document.getElementById("log").addEventListener("change", (event) => {
+      for (const chart of charts) {
+        chart.options.scales.y.type = event.target.checked ? "logarithmic" : "linear";
+        chart.update();
+      }
+    });
+  </script>
+</body>
 </html>
