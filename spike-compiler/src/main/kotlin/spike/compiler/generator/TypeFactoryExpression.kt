@@ -3,10 +3,10 @@ package spike.compiler.generator
 import com.squareup.kotlinpoet.CodeBlock
 import spike.Include
 import spike.compiler.generator.code.addArgument
+import spike.compiler.generator.code.addCall
 import spike.compiler.generator.code.addDependencyFactoryCall
 import spike.compiler.generator.code.addLazy
 import spike.compiler.generator.code.addMap
-import spike.compiler.generator.code.addMember
 import spike.compiler.generator.code.addOptionalSingleton
 import spike.compiler.generator.code.addParameters
 import spike.compiler.generator.code.addProvider
@@ -67,9 +67,7 @@ class TypeFactoryExpression {
         factory: Method,
     ) {
         body.addOptionalSingleton(getDependencyId(factory), factory.singleton) {
-            body.addMember(factory.member) {
-                addParameters(factory.invocation)
-            }.addStatement("")
+            body.addCall(factory.member, factory.invocation).addStatement("")
         }
     }
 

@@ -47,7 +47,7 @@ data class GraphStore(
             constructors += Constructor(type, invocation, singleton)
         }
 
-        fun addFactory(type: Type, member: Member.Method, invocation: Invocation, singleton: Boolean) {
+        fun addFactory(type: Type, member: Member, invocation: Invocation, singleton: Boolean) {
             factories += Factory(type, member, invocation, singleton)
         }
 

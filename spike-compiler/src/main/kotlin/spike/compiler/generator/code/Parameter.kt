@@ -12,10 +12,10 @@ context(context: FileGeneratorContext, step: LinearStep, references: LinearRefer
 fun CodeBlock.Builder.addParameter(index: Int, parameter: Parameter) = addArgument(index, parameter.type)
 
 context(context: FileGeneratorContext, step: LinearStep, references: LinearReferences)
-fun CodeBlock.Builder.addParameters(invocation: Invocation) = apply {
-    for ((index, parameter) in invocation.parameters.withIndex()) {
-        if (index > 0) add(", ")
-        addParameter(index, parameter)
+fun CodeBlock.Builder.addParameters(invocation: Invocation, from: Int = 0) = apply {
+    for (index in from until invocation.parameters.size) {
+        if (index > from) add(", ")
+        addParameter(index, invocation.parameters[index])
     }
 }
 

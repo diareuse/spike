@@ -34,7 +34,7 @@ sealed interface TypeFactory {
 
     data class Method(
         override val type: Type,
-        val member: Member.Method,
+        val member: Member,
         override val invocation: Invocation,
         override val singleton: Boolean,
         override val dependencies: List<TypeFactory>,
@@ -51,7 +51,7 @@ sealed interface TypeFactory {
                 other.singleton == singleton
         }
 
-        override fun toString() = "${member.name}$invocation: $type"
+        override fun toString() = "$member$invocation: $type"
     }
 
     data class Binds(

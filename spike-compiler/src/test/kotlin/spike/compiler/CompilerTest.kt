@@ -176,6 +176,69 @@ class CompilerTest : HarnessCompiler() {
         assertRuns("qualified_input_beside_include")
 
     @Test
+    fun `an Include extension property binds its receiver to the property type`() =
+        assertRuns("bind_extension_property")
+
+    @Test
+    fun `an Include extension function binds its receiver to the return type`() =
+        assertRuns("bind_extension_function")
+
+    @Test
+    fun `an Include function taking the implementation binds it to the return type`() =
+        assertRuns("bind_function_parameter")
+
+    @Test
+    fun `an Include top-level property provides its type`() = assertRuns("include_property")
+
+    @Test
+    fun `an Include extension property can contribute to a multibinding`() =
+        assertRuns("bind_extension_property_multibinding")
+
+    @Test
+    fun `an Include function in a companion object binds its parameter to the return type`() =
+        assertRuns("bind_companion_function")
+
+    @Test
+    fun `an Include extension property in a companion object binds its receiver`() =
+        assertRuns("bind_companion_extension_property")
+
+    @Test
+    fun `an Include extension function in a companion object binds its receiver`() =
+        assertRuns("bind_companion_extension_function")
+
+    @Test
+    fun `an Include member of a class that is not an object fails`() = assertProcessingFails(
+        "include_member_of_class",
+        "@Include property asCat is declared in class Bindings",
+        "top level or inside an object"
+    )
+
+    @Test
+    fun `an Include member function of a class that is not an object fails`() = assertProcessingFails(
+        "include_member_function_of_class",
+        "@Include function cat is declared in class Bindings",
+        "top level or inside an object"
+    )
+
+    @Test
+    fun `a class and extension properties providing the same type fail naming each`() = assertProcessingFails(
+        "duplicate_class_and_extension_property",
+        "Duplicate bindings for Cat",
+        "property Cat.Companion.asCat on HouseCat",
+        "property asCat on StrayCat"
+    )
+
+    @Test
+    fun `a Singleton Include property is evaluated once per entry point`() = assertRuns("include_singleton_property")
+
+    @Test
+    fun `a qualified Include property resolves only for the qualified type`() =
+        assertRuns("include_qualified_property")
+
+    @Test
+    fun `an Include extension property can contribute to a keyed map`() = assertRuns("bind_extension_property_map")
+
+    @Test
     fun `null passed for a nullable factory parameter reaches every consumer`() =
         assertRuns("nullable_factory_parameter")
 

@@ -3,6 +3,7 @@ package spike.compiler.processor
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import spike.BindTarget
 import spike.Include
@@ -13,40 +14,31 @@ import spike.compiler.processor.util.getAnnotationParameterOrDefault
 class IncludeContributorBindTo(
     private val origin: IncludeContributor,
 ) : IncludeContributor {
-    override fun contribute(
-        context: GraphContext,
-        annotated: KSClassDeclaration,
-    ) {
-        fun toType() = annotated.findBindAsOrSelf { this.toType(false) }
-        when (annotated.findBindToTarget()) {
-            BindTarget.None -> origin.contribute(context, annotated)
-            BindTarget.Set -> context.multibind.addToSet(toType()) {
-                origin.contribute(context.copy(builder = this), annotated)
-            }
-            BindTarget.List -> context.multibind.addToList(toType()) {
-                origin.contribute(context.copy(builder = this), annotated)
-            }
-            BindTarget.Map -> context.multibind.addToMap(toType(), annotated.findKey()) {
-                origin.contribute(context.copy(builder = this), annotated)
-            }
-        }
-    }
+    override fun contribute(context: GraphContext, annotated: KSClassDeclaration) =
+        annotated.contributeTo(context, { toType(false) }, origin::contribute)
 
-    override fun contribute(
+    override fun contribute(context: GraphContext, annotated: KSFunctionDeclaration) =
+        annotated.contributeTo(context, { returnType!!.resolve().toType() }, origin::contribute)
+
+    override fun contribute(context: GraphContext, annotated: KSPropertyDeclaration) =
+        annotated.contributeTo(context, { type.resolve().toType() }, origin::contribute)
+
+    private inline fun <T : KSAnnotated> T.contributeTo(
         context: GraphContext,
-        annotated: KSFunctionDeclaration,
+        type: T.() -> Type,
+        crossinline contribute: (GraphContext, T) -> Unit,
     ) {
-        fun toType() = annotated.findBindAsOrSelf { returnType!!.resolve().toType() }
-        when (annotated.findBindToTarget()) {
-            BindTarget.None -> origin.contribute(context, annotated)
-            BindTarget.Set -> context.multibind.addToSet(toType()) {
-                origin.contribute(context.copy(builder = this), annotated)
+        val annotated = this
+        when (findBindToTarget()) {
+            BindTarget.None -> contribute(context, annotated)
+            BindTarget.Set -> context.multibind.addToSet(findBindAsOrSelf(type)) {
+                contribute(context.copy(builder = this), annotated)
             }
-            BindTarget.List -> context.multibind.addToList(toType()) {
-                origin.contribute(context.copy(builder = this), annotated)
+            BindTarget.List -> context.multibind.addToList(findBindAsOrSelf(type)) {
+                contribute(context.copy(builder = this), annotated)
             }
-            BindTarget.Map -> context.multibind.addToMap(toType(), annotated.findKey()) {
-                origin.contribute(context.copy(builder = this), annotated)
+            BindTarget.Map -> context.multibind.addToMap(findBindAsOrSelf(type), findKey()) {
+                contribute(context.copy(builder = this), annotated)
             }
         }
     }

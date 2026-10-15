@@ -12,5 +12,10 @@ fun Member.toMemberName(): MemberName = when (this) {
         null -> MemberName(packageName, name)
         else -> MemberName(p.toClassName(), name)
     }
-    is Member.Receiver -> member.toMemberName()
+    is Member.Receiver -> member.toMemberName().let { name ->
+        when (val enclosing = name.enclosingClassName) {
+            null -> MemberName(name.packageName, name.simpleName, isExtension = true)
+            else -> MemberName(enclosing, name.simpleName, isExtension = true)
+        }
+    }
 }

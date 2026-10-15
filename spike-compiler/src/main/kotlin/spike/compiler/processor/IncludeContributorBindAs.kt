@@ -3,6 +3,7 @@ package spike.compiler.processor
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import spike.Include
 import spike.compiler.graph.BuiltInTypes
@@ -32,6 +33,8 @@ class IncludeContributorBindAs : IncludeContributor {
         val sourceType = annotated.returnType!!.resolve().toType().qualifiedBy(qualifiers)
         context.builder.addBinder(from = sourceType, to = targetType)
     }
+
+    override fun contribute(context: GraphContext, annotated: KSPropertyDeclaration) = Unit
 
     // ---
 

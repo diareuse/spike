@@ -5,6 +5,7 @@ import com.google.devtools.ksp.getConstructors
 import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import spike.Include
 import spike.compiler.graph.Key
 import spike.compiler.graph.Type
@@ -49,5 +50,12 @@ class IncludeContributorViewModel : IncludeContributor {
         annotated: KSFunctionDeclaration,
     ) {
         error("ViewModels must not be included as a function")
+    }
+
+    override fun contribute(
+        context: GraphContext,
+        annotated: KSPropertyDeclaration,
+    ) {
+        error("ViewModels must not be included as a property")
     }
 }
