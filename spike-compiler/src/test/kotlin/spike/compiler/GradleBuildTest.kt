@@ -16,6 +16,10 @@ class GradleBuildTest : HarnessGradle() {
         assertBuilds("expect_actual_property", tasks = listOf("assemble", ":jvmRun"))
 
     @Test
+    fun `an incremental build after editing an unrelated file keeps the entry point factory`() =
+        assertRebuildsAfterEdit("incremental_edit", "src/main/Screen.kt", "\"first\"", "\"second\"")
+
+    @Test
     fun `exports are taken into account`() = assertMatchesGolden(
         "multi_module",
         template = "multi_module",

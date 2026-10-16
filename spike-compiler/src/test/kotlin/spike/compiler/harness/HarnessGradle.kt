@@ -24,6 +24,19 @@ abstract class HarnessGradle {
         assertTasksSucceeded(FixtureProject(name, template).build(tasks), tasks)
     }
 
+    protected fun assertRebuildsAfterEdit(
+        name: String,
+        path: String,
+        oldText: String,
+        newText: String,
+        tasks: List<String> = listOf(":run")
+    ) {
+        val project = FixtureProject(name, null)
+        assertTasksSucceeded(project.build(tasks), tasks)
+        project.replace(path, oldText, newText)
+        assertTasksSucceeded(project.build(tasks), tasks)
+    }
+
     private fun assertTasksSucceeded(result: BuildResult, tasks: List<String>) {
         for (task in tasks.filter { it.startsWith(":") }) {
             assertEquals(TaskOutcome.SUCCESS, result.task(task)?.outcome, "$task did not run")

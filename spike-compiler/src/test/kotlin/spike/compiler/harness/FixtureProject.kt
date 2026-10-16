@@ -19,6 +19,13 @@ class FixtureProject(private val name: String, template: String?) {
 
     fun build(tasks: List<String>): BuildResult = runner(tasks).build()
 
+    fun replace(path: String, oldText: String, newText: String) {
+        val file = directory.resolve(path)
+        val text = file.readText()
+        check(oldText in text) { "$path does not contain $oldText" }
+        file.writeText(text.replace(oldText, newText))
+    }
+
     fun generatedSources(module: String): File = directory.resolve(module).resolve("build/generated/ksp")
 
     private fun runner(tasks: List<String>) = GradleRunner.create()

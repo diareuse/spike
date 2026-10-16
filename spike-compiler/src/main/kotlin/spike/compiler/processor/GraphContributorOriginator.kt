@@ -18,6 +18,7 @@ import spike.compiler.diagnostic.DiagnosticCollector
 import spike.compiler.diagnostic.DiagnosticEntryPointMember
 import spike.compiler.diagnostic.DiagnosticException
 import spike.compiler.generator.DependencyGraphGenerator
+import spike.compiler.generator.requireKSFile
 import spike.compiler.graph.DependencyGraph
 import spike.compiler.graph.GraphEntryPoint
 import spike.compiler.graph.GraphEntryPoint.Companion.virtualFactory
@@ -75,7 +76,7 @@ abstract class GraphContributorOriginator : GraphContributor {
         for ((e, exportedBy) in external) {
             graphFactory.putExternal(e, exportedBy)
         }
-        generator.generate(graphFactory.create(), context.originatingFiles) { spec ->
+        generator.generate(graphFactory.create(), context.originatingFiles + entryPoint.requireKSFile()) { spec ->
             spec.writeTo(environment.codeGenerator, true)
         }
     }
