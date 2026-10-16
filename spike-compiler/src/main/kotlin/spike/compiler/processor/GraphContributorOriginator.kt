@@ -135,7 +135,8 @@ abstract class GraphContributorOriginator : GraphContributor {
                     }
                     for (p in klass.primaryConstructor?.parameters.orEmpty()) {
                         val type = p.type.resolve().toType()
-                        if (type == SingletonHolderType) continue
+                        val imported = properties.any { it.synthetic && it.returns == type }
+                        if (type == SingletonHolderType || imported) continue
                         properties.add(Member.Property(type.packageName, p.name!!.asString(), type, synthetic = true))
                     }
                 }

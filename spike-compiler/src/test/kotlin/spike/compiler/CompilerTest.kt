@@ -143,6 +143,10 @@ class CompilerTest : HarnessCompiler() {
         assertRuns("import_empty_multibinding")
 
     @Test
+    fun `two exports of one module importing the same type share one import`() =
+        assertRuns("import_shared_by_two_exports")
+
+    @Test
     fun `exported module imports types whose names differ only in punctuation`() =
         assertRuns("import_name_escaping")
 
