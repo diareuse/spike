@@ -7,6 +7,7 @@ class TypeFactoryCreatorMultiBindCollection(
     private val imported: ImportedContributions,
     private val collectionType: Type,
     private val target: BindTarget,
+    private val segments: MultibindingSegments,
 ) : TypeFactoryCreator {
 
     override suspend fun Minting.create(context: TypeFactoryCreator.Context): TypeFactory {
@@ -20,7 +21,7 @@ class TypeFactoryCreatorMultiBindCollection(
         if (valueType is Type.Parametrized && valueType.envelope == BuiltInTypes.Provider)
             valueType = valueType.typeArguments.single()
         val instances = multibinding[valueType] ?: GraphStore()
-        return TypeFactory.MultibindsCollection(
+        return segments.of(TypeFactory.MultibindsCollection(
             type = type,
             entries = buildList {
                 for (c in instances.constructors) {
@@ -32,6 +33,6 @@ class TypeFactoryCreatorMultiBindCollection(
                 addAll(imported.collection(target, valueType).map { it.wrappedAs(elementType) })
             },
             collectionType = collectionType,
-        )
+        ))
     }
 }

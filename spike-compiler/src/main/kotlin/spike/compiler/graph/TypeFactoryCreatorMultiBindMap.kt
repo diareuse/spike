@@ -7,6 +7,7 @@ import spike.compiler.diagnostic.DiagnosticMapKeyType
 class TypeFactoryCreatorMultiBindMap(
     private val multibinding: MultiBindingStore,
     private val imported: ImportedContributions,
+    private val segments: MultibindingSegments,
 ) : TypeFactoryCreator {
     override suspend fun Minting.create(context: TypeFactoryCreator.Context): TypeFactory {
         val type = context.type
@@ -41,10 +42,7 @@ class TypeFactoryCreatorMultiBindMap(
                 )
             }
         }
-        return TypeFactory.MultibindsMap(
-            type = type,
-            keyValues = keyValues,
-        )
+        return segments.of(TypeFactory.MultibindsMap(type = type, keyValues = keyValues))
     }
 
     private fun failOnKeyType(type: Type, keyType: Type, valueType: Type, entries: Map<Key, GraphStore>): Nothing =

@@ -25,15 +25,32 @@ sealed interface GraphRole {
             resolving: List<TypeFactoryCreator>,
             multibinding: MultiBindingStore,
             imported: ImportedContributions,
-        ) = resolving + listOf(
-            TypeFactoryCreatorMultiBindMap(multibinding, imported),
-            TypeFactoryCreatorMultiBindCollection(multibinding.set, imported, BuiltInTypes.Set, BindTarget.Set),
-            TypeFactoryCreatorMultiBindCollection(multibinding.list, imported, BuiltInTypes.List, BindTarget.List),
-        )
+        ): List<TypeFactoryCreator> {
+            val segments = MultibindingSegments(SEGMENT_SIZE)
+            return resolving + listOf(
+                TypeFactoryCreatorMultiBindMap(multibinding, imported, segments),
+                TypeFactoryCreatorMultiBindCollection(
+                    multibinding.set,
+                    imported,
+                    BuiltInTypes.Set,
+                    BindTarget.Set,
+                    segments,
+                ),
+                TypeFactoryCreatorMultiBindCollection(
+                    multibinding.list,
+                    imported,
+                    BuiltInTypes.List,
+                    BindTarget.List,
+                    segments,
+                ),
+            )
+        }
 
         override fun contributions(export: () -> List<ExportedContribution>) = emptyList<ExportedContribution>()
 
         override fun unresolved(imports: List<TypeFactory.Imported>) = imports
+
+        private const val SEGMENT_SIZE = 100
     }
 
     data object Module : GraphRole {

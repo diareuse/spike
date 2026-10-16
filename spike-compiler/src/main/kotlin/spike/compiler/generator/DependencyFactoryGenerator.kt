@@ -1,5 +1,6 @@
 package spike.compiler.generator
 
+import com.squareup.kotlinpoet.ANY
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
@@ -134,6 +135,28 @@ class DependencyFactoryGenerator(
         collector: FileSpecCollector
     ) {
         val typeVariable = TypeVariableName("T")
+        val branches = createBranches(context, collector)
+        val chunks = branches.groupBy { (id, _) -> id / GetChunkSize }
+        val body = if (chunks.size <= 1) dispatch(branches) else CodeBlock.builder()
+            .beginControlFlow("return when (id.%L / %L) {", DependencyId::id.name, GetChunkSize)
+            .apply {
+                for (chunk in chunks.keys.sorted()) addStatement("%L -> get%L(id)", chunk, chunk)
+            }
+            .addStatement($$"else -> error(\"Invalid identifier $id\")")
+            .unindent().add("} as T\n")
+            .build()
+        if (chunks.size > 1) {
+            for ((chunk, chunkBranches) in chunks) {
+                spec.addFunction(
+                    FunSpec.builder("get$chunk")
+                        .addModifiers(KModifier.PRIVATE)
+                        .returns(NullableAny)
+                        .addParameter("id", DependencyId::class)
+                        .addCode(dispatch(chunkBranches, cast = false))
+                        .build()
+                )
+            }
+        }
         spec.addFunction(
             FunSpec.builder("get")
                 .addAnnotation(
@@ -142,17 +165,27 @@ class DependencyFactoryGenerator(
                 .addTypeVariable(typeVariable)
                 .returns(typeVariable)
                 .addParameter("id", DependencyId::class)
-                .addCode(createGetBody(context, collector))
+                .addCode(body)
                 .build()
         )
     }
 
-    private fun createGetBody(context: FileGeneratorContext, collector: FileSpecCollector): CodeBlock {
+    private fun dispatch(branches: List<Pair<Int, ClassName>>, cast: Boolean = true): CodeBlock {
         val block = CodeBlock.builder()
             .beginControlFlow("return when (id.%L) {", DependencyId::id.name)
+        for ((id, className) in branches) block.addStatement("%L -> %T.resolve(this)", id, className)
+        block.addStatement($$"else -> error(\"Invalid identifier $id\")")
+        block.unindent().add(if (cast) "} as T\n" else "}\n")
+        return block.build()
+    }
+
+    private fun createBranches(
+        context: FileGeneratorContext,
+        collector: FileSpecCollector,
+    ): List<Pair<Int, ClassName>> {
         val queue = ArrayDeque(context.graph.toSequence().toList())
         val uniqueTypes = HashSet<TypeFactory>()
-
+        val branches = mutableListOf<Pair<Int, ClassName>>()
         while (queue.isNotEmpty()) {
             val type = queue.removeFirst()
             if (!uniqueTypes.add(type)) {
@@ -160,13 +193,9 @@ class DependencyFactoryGenerator(
             }
             val id = context.getDependencyId(type)
             val program = createProgram(type, queue, context)
-            val className = programs.generate(context, program, uniqueTypes.size - 1, collector)
-            block.addStatement("%L -> %T.resolve(this)", id, className)
+            branches += id to programs.generate(context, program, uniqueTypes.size - 1, collector)
         }
-
-        block.addStatement($$"else -> error(\"Invalid identifier $id\")")
-        block.unindent().add("} as T\n")
-        return block.build()
+        return branches
     }
 
     private fun createProgram(
@@ -208,5 +237,10 @@ class DependencyFactoryGenerator(
             is TypeFactory.MultibindsMap -> queue.addAll(0, dependency.keyValues.values)
             else -> {}
         }
+    }
+
+    private companion object {
+        const val GetChunkSize = 256
+        val NullableAny = ANY.copy(nullable = true)
     }
 }

@@ -411,6 +411,14 @@ class CompilerTest : HarnessCompiler() {
         assertMethodsFitJit("large_graph")
 
     @Test
+    fun `an entry point with hundreds of roots generates only methods small enough for the JIT`() =
+        assertMethodsFitJit("wide_entry_point")
+
+    @Test
+    fun `a multibinding with hundreds of entries generates only methods small enough for the JIT`() =
+        assertMethodsFitJit("large_multibinding")
+
+    @Test
     fun `a dependency chain thousands deep resolves on a small thread stack`() = assertRuns("deep_chain")
 
     @Test

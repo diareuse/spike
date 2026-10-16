@@ -189,6 +189,24 @@ sealed interface TypeFactory {
         override fun toString() = "Map of ${keyValues.mapValues { it.value.type }}"
     }
 
+    data class Concatenation(
+        override val type: Type,
+        val parts: List<TypeFactory>,
+    ) : Structured {
+        private val hash = Objects.hash(type, parts)
+
+        override fun hashCode() = hash
+
+        override fun equals(other: Any?) = structurallyEqual(this, other)
+
+        override fun pairedChildren(other: TypeFactory) =
+            parts.pairedWith(other.dependencies).takeIf { other is Concatenation && other.type == type }
+
+        override val dependencies: List<TypeFactory> get() = parts
+
+        override fun toString() = "Concatenation of ${parts.size} parts of $type"
+    }
+
     sealed interface Callable : TypeFactory {
         override val type: Type
         val invocation: Invocation
