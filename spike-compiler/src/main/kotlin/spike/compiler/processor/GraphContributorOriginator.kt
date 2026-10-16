@@ -42,17 +42,22 @@ abstract class GraphContributorOriginator : GraphContributor {
 
     final override fun contribute(context: GraphContext) {
         val diagnostics = DiagnosticCollector()
-        for (entryPoint in getOrigins(context.resolver)) diagnostics.attempt { contribute(context, entryPoint) }
+        val generated = context.resolver.getDeclarationsFromPackage("spike.generated")
+            .filterIsInstance<KSClassDeclaration>()
+            .toList()
+        for (entryPoint in getOrigins(context.resolver)) {
+            diagnostics.attempt { contribute(context, entryPoint, generated) }
+        }
         diagnostics.throwCollected()
     }
 
-    private fun contribute(context: GraphContext, entryPoint: KSClassDeclaration) {
+    private fun contribute(context: GraphContext, entryPoint: KSClassDeclaration, generated: List<KSClassDeclaration>) {
         verifyOrigin(entryPoint)
         val factory = findFactory(entryPoint)
         val properties = findProperties(entryPoint).toMutableList()
         val virtualFactoryParameters = mutableListOf<Parameter>()
         val methods = findMethods(entryPoint).toMutableList()
-        val external = findExternal(context.resolver, properties)
+        val external = findExternal(generated, properties)
         val type = entryPoint.toType(false)
         val entry = GraphEntryPoint(
             type = type,
@@ -66,8 +71,7 @@ abstract class GraphContributorOriginator : GraphContributor {
             entry = entry,
             root = context.builder.build(),
             multibinding = context.multibind.build(),
-            imports = context.resolver.getDeclarationsFromPackage("spike.generated")
-                .filterIsInstance<KSClassDeclaration>()
+            imports = generated.asSequence()
                 .map {
                     val invocation = it.primaryConstructor!!.toInvocation()
                     val inputs = invocation.copy(
@@ -79,9 +83,6 @@ abstract class GraphContributorOriginator : GraphContributor {
         for ((e, exportedBy) in external) {
             graphFactory.putExternal(e, exportedBy)
         }
-        val generated = context.resolver.getDeclarationsFromPackage("spike.generated")
-            .filterIsInstance<KSClassDeclaration>()
-            .toList()
         for (contribution in contributions.of(generated)) {
             graphFactory.putContribution(
                 contribution.target,
@@ -96,11 +97,10 @@ abstract class GraphContributorOriginator : GraphContributor {
     }
 
     private fun findExternal(
-        resolver: Resolver,
+        generated: List<KSClassDeclaration>,
         properties: MutableList<Member.Property>
     ): Sequence<Pair<TypeFactory.External, Type>> {
-        return resolver.getDeclarationsFromPackage("spike.generated")
-            .filterIsInstance<KSClassDeclaration>()
+        return generated.asSequence()
             .flatMap { klass ->
                 val exported = klass.superTypes.first().resolve()
                 val exportedBy = exported.toType()
