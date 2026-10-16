@@ -22,6 +22,22 @@ public class SingletonHolder {
         return value as T
     }
 
+    public fun needed(table: String): BooleanArray {
+        val needed = BooleanArray(table[0].code - 1)
+        var cursor = 1
+        for (step in needed.indices) {
+            val consumers = table[cursor++].code - 1
+            repeat(consumers) {
+                val consumer = table[cursor++].code - 1
+                val singleton = table[cursor++].code - 1
+                val consumerRuns = consumer < 0 || needed[consumer]
+                val consumerBuilds = singleton < 0 || backend.value[singleton] == null
+                if (consumerRuns && consumerBuilds) needed[step] = true
+            }
+        }
+        return needed
+    }
+
     private inline fun <K, V> AtomicRef<Map<K, V>>.getOrInsert(key: K, create: () -> V): V {
         while (true) {
             val current = value

@@ -18,7 +18,7 @@ public class NightStand_Factory(
   @Suppress("UNCHECKED_CAST")
   public fun <T> `get`(id: DependencyId): T = when (id.id) {
     0 -> NightStand_Program0.resolve(this)
-    1 -> NightStand_Program1.resolve(this)
+    2 -> NightStand_Program1.resolve(this)
     4 -> NightStand_Program2.resolve(this)
     else -> error("Invalid identifier $id")
   } as T

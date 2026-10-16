@@ -150,6 +150,9 @@ class CompilerTest : HarnessCompiler() {
     )
 
     @Test
+    fun `a cached singleton does not build its arguments again`() = assertRuns("singleton_arguments_built_once")
+
+    @Test
     fun `entry points created by one factory each get their own singletons`() = assertRuns("factory_singleton")
 
     @Test
