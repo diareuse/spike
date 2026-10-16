@@ -22,6 +22,13 @@ class ImportNameTest {
         assertNotEquals(simple("a", "b_c").importName(), simple("a.b", "c").importName())
 
     @Test
+    fun `an escaped name reads back as the original text`() {
+        val text = "function com.example.lib.libraryTom: kotlin.collections.Map<kotlin.String?, a.b_c>.1"
+
+        assertEquals(text, text.escapedName().unescapedName())
+    }
+
+    @Test
     fun `a plain type keeps a readable name`() =
         assertEquals("kotlin_String", simple("kotlin", "String").importName())
 

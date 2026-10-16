@@ -1,5 +1,6 @@
 package spike.compiler.graph
 
+import spike.BindTarget
 import spike.compiler.diagnostic.Diagnostic
 import spike.compiler.diagnostic.DiagnosticException
 import spike.compiler.diagnostic.DiagnosticMissingBinding
@@ -11,6 +12,7 @@ class DependencyGraph private constructor(
     val properties: List<TypeFactory>,
     val imports: List<TypeFactory.Class>,
     val importFactories: List<TypeFactory.Imported>,
+    val contributions: List<ExportedContribution>,
 ) {
 
     operator fun iterator() = iterator {
@@ -30,6 +32,8 @@ class DependencyGraph private constructor(
             yield(m)
         for (p in properties)
             yield(p)
+        for (c in contributions)
+            yield(c.factory)
     }
 
     class Factory(
@@ -38,6 +42,8 @@ class DependencyGraph private constructor(
         private val multibinding: MultiBindingStore,
         private val imports: Sequence<TypeFactory.Class>,
     ) {
+
+        private val imported = ImportedContributions()
 
         private val inputs =
             TypeFactoryCreatorInput(root, Involved("entry point ${entry.type.displayName}", entry.origin))
@@ -55,10 +61,14 @@ class DependencyGraph private constructor(
             inputs.put(external, "$kind ${external.name} of @Export ${exportedBy.displayName}")
         }
 
+        fun putContribution(target: BindTarget, key: Key?, external: TypeFactory.External, exportedBy: Type) {
+            val description = ExportedContribution.describe(external.name, target)
+            imported.put(target, key, external, Involved("$description, exported by ${exportedBy.displayName}"))
+        }
+
         fun create(): DependencyGraph {
             val importCollector = TypeFactoryCreatorImportCollector()
-            val empty = if (entry.isModule) EmptyMultibindingImported else EmptyMultibindingResolved
-            val creators = listOf(
+            val resolving = listOf(
                 TypeFactoryCreatorMemo(),
                 importCollector,
                 inputs,
@@ -67,29 +77,49 @@ class DependencyGraph private constructor(
                 TypeFactoryCreatorMethod(),
                 TypeFactoryCreatorLazy(),
                 TypeFactoryCreatorProvider(),
-                TypeFactoryCreatorMultiBindMap(multibinding, empty),
-                TypeFactoryCreatorMultiBindCollection(multibinding, BuiltInTypes.Set, empty),
-                TypeFactoryCreatorMultiBindCollection(multibinding, BuiltInTypes.List, empty),
             )
+            val creators = entry.role.creators(resolving, multibinding, imported)
             val methods = entry.methods.map {
                 createTypeFactory(it.returns, creators)
             }
             val properties = entry.properties.map {
                 createTypeFactory(it.returns, creators)
             }
+            val contributions = entry.role.contributions { exportContributions(creators) }
             SharedSingletonInputCheck(root).check(entry, methods + properties)
             val imports = imports.toList()
-            if (!entry.isModule && importCollector.imports.isNotEmpty()) {
-                throw DiagnosticException(importCollector.imports.map { it.missing() })
-            }
+            val unresolved = entry.role.unresolved(importCollector.imports.toList())
+            if (unresolved.isNotEmpty()) throw DiagnosticException(unresolved.map { it.missing() })
             return DependencyGraph(
                 entry = entry,
                 methods = methods,
                 properties = properties,
                 imports = imports,
-                importFactories = importCollector.imports.toList()
+                importFactories = importCollector.imports.toList(),
+                contributions = contributions,
             )
         }
+
+        private fun exportContributions(creators: List<TypeFactoryCreator>) = buildList {
+            for (store in multibinding.list.values) addAll(store.exported(BindTarget.List, null, creators))
+            for (store in multibinding.set.values) addAll(store.exported(BindTarget.Set, null, creators))
+            for (keys in multibinding.map.values) {
+                for ((key, store) in keys) {
+                    if (key.annotation != null) addAll(store.exported(BindTarget.Map, key, creators))
+                }
+            }
+        }
+
+        private fun GraphStore.exported(target: BindTarget, key: Key?, creators: List<TypeFactoryCreator>) =
+            (constructors + factories).map { binding ->
+                val store = root.overriddenBy(binding.asGraphStore())
+                ExportedContribution(
+                    target = target,
+                    key = key,
+                    factory = minting(TypeFactoryCreatorChain(binding.type, creators, store)),
+                    name = ExportedContribution.nameOf(target, binding),
+                )
+            }
 
         // ---
 

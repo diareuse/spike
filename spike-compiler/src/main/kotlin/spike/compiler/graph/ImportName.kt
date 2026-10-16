@@ -1,7 +1,9 @@
 package spike.compiler.graph
 
-internal fun Type.importName(): String {
-    val text = toString()
+internal fun Type.importName(): String = toString().escapedName()
+
+internal fun String.escapedName(): String {
+    val text = this
     return buildString {
         for ((index, char) in text.withIndex()) {
             val next = text.getOrNull(index + 1)
@@ -13,6 +15,28 @@ internal fun Type.importName(): String {
         }
     }
 }
+
+internal fun String.unescapedName(): String = buildString {
+    var index = 0
+    val text = this@unescapedName
+    while (index < text.length) {
+        val char = text[index++]
+        if (char != '_') {
+            append(char)
+            continue
+        }
+        val next = text[index++]
+        when {
+            next.isLetter() -> append('.').append(next)
+            next == '9' -> append(text.substring(index, index + CODE_LENGTH).toInt(HEX).toChar()).also {
+                index += CODE_LENGTH
+            }
+            else -> append(unescapes.getValue(next))
+        }
+    }
+}
+
+private val unescapes by lazy { escapes.entries.associate { (char, code) -> code.single() to char } }
 
 private fun Char.escapedCode() = "9" + code.toString(HEX).padStart(CODE_LENGTH, '0')
 

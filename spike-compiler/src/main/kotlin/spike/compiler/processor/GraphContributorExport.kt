@@ -12,6 +12,7 @@ class GraphContributorExport(
     override val generator: DependencyGraphGenerator,
     override val environment: SymbolProcessorEnvironment,
     override val logger: KSPLogger,
+    override val contributions: ContributionImports,
     private val registry: SymbolRegistry
 ) : GraphContributorOriginator() {
     override fun getOrigins(resolver: Resolver) = registry.export(resolver)

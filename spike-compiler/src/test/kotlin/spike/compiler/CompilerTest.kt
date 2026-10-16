@@ -131,6 +131,14 @@ class CompilerTest : HarnessCompiler() {
         assertRuns("import_nullable_generic")
 
     @Test
+    fun `multibindings contributed in a module and in the app form one collection`() =
+        assertRuns("multibinding_across_modules")
+
+    @Test
+    fun `a map key contributed in both a module and the app fails`() =
+        assertProcessingFails("multibinding_across_modules_duplicate_key")
+
+    @Test
     fun `exported module imports a collection it has no contributions for from the consumer`() =
         assertRuns("import_empty_multibinding")
 

@@ -18,7 +18,7 @@ import spike.compiler.graph.TypeFactory
 import spike.factory.DependencyId
 import spike.factory.SingletonHolder
 
-class ExportGenerator : Generator {
+class ExportGenerator(private val contributions: ContributionFunction) : Generator {
     override fun generate(context: FileGeneratorContext, collector: FileSpecCollector) {
         val graph = context.graph
         val resolver = context.resolver
@@ -61,6 +61,7 @@ class ExportGenerator : Generator {
             .build())
         generateMethods(ep, type, resolver, context)
         generateProperties(ep, type, resolver, context)
+        for (contribution in context.graph.contributions) type.addFunction(contributions.of(contribution, context))
         val file = FileSpec.builder(epcn)
             .addType(type.build())
             .addAnnotation(

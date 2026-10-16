@@ -8,7 +8,7 @@ data class GraphEntryPoint private constructor(
     val factory: Factory,
     val properties: List<Member.Property>,
     val methods: List<Member.Method>,
-    val isModule: Boolean,
+    val role: GraphRole,
     val origin: Origin? = null,
 ) {
     override fun toString(): String {
@@ -43,14 +43,14 @@ data class GraphEntryPoint private constructor(
             factory: Factory,
             properties: List<Member.Property>,
             methods: List<Member.Method>,
-            isModule: Boolean,
+            role: GraphRole,
             origin: Origin? = null,
         ) = GraphEntryPoint(
             type = type,
             factory = factory,
             properties = properties,
             methods = methods,
-            isModule = isModule,
+            role = role,
             origin = origin,
         )
 

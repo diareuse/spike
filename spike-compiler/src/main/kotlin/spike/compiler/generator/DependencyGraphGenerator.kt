@@ -31,7 +31,9 @@ class DependencyGraphGenerator private constructor(
         fun create(export: Boolean) = DependencyGraphGenerator(
             resolver = resolver,
             entryPoint = when (export) {
-                true -> ExportGenerator()
+                true -> ExportGenerator(
+                    ContributionFunctionQualified(ContributionFunctionKeyed(ContributionFunctionCall())),
+                )
                 else -> EntryPointGenerator()
             },
             members = when (export) {

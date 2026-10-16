@@ -27,12 +27,14 @@ fun interface GraphContributor {
                     generator = generator.create(false),
                     environment = environment,
                     logger = environment.logger,
+                    contributions = ContributionImportsGenerated(),
                     registry = registry
                 ).timed("EntryPoint", environment.logger),
                 GraphContributorExport(
                     generator = generator.create(true),
                     environment = environment,
                     logger = environment.logger,
+                    contributions = ContributionImportsGenerated(),
                     registry = registry
                 ).timed("Export", environment.logger)
             )

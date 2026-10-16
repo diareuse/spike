@@ -6,7 +6,7 @@ import spike.compiler.diagnostic.DiagnosticMapKeyType
 
 class TypeFactoryCreatorMultiBindMap(
     private val multibinding: MultiBindingStore,
-    private val empty: EmptyMultibinding,
+    private val imported: ImportedContributions,
 ) : TypeFactoryCreator {
     override suspend fun Minting.create(context: TypeFactoryCreator.Context): TypeFactory {
         val type = context.type
@@ -15,40 +15,30 @@ class TypeFactoryCreatorMultiBindMap(
         }
         val (keyType, valueType) = type.typeArguments
         val instanceMap = multibinding.map[valueType.unwrapParametrized()].orEmpty()
-        return if (instanceMap.isEmpty()) {
-            val none = TypeFactory.MultibindsMap(type, emptyMap())
-            with(empty) { resolve(this@TypeFactoryCreatorMultiBindMap, context, none) }
-        } else {
-            createMap(context, type, keyType, valueType, instanceMap)
+        val importedMap = imported.map(valueType.unwrapParametrized())
+        val keys = (instanceMap.keys + importedMap.keys).filter { it.type == keyType }
+        if (keys.isEmpty() && (instanceMap.isNotEmpty() || importedMap.isNotEmpty())) {
+            failOnKeyType(type, keyType, valueType, instanceMap)
         }
-    }
-
-    private suspend fun Minting.createMap(
-        context: TypeFactoryCreator.Context,
-        type: Type.Parametrized,
-        keyType: Type,
-        valueType: Type,
-        instanceMap: Map<Key, GraphStore>,
-    ): TypeFactory {
-        val instances = instanceMap
-            .filterKeys { it.type == keyType }
-            .mapKeys { it.key.value }
-        if (instances.isEmpty()) failOnKeyType(type, keyType, valueType, instanceMap)
         val keyValues = buildMap {
-            for ((k, v) in instances) {
-                val definitions = (v.constructors + v.factories).distinct()
-                if (definitions.size > 1) {
+            for (key in keys) {
+                val definitions = instanceMap[key]?.let { (it.constructors + it.factories).distinct() }.orEmpty()
+                val imports = importedMap[key].orEmpty()
+                if (definitions.size + imports.size > 1) {
+                    val involved = definitions.map { it.involved } + imports.map { it.involved }
                     throw DiagnosticException(
-                        DiagnosticDuplicateMapKey(type.displayName, k.renderedKey(), definitions.map { it.involved })
+                        DiagnosticDuplicateMapKey(type.displayName, key.value.renderedKey(), involved)
                     )
                 }
                 val definition = definitions.singleOrNull()
-                    ?: error("No definition found for $type whilst being multi-bound, this is however most likely a spike inference error.")
-                val newType = mint(
-                    context = context.clone(store = context.store.overriddenBy(definition.asGraphStore())),
-                    type = definition.type.overrideType(valueType),
+                put(
+                    key.value,
+                    if (definition == null) imports.single().external.wrappedAs(valueType)
+                    else mint(
+                        context = context.clone(store = context.store.overriddenBy(definition.asGraphStore())),
+                        type = definition.type.overrideType(valueType),
+                    )
                 )
-                put(k, newType)
             }
         }
         return TypeFactory.MultibindsMap(

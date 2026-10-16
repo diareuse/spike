@@ -1,6 +1,7 @@
 package spike.compiler.generator.code
 
 import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.withIndent
 import spike.compiler.generator.FileGeneratorContext
 import spike.compiler.generator.LinearReferences
@@ -21,6 +22,14 @@ inline fun CodeBlock.Builder.addMap(key: Type, value: Type, body: CodeBlock.Buil
         body()
     }
     add(")")
+}
+
+fun FileGeneratorContext.keyLiteral(key: Any?): CodeBlock = when (key) {
+    is String -> CodeBlock.of("%S", key)
+    is KClass<*> -> CodeBlock.of("%L::class", key.qualifiedName)
+    is Type -> CodeBlock.of("%T::class", resolver.getTypeName(key))
+    is MemberName -> CodeBlock.of("%M", key)
+    else -> CodeBlock.of("%L", key)
 }
 
 context(context: FileGeneratorContext)

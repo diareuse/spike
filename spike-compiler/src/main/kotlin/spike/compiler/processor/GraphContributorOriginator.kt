@@ -20,7 +20,9 @@ import spike.compiler.diagnostic.DiagnosticException
 import spike.compiler.generator.DependencyGraphGenerator
 import spike.compiler.generator.requireKSFile
 import spike.compiler.graph.DependencyGraph
+import spike.compiler.graph.ExportedContribution
 import spike.compiler.graph.GraphEntryPoint
+import spike.compiler.graph.GraphRole
 import spike.compiler.graph.GraphEntryPoint.Companion.virtualFactory
 import spike.compiler.graph.Member
 import spike.compiler.graph.Parameter
@@ -30,6 +32,7 @@ import spike.compiler.graph.TypeFactory
 @OptIn(KspExperimental::class)
 abstract class GraphContributorOriginator : GraphContributor {
     protected abstract val generator: DependencyGraphGenerator
+    protected abstract val contributions: ContributionImports
     protected abstract val environment: SymbolProcessorEnvironment
     protected abstract val logger: KSPLogger
 
@@ -56,7 +59,7 @@ abstract class GraphContributorOriginator : GraphContributor {
             factory = factory ?: type.virtualFactory(virtualFactoryParameters),
             properties = properties,
             methods = methods,
-            isModule = entryPoint.isAnnotationPresent(Export::class),
+            role = if (entryPoint.isAnnotationPresent(Export::class)) GraphRole.Module else GraphRole.App,
             origin = entryPoint.asOrigin(),
         )
         val graphFactory = DependencyGraph.Factory(
@@ -75,6 +78,17 @@ abstract class GraphContributorOriginator : GraphContributor {
         )
         for ((e, exportedBy) in external) {
             graphFactory.putExternal(e, exportedBy)
+        }
+        val generated = context.resolver.getDeclarationsFromPackage("spike.generated")
+            .filterIsInstance<KSClassDeclaration>()
+            .toList()
+        for (contribution in contributions.of(generated)) {
+            graphFactory.putContribution(
+                contribution.target,
+                contribution.key,
+                contribution.external,
+                contribution.exportedBy,
+            )
         }
         generator.generate(graphFactory.create(), context.originatingFiles + entryPoint.requireKSFile()) { spec ->
             spec.writeTo(environment.codeGenerator, true)
@@ -97,7 +111,8 @@ abstract class GraphContributorOriginator : GraphContributor {
                     .associate { it.name() to it.type.qualifiersWith(it) }
                 sequence {
                     for (f in klass.getDeclaredFunctions()) {
-                        if (!f.isPublic() || f.isConstructor()) continue
+                        val contribution = ExportedContribution.targetOf(f.name()) != null
+                        if (!f.isPublic() || f.isConstructor() || contribution) continue
                         val tf = TypeFactory.External(
                             type = f.returnType!!.resolve().toType()
                                 .qualifiedBy(functionQualifiers[f.name()].orEmpty()),

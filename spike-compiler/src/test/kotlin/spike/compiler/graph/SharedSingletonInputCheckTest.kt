@@ -99,7 +99,7 @@ class SharedSingletonInputCheckTest {
             method = Member.Method("test", "create", entryType, factoryType),
             sharesSingletons = sharesSingletons,
         )
-        SharedSingletonInputCheck().check(GraphEntryPoint(entryType, factory, emptyList(), emptyList(), false), roots)
+        SharedSingletonInputCheck().check(GraphEntryPoint(entryType, factory, emptyList(), emptyList(), GraphRole.App), roots)
     }
 
     private fun chain(depth: Int, bottom: TypeFactory): TypeFactory {

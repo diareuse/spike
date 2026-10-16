@@ -67,7 +67,7 @@ fun KSDeclaration.findKey(): Key {
         }
         else -> v
     }
-    return Key(param.type.resolve().toType(), value)
+    return Key(param.type.resolve().toType(), value, key.annotationType.resolve().toType())
 }
 
 @OptIn(KspExperimental::class)

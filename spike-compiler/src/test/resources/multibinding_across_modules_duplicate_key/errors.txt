@@ -1,0 +1,5 @@
+Main.kt:16: [SPIKE-DUPLICATE-MAP-KEY] kotlin.collections.Map<kotlin.String, com.example.lib.Cat> has 2 entries with key "tom", Spike cannot pick one
+  - function com.example.app.appTom (Main.kt:16)
+  - function com.example.lib.libraryTom: com.example.lib.Cat, exported by com.example.lib.Exported
+Why: Each key of a multibound Map maps to exactly one entry.
+Fix: Give each entry its own key, or remove one of them.
