@@ -1,0 +1,4 @@
+Main.kt:9: [SPIKE-ARGUMENT-CAPTURED] spike.Provider<Session> depends on kotlin.String, an argument of (kotlin.String) -> Detail
+  - constructor of Session (Main.kt:9)
+Why: Each call of (kotlin.String) -> Detail passes its own kotlin.String, but a Provider outlives the call and would keep the argument of whichever call created it first.
+Fix: Request Session directly instead of through Provider.

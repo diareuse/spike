@@ -73,10 +73,12 @@ class DependencyGraph private constructor(
                 importCollector,
                 inputs,
                 TypeFactoryCreatorUniqueBinding(),
+                TypeFactoryCreatorArgument(),
                 TypeFactoryCreatorConstructor(),
                 TypeFactoryCreatorMethod(),
                 TypeFactoryCreatorLazy(),
                 TypeFactoryCreatorProvider(),
+                TypeFactoryCreatorAssisted(listOf(ArgumentCaptorSingleton(), ArgumentCaptorDeferred())),
             )
             val creators = entry.role.creators(resolving, multibinding, imported)
             val methods = entry.methods.map {

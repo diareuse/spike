@@ -1,6 +1,5 @@
 package spike.compiler.generator
 
-import com.squareup.kotlinpoet.ANY
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
@@ -11,7 +10,6 @@ import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.asTypeName
 import spike.Include
 import spike.compiler.graph.TypeFactory
@@ -24,6 +22,9 @@ import spike.factory.SingletonOwner
 class DependencyFactoryGenerator(
     private val programs: LinearProgramGenerator,
 ) {
+    private val getDispatch = DispatchGetChunked(GetChunkSize, DispatchGet())
+    private val assistedDispatch = DispatchAssisted()
+
     fun generate(context: FileGeneratorContext, collector: FileSpecCollector, members: EntryPointMembers) {
         val spec = TypeSpec.classBuilder(context.dependencyFactoryClassName)
             .addOriginatingFiles(context.originatingFiles)
@@ -134,74 +135,39 @@ class DependencyFactoryGenerator(
         spec: TypeSpec.Builder,
         collector: FileSpecCollector
     ) {
-        val typeVariable = TypeVariableName("T")
-        val branches = createBranches(context, collector)
-        val chunks = branches.groupBy { (id, _) -> id / GetChunkSize }
-        val body = if (chunks.size <= 1) dispatch(branches) else CodeBlock.builder()
-            .beginControlFlow("return when (id.%L / %L) {", DependencyId::id.name, GetChunkSize)
-            .apply {
-                for (chunk in chunks.keys.sorted()) addStatement("%L -> get%L(id)", chunk, chunk)
+        val plain = BranchQueue(takesArguments = false, root = { it })
+        val assisted = BranchQueue(takesArguments = true, root = { (it as TypeFactory.Assisted).factory })
+        plain.pending += context.graph.toSequence()
+        var index = 0
+        var queue = listOf(plain, assisted).firstOrNull { it.pending.isNotEmpty() }
+        while (queue != null) {
+            val type = queue.pending.removeFirst()
+            if (queue.seen.add(type)) {
+                val id = context.getDependencyId(type)
+                val program = createProgram(queue.root(type), plain, assisted, context, queue.takesArguments)
+                queue.branches += ProgramBranch(id, programs.generate(context, program, index++, collector))
             }
-            .addStatement($$"else -> error(\"Invalid identifier $id\")")
-            .unindent().add("} as T\n")
-            .build()
-        if (chunks.size > 1) {
-            for ((chunk, chunkBranches) in chunks) {
-                spec.addFunction(
-                    FunSpec.builder("get$chunk")
-                        .addModifiers(KModifier.PRIVATE)
-                        .returns(NullableAny)
-                        .addParameter("id", DependencyId::class)
-                        .addCode(dispatch(chunkBranches, cast = false))
-                        .build()
-                )
-            }
+            queue = listOf(plain, assisted).firstOrNull { it.pending.isNotEmpty() }
         }
-        spec.addFunction(
-            FunSpec.builder("get")
-                .addAnnotation(
-                    AnnotationSpec.builder(Suppress::class).addMember("%S", "UNCHECKED_CAST").build()
-                )
-                .addTypeVariable(typeVariable)
-                .returns(typeVariable)
-                .addParameter("id", DependencyId::class)
-                .addCode(body)
-                .build()
-        )
+        spec.addFunctions(assistedDispatch.of(assisted.branches))
+        spec.addFunctions(getDispatch.of(plain.branches))
     }
 
-    private fun dispatch(branches: List<Pair<Int, ClassName>>, cast: Boolean = true): CodeBlock {
-        val block = CodeBlock.builder()
-            .beginControlFlow("return when (id.%L) {", DependencyId::id.name)
-        for ((id, className) in branches) block.addStatement("%L -> %T.resolve(this)", id, className)
-        block.addStatement($$"else -> error(\"Invalid identifier $id\")")
-        block.unindent().add(if (cast) "} as T\n" else "}\n")
-        return block.build()
-    }
-
-    private fun createBranches(
-        context: FileGeneratorContext,
-        collector: FileSpecCollector,
-    ): List<Pair<Int, ClassName>> {
-        val queue = ArrayDeque(context.graph.toSequence().toList())
-        val uniqueTypes = HashSet<TypeFactory>()
-        val branches = mutableListOf<Pair<Int, ClassName>>()
-        while (queue.isNotEmpty()) {
-            val type = queue.removeFirst()
-            if (!uniqueTypes.add(type)) {
-                continue
-            }
-            val id = context.getDependencyId(type)
-            val program = createProgram(type, queue, context)
-            branches += id to programs.generate(context, program, uniqueTypes.size - 1, collector)
-        }
-        return branches
+    /**
+     * Dependencies waiting for a program, built by [root] and taking runtime arguments when [takesArguments].
+     */
+    private class BranchQueue(val takesArguments: Boolean, val root: (TypeFactory) -> TypeFactory) {
+        val pending = ArrayDeque<TypeFactory>()
+        val seen = HashSet<TypeFactory>()
+        val branches = mutableListOf<ProgramBranch>()
     }
 
     private fun createProgram(
         type: TypeFactory,
-        queue: ArrayDeque<TypeFactory>,
+        plain: BranchQueue,
+        assisted: BranchQueue,
         context: FileGeneratorContext,
+        takesArguments: Boolean,
     ): LinearProgram {
         val contextIndexByFactory = HashMap<TypeFactory, Int>()
         val steps = mutableListOf<LinearStep>()
@@ -210,7 +176,8 @@ class DependencyFactoryGenerator(
             if (dependency is TypeFactory.Imported) {
                 context.imports += dependency
             }
-            enqueueNestedTypes(dependency, queue)
+            if (dependency is TypeFactory.Assisted) assisted.pending += dependency
+            if (dependency is TypeFactory.Deferred || !takesArguments) enqueueNestedTypes(dependency, plain.pending)
 
             if (dependency in contextIndexByFactory) {
                 continue
@@ -220,7 +187,7 @@ class DependencyFactoryGenerator(
             contextIndexByFactory[dependency] = steps.lastIndex
         }
 
-        return LinearProgram(steps)
+        return LinearProgram(steps, takesArguments)
     }
 
     private fun argumentsOf(dependency: TypeFactory, contextIndexByFactory: Map<TypeFactory, Int>): List<Int> {
@@ -241,6 +208,5 @@ class DependencyFactoryGenerator(
 
     private companion object {
         const val GetChunkSize = 256
-        val NullableAny = ANY.copy(nullable = true)
     }
 }

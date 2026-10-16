@@ -5,11 +5,13 @@ import spike.compiler.diagnostic.Origin
 data class GraphStore(
     val constructors: List<Constructor> = emptyList(),
     val factories: List<Factory> = emptyList(),
+    val arguments: List<Argument> = emptyList(),
 ) {
 
     operator fun plus(other: GraphStore) = GraphStore(
         constructors = constructors + other.constructors,
         factories = factories + other.factories,
+        arguments = arguments + other.arguments,
     )
 
     private val constructorsByType by lazy(LazyThreadSafetyMode.NONE) { constructors.groupBy { it.type } }
@@ -19,9 +21,12 @@ data class GraphStore(
 
     fun factoryOf(type: Type): Factory? = factoriesByType[type]?.first()
 
+    fun argumentOf(type: Type): Argument? = arguments.firstOrNull { it.type == type }
+
     fun bindingsOf(type: Type): List<Binding> = buildList {
         constructorsByType[type]?.let(::addAll)
         factoriesByType[type]?.let(::addAll)
+        addAll(arguments.filter { it.type == type })
     }.distinct()
 
     fun overriddenBy(definition: GraphStore): GraphStore {
@@ -29,6 +34,7 @@ data class GraphStore(
         return definition + GraphStore(
             constructors = constructors.filterNot { it.type in types },
             factories = factories.filterNot { it.type in types },
+            arguments = arguments,
         )
     }
 

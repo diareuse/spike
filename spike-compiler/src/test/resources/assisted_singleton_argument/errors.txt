@@ -1,0 +1,4 @@
+Main.kt:10: [SPIKE-ARGUMENT-CAPTURED] @Singleton Session depends on kotlin.String, an argument of (kotlin.String) -> Detail
+  - constructor of Session (Main.kt:10)
+Why: Each call of (kotlin.String) -> Detail passes its own kotlin.String, but a @Singleton outlives the call and would keep the argument of whichever call created it first.
+Fix: Remove @Singleton from Session, or stop it depending on kotlin.String.

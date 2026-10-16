@@ -162,6 +162,30 @@ class CompilerTest : HarnessCompiler() {
     )
 
     @Test
+    fun `a function-type dependency builds its result from the call's arguments and the graph`() =
+        assertRuns("assisted")
+
+    @Test
+    fun `a multibinding entry inside a function-type dependency receives the call's argument`() =
+        assertRuns("assisted_multibinding")
+
+    @Test
+    fun `a function-type dependency with two arguments of one type fails`() =
+        assertProcessingFails("assisted_repeated_argument", "SPIKE-REPEATED-ARGUMENT")
+
+    @Test
+    fun `a function-type argument whose type the graph also binds fails`() =
+        assertProcessingFails("assisted_bound_argument", "SPIKE-DUPLICATE-BINDING")
+
+    @Test
+    fun `a singleton depending on a function-type argument fails`() =
+        assertProcessingFails("assisted_singleton_argument", "SPIKE-ARGUMENT-CAPTURED")
+
+    @Test
+    fun `a Provider reaching a function-type argument fails`() =
+        assertProcessingFails("assisted_provider_argument", "SPIKE-ARGUMENT-CAPTURED")
+
+    @Test
     fun `a cached singleton does not build its arguments again`() = assertRuns("singleton_arguments_built_once")
 
     @Test

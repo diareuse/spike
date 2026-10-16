@@ -137,7 +137,20 @@ class Pump {
 @Singleton
 @Include
 class ShopInventory
+
+// Depend on a function type to pass some values at runtime: Spike builds Order with the
+// call's arguments and takes everything else from the graph
+@Include
+class Order(val table: Int, val inventory: ShopInventory)
+
+@Include
+class Waiter(private val order: (Int) -> Order) {
+    fun serve(table: Int) = order(table)
+}
 ```
+
+Each argument type of a function-type dependency must be distinct and must not also be bound in the graph.
+A `@Singleton`, `Lazy` or `Provider` cannot depend on an argument, because it would outlive the call.
 
 ### 3. Create an Entry Point
 

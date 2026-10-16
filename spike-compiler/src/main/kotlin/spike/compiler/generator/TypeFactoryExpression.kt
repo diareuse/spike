@@ -26,6 +26,8 @@ class TypeFactoryExpression(private val codes: Map<KClass<out TypeFactory>, Type
                 TypeFactory.MultibindsCollection::class to TypeFactoryCodeMultibindsCollection(),
                 TypeFactory.MultibindsMap::class to TypeFactoryCodeMultibindsMap(),
                 TypeFactory.Concatenation::class to TypeFactoryCodeConcatenation(),
+                TypeFactory.Argument::class to TypeFactoryCodeArgument(),
+                TypeFactory.Assisted::class to TypeFactoryCodeAssisted(),
                 TypeFactory.Property::class to TypeFactoryCodeProperty(),
                 TypeFactory.External::class to TypeFactoryCodeExternal(),
                 TypeFactory.Imported::class to TypeFactoryCodeImported(),

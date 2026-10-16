@@ -17,7 +17,7 @@ class LinearProgramGenerator(
 ) {
 
     private val layouts = LinearLayoutByCost(ChunksByCost(ChunkBudget), ::cost)
-    private val values = listOf(ProgramValueInstances(), ProgramValueNeeded())
+    private val values = listOf(ProgramValueArguments(), ProgramValueInstances(), ProgramValueNeeded())
 
     fun generate(
         context: FileGeneratorContext,

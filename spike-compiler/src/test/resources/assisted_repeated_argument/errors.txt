@@ -1,0 +1,4 @@
+Main.kt:9: [SPIKE-REPEATED-ARGUMENT] (kotlin.String, kotlin.String) -> Range takes kotlin.String more than once, Spike cannot tell the arguments apart
+  - constructor of Range (Main.kt:9)
+Why: Spike passes each argument of a function-type dependency to the parameter of its type, so two arguments of one type would be ambiguous.
+Fix: Wrap the arguments in a class that holds both, and take that class as the single argument.

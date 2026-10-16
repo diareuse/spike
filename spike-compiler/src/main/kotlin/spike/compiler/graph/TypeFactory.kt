@@ -8,6 +8,12 @@ sealed interface TypeFactory {
     val type: Type
     val dependencies: List<TypeFactory>
 
+    /**
+     * Every factory this one can lead to, including the target that a deferred factory builds later.
+     */
+    val reached: List<TypeFactory>
+        get() = dependencies
+
     sealed interface Structured : TypeFactory {
         fun pairedChildren(other: TypeFactory): List<Pair<TypeFactory, TypeFactory>>?
     }
@@ -56,6 +62,9 @@ sealed interface TypeFactory {
 
     sealed interface Deferred : Structured {
         val factory: TypeFactory
+
+        override val reached: List<TypeFactory>
+            get() = dependencies + factory
     }
 
     data class Provides(
@@ -187,6 +196,34 @@ sealed interface TypeFactory {
 
         override val dependencies get() = keyValues.values.toList()
         override fun toString() = "Map of ${keyValues.mapValues { it.value.type }}"
+    }
+
+    data class Argument(
+        override val type: Type,
+        val index: Int,
+    ) : TypeFactory {
+        override val dependencies: List<TypeFactory>
+            get() = emptyList()
+    }
+
+    data class Assisted(
+        override val type: Type.Parametrized,
+        val factory: TypeFactory,
+    ) : Structured {
+        private val hash = Objects.hash(type, factory)
+
+        override fun hashCode() = hash
+
+        override fun equals(other: Any?) = structurallyEqual(this, other)
+
+        override fun pairedChildren(other: TypeFactory) =
+            if (other is Assisted && other.type == type) listOf(factory to other.factory) else null
+
+        override val dependencies: List<TypeFactory>
+            get() = emptyList()
+
+        val arguments: List<Type>
+            get() = type.typeArguments.dropLast(1)
     }
 
     data class Concatenation(
