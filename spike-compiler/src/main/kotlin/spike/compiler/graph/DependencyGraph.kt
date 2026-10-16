@@ -57,6 +57,7 @@ class DependencyGraph private constructor(
 
         fun create(): DependencyGraph {
             val importCollector = TypeFactoryCreatorImportCollector()
+            val empty = if (entry.isModule) EmptyMultibindingImported else EmptyMultibindingResolved
             val creators = listOf(
                 TypeFactoryCreatorMemo(),
                 importCollector,
@@ -66,9 +67,9 @@ class DependencyGraph private constructor(
                 TypeFactoryCreatorMethod(),
                 TypeFactoryCreatorLazy(),
                 TypeFactoryCreatorProvider(),
-                TypeFactoryCreatorMultiBindMap(multibinding),
-                TypeFactoryCreatorMultiBindCollection(multibinding, BuiltInTypes.Set),
-                TypeFactoryCreatorMultiBindCollection(multibinding, BuiltInTypes.List),
+                TypeFactoryCreatorMultiBindMap(multibinding, empty),
+                TypeFactoryCreatorMultiBindCollection(multibinding, BuiltInTypes.Set, empty),
+                TypeFactoryCreatorMultiBindCollection(multibinding, BuiltInTypes.List, empty),
             )
             val methods = entry.methods.map {
                 createTypeFactory(it.returns, creators)

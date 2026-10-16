@@ -6,6 +6,7 @@ import spike.compiler.diagnostic.DiagnosticMapKeyType
 
 class TypeFactoryCreatorMultiBindMap(
     private val multibinding: MultiBindingStore,
+    private val empty: EmptyMultibinding,
 ) : TypeFactoryCreator {
     override suspend fun Minting.create(context: TypeFactoryCreator.Context): TypeFactory {
         val type = context.type
@@ -14,10 +15,25 @@ class TypeFactoryCreatorMultiBindMap(
         }
         val (keyType, valueType) = type.typeArguments
         val instanceMap = multibinding.map[valueType.unwrapParametrized()].orEmpty()
+        return if (instanceMap.isEmpty()) {
+            val none = TypeFactory.MultibindsMap(type, emptyMap())
+            with(empty) { resolve(this@TypeFactoryCreatorMultiBindMap, context, none) }
+        } else {
+            createMap(context, type, keyType, valueType, instanceMap)
+        }
+    }
+
+    private suspend fun Minting.createMap(
+        context: TypeFactoryCreator.Context,
+        type: Type.Parametrized,
+        keyType: Type,
+        valueType: Type,
+        instanceMap: Map<Key, GraphStore>,
+    ): TypeFactory {
         val instances = instanceMap
             .filterKeys { it.type == keyType }
             .mapKeys { it.key.value }
-        if (instanceMap.isNotEmpty() && instances.isEmpty()) failOnKeyType(type, keyType, valueType, instanceMap)
+        if (instances.isEmpty()) failOnKeyType(type, keyType, valueType, instanceMap)
         val keyValues = buildMap {
             for ((k, v) in instances) {
                 val definitions = (v.constructors + v.factories).distinct()

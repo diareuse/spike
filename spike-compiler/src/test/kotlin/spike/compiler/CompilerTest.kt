@@ -131,6 +131,10 @@ class CompilerTest : HarnessCompiler() {
         assertRuns("import_nullable_generic")
 
     @Test
+    fun `exported module imports a collection it has no contributions for from the consumer`() =
+        assertRuns("import_empty_multibinding")
+
+    @Test
     fun `exported module imports types whose names differ only in punctuation`() =
         assertRuns("import_name_escaping")
 

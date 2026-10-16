@@ -4,6 +4,7 @@ package spike.compiler.graph
 class TypeFactoryCreatorMultiBindCollection(
     multibinding: MultiBindingStore,
     private val collectionType: Type,
+    private val empty: EmptyMultibinding,
 ) : TypeFactoryCreator {
     private val multibinding = when (collectionType) {
         BuiltInTypes.Set -> multibinding.set
@@ -21,7 +22,7 @@ class TypeFactoryCreatorMultiBindCollection(
         if (valueType is Type.Parametrized && valueType.envelope == BuiltInTypes.Provider)
             valueType = valueType.typeArguments.single()
         val instances = multibinding[valueType] ?: GraphStore()
-        return TypeFactory.MultibindsCollection(
+        val factory = TypeFactory.MultibindsCollection(
             type = type,
             entries = buildList {
                 for (c in instances.constructors) {
@@ -33,5 +34,7 @@ class TypeFactoryCreatorMultiBindCollection(
             },
             collectionType = collectionType,
         )
+        return if (factory.entries.isNotEmpty()) factory
+        else with(empty) { resolve(this@TypeFactoryCreatorMultiBindCollection, context, factory) }
     }
 }
