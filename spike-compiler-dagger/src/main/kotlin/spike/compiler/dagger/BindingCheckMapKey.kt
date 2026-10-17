@@ -3,7 +3,11 @@ package spike.compiler.dagger
 import com.google.devtools.ksp.symbol.KSAnnotation
 import spike.compiler.conversion.ConversionCheck
 import spike.compiler.conversion.ConversionProblem
+import spike.Include
+import spike.BindTarget
+import spike.compiler.conversion.Order
 
+@Include
 class BindingCheckMapKey : ConversionCheck<DaggerBinding> {
     override fun check(subject: DaggerBinding): ConversionProblem? {
         val annotations = subject.function.annotations
@@ -19,4 +23,11 @@ class BindingCheckMapKey : ConversionCheck<DaggerBinding> {
 
     private fun isCustomMapKey(annotation: KSAnnotation) =
         DaggerNames.MapKey.annotatesAnnotationOf(annotation) && !DaggerNames.KnownKeys.matches(annotation)
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(30)
+        val BindingCheckMapKey.asCheck: ConversionCheck<DaggerBinding>
+            get() = this
+    }
 }

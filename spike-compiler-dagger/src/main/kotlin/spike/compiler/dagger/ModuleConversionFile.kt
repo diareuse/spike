@@ -7,7 +7,9 @@ import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.writeTo
 import spike.compiler.conversion.Conversion
 import spike.compiler.conversion.IncludeFunction
+import spike.Include
 
+@Include
 class ModuleConversionFile(
     private val function: IncludeFunction<DaggerBinding>,
     private val codeGenerator: CodeGenerator,
