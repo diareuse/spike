@@ -1,3 +1,7 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
+
 plugins {
     id("spike.multiplatform.compose")
 }
@@ -5,6 +9,12 @@ plugins {
 kotlin {
     android {
         namespace = "spike.androidx.compose"
+    }
+    js {
+        browser()
+    }
+    wasmJs {
+        browser()
     }
     sourceSets {
         commonMain.dependencies {
