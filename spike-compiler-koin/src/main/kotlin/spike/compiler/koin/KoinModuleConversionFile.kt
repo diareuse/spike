@@ -10,10 +10,12 @@ import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.writeTo
 import spike.compiler.conversion.Conversion
+import spike.Include
 
 /**
  * Writes `fun EntryPoint.koinModule(): Module`, a Koin module with a factory for each exported member.
  */
+@Include
 class KoinModuleConversionFile(
     private val members: ExportedMembers,
     private val codeGenerator: CodeGenerator,

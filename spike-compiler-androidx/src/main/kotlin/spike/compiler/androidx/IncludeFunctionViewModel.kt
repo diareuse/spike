@@ -7,7 +7,9 @@ import com.squareup.kotlinpoet.ksp.toClassName
 import spike.compiler.conversion.IncludeFunction
 import spike.compiler.conversion.ParameterConversion
 import spike.compiler.conversion.SpikeNames
+import spike.Include
 
+@Include
 class IncludeFunctionViewModel(private val parameters: ParameterConversion) : IncludeFunction<ViewModelInclusion> {
     override fun of(subject: ViewModelInclusion): FunSpec {
         val className = subject.declaration.toClassName()
