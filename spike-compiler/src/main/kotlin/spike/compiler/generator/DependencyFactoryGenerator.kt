@@ -27,6 +27,7 @@ class DependencyFactoryGenerator(
 
     fun generate(context: FileGeneratorContext, collector: FileSpecCollector, members: EntryPointMembers) {
         val spec = TypeSpec.classBuilder(context.dependencyFactoryClassName)
+            .addModifiers(context.graph.entry.visibility.modifier)
             .addOriginatingFiles(context.originatingFiles)
 
         context.imports.clear()

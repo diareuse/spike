@@ -6,6 +6,7 @@ import com.google.devtools.ksp.getDeclaredProperties
 import com.google.devtools.ksp.isAbstract
 import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.isConstructor
+import com.google.devtools.ksp.isInternal
 import com.google.devtools.ksp.isPublic
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
@@ -23,6 +24,7 @@ import spike.compiler.graph.DependencyGraph
 import spike.compiler.graph.ExportedContribution
 import spike.compiler.graph.GraphEntryPoint
 import spike.compiler.graph.GraphRole
+import spike.compiler.graph.EntryPointVisibility
 import spike.compiler.graph.GraphEntryPoint.Companion.virtualFactory
 import spike.compiler.graph.Member
 import spike.compiler.graph.Parameter
@@ -73,6 +75,7 @@ abstract class GraphContributorOriginator : GraphContributor {
             methods = methods,
             role = if (entryPoint.isAnnotationPresent(Export::class)) GraphRole.Module else GraphRole.App,
             origin = entryPoint.asOrigin(),
+            visibility = if (entryPoint.isInternal()) EntryPointVisibility.Internal else EntryPointVisibility.Public,
         )
         val resolved = stores.of(context, entryPoint)
         val graphFactory = graphs(

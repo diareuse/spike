@@ -10,6 +10,7 @@ data class GraphEntryPoint private constructor(
     val methods: List<Member.Method>,
     val role: GraphRole,
     val origin: Origin? = null,
+    val visibility: EntryPointVisibility = EntryPointVisibility.Public,
 ) {
     override fun toString(): String {
         var out = ""
@@ -45,6 +46,7 @@ data class GraphEntryPoint private constructor(
             methods: List<Member.Method>,
             role: GraphRole,
             origin: Origin? = null,
+            visibility: EntryPointVisibility = EntryPointVisibility.Public,
         ) = GraphEntryPoint(
             type = type,
             factory = factory,
@@ -52,6 +54,7 @@ data class GraphEntryPoint private constructor(
             methods = methods,
             role = role,
             origin = origin,
+            visibility = visibility,
         )
 
         fun Type.virtualFactory(parameters: List<Parameter>): Factory {

@@ -349,6 +349,9 @@ class CompilerTest : HarnessCompiler() {
     fun `a star-projected type can be bound and multibound`() = assertRuns("star_projected_binding")
 
     @Test
+    fun `an internal entry point exposing internal types compiles`() = assertRuns("internal_entry_point")
+
+    @Test
     fun `a cached singleton does not build its arguments again`() = assertRuns("singleton_arguments_built_once")
 
     @Test
