@@ -21,5 +21,5 @@ dependencies {
 tasks.test { useJUnitPlatform() }
 
 tasks.named<JavaExec>("run") {
-    args(rootDir.path)
+    args(listOfNotNull(rootDir.path, providers.gradleProperty("benchmarkSize").orNull))
 }
