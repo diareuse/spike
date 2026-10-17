@@ -15,8 +15,12 @@ import spike.InternalSpikeApi
 import spike.compiler.generator.findKSFile
 import spike.compiler.processor.symbol.SymbolRegistry
 import spike.factory.IncludedDeclarations
+import spike.BindTarget
+import spike.Include
+import spike.compiler.Order
 
 @OptIn(InternalSpikeApi::class)
+@Include
 class GraphContributorIndex(
     private val registry: SymbolRegistry,
     private val environment: SymbolProcessorEnvironment,
@@ -58,5 +62,12 @@ class GraphContributorIndex(
             .addType(type.build())
             .build()
             .writeTo(environment.codeGenerator, true)
+    }
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(40)
+        val GraphContributorIndex.asGraphContributor: GraphContributor
+            get() = this
     }
 }

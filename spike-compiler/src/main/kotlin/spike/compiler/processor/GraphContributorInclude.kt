@@ -9,8 +9,12 @@ import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import spike.compiler.diagnostic.DiagnosticCollector
 import spike.compiler.generator.requireKSFile
 import spike.compiler.processor.symbol.SymbolRegistry
+import spike.BindTarget
+import spike.Include
+import spike.compiler.Order
 
 @OptIn(KspExperimental::class)
+@Include
 class GraphContributorInclude(
     private val contributor: IncludeContributor,
     private val registry: SymbolRegistry
@@ -37,5 +41,12 @@ class GraphContributorInclude(
             )
         }
         context.originatingFiles.add(ks.requireKSFile())
+    }
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(10)
+        val GraphContributorInclude.asGraphContributor: GraphContributor
+            get() = this
     }
 }

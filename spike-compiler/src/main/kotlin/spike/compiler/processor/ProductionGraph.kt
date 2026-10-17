@@ -5,10 +5,12 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import spike.compiler.diagnostic.DiagnosticCollector
 import spike.compiler.graph.GraphStore
 import spike.compiler.graph.MultiBindingStore
+import spike.Include
 
 /**
  * Rebuilds the bindings of a compiled production entry point from the declarations its index lists.
  */
+@Include
 class ProductionGraph(
     private val declarations: IndexedDeclarations,
     private val include: IncludeVisitor,

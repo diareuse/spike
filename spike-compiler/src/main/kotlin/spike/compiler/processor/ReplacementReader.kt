@@ -5,10 +5,12 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import spike.compiler.diagnostic.Involved
+import spike.Include
 
 /**
  * Reads what an @Replaces declaration replaces and what it provides instead, both qualified as it is.
  */
+@Include
 class ReplacementReader(private val provided: ProvidedTypeVisitor) {
     fun of(symbol: KSAnnotated, base: KSClassDeclaration): Replacement {
         val replacedType = symbol.annotations

@@ -8,14 +8,16 @@ import spike.compiler.diagnostic.DiagnosticCollector
 import spike.compiler.graph.Alias
 import spike.compiler.graph.GraphStore
 import spike.compiler.processor.symbol.SymbolRegistry
+import spike.Include
 
 /**
  * Gives a test entry point that extends a compiled production entry point the production graph, with every
  * @Replaces declaration taking the place of the binding it replaces.
  */
 @OptIn(KspExperimental::class)
+@Include
 class EntryPointStoresDerived(
-    private val delegate: EntryPointStores,
+    private val delegate: EntryPointStoresLocal,
     private val production: ProductionGraph,
     private val registry: SymbolRegistry,
     private val replacements: ReplacementReader,

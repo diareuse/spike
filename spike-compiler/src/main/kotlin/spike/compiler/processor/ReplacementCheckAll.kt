@@ -1,8 +1,11 @@
 package spike.compiler.processor
 
 import spike.compiler.graph.GraphStore
+import spike.Include
 
-class ReplacementCheckAll(private val checks: List<ReplacementCheck>) : ReplacementCheck {
+@Include
+class ReplacementCheckAll(checks: Map<Int, ReplacementCheck>) : ReplacementCheck {
+    private val checks = checks.toSortedMap().values
     override fun check(replacement: Replacement, production: GraphStore) {
         for (check in checks) check.check(replacement, production)
     }

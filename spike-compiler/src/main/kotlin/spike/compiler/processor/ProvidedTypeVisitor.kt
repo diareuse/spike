@@ -6,10 +6,12 @@ import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.visitor.KSDefaultVisitor
+import spike.Include
 
 /**
  * Reads the type an included declaration provides: a class itself, or what a function or property returns.
  */
+@Include
 class ProvidedTypeVisitor : KSDefaultVisitor<Unit, KSType?>(enableNewFeatures = true) {
     override fun defaultHandler(node: KSNode, data: Unit): KSType? = null
 

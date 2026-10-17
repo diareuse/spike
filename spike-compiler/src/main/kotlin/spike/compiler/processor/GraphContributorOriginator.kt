@@ -37,7 +37,7 @@ abstract class GraphContributorOriginator : GraphContributor {
     protected abstract val logger: KSPLogger
     protected abstract val reporter: DiagnosticReporter
     protected abstract val warnings: WarningReporter
-    protected open val stores: EntryPointStores = EntryPointStoresLocal
+    protected abstract val stores: EntryPointStores
 
     protected open fun verifyOrigin(declaration: KSClassDeclaration) = Unit
     protected open fun findFactory(entryPoint: KSClassDeclaration): GraphEntryPoint.Factory? = null

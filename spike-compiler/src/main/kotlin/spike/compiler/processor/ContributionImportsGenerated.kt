@@ -8,8 +8,10 @@ import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import spike.Key
 import spike.compiler.graph.ExportedContribution
 import spike.compiler.graph.TypeFactory
+import spike.Include
 
 @OptIn(KspExperimental::class)
+@Include
 class ContributionImportsGenerated : ContributionImports {
     override fun of(generated: List<KSClassDeclaration>) = generated.flatMap { klass ->
         val exportedBy = klass.superTypes.first().resolve().toType()

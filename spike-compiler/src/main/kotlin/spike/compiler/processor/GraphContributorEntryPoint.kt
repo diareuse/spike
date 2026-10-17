@@ -25,17 +25,22 @@ import spike.compiler.graph.Member
 import spike.compiler.graph.Parameter
 import spike.compiler.graph.SingletonOwnership
 import spike.compiler.processor.symbol.SymbolRegistry
+import spike.BindTarget
+import spike.Include
+import spike.compiler.Order
+import spike.compiler.generator.AppGraph
 
 @OptIn(KspExperimental::class)
+@Include
 class GraphContributorEntryPoint(
-    override val generator: DependencyGraphGenerator,
+    @AppGraph override val generator: DependencyGraphGenerator,
     override val environment: SymbolProcessorEnvironment,
     override val logger: KSPLogger,
     override val reporter: DiagnosticReporter,
     override val warnings: WarningReporter,
     override val contributions: ContributionImports,
     private val registry: SymbolRegistry,
-    override val stores: EntryPointStores = EntryPointStoresLocal,
+    override val stores: EntryPointStores,
 ) : GraphContributorOriginator() {
 
     override fun getOrigins(resolver: Resolver) = registry.entryPoint(resolver)
@@ -106,4 +111,11 @@ class GraphContributorEntryPoint(
 
 
     private fun KSClassDeclaration.name() = simpleName.asString()
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(20)
+        val GraphContributorEntryPoint.asGraphContributor: GraphContributor
+            get() = this
+    }
 }

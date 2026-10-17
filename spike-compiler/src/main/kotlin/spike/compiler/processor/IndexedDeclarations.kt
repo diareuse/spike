@@ -3,10 +3,12 @@ package spike.compiler.processor
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import spike.Include
 
 /**
  * Reads the declarations that a compiled entry point's index lists, each found by the lookup of its prefix.
  */
+@Include
 class IndexedDeclarations(private val lookups: Map<String, IndexLookup>) {
     fun of(resolver: Resolver, entryPoint: KSClassDeclaration): List<KSAnnotated> {
         val name = EntryPointIndex.classNameOf(entryPoint.qualifiedName!!.asString()).canonicalName
