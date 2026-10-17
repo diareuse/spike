@@ -23,6 +23,7 @@ class SourceTree(
             sources.resolve("Nodes$index.kt").writeText(withPackage(packageName, dialect.nodesFile(index, nodes)))
         }
         sources.resolve("Graph.kt").writeText(withPackage(packageName, dialect.graphFile(tree, files.size)))
+        sources.resolve("Screens.kt").writeText(withPackage(packageName, dialect.screensFile()))
     }
 
     private fun withPackage(packageName: String, content: String) = "package $packageName\n\n$content"

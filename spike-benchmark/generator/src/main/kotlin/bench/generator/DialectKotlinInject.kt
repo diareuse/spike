@@ -19,4 +19,37 @@ class DialectKotlinInject : Dialect {
         fun resolve(): ${tree.root.name} = resolve(createGraph())
 
     """.trimIndent()
+
+    override fun screensFile() = """
+        @me.tatarka.inject.annotations.Scope
+        annotation class AppScope
+
+        class Handle(val id: Int)
+
+        @AppScope
+        @me.tatarka.inject.annotations.Inject
+        class AppState
+
+        @me.tatarka.inject.annotations.Inject
+        class Screen(val handle: Handle, val state: AppState)
+
+        @AppScope
+        @me.tatarka.inject.annotations.Component
+        abstract class App {
+            abstract val state: AppState
+        }
+
+        @me.tatarka.inject.annotations.Component
+        abstract class ScreenComponent(
+            @me.tatarka.inject.annotations.Component val parent: App,
+            @get:me.tatarka.inject.annotations.Provides val handle: Handle,
+        ) {
+            abstract val screen: Screen
+        }
+
+        fun createApp(): App = App::class.create()
+
+        fun openScreen(app: App, id: Int): Screen = ScreenComponent::class.create(app, Handle(id)).screen
+
+    """.trimIndent()
 }

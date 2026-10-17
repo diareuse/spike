@@ -26,4 +26,24 @@ class DialectKoin : Dialect {
 
         """.trimIndent()
     }
+
+    override fun screensFile() = """
+        class Handle(val id: Int)
+
+        class AppState
+
+        class Screen(val handle: Handle, val state: AppState)
+
+        typealias App = org.koin.core.Koin
+
+        val screens = org.koin.dsl.module {
+            single { AppState() }
+            factory { (handle: Handle) -> Screen(handle, get()) }
+        }
+
+        fun createApp(): App = org.koin.dsl.koinApplication { modules(screens) }.koin
+
+        fun openScreen(app: App, id: Int): Screen = app.get { org.koin.core.parameter.parametersOf(Handle(id)) }
+
+    """.trimIndent()
 }

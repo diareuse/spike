@@ -20,4 +20,34 @@ class DialectDagger : Dialect {
         fun resolve(): ${tree.root.name} = resolve(createGraph())
 
     """.trimIndent()
+
+    override fun screensFile() = """
+        class Handle(val id: Int)
+
+        @javax.inject.Singleton
+        class AppState @javax.inject.Inject constructor()
+
+        class Screen @javax.inject.Inject constructor(val handle: Handle, val state: AppState)
+
+        @dagger.Subcomponent
+        interface ScreenComponent {
+            val screen: Screen
+
+            @dagger.Subcomponent.Factory
+            interface Factory {
+                fun create(@dagger.BindsInstance handle: Handle): ScreenComponent
+            }
+        }
+
+        @javax.inject.Singleton
+        @dagger.Component
+        interface App {
+            val screens: ScreenComponent.Factory
+        }
+
+        fun createApp(): App = DaggerApp.create()
+
+        fun openScreen(app: App, id: Int): Screen = app.screens.create(Handle(id)).screen
+
+    """.trimIndent()
 }

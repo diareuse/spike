@@ -82,6 +82,37 @@ class GraphBenchmarkColdStart {
 }
 
 @State(Scope.Benchmark)
+@Fork(jvmArgsAppend = ["-Xms1g", "-Xmx1g", "-XX:+UseParallelGC"])
+class GraphBenchmarkScreen {
+
+    private val manualApp = bench.manual.createApp()
+    private val spikeApp = bench.spike.createApp()
+    private val daggerApp = bench.dagger.createApp()
+    private val metroApp = bench.metro.createApp()
+    private val kotlinInjectApp = bench.kotlininject.createApp()
+    private val koinApp = bench.koin.createApp()
+
+    @Benchmark
+    fun manual() = bench.manual.openScreen(manualApp, 1)
+
+    @Benchmark
+    fun spike() = bench.spike.openScreen(spikeApp, 1)
+
+    @Benchmark
+    fun dagger() = bench.dagger.openScreen(daggerApp, 1)
+
+    @Benchmark
+    fun metro() = bench.metro.openScreen(metroApp, 1)
+
+    @Benchmark
+    fun kotlin_inject() = bench.kotlininject.openScreen(kotlinInjectApp, 1)
+
+    @Benchmark
+    fun koin() = bench.koin.openScreen(koinApp, 1)
+
+}
+
+@State(Scope.Benchmark)
 class GraphStateManual {
     lateinit var graph: bench.manual.Graph
 

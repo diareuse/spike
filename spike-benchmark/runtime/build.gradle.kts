@@ -27,6 +27,7 @@ benchmark {
         named("main") {
             include(selected("GraphBenchmarkCreate"))
             include(selected("GraphBenchmarkResolve"))
+            include(selected("GraphBenchmarkScreen"))
             mode = "avgt"
             outputTimeUnit = "us"
             warmups = 5

@@ -12,11 +12,11 @@ class SourceTreeTest {
     )
 
     @Test
-    fun `splits nodes into files of the given size plus one graph file`() {
+    fun `splits nodes into files of the given size plus one graph file and one screens file`() {
         val directory = Files.createTempDirectory("sources").toFile()
         SourceTree(tree, nodesPerFile = 2).writeTo(directory, DialectManual())
         val written = directory.resolve("bench/manual").list()!!.sorted()
-        assertEquals(listOf("Graph.kt", "Nodes0.kt", "Nodes1.kt"), written)
+        assertEquals(listOf("Graph.kt", "Nodes0.kt", "Nodes1.kt", "Screens.kt"), written)
     }
 
     @Test

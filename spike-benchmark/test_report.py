@@ -9,7 +9,7 @@ from pathlib import Path
 REPORT = Path(__file__).parent / "report.py"
 BUILD = ["clean build", "ABI change", "non-ABI change"]
 RUNTIME = {"GraphBenchmarkCreate": "create graph", "GraphBenchmarkResolve": "resolve from graph",
-           "GraphBenchmarkColdStart": "cold start"}
+           "GraphBenchmarkColdStart": "cold start", "GraphBenchmarkScreen": "open screen"}
 
 
 def write_measurements(frameworks, root):
@@ -78,13 +78,13 @@ class SpikeSeriesTest(unittest.TestCase):
         spike = report(["spike", "dagger"])["results-spike.json"]
 
         self.assertEqual([("spike clean build", "ms"), ("spike ABI change", "ms"), ("spike non-ABI change", "ms"),
-                          ("spike resolve from graph", "us"), ("spike cold start", "us")],
+                          ("spike resolve from graph", "us"), ("spike cold start", "us"), ("spike open screen", "us")],
                          [(entry["name"], entry["unit"]) for entry in spike])
 
     def test_a_spike_only_run_still_alerts_on_every_spike_series(self):
         spike = report(["spike"])["results-spike.json"]
 
-        self.assertEqual(5, len(spike))
+        self.assertEqual(6, len(spike))
 
 
 class AllSeriesTest(unittest.TestCase):
@@ -95,7 +95,7 @@ class AllSeriesTest(unittest.TestCase):
         values = {entry["name"]: entry["value"] for entry in series}
         self.assertEqual(value("dagger cold start"), values["dagger cold start"])
         self.assertEqual(value("spike create graph"), values["spike create graph"])
-        self.assertEqual(12, len(series))
+        self.assertEqual(14, len(series))
 
 
 if __name__ == "__main__":

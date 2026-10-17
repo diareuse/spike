@@ -19,4 +19,35 @@ class DialectMetro : Dialect {
         fun resolve(): ${tree.root.name} = resolve(createGraph())
 
     """.trimIndent()
+
+    override fun screensFile() = """
+        class Handle(val id: Int)
+
+        @dev.zacsweers.metro.SingleIn(dev.zacsweers.metro.AppScope::class)
+        @dev.zacsweers.metro.Inject
+        class AppState
+
+        @dev.zacsweers.metro.Inject
+        class Screen(val handle: Handle, val state: AppState)
+
+        @dev.zacsweers.metro.GraphExtension
+        interface ScreenGraph {
+            val screen: Screen
+
+            @dev.zacsweers.metro.GraphExtension.Factory
+            interface Factory {
+                fun create(@dev.zacsweers.metro.Provides handle: Handle): ScreenGraph
+            }
+        }
+
+        @dev.zacsweers.metro.DependencyGraph(dev.zacsweers.metro.AppScope::class)
+        interface App {
+            val screens: ScreenGraph.Factory
+        }
+
+        fun createApp(): App = dev.zacsweers.metro.createGraph<App>()
+
+        fun openScreen(app: App, id: Int): Screen = app.screens.create(Handle(id)).screen
+
+    """.trimIndent()
 }

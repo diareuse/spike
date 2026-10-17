@@ -23,4 +23,21 @@ class DialectManual : Dialect {
     """.trimIndent()
 
     private fun factoryOf(name: String) = "new$name"
+
+    override fun screensFile() = """
+        class Handle(val id: Int)
+
+        class AppState
+
+        class Screen(val handle: Handle, val state: AppState)
+
+        class App {
+            val state = AppState()
+        }
+
+        fun createApp(): App = App()
+
+        fun openScreen(app: App, id: Int): Screen = Screen(Handle(id), app.state)
+
+    """.trimIndent()
 }

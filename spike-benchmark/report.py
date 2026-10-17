@@ -7,7 +7,7 @@ from pathlib import Path
 FRAMEWORKS = ["manual", "spike", "dagger", "metro", "kotlin-inject", "koin"]
 BUILD = [("clean", "clean build"), ("abi", "ABI change"), ("nonabi", "non-ABI change")]
 RUNTIME = [("GraphBenchmarkCreate", "create graph"), ("GraphBenchmarkResolve", "resolve from graph"),
-           ("GraphBenchmarkColdStart", "cold start")]
+           ("GraphBenchmarkColdStart", "cold start"), ("GraphBenchmarkScreen", "open screen")]
 
 root = Path(sys.argv[1])
 output = root / "output"
@@ -43,17 +43,17 @@ build = build_times()
 runtime = runtime_times()
 lines = [
     "| Framework | Clean build (ms) | ABI change (ms) | Non-ABI change (ms) "
-    "| Create graph (µs) | Resolve from graph (µs) | Cold start (ms) | Module jar (KiB) |",
-    "|---|---:|---:|---:|---:|---:|---:|---:|",
+    "| Create graph (µs) | Resolve from graph (µs) | Cold start (ms) | Open screen (µs) | Module jar (KiB) |",
+    "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
 ]
 series = []
 for framework in [f for f in FRAMEWORKS if f"{f} clean build" in build]:
     builds = [build[f"{framework} {title}"] for _, title in BUILD]
     method = framework.replace("-", "_")
     runtimes = [runtime[(benchmark, method)] for benchmark, _ in RUNTIME]
-    create, resolve, cold = runtimes
+    create, resolve, cold, screen = runtimes
     lines.append(f"| {framework} | " + " | ".join(f"{value:.0f}" for value in builds)
-                 + f" | {create:.3f} | {resolve:.1f} | {cold / 1000:.1f} | {jar_kib(framework):.0f} |")
+                 + f" | {create:.3f} | {resolve:.1f} | {cold / 1000:.1f} | {screen:.3f} | {jar_kib(framework):.0f} |")
     series += [{"framework": framework, "metric": title, "unit": "ms", "value": value}
                for (_, title), value in zip(BUILD, builds)]
     series += [{"framework": framework, "metric": title, "unit": "us", "value": value}

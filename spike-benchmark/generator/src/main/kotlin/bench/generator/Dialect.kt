@@ -4,6 +4,7 @@ interface Dialect {
     val id: String
     fun nodesFile(index: Int, nodes: List<Node>): String
     fun graphFile(tree: DependencyTree, nodeFiles: Int): String
+    fun screensFile(): String
 }
 
 internal fun Node.parameters(): String =
