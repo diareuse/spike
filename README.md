@@ -107,7 +107,7 @@ class ElectricHeater : Heater
 @Include
 val ElectricHeater.asHeater: Heater get() = this
 
-// Spike can inject standard `Lazy<T>` or `spike.Provider<T>` automatically
+// Spike can inject standard `Lazy<T>` or `spike.Provider<T>` automatically; they also break dependency cycles
 @Include
 class CoffeeMaker(
     private val heater: Heater,

@@ -206,6 +206,20 @@ class CompilerTest : HarnessCompiler() {
         assertProcessingFails("test_replaces_nothing", "SPIKE-REPLACES-NOTHING")
 
     @Test
+    fun `a Provider or Lazy breaks a dependency cycle`() = assertRuns("cycle_provider")
+
+    @Test
+    fun `a viewmodel singleton reaching SavedStateHandle through a Provider cycle fails`() = assertProcessingFails(
+        "androidx_viewmodel_singleton_cycle_handle",
+        "SPIKE-SINGLETON-INPUT",
+        libraries = Androidx
+    )
+
+    @Test
+    fun `a Provider cycle reaching a function-type argument fails`() =
+        assertProcessingFails("assisted_cycle_argument", "SPIKE-ARGUMENT-CAPTURED")
+
+    @Test
     fun `a cached singleton does not build its arguments again`() = assertRuns("singleton_arguments_built_once")
 
     @Test

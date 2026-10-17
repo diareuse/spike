@@ -177,7 +177,7 @@ class DependencyFactoryGenerator(
                 context.imports += dependency
             }
             if (dependency is TypeFactory.Assisted) assisted.pending += dependency
-            if (dependency is TypeFactory.Deferred) plain.pending.addFirst(dependency.factory)
+            if (dependency is TypeFactory.Deferred) plain.pending.addFirst(dependency.factory.resolvedTarget)
 
             if (dependency in contextIndexByFactory) {
                 continue

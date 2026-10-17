@@ -68,8 +68,9 @@ class DependencyGraph private constructor(
 
         fun create(): DependencyGraph {
             val importCollector = TypeFactoryCreatorImportCollector()
+            val recursions = Recursions()
             val resolving = listOf(
-                TypeFactoryCreatorMemo(),
+                TypeFactoryCreatorMemo(recursions),
                 importCollector,
                 inputs,
                 TypeFactoryCreatorUniqueBinding(),
@@ -77,8 +78,8 @@ class DependencyGraph private constructor(
                 TypeFactoryCreatorAlias(),
                 TypeFactoryCreatorConstructor(),
                 TypeFactoryCreatorMethod(),
-                TypeFactoryCreatorLazy(),
-                TypeFactoryCreatorProvider(),
+                TypeFactoryCreatorLazy(recursions),
+                TypeFactoryCreatorProvider(recursions),
                 TypeFactoryCreatorAssisted(listOf(ArgumentCaptorSingleton(), ArgumentCaptorDeferred())),
             )
             val creators = entry.role.creators(resolving, multibinding, imported)

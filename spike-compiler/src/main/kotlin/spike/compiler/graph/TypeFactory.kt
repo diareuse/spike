@@ -14,6 +14,12 @@ sealed interface TypeFactory {
     val reached: List<TypeFactory>
         get() = dependencies
 
+    /**
+     * The factory that actually builds [type], seen through a recursion once it is resolved.
+     */
+    val resolvedTarget: TypeFactory
+        get() = this
+
     sealed interface Structured : TypeFactory {
         fun pairedChildren(other: TypeFactory): List<Pair<TypeFactory, TypeFactory>>?
     }
@@ -196,6 +202,19 @@ sealed interface TypeFactory {
 
         override val dependencies get() = keyValues.values.toList()
         override fun toString() = "Map of ${keyValues.mapValues { it.value.type }}"
+    }
+
+    class Recursion(override val type: Type) : TypeFactory {
+        var target: TypeFactory? = null
+            internal set
+
+        override val dependencies: List<TypeFactory>
+            get() = emptyList()
+
+        override val resolvedTarget: TypeFactory
+            get() = checkNotNull(target) { "Recursion to $type was never resolved" }
+
+        override fun toString() = "Recursion($type)"
     }
 
     data class Argument(

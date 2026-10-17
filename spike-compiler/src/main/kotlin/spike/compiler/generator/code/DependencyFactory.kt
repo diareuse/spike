@@ -14,5 +14,5 @@ fun CodeBlock.Builder.addDependencyFactoryCall(
     "factory.get<%T>(%T(%L))",
     context.resolver.getTypeName(type),
     DependencyId::class,
-    context.getDependencyId(factory)
+    context.getDependencyId(factory.resolvedTarget)
 )

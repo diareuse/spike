@@ -8,14 +8,21 @@ import java.util.IdentityHashMap
 class SharedSingletonInputCheck(private val bindings: GraphStore = GraphStore()) {
     fun check(entry: GraphEntryPoint, roots: List<TypeFactory>) {
         if (!entry.factory.sharesSingletons) return
-        val inputs = IdentityHashMap<TypeFactory, TypeFactory.Property?>()
-        for (root in roots) inputReachedFrom(entry, root, inputs)
+        var previous: Map<TypeFactory, TypeFactory.Property?> = emptyMap()
+        do {
+            val inputs = IdentityHashMap<TypeFactory, TypeFactory.Property?>()
+            for (root in roots) inputReachedFrom(entry, root, inputs, previous)
+            val cyclic = inputs.keys.any { it is TypeFactory.Recursion }
+            val changed = inputs.values.count { it != null } != previous.values.count { it != null }
+            previous = inputs
+        } while (cyclic && changed)
     }
 
     private fun inputReachedFrom(
         entry: GraphEntryPoint,
         root: TypeFactory,
         inputs: MutableMap<TypeFactory, TypeFactory.Property?>,
+        previous: Map<TypeFactory, TypeFactory.Property?>,
     ) {
         val pending = ArrayDeque<Pair<TypeFactory, Boolean>>()
         pending.addLast(root to false)
@@ -23,7 +30,7 @@ class SharedSingletonInputCheck(private val bindings: GraphStore = GraphStore())
             val (factory, expanded) = pending.removeLast()
             when {
                 factory in inputs -> Unit
-                expanded -> record(entry, factory, inputs)
+                expanded -> record(entry, factory, inputs, previous)
                 else -> {
                     pending.addLast(factory to true)
                     for (child in factory.children().asReversed()) pending.addLast(child to false)
@@ -36,8 +43,11 @@ class SharedSingletonInputCheck(private val bindings: GraphStore = GraphStore())
         entry: GraphEntryPoint,
         factory: TypeFactory,
         inputs: MutableMap<TypeFactory, TypeFactory.Property?>,
+        previous: Map<TypeFactory, TypeFactory.Property?>,
     ) {
-        val input = factory as? TypeFactory.Property ?: factory.children().firstNotNullOfOrNull { inputs[it] }
+        val input = factory as? TypeFactory.Property
+            ?: (factory as? TypeFactory.Recursion)?.target?.let { previous[it] }
+            ?: factory.children().firstNotNullOfOrNull { inputs[it] }
         inputs[factory] = input
         if (input != null && factory is TypeFactory.Callable && factory.singleton) {
             failOnSingletonInput(entry, factory, input)
