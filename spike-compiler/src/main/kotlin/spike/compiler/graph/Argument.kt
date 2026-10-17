@@ -14,4 +14,6 @@ data class Argument(
         get() = null
 
     override fun asGraphStore() = GraphStore(arguments = listOf(this))
+
+    override fun retyped(type: Type) = copy(type = type)
 }

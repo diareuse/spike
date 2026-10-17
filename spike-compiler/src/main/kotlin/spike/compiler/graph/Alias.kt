@@ -11,4 +11,6 @@ data class Alias(
         get() = "replacement of ${type.displayName} by ${target.displayName}"
 
     override fun asGraphStore() = GraphStore(aliases = listOf(this))
+
+    override fun retyped(type: Type) = copy(type = type)
 }

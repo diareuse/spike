@@ -10,6 +10,7 @@ sealed interface Binding {
     val description: String
     val origin: Origin?
     fun asGraphStore(): GraphStore
+    fun retyped(type: Type): Binding
 }
 
 internal val Type.displayName: String

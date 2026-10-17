@@ -24,6 +24,8 @@ data class Factory(
 
     override fun asGraphStore() = GraphStore(factories = listOf(this))
 
+    override fun retyped(type: Type) = copy(type = type)
+
     override fun equals(other: Any?) = other is Factory && other.type == type && other.member == member &&
         other.invocation == invocation && other.singleton == singleton
 

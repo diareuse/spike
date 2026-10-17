@@ -223,6 +223,9 @@ class CompilerTest : HarnessCompiler() {
     fun `a qualified generic binding keeps its type arguments`() = assertRuns("qualified_generic")
 
     @Test
+    fun `a contribution returning a collection adds each of its elements`() = assertRuns("multibinding_elements")
+
+    @Test
     fun `a cached singleton does not build its arguments again`() = assertRuns("singleton_arguments_built_once")
 
     @Test

@@ -11,8 +11,8 @@ class ImportedContributions {
         byName.getOrPut(external.name) { Entry(target, key, external, involved) }
     }
 
-    fun collection(target: BindTarget, element: Type): List<TypeFactory.External> =
-        byName.values.filter { it.target == target && it.external.type == element }.map { it.external }
+    fun collection(target: BindTarget, type: Type): List<TypeFactory.External> =
+        byName.values.filter { it.target == target && it.external.type == type }.map { it.external }
 
     fun map(value: Type): Map<Key, List<Entry>> =
         byName.values.filter { it.target == BindTarget.Map && it.external.type == value }.groupBy { it.key!! }

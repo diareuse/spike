@@ -13,6 +13,8 @@ data class Constructor(
 
     override fun asGraphStore() = GraphStore(constructors = listOf(this))
 
+    override fun retyped(type: Type) = copy(type = type)
+
     override fun equals(other: Any?) = other is Constructor &&
         other.type == type && other.invocation == invocation && other.singleton == singleton
 
