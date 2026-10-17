@@ -25,7 +25,6 @@ public class PropertyEntryPoint_Factory(
     0 -> PropertyEntryPoint_Program0.resolve(this)
     2 -> PropertyEntryPoint_Program1.resolve(this)
     3 -> PropertyEntryPoint_Program2.resolve(this)
-    4 -> PropertyEntryPoint_Program3.resolve(this)
     else -> error("Invalid identifier $id")
   } as T
 }

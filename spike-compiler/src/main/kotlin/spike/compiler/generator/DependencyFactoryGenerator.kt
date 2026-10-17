@@ -177,7 +177,7 @@ class DependencyFactoryGenerator(
                 context.imports += dependency
             }
             if (dependency is TypeFactory.Assisted) assisted.pending += dependency
-            if (dependency is TypeFactory.Deferred || !takesArguments) enqueueNestedTypes(dependency, plain.pending)
+            if (dependency is TypeFactory.Deferred) plain.pending.addFirst(dependency.factory)
 
             if (dependency in contextIndexByFactory) {
                 continue
@@ -197,14 +197,6 @@ class DependencyFactoryGenerator(
         }
     }
 
-    private fun enqueueNestedTypes(dependency: TypeFactory, queue: ArrayDeque<TypeFactory>) {
-        when (dependency) {
-            is TypeFactory.Deferred -> queue.add(0, dependency.factory)
-            is TypeFactory.MultibindsCollection -> queue.addAll(0, dependency.entries)
-            is TypeFactory.MultibindsMap -> queue.addAll(0, dependency.keyValues.values)
-            else -> {}
-        }
-    }
 
     private companion object {
         const val GetChunkSize = 256
