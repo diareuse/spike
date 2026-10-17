@@ -25,6 +25,7 @@ dependencies {
     ksp(libs.spike.compiler)
     testImplementation(project(":spike-androidx"))
     testImplementation(project(":spike-ktor"))
+    testImplementation(project(":spike-compiler-jsr"))
     testImplementation(gradleTestKit())
     testImplementation(libs.google.ksp.standalone)
     testImplementation(libs.google.ksp.common.deps)
@@ -52,12 +53,22 @@ val fixtureAndroidx = fixtureLibraries(
     libs.androidx.lifecycle.viewmodel.savedstate.get()
 )
 
+val fixtureJsr = fixtureLibraries(
+    "fixtureJsr",
+    project(":spike-core"),
+    project(":spike-jsr"),
+    "org.jetbrains.kotlin:kotlin-stdlib:${libs.versions.kotlin.get()}",
+    libs.javax.inject.get(),
+    libs.jakarta.inject.get(),
+)
+
 tasks.test {
-    inputs.files(fixtureKotlin, fixtureAndroidx).withPropertyName("fixtureLibraries")
+    inputs.files(fixtureKotlin, fixtureAndroidx, fixtureJsr).withPropertyName("fixtureLibraries")
     jvmArgumentProviders += CommandLineArgumentProvider {
         listOf(
             "-Dspike.fixture.kotlin=${fixtureKotlin.asPath}",
-            "-Dspike.fixture.androidx=${fixtureAndroidx.asPath}"
+            "-Dspike.fixture.androidx=${fixtureAndroidx.asPath}",
+            "-Dspike.fixture.jsr=${fixtureJsr.asPath}"
         )
     }
 }

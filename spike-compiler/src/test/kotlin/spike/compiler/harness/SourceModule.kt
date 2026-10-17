@@ -67,11 +67,12 @@ class SourceModule(
         resourceOutputDir = generated.resolve("resources")
     }.build()
 
-    data class Error(val message: String, val symbol: KSNode?) {
-        override fun toString(): String {
-            val location = symbol?.location as? FileLocation ?: return message
-            return "${File(location.filePath).name}:${location.lineNumber}: $message"
-        }
+    class Error(val message: String, symbol: KSNode?) {
+        private val location = (symbol?.location as? FileLocation)
+            ?.let { "${File(it.filePath).name}:${it.lineNumber}: " }
+            .orEmpty()
+
+        override fun toString() = location + message
     }
 
     data class Processing(
