@@ -4,6 +4,7 @@ Spike is a Kotlin Multiplatform dependency injection compositor that ensures com
 
 [![Static Badge](https://img.shields.io/badge/build-benchmark-blue)](https://diareuse.github.io/spike/dev/bench/)
 [![Static Badge](https://img.shields.io/badge/changelog-691337)](CHANGELOG.md)
+[![Static Badge](https://img.shields.io/badge/compared%20with-Dagger%2C%20Metro%2C%20kotlin--inject%2C%20Koin-555)](docs/comparison.md)
 [![GitHub Tag](https://img.shields.io/github/v/tag/diareuse/spike)](https://github.com/diareuse/spike/releases)
 
 ### Gradle plugin
