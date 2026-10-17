@@ -9,7 +9,8 @@ data class TypeFactoryCreatorChain(
     private val creators: List<TypeFactoryCreator>,
     override val store: GraphStore,
     override val isTopLevel: Boolean = true,
-    private val chain: List<Type> = listOf(type)
+    private val chain: List<Type> = listOf(type),
+    private val stores: List<GraphStore> = listOf(store),
 ) : TypeFactoryCreator.Context {
 
     override suspend fun Minting.resolve() = with(creators[0]) { create(this@TypeFactoryCreatorChain) }
@@ -32,15 +33,23 @@ data class TypeFactoryCreatorChain(
     }
 
     override fun child(type: Type): TypeFactoryCreator.Context {
-        if (type in chain) {
-            val cycle = chain.dropWhile { it != type } + type
+        val repeated = chain.indices.firstOrNull { chain[it] == type && resolvesAlike(stores[it], type) }
+        if (repeated != null) {
+            val cycle = chain.drop(repeated) + type
             val bindings = cycle.distinct().map {
                 store.bindingsOf(it).firstOrNull()?.involved ?: Involved(it.displayName)
             }
             throw DiagnosticException(DiagnosticDependencyCycle(cycle.map { it.displayName }, bindings))
         }
-        return copy(type = type, isTopLevel = false, chain = chain + type)
+        return copy(type = type, isTopLevel = false, chain = chain + type, stores = stores + store)
     }
+
+    /**
+     * A type repeats as a cycle only when it resolves to the same binding again; a multibinding entry resolves its
+     * own type through the entry's binding, which differs from a composite bound to the same type.
+     */
+    private fun resolvesAlike(earlier: GraphStore, type: Type) =
+        earlier === store || earlier.bindingsOf(type).firstOrNull() == store.bindingsOf(type).firstOrNull()
 
     override fun clone(store: GraphStore) = copy(store = store)
 

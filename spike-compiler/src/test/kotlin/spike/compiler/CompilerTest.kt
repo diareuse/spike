@@ -338,6 +338,10 @@ class CompilerTest : HarnessCompiler() {
         assertProcessingFails("jsr_custom_qualifier", "SPIKE-JSR-QUALIFIER", libraries = Jsr)
 
     @Test
+    fun `a composite bound to the same type as its multibinding entries receives the entries`() =
+        assertRuns("multibinding_composite")
+
+    @Test
     fun `a cached singleton does not build its arguments again`() = assertRuns("singleton_arguments_built_once")
 
     @Test
