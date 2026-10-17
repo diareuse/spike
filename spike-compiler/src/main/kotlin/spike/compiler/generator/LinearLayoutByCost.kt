@@ -1,5 +1,6 @@
 package spike.compiler.generator
 
+import spike.Include
 class LinearLayoutByCost(
     private val chunks: ChunksByCost,
     private val cost: (LinearStep) -> Int,
@@ -21,4 +22,13 @@ class LinearLayoutByCost(
         return LinearLayout(parts, slots, consumers, partOf)
     }
 
+    companion object {
+        private const val StepCost = 32
+        private const val ArgumentCost = 24
+        private const val ChunkBudget = 4000
+
+        @Include
+        fun default(): LinearLayoutByCost =
+            LinearLayoutByCost(ChunksByCost(ChunkBudget)) { step -> StepCost + ArgumentCost * step.arguments.size }
+    }
 }

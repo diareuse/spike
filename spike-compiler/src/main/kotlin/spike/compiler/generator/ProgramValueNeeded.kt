@@ -6,10 +6,14 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
+import spike.Include
+import spike.BindTarget
+import spike.compiler.Order
 
 /**
  * Which guarded steps still have to run, read from the guard table against the singletons already cached.
  */
+@Include
 class ProgramValueNeeded : ProgramValueSource {
     override fun of(program: LinearProgram, layout: LinearLayout, guards: LinearGuards): ProgramValue? =
         if (guards.table.isEmpty()) null else Value(guards.table)
@@ -25,5 +29,12 @@ class ProgramValueNeeded : ProgramValueSource {
             )
             body.addStatement("val needed = factory._singletons.needed(guards)")
         }
+    }
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(30)
+        val ProgramValueNeeded.asSource: ProgramValueSource
+            get() = this
     }
 }

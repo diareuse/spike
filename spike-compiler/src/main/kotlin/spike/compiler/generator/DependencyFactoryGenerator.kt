@@ -21,9 +21,9 @@ import spike.factory.SingletonOwner
 @Include
 class DependencyFactoryGenerator(
     private val programs: LinearProgramGenerator,
+    @PlainBranches private val getDispatch: DispatchFunctions,
+    @AssistedBranches private val assistedDispatch: DispatchFunctions,
 ) {
-    private val getDispatch = DispatchGetChunked(GetChunkSize, DispatchGet())
-    private val assistedDispatch = DispatchAssisted()
 
     fun generate(context: FileGeneratorContext, collector: FileSpecCollector, members: EntryPointMembers) {
         val spec = TypeSpec.classBuilder(context.dependencyFactoryClassName)
@@ -197,8 +197,4 @@ class DependencyFactoryGenerator(
         }
     }
 
-
-    private companion object {
-        const val GetChunkSize = 256
-    }
 }

@@ -8,10 +8,14 @@ import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
+import spike.Include
+import spike.BindTarget
+import spike.compiler.Order
 
 /**
  * The slots through which a program split into parts hands instances from one part to the next.
  */
+@Include
 class ProgramValueInstances : ProgramValueSource {
     override fun of(program: LinearProgram, layout: LinearLayout, guards: LinearGuards): ProgramValue? =
         if (layout.slots.isEmpty()) null else Value(layout.slots.size)
@@ -25,5 +29,12 @@ class ProgramValueInstances : ProgramValueSource {
         override fun declare(program: TypeSpec.Builder, resolve: FunSpec.Builder, body: CodeBlock.Builder) {
             body.addStatement("val instances = %M<%T>(%L)", MemberName("kotlin", "arrayOfNulls"), ANY, size)
         }
+    }
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(20)
+        val ProgramValueInstances.asSource: ProgramValueSource
+            get() = this
     }
 }

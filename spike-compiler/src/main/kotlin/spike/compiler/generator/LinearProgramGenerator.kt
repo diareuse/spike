@@ -14,10 +14,11 @@ import spike.compiler.graph.TypeFactory
 @Include
 class LinearProgramGenerator(
     private val expression: TypeFactoryExpression,
+    private val layouts: LinearLayoutByCost,
+    values: Map<Int, ProgramValueSource>,
 ) {
 
-    private val layouts = LinearLayoutByCost(ChunksByCost(ChunkBudget), ::cost)
-    private val values = listOf(ProgramValueArguments(), ProgramValueInstances(), ProgramValueNeeded())
+    private val values = values.toSortedMap().values
 
     fun generate(
         context: FileGeneratorContext,
@@ -114,12 +115,7 @@ class LinearProgramGenerator(
         return function.addCode(body.build()).build()
     }
 
-    private fun cost(step: LinearStep) = StepCost + ArgumentCost * step.arguments.size
-
     private companion object {
-        const val StepCost = 32
-        const val ArgumentCost = 24
-        const val ChunkBudget = 4000
         const val GuardTableLimit = 16_000
         val NullableAny = ANY.copy(nullable = true)
     }

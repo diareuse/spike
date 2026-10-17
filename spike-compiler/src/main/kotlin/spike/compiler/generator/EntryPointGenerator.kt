@@ -8,7 +8,9 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.TypeSpec
 import spike.compiler.graph.GraphEntryPoint
+import spike.Include
 
+@Include
 class EntryPointGenerator : Generator {
     override fun generate(context: FileGeneratorContext, collector: FileSpecCollector) {
         val graph = context.graph
@@ -94,5 +96,12 @@ class EntryPointGenerator : Generator {
                     .build()
             )
             .build()
+    }
+
+    companion object {
+        @Include
+        @AppGraph
+        val EntryPointGenerator.asGenerator: Generator
+            get() = this
     }
 }

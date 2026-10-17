@@ -7,10 +7,14 @@ import com.squareup.kotlinpoet.ParameterSpec
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
+import spike.Include
+import spike.BindTarget
+import spike.compiler.Order
 
 /**
  * The runtime arguments of an assisted program, passed to `resolve` by the caller.
  */
+@Include
 class ProgramValueArguments : ProgramValueSource {
     override fun of(program: LinearProgram, layout: LinearLayout, guards: LinearGuards): ProgramValue? =
         if (program.takesArguments) Value else null
@@ -24,5 +28,12 @@ class ProgramValueArguments : ProgramValueSource {
         override fun declare(program: TypeSpec.Builder, resolve: FunSpec.Builder, body: CodeBlock.Builder) {
             resolve.addParameter(parameter)
         }
+    }
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(10)
+        val ProgramValueArguments.asSource: ProgramValueSource
+            get() = this
     }
 }
