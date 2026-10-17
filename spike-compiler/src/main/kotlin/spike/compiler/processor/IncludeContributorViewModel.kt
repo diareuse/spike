@@ -23,7 +23,7 @@ class IncludeContributorViewModel : IncludeContributor {
                 .let(::listOf),
             nullable = false
         )
-        val key = Key(keyType, type)
+        val key = Key(keyType, type, Type.Simple("spike.lifecycle.viewmodel", "ViewModelKey", false))
         val commonType = Type.Simple("androidx.lifecycle", "ViewModel", false)
         context.multibind.addToMap(commonType, key) {
             addConstructor(

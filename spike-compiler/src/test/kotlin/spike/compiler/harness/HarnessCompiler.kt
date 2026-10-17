@@ -138,7 +138,7 @@ abstract class HarnessCompiler {
         val library = SourceModule(
             name = "library",
             sources = project.resolve("library/src"),
-            libraries = Libraries.Kotlin.files(),
+            libraries = libraries.files(),
             workDirectory = work.resolve("library")
         )
         val app = SourceModule(

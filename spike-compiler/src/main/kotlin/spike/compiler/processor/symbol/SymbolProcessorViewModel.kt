@@ -33,7 +33,8 @@ class SymbolProcessorViewModel(
         val enabled = environment.options["spike.viewmodel.enabled"]?.toBoolean() ?: true
         val entryPointName = resolver.getKSNameFromString("spike.lifecycle.viewmodel.ViewModelEntryPoint")
         val entryPoint = resolver.getClassDeclarationByName(entryPointName)
-        if (entryPoint != null && enabled) {
+        val library = registry.export(resolver).any()
+        if (entryPoint != null && enabled && !library) {
             val packageName = environment.options["spike.viewmodel.package"] ?: "spike.lifecycle.viewmodel"
             val name = ClassName(packageName, "ViewModelEntryPointImpl")
             val factory = TypeSpec.interfaceBuilder(name.nestedClass("Factory"))

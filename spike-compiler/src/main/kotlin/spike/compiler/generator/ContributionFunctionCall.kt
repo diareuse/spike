@@ -8,7 +8,7 @@ import spike.factory.DependencyId
 class ContributionFunctionCall : ContributionFunction {
     override fun of(contribution: ExportedContribution, context: FileGeneratorContext): FunSpec =
         FunSpec.builder(contribution.name)
-            .returns(context.resolver.getTypeName(contribution.factory.type))
+            .returns(context.resolver.getTypeName(contribution.type))
             .addStatement(
                 "return factory.get(%L(%L))",
                 DependencyId::class.asClassName(),

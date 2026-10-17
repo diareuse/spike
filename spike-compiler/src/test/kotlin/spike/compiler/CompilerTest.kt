@@ -472,6 +472,10 @@ class CompilerTest : HarnessCompiler() {
     )
 
     @Test
+    fun `viewmodels declared in a library reach the app's entry point`() =
+        assertRuns("androidx_viewmodel_library", Androidx)
+
+    @Test
     fun `viewmodels share singletons of an exported library`() = assertRuns("androidx_viewmodel_export", Androidx)
 
     @Test

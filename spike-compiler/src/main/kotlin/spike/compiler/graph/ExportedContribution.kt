@@ -7,6 +7,7 @@ class ExportedContribution(
     val key: Key?,
     val factory: TypeFactory,
     val name: String,
+    val type: Type = factory.type,
 ) {
     companion object {
         fun nameOf(target: BindTarget, binding: Binding): String =

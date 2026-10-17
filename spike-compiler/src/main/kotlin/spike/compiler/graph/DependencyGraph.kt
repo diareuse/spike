@@ -110,23 +110,29 @@ class DependencyGraph private constructor(
         private fun exportContributions(creators: List<TypeFactoryCreator>) = buildList {
             for (store in multibinding.list.values) addAll(store.exported(BindTarget.List, null, creators))
             for (store in multibinding.set.values) addAll(store.exported(BindTarget.Set, null, creators))
-            for (keys in multibinding.map.values) {
+            for ((valueType, keys) in multibinding.map) {
                 for ((key, store) in keys) {
-                    if (key.annotation != null) addAll(store.exported(BindTarget.Map, key, creators))
+                    if (key.annotation != null) addAll(store.exported(BindTarget.Map, key, creators, valueType))
                 }
             }
         }
 
-        private fun GraphStore.exported(target: BindTarget, key: Key?, creators: List<TypeFactoryCreator>) =
-            (constructors + factories).map { binding ->
-                val store = root.overriddenBy(binding.asGraphStore())
-                ExportedContribution(
-                    target = target,
-                    key = key,
-                    factory = minting(TypeFactoryCreatorChain(binding.type, creators, store)),
-                    name = ExportedContribution.nameOf(target, binding),
-                )
-            }
+        private fun GraphStore.exported(
+            target: BindTarget,
+            key: Key?,
+            creators: List<TypeFactoryCreator>,
+            exportedType: Type? = null,
+        ) = (constructors + factories).map { binding ->
+            val store = root.overriddenBy(binding.asGraphStore())
+            val factory = minting(TypeFactoryCreatorChain(binding.type, creators, store))
+            ExportedContribution(
+                target = target,
+                key = key,
+                factory = factory,
+                name = ExportedContribution.nameOf(target, binding),
+                type = exportedType ?: factory.type,
+            )
+        }
 
         // ---
 
