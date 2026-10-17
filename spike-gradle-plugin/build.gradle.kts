@@ -1,6 +1,7 @@
 plugins {
     id("spike.jvm")
     `java-gradle-plugin`
+    id(libs.plugins.google.ksp.get().pluginId)
 }
 
 group = "spike.gradle"
@@ -16,7 +17,13 @@ gradlePlugin {
     }
 }
 
+ksp {
+    arg("spike.viewmodel.enabled", "false")
+}
+
 dependencies {
+    implementation(project(":spike-core"))
+    ksp(libs.spike.compiler)
     compileOnly(libs.plugin.multiplatform)
     implementation(libs.com.google.devtools.ksp.gradle.plugin)
 }
