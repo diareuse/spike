@@ -4,6 +4,7 @@ import spike.compiler.harness.HarnessCompiler
 import spike.compiler.harness.Libraries.Androidx
 import spike.compiler.harness.Libraries.Dagger
 import spike.compiler.harness.Libraries.Jsr
+import spike.compiler.harness.Libraries.KotlinInject
 import org.junit.jupiter.api.Timeout
 import kotlin.test.Test
 
@@ -258,6 +259,30 @@ class CompilerTest : HarnessCompiler() {
     @Test
     fun `a Dagger module with constructor state is reported by spike-compiler-dagger`() =
         assertProcessingFails("dagger_module_state", "SPIKE-DAGGER-MODULE-STATE", libraries = Dagger)
+
+    @Test
+    fun `kotlin-inject declarations and components become a Spike graph through spike-compiler-kotlin-inject`() =
+        assertRuns("kotlin_inject_component", KotlinInject)
+
+    @Test
+    fun `kotlin-inject declarations that cannot be converted are reported`() = assertProcessingFails(
+        "kotlin_inject_unsupported",
+        "SPIKE-KI-MAP",
+        "SPIKE-KI-COMPONENT-PROVIDES",
+        "SPIKE-KI-PARENT",
+        libraries = KotlinInject,
+    )
+
+    @Test
+    fun `kotlin-inject declarations Spike cannot call or key are reported`() = assertProcessingFails(
+        "kotlin_inject_rejected",
+        "SPIKE-KI-VISIBILITY",
+        "SPIKE-KI-GENERIC",
+        "SPIKE-KI-QUALIFIER",
+        "SPIKE-KI-STATEFUL",
+        "SPIKE-KI-UNSUPPORTED",
+        libraries = KotlinInject,
+    )
 
     @Test
     fun `a private Inject constructor is reported by spike-compiler-jsr`() =
