@@ -36,7 +36,16 @@ benchmark {
             iterationTimeUnit = "s"
             advanced("jvmForks", 3)
         }
-        register("cold") {
+        register("smoke") {
+            include("GraphBenchmark")
+            mode = "avgt"
+            warmups = 0
+            iterations = 1
+            iterationTime = 50
+            iterationTimeUnit = "ms"
+            advanced("jvmForks", 1)
+        }
+                register("cold") {
             include(selected("GraphBenchmarkColdStart"))
             outputTimeUnit = "us"
             warmups = 0

@@ -3,14 +3,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 only=${1:-}
 
-./gradlew \
-  :spike-core:publishJvmPublicationToMavenLocal \
-  :spike-core:publishKotlinMultiplatformPublicationToMavenLocal \
-  :spike-compiler:publishMavenPublicationToMavenLocal \
-  :spike-compiler-androidx:publishMavenPublicationToMavenLocal \
-  :spike-compiler-conversion:publishMavenPublicationToMavenLocal \
-  -PVERSION_NAME=0.0.0-benchmark \
-  -PsignAllPublications=false
+bash spike-benchmark/publish.sh
 
 rm -rf spike-benchmark/output
 ./gradlew -p spike-benchmark :generator:run

@@ -25,9 +25,24 @@ class BenchmarkGraphs(
 interface BenchmarkGenerator {
     val graphs: BenchmarkGraphs
 
+    @EntryPoint.Factory
+    interface Factory {
+        fun create(size: GraphSize): BenchmarkGenerator
+    }
+
     companion object
 }
 
+/**
+ * How many nodes the generated graph has; the benchmark uses [Benchmark], a smoke test far fewer.
+ */
+@JvmInline
+value class GraphSize(val nodes: Int) {
+    companion object {
+        val Benchmark = GraphSize(2000)
+    }
+}
+
 @Include
-fun sourceTree(): SourceTree =
-    SourceTree(TreeShapeSeeded(size = 2000, maxDependencies = 3, seed = 1).grow(), nodesPerFile = 50)
+fun sourceTree(size: GraphSize): SourceTree =
+    SourceTree(TreeShapeSeeded(size = size.nodes, maxDependencies = 3, seed = 1).grow(), nodesPerFile = 50)
