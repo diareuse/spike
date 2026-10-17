@@ -14,7 +14,7 @@ fun CodeBlock.Builder.addCall(member: Member, invocation: Invocation): CodeBlock
         is Member.Method -> add("%M(", name).addParameters(invocation).add(")")
         is Member.Property -> add("%M", name)
         is Member.Receiver -> {
-            addParameter(0, invocation.parameters.first()).add(".%M", name)
+            addReceiverArgument(0, invocation.parameters.first().type).add(".%M", name)
             if (member.member is Member.Method) add("(").addParameters(invocation, from = 1).add(")")
         }
     }
