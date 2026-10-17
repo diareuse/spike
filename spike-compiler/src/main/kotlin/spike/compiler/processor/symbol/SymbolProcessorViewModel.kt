@@ -27,7 +27,7 @@ class SymbolProcessorViewModel(
     private var processed = false
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        // we generate this entry point in the first round only, then other SymbolProcessors take over
+        // generated once, in the first round Spike processes, then the graph processor takes over
         if (processed) return emptyList()
 
         val enabled = environment.options["spike.viewmodel.enabled"]?.toBoolean() ?: true

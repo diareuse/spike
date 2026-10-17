@@ -44,4 +44,8 @@ class SymbolProcessorGraph(
 }
 
 @Include
-fun symbolProcessor(graph: SymbolProcessorGraph): SymbolProcessor = graph
+fun symbolProcessor(
+    graph: SymbolProcessorGraph,
+    environment: SymbolProcessorEnvironment,
+    registry: SymbolRegistry,
+): SymbolProcessor = SymbolProcessorSettled(graph, environment, registry)
