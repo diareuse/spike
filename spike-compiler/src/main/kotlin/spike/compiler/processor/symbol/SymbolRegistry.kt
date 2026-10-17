@@ -12,10 +12,6 @@ import spike.compiler.processor.util.getSymbolsWithAnnotation
 @OptIn(KspExperimental::class)
 class SymbolRegistry {
 
-    fun spikeViewModel(resolver: Resolver) = resolver
-        .getSymbolsWithAnnotation("spike.lifecycle.viewmodel.SpikeViewModel")
-        .filterIsInstance<KSClassDeclaration>()
-
     fun replaces(resolver: Resolver) = resolver
         .getSymbolsWithAnnotation("spike.test.Replaces")
 
@@ -31,7 +27,6 @@ class SymbolRegistry {
         .filterIsInstance<KSClassDeclaration>()
 
     fun all(resolver: Resolver) = buildList {
-        addAll(spikeViewModel(resolver))
         addAll(include(resolver))
         addAll(entryPoint(resolver))
         addAll(export(resolver))

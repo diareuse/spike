@@ -7,6 +7,7 @@ only=${1:-}
   :spike-core:publishJvmPublicationToMavenLocal \
   :spike-core:publishKotlinMultiplatformPublicationToMavenLocal \
   :spike-compiler:publishMavenPublicationToMavenLocal \
+  :spike-compiler-androidx:publishMavenPublicationToMavenLocal \
   -PVERSION_NAME=0.0.0-benchmark \
   -PsignAllPublications=false
 

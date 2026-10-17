@@ -4,6 +4,7 @@ import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
+import com.google.devtools.ksp.symbol.KSAnnotated
 import spike.Include
 import spike.compiler.diagnostic.DiagnosticException
 import spike.compiler.graph.GraphStore
@@ -15,7 +16,6 @@ import spike.compiler.processor.GraphContributor
 @Include
 @OptIn(KspExperimental::class)
 class SymbolProcessorGraph(
-    private val viewModel: SymbolProcessorViewModel,
     private val environment: SymbolProcessorEnvironment,
     private val contributor: GraphContributor,
     private val reporter: DiagnosticReporter,
@@ -23,8 +23,8 @@ class SymbolProcessorGraph(
 
     private var processed = false
 
-    override fun process(resolver: Resolver) = viewModel.process(resolver).ifEmpty {
-        if (processed) return@ifEmpty emptyList()
+    override fun process(resolver: Resolver): List<KSAnnotated> {
+        if (processed) return emptyList()
         val root = GraphStore.Builder()
         val multibind = MultiBindingStore.Builder()
         try {
@@ -38,7 +38,7 @@ class SymbolProcessorGraph(
             environment.logger.warn(e.stackTraceToString())
         }
         processed = true
-        emptyList()
+        return emptyList()
     }
 
 }

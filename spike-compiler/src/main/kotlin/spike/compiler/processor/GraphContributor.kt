@@ -12,7 +12,6 @@ fun interface GraphContributor {
     companion object {
         @Include
         fun default(
-            viewModel: IncludeContributorViewModel,
             registry: SymbolRegistry,
             include: IncludeContributor,
             environment: SymbolProcessorEnvironment,
@@ -21,8 +20,6 @@ fun interface GraphContributor {
             warnings: WarningReporter,
         ): GraphContributor = GraphContributorMeta(
             listOf(
-                GraphContributorIncludeViewModel(viewModel, registry)
-                    .timed("ViewModel", environment.logger),
                 GraphContributorInclude(include, registry)
                     .timed("Include", environment.logger),
                 GraphContributorEntryPoint(

@@ -18,6 +18,7 @@ ksp {
 
 dependencies {
     implementation(project(":spike-core"))
+    runtimeOnly(project(":spike-compiler-androidx"))
     implementation(libs.squareup.kotlinpoet)
     implementation(libs.squareup.kotlinpoet.ksp)
     implementation(libs.google.ksp.api)

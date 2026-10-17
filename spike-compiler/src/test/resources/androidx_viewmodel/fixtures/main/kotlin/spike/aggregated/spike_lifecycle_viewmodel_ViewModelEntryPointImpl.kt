@@ -8,5 +8,5 @@ import kotlin.Suppress
 import spike.InternalSpikeApi
 import spike.factory.IncludedDeclarations
 
-@IncludedDeclarations(names = [])
+@IncludedDeclarations(names = ["f:spikeViewModelMyViewModel"])
 public object spike_lifecycle_viewmodel_ViewModelEntryPointImpl
