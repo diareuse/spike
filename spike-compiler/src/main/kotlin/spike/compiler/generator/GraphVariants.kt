@@ -19,8 +19,18 @@ annotation class ExportGraph
 
 @Include
 @AppGraph
-fun DependencyGraphGenerator.Factory.appGraph(): DependencyGraphGenerator = create(false)
+fun appGraph(
+    resolver: TypeResolver,
+    @AppGraph entryPoint: Generator,
+    @AppGraph members: EntryPointMembers,
+    dependencyFactory: DependencyFactoryGenerator,
+): DependencyGraphGenerator = DependencyGraphGenerator(resolver, entryPoint, members, dependencyFactory)
 
 @Include
 @ExportGraph
-fun DependencyGraphGenerator.Factory.exportGraph(): DependencyGraphGenerator = create(true)
+fun exportGraph(
+    resolver: TypeResolver,
+    @ExportGraph entryPoint: Generator,
+    @ExportGraph members: EntryPointMembers,
+    dependencyFactory: DependencyFactoryGenerator,
+): DependencyGraphGenerator = DependencyGraphGenerator(resolver, entryPoint, members, dependencyFactory)

@@ -5,7 +5,9 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import spike.factory.DependencyId
+import spike.Include
 
+@Include
 class EntryPointMembersOverriding : EntryPointMembers {
     override fun addTo(factory: TypeSpec.Builder, context: FileGeneratorContext) {
         val entry = context.graph.entry
@@ -40,5 +42,12 @@ class EntryPointMembersOverriding : EntryPointMembers {
                     .build()
             )
         }
+    }
+
+    companion object {
+        @Include
+        @AppGraph
+        val EntryPointMembersOverriding.asMembers: EntryPointMembers
+            get() = this
     }
 }

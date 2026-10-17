@@ -4,7 +4,9 @@ import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.asClassName
 import spike.compiler.graph.ExportedContribution
 import spike.factory.DependencyId
+import spike.Include
 
+@Include
 class ContributionFunctionCall : ContributionFunction {
     override fun of(contribution: ExportedContribution, context: FileGeneratorContext): FunSpec =
         FunSpec.builder(contribution.name)

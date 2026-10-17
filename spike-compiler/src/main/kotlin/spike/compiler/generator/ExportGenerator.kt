@@ -17,7 +17,9 @@ import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
 import spike.factory.DependencyId
 import spike.factory.SingletonHolder
+import spike.Include
 
+@Include
 class ExportGenerator(private val contributions: ContributionFunction) : Generator {
     override fun generate(context: FileGeneratorContext, collector: FileSpecCollector) {
         val graph = context.graph
@@ -130,4 +132,11 @@ class ExportGenerator(private val contributions: ContributionFunction) : Generat
 
     private fun Parameter.toParameterSpec() = ParameterSpec.builder(name, type.toTypeName())
         .build()
+
+    companion object {
+        @Include
+        @ExportGraph
+        val ExportGenerator.asGenerator: Generator
+            get() = this
+    }
 }

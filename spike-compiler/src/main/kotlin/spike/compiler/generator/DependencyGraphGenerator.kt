@@ -3,10 +3,9 @@
 package spike.compiler.generator
 
 import com.google.devtools.ksp.symbol.KSFile
-import spike.Include
 import spike.compiler.graph.DependencyGraph
 
-class DependencyGraphGenerator private constructor(
+class DependencyGraphGenerator(
     private val resolver: TypeResolver,
     private val entryPoint: Generator,
     private val members: EntryPointMembers,
@@ -22,26 +21,4 @@ class DependencyGraphGenerator private constructor(
         dependencyFactory.generate(context, collector, members)
         entryPoint.generate(context, collector)
     }
-
-    @Include
-    class Factory(
-        private val resolver: TypeResolver,
-        private val dependencyFactory: DependencyFactoryGenerator
-    ) {
-        fun create(export: Boolean) = DependencyGraphGenerator(
-            resolver = resolver,
-            entryPoint = when (export) {
-                true -> ExportGenerator(
-                    ContributionFunctionQualified(ContributionFunctionKeyed(ContributionFunctionCall())),
-                )
-                else -> EntryPointGenerator()
-            },
-            members = when (export) {
-                true -> EntryPointMembersNone()
-                else -> EntryPointMembersOverriding()
-            },
-            dependencyFactory = dependencyFactory
-        )
-    }
-
 }

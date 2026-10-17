@@ -5,7 +5,9 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.TypeVariableName
 import spike.factory.DependencyId
+import spike.Include
 
+@Include
 class DispatchGet : DispatchFunctions {
     override fun of(branches: List<ProgramBranch>): List<FunSpec> {
         val block = CodeBlock.builder().beginControlFlow("return when (id.%L) {", DependencyId::id.name)

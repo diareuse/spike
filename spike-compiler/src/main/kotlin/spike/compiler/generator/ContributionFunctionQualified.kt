@@ -6,6 +6,9 @@ import com.squareup.kotlinpoet.FunSpec
 import spike.compiler.generator.code.keyLiteral
 import spike.compiler.graph.ExportedContribution
 import spike.compiler.graph.Type
+import spike.BindTarget
+import spike.Include
+import spike.compiler.Order
 
 class ContributionFunctionQualified(private val delegate: ContributionFunction) : ContributionFunction {
     override fun of(contribution: ExportedContribution, context: FileGeneratorContext): FunSpec {
@@ -18,5 +21,11 @@ class ContributionFunctionQualified(private val delegate: ContributionFunction) 
             annotation.build()
         }
         return delegate.of(contribution, context).toBuilder().addAnnotations(annotations).build()
+    }
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(20)
+        fun decorator(): ContributionFunctionDecorator = ContributionFunctionDecorator(::ContributionFunctionQualified)
     }
 }

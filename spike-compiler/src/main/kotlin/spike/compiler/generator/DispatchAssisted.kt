@@ -8,10 +8,12 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.asTypeName
 import spike.factory.DependencyId
+import spike.Include
 
 /**
  * Routes an identifier and the runtime arguments of an assisted call to the program building that dependency.
  */
+@Include
 class DispatchAssisted : DispatchFunctions {
     override fun of(branches: List<ProgramBranch>): List<FunSpec> {
         if (branches.isEmpty()) return emptyList()
