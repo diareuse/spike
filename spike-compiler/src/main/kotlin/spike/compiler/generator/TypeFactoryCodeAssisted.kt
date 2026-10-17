@@ -4,7 +4,10 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.joinToCode
 import spike.compiler.graph.TypeFactory
 import spike.factory.DependencyId
+import spike.BindTarget
+import spike.Include
 
+@Include
 class TypeFactoryCodeAssisted : TypeFactoryCode<TypeFactory.Assisted> {
     context(context: FileGeneratorContext, step: LinearStep, references: LinearReferences)
     override fun write(body: CodeBlock.Builder, factory: TypeFactory.Assisted) {
@@ -20,5 +23,12 @@ class TypeFactoryCodeAssisted : TypeFactoryCode<TypeFactory.Assisted> {
             context.getDependencyId(factory),
             names.joinToString(),
         )
+    }
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @TypeFactoryVariant(TypeFactory.Assisted::class)
+        val TypeFactoryCodeAssisted.asCode: TypeFactoryCode<*>
+            get() = this
     }
 }
