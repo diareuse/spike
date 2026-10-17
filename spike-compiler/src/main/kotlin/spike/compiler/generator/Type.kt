@@ -2,6 +2,7 @@ package spike.compiler.generator
 
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.WildcardTypeName
 import spike.compiler.graph.Type
@@ -22,5 +23,5 @@ fun Type.toTypeName(): TypeName = when (this) {
     is Type.Qualified -> type.toTypeName().copy(nullable = nullable)
     is Type.Simple -> ClassName(packageName, simpleName).copy(nullable = nullable)
     is Type.Inner -> ClassName(packageName, names).copy(nullable = nullable)
-    is Type.WithVariance -> WildcardTypeName.producerOf(type!!.toTypeName().copy(nullable = nullable))
+    is Type.WithVariance -> type?.let { WildcardTypeName.producerOf(it.toTypeName().copy(nullable = nullable)) } ?: STAR
 }
