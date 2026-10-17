@@ -1,7 +1,9 @@
 package bench.generator
 
+import spike.Include
 import java.io.File
 
+@Include
 class ProfilerScenarios(private val sources: SourceTree) {
 
     fun writeTo(file: File, dialects: List<Dialect>) {

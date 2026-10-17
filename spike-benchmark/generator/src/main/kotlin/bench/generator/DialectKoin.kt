@@ -1,5 +1,9 @@
 package bench.generator
 
+import spike.BindTarget
+import spike.Include
+
+@Include
 class DialectKoin : Dialect {
     override val id = "koin"
 
@@ -46,4 +50,11 @@ class DialectKoin : Dialect {
         fun openScreen(app: App, id: Int): Screen = app.get { org.koin.core.parameter.parametersOf(Handle(id)) }
 
     """.trimIndent()
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(60)
+        val DialectKoin.asDialect: Dialect
+            get() = this
+    }
 }

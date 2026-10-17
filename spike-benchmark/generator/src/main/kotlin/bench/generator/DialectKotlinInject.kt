@@ -1,5 +1,9 @@
 package bench.generator
 
+import spike.BindTarget
+import spike.Include
+
+@Include
 class DialectKotlinInject : Dialect {
     override val id = "kotlin-inject"
 
@@ -52,4 +56,11 @@ class DialectKotlinInject : Dialect {
         fun openScreen(app: App, id: Int): Screen = ScreenComponent::class.create(app, Handle(id)).screen
 
     """.trimIndent()
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(50)
+        val DialectKotlinInject.asDialect: Dialect
+            get() = this
+    }
 }
