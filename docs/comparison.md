@@ -19,7 +19,7 @@ this page never goes stale; it compares features.
 | `Provider` / `Lazy`, breaking cycles | yes | yes | yes | yes | `inject()` |
 | Android ViewModels | `@SpikeViewModel`, shared singletons | `@HiltViewModel` | via integrations | manual | `viewModel { }` |
 | Test replacements | `@Replaces` + derived test entry point | `@TestInstallIn` | yes | manual | `loadKoinModules` |
-| Migration from another framework | converters for JSR-330, Dagger, kotlin-inject and Metro; two-way Koin interop | — | — | — | — |
+| Migration from another framework | converters for JSR-330, Dagger, kotlin-inject and Metro; two-way Koin interop | — | reads Dagger, Hilt, Anvil, kotlin-inject and Guice annotations; graphs interoperate with Dagger and kotlin-inject components | — | JSR-330 annotations with `koin-jsr330` |
 | Gradle setup | one plugin, every target | per module | one plugin | one KSP line per target | one dependency |
 
 ## Where Spike differs on purpose
