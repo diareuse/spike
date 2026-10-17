@@ -226,6 +226,10 @@ class CompilerTest : HarnessCompiler() {
     fun `a contribution returning a collection adds each of its elements`() = assertRuns("multibinding_elements")
 
     @Test
+    fun `a nullable dependency falls back to the non-null binding and then to null with a warning`() =
+        assertRunsWarning("optional_bindings", "SPIKE-UNBOUND-OPTIONAL", "Analytics")
+
+    @Test
     fun `a cached singleton does not build its arguments again`() = assertRuns("singleton_arguments_built_once")
 
     @Test

@@ -29,6 +29,7 @@ class TypeFactoryExpression(private val codes: Map<KClass<out TypeFactory>, Type
                 TypeFactory.Argument::class to TypeFactoryCodeArgument(),
                 TypeFactory.Assisted::class to TypeFactoryCodeAssisted(),
                 TypeFactory.Recursion::class to TypeFactoryCodeRecursion(),
+                TypeFactory.Null::class to TypeFactoryCodeNull(),
                 TypeFactory.Property::class to TypeFactoryCodeProperty(),
                 TypeFactory.External::class to TypeFactoryCodeExternal(),
                 TypeFactory.Imported::class to TypeFactoryCodeImported(),

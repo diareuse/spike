@@ -32,6 +32,19 @@ abstract class HarnessCompiler {
         runMain(modules)
     }
 
+    protected fun assertRunsWarning(name: String, vararg warnings: String) {
+        val modules = modules(name, Libraries.Kotlin)
+        val reported = mutableListOf<String>()
+        for (module in modules) {
+            val processing = module.source.process()
+            assertTrue(processing.succeeded && processing.exceptions.isEmpty(), processing.report)
+            reported += processing.warnings.map { it.toString() }
+            assertCompiles(module.source)
+        }
+        for (warning in warnings) assertContains(reported.joinToString("\n"), warning)
+        runMain(modules)
+    }
+
     protected fun assertMethodsFitJit(name: String, libraries: Libraries = Libraries.Kotlin) {
         val modules = modules(name, libraries)
         for (module in modules) {

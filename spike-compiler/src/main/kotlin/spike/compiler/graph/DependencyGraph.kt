@@ -13,6 +13,7 @@ class DependencyGraph private constructor(
     val imports: List<TypeFactory.Class>,
     val importFactories: List<TypeFactory.Imported>,
     val contributions: List<ExportedContribution>,
+    val warnings: List<Diagnostic> = emptyList(),
 ) {
 
     operator fun iterator() = iterator {
@@ -69,6 +70,7 @@ class DependencyGraph private constructor(
         fun create(): DependencyGraph {
             val importCollector = TypeFactoryCreatorImportCollector()
             val recursions = Recursions()
+            val warnings = mutableListOf<Diagnostic>()
             val resolving = listOf(
                 TypeFactoryCreatorMemo(recursions),
                 importCollector,
@@ -82,7 +84,7 @@ class DependencyGraph private constructor(
                 TypeFactoryCreatorProvider(recursions),
                 TypeFactoryCreatorAssisted(listOf(ArgumentCaptorSingleton(), ArgumentCaptorDeferred())),
             )
-            val creators = entry.role.creators(resolving, multibinding, imported)
+            val creators = entry.role.creators(resolving, multibinding, imported, inputs, warnings)
             val methods = entry.methods.map {
                 createTypeFactory(it.returns, creators)
             }
@@ -101,6 +103,7 @@ class DependencyGraph private constructor(
                 imports = imports,
                 importFactories = importCollector.imports.toList(),
                 contributions = contributions,
+                warnings = warnings.toList(),
             )
         }
 

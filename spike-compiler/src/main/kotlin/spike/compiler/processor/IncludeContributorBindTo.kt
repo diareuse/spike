@@ -44,14 +44,6 @@ class IncludeContributorBindTo(
         }
     }
 
-    private fun Type.elementOf(collection: Type): Type = when {
-        this is Type.Qualified -> type.elementOf(collection).let { element ->
-            if (element === type) this else element.qualifiedBy(qualifiers)
-        }
-        this is Type.Parametrized && envelope == collection -> typeArguments.single()
-        else -> this
-    }
-
     private fun KSAnnotated.findBindToTarget(): BindTarget {
         val bindTo: KSClassDeclaration = getAnnotationParameterOrDefault(Include::bindTo, null)
             ?: return BindTarget.None

@@ -149,6 +149,9 @@ class Waiter(private val order: (Int) -> Order) {
 }
 ```
 
+A nullable dependency such as `Analytics?` uses a binding of `Analytics?`, then a binding of `Analytics`, and is
+`null` when neither exists; the build warns about every such `null`.
+
 Each argument type of a function-type dependency must be distinct and must not also be bound in the graph.
 A `@Singleton`, `Lazy` or `Provider` cannot depend on an argument, because it would outlive the call.
 

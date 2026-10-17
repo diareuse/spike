@@ -11,6 +11,8 @@ interface TypeFactoryCreator {
         val store: GraphStore
         val isTopLevel: Boolean
 
+        val requester: Type?
+
         fun isResolving(type: Type): Boolean
 
         suspend fun Minting.resolve(): TypeFactory

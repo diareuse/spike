@@ -1,6 +1,7 @@
 package spike.compiler.graph
 
 import spike.BindTarget
+import spike.compiler.diagnostic.Diagnostic
 
 /**
  * What a graph is built for: an app resolves everything it needs, while an @Export module leaves multibindings
@@ -11,6 +12,8 @@ sealed interface GraphRole {
         resolving: List<TypeFactoryCreator>,
         multibinding: MultiBindingStore,
         imported: ImportedContributions,
+        inputs: TypeFactoryCreatorInput,
+        warnings: MutableList<Diagnostic>,
     ): List<TypeFactoryCreator>
 
     fun contributions(export: () -> List<ExportedContribution>): List<ExportedContribution>
@@ -25,6 +28,8 @@ sealed interface GraphRole {
             resolving: List<TypeFactoryCreator>,
             multibinding: MultiBindingStore,
             imported: ImportedContributions,
+            inputs: TypeFactoryCreatorInput,
+            warnings: MutableList<Diagnostic>,
         ): List<TypeFactoryCreator> {
             val segments = MultibindingSegments(SEGMENT_SIZE)
             return resolving + listOf(
@@ -43,6 +48,7 @@ sealed interface GraphRole {
                     BindTarget.List,
                     segments,
                 ),
+                TypeFactoryCreatorOptional(inputs, warnings),
             )
         }
 
@@ -58,6 +64,8 @@ sealed interface GraphRole {
             resolving: List<TypeFactoryCreator>,
             multibinding: MultiBindingStore,
             imported: ImportedContributions,
+            inputs: TypeFactoryCreatorInput,
+            warnings: MutableList<Diagnostic>,
         ) = resolving
 
         override fun contributions(export: () -> List<ExportedContribution>) = export()

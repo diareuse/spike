@@ -30,6 +30,8 @@ class GraphContributorEntryPoint(
     override val generator: DependencyGraphGenerator,
     override val environment: SymbolProcessorEnvironment,
     override val logger: KSPLogger,
+    override val reporter: DiagnosticReporter,
+    override val warnings: WarningReporter,
     override val contributions: ContributionImports,
     private val registry: SymbolRegistry,
     override val stores: EntryPointStores = EntryPointStoresLocal,

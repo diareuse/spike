@@ -7,12 +7,22 @@ sealed class Type {
     abstract val simpleName: String
     abstract val nullable: Boolean
 
+    abstract fun nonNullable(): Type
+
+    /**
+     * The element type that a contribution of this type adds to a [collection] multibinding: the argument of a
+     * collection-returning contribution, keeping its qualifiers, or this type itself.
+     */
+    open fun elementOf(collection: Type): Type = this
+
     data class Simple(
         override val packageName: String,
         override val simpleName: String,
         override val nullable: Boolean,
     ) : Type() {
         override fun toString(): String = "$packageName.$simpleName${if (nullable) "?" else ""}"
+
+        override fun nonNullable() = copy(nullable = false)
     }
 
     data class Inner(
@@ -32,6 +42,8 @@ sealed class Type {
             }
 
         override fun toString(): String = "$parent.$simpleName${if (nullable) "?" else ""}"
+
+        override fun nonNullable() = copy(nullable = false)
     }
 
     data class Parametrized(
@@ -45,6 +57,10 @@ sealed class Type {
             get() = envelope.simpleName
 
         override fun toString(): String = "$envelope<${typeArguments.joinToString(", ")}>${if (nullable) "?" else ""}"
+
+        override fun nonNullable() = copy(nullable = false)
+
+        override fun elementOf(collection: Type) = if (envelope == collection) typeArguments.single() else this
     }
 
     data class WithVariance(
@@ -75,6 +91,8 @@ sealed class Type {
             null -> "$variance"
             else -> "$variance $type"
         }
+
+        override fun nonNullable() = this
     }
 
     data class Qualified(
@@ -93,6 +111,13 @@ sealed class Type {
             get() = type.nullable
 
         override fun toString(): String = "${qualifiers.joinToString(" ")} $type"
+
+        override fun nonNullable() = copy(type = type.nonNullable())
+
+        override fun elementOf(collection: Type): Type {
+            val element = type.elementOf(collection)
+            return if (element === type) this else Qualified(element, qualifiers)
+        }
     }
 
     companion object {

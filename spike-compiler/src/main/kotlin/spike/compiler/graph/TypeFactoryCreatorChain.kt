@@ -45,4 +45,7 @@ data class TypeFactoryCreatorChain(
     override fun clone(store: GraphStore) = copy(store = store)
 
     override fun isResolving(type: Type) = type in chain
+
+    override val requester: Type?
+        get() = chain.getOrNull(chain.size - 2)
 }

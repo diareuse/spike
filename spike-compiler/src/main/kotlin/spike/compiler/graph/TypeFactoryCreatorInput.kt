@@ -16,6 +16,8 @@ class TypeFactoryCreatorInput(
         inputs.getOrPut(factory.type) { mutableListOf() } += Input(factory, description, origin)
     }
 
+    fun provides(type: Type) = type in inputs
+
     override suspend fun Minting.create(context: TypeFactoryCreator.Context): TypeFactory {
         val candidates = inputs[context.type]
         val bindings = if (candidates == null) emptyList() else context.store.bindingsOf(context.type)

@@ -204,6 +204,11 @@ sealed interface TypeFactory {
         override fun toString() = "Map of ${keyValues.mapValues { it.value.type }}"
     }
 
+    data class Null(override val type: Type) : TypeFactory {
+        override val dependencies: List<TypeFactory>
+            get() = emptyList()
+    }
+
     class Recursion(override val type: Type) : TypeFactory {
         var target: TypeFactory? = null
             internal set

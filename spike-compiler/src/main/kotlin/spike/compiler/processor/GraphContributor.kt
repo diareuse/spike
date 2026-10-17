@@ -16,7 +16,9 @@ fun interface GraphContributor {
             registry: SymbolRegistry,
             include: IncludeContributor,
             environment: SymbolProcessorEnvironment,
-            generator: DependencyGraphGenerator.Factory
+            generator: DependencyGraphGenerator.Factory,
+            reporter: DiagnosticReporter,
+            warnings: WarningReporter,
         ): GraphContributor = GraphContributorMeta(
             listOf(
                 GraphContributorIncludeViewModel(viewModel, registry)
@@ -27,6 +29,8 @@ fun interface GraphContributor {
                     generator = generator.create(false),
                     environment = environment,
                     logger = environment.logger,
+                    reporter = reporter,
+                    warnings = warnings,
                     contributions = ContributionImportsGenerated(),
                     registry = registry,
                     stores = EntryPointStoresDerived(
@@ -50,6 +54,8 @@ fun interface GraphContributor {
                     generator = generator.create(true),
                     environment = environment,
                     logger = environment.logger,
+                    reporter = reporter,
+                    warnings = warnings,
                     contributions = ContributionImportsGenerated(),
                     registry = registry
                 ).timed("Export", environment.logger),

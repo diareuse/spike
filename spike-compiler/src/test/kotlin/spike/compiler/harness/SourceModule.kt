@@ -27,7 +27,7 @@ class SourceModule(
     fun process(): Processing {
         val log = ProcessingLog()
         val exitCode = KotlinSymbolProcessing(kspConfig(), processors, log).execute()
-        return Processing(exitCode == KotlinSymbolProcessing.ExitCode.OK, log.errors, log.exceptions)
+        return Processing(exitCode == KotlinSymbolProcessing.ExitCode.OK, log.errors, log.exceptions, log.warnings)
     }
 
     fun compile(): Compilation {
@@ -74,7 +74,12 @@ class SourceModule(
         }
     }
 
-    data class Processing(val succeeded: Boolean, val errors: List<Error>, val exceptions: List<Throwable>) {
+    data class Processing(
+        val succeeded: Boolean,
+        val errors: List<Error>,
+        val exceptions: List<Throwable>,
+        val warnings: List<Error> = emptyList(),
+    ) {
         val report: String
             get() = (errors.map { it.toString() } + exceptions.map { it.stackTraceToString() }).joinToString("\n")
     }
@@ -84,9 +89,12 @@ class SourceModule(
     private class ProcessingLog : KSPLogger {
         val errors = mutableListOf<Error>()
         val exceptions = mutableListOf<Throwable>()
+        val warnings = mutableListOf<Error>()
         override fun logging(message: String, symbol: KSNode?) = Unit
         override fun info(message: String, symbol: KSNode?) = Unit
-        override fun warn(message: String, symbol: KSNode?) = Unit
+        override fun warn(message: String, symbol: KSNode?) {
+            warnings += Error(message, symbol)
+        }
         override fun error(message: String, symbol: KSNode?) {
             errors += Error(message, symbol)
         }

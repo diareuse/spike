@@ -35,6 +35,8 @@ abstract class GraphContributorOriginator : GraphContributor {
     protected abstract val contributions: ContributionImports
     protected abstract val environment: SymbolProcessorEnvironment
     protected abstract val logger: KSPLogger
+    protected abstract val reporter: DiagnosticReporter
+    protected abstract val warnings: WarningReporter
     protected open val stores: EntryPointStores = EntryPointStoresLocal
 
     protected open fun verifyOrigin(declaration: KSClassDeclaration) = Unit
@@ -93,7 +95,9 @@ abstract class GraphContributorOriginator : GraphContributor {
                 contribution.exportedBy,
             )
         }
-        generator.generate(graphFactory.create(), context.originatingFiles + entryPoint.requireKSFile()) { spec ->
+        val graph = graphFactory.create()
+        graph.warnings.forEach(warnings::warn)
+        generator.generate(graph, context.originatingFiles + entryPoint.requireKSFile()) { spec ->
             spec.writeTo(environment.codeGenerator, true)
         }
     }
