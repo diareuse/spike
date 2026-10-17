@@ -25,7 +25,7 @@ class EntryPointGenerator : Generator {
             .addType(type.build())
             .addFunction(
                 FunSpec.builder("invoke")
-                    .addModifiers(KModifier.OPERATOR)
+                    .addModifiers(ep.visibility.modifier, KModifier.OPERATOR)
                     .receiver((resolver.getTypeName(ep.type) as ClassName).nestedClass("Companion"))
                     .returns(resolver.getTypeName(ep.type))
                     .addParameters(ep.factory.method.parameters.map {
@@ -61,6 +61,7 @@ class EntryPointGenerator : Generator {
         if (ep.factory.method.parameters.isNotEmpty()) {
             file.addFunction(
                 FunSpec.builder("factory")
+                    .addModifiers(ep.visibility.modifier)
                     .returns(context.resolver.getTypeName(ep.factory.type))
                     .receiver((resolver.getTypeName(ep.type) as ClassName).nestedClass("Companion"))
                     .addCode("return %T.Factory", epcn)
