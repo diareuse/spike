@@ -2,6 +2,7 @@ package spike.compiler
 
 import spike.compiler.harness.HarnessCompiler
 import spike.compiler.harness.Libraries.Androidx
+import spike.compiler.harness.Libraries.Dagger
 import spike.compiler.harness.Libraries.Jsr
 import org.junit.jupiter.api.Timeout
 import kotlin.test.Test
@@ -236,6 +237,27 @@ class CompilerTest : HarnessCompiler() {
     @Test
     fun `javax and jakarta inject declarations join the graph through spike-compiler-jsr`() =
         assertRuns("jsr_inject", Jsr)
+
+    @Test
+    fun `Dagger modules, multibindings and components become a Spike graph through spike-compiler-dagger`() =
+        assertRuns("dagger_module", Dagger)
+
+    @Test
+    fun `Dagger bindings that cannot be converted are reported by spike-compiler-dagger`() = assertProcessingFails(
+        "dagger_unsupported",
+        "SPIKE-DAGGER-VISIBILITY",
+        "SPIKE-DAGGER-RECEIVER",
+        "SPIKE-DAGGER-MAP-KEY",
+        libraries = Dagger,
+    )
+
+    @Test
+    fun `a Dagger component builder is reported by spike-compiler-dagger`() =
+        assertProcessingFails("dagger_builder", "SPIKE-DAGGER-BUILDER", libraries = Dagger)
+
+    @Test
+    fun `a Dagger module with constructor state is reported by spike-compiler-dagger`() =
+        assertProcessingFails("dagger_module_state", "SPIKE-DAGGER-MODULE-STATE", libraries = Dagger)
 
     @Test
     fun `a private Inject constructor is reported by spike-compiler-jsr`() =

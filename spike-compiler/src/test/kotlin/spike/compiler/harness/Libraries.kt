@@ -5,7 +5,8 @@ import java.io.File
 enum class Libraries(private val property: String) {
     Kotlin("spike.fixture.kotlin"),
     Androidx("spike.fixture.androidx"),
-    Jsr("spike.fixture.jsr");
+    Jsr("spike.fixture.jsr"),
+    Dagger("spike.fixture.dagger");
 
     fun files(): List<File> = checkNotNull(System.getProperty(property)) {
         "System property $property is missing. Run the tests through Gradle, " +

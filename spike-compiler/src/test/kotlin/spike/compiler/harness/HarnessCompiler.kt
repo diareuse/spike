@@ -20,7 +20,7 @@ abstract class HarnessCompiler {
             assertEquals(emptyList(), module.source.generatedOutsideKotlin(), "Unexpected generated files")
             assertCompiles(module.source)
         }
-        runMain(modules)
+        runMain(modules, libraries)
     }
 
     protected fun assertRuns(name: String, libraries: Libraries = Libraries.Kotlin) {
@@ -29,7 +29,7 @@ abstract class HarnessCompiler {
             assertProcesses(module)
             assertCompiles(module.source)
         }
-        runMain(modules)
+        runMain(modules, libraries)
     }
 
     protected fun assertRunsWarning(name: String, vararg warnings: String) {
@@ -42,7 +42,7 @@ abstract class HarnessCompiler {
             assertCompiles(module.source)
         }
         for (warning in warnings) assertContains(reported.joinToString("\n"), warning)
-        runMain(modules)
+        runMain(modules, Libraries.Kotlin)
     }
 
     protected fun assertMethodsFitJit(name: String, libraries: Libraries = Libraries.Kotlin) {
@@ -51,7 +51,7 @@ abstract class HarnessCompiler {
             assertProcesses(module)
             assertCompiles(module.source)
         }
-        runMain(modules)
+        runMain(modules, libraries)
         val oversized = modules.flatMap { module ->
             module.source.classes.walk().filter { it.extension == "class" }.flatMap { file ->
                 BytecodeMethodSizes(file).read()
@@ -107,9 +107,10 @@ abstract class HarnessCompiler {
         assertTrue(compilation.succeeded, compilation.messages)
     }
 
-    private fun runMain(modules: List<FixtureModule>) {
+    private fun runMain(modules: List<FixtureModule>, libraries: Libraries) {
         val classes = modules.map { it.source.classes }
-        URLClassLoader(classes.map { it.toURI().toURL() }.toTypedArray(), javaClass.classLoader).use { loader ->
+        val urls = (classes + libraries.files()).map { it.toURI().toURL() }.toTypedArray()
+        URLClassLoader(urls, javaClass.classLoader).use { loader ->
             val main = loader.loadClass(mainClassIn(classes.last())).getMethod("main")
             try {
                 main.invoke(null)

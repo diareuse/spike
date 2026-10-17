@@ -73,6 +73,8 @@ respective documentation for more details:
   Compose integration for Spike ViewModels.
 * [Spike Ktor](spike-ktor/readme.md) (`spike-ktor`) - Seamless dependency injection for Ktor
   applications.
+* [Spike for Dagger](spike-compiler-dagger/readme.md) (`spike-compiler-dagger`, `spike-dagger`) - Convert
+  Dagger modules, multibindings and components to Spike while migrating.
 * [Spike JSR-330](spike-compiler-jsr/readme.md) (`spike-compiler-jsr`, `spike-jsr`) - Use classes with
   javax or jakarta `@Inject` constructors in a Spike graph without editing them.
 
