@@ -38,7 +38,7 @@ jobs:
       - id: benchmark
         run: bash spike-benchmark/benchmark.sh
 
-      - if: success() || failure()
+      - if: (success() || failure()) && hashFiles('spike-benchmark/output/results.md') != ''
         run: cat spike-benchmark/output/results.md >> $GITHUB_STEP_SUMMARY
 
       - uses: benchmark-action/github-action-benchmark@v1
@@ -49,10 +49,10 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
           alert-threshold: '130%'
-          comment-on-commit: true
+          comment-on-alert: true
           fail-on-alert: true
 
-      - if: success() || failure()
+      - if: (success() || failure()) && steps.benchmark.outcome == 'success'
         uses: benchmark-action/github-action-benchmark@v1
         with:
           name: Baselines
@@ -60,7 +60,6 @@ jobs:
           output-file-path: spike-benchmark/output/results-baselines.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-          comment-on-commit: false
           fail-on-alert: false
 
       - name: Spike is at least as fast as Dagger at runtime
