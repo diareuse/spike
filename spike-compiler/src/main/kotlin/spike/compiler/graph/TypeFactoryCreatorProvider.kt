@@ -1,5 +1,9 @@
 package spike.compiler.graph
 
+import spike.BindTarget
+import spike.Include
+import spike.compiler.Order
+
 class TypeFactoryCreatorProvider(private val recursions: Recursions) : TypeFactoryCreator {
     override suspend fun Minting.create(context: TypeFactoryCreator.Context): TypeFactory {
         val type = context.type
@@ -9,5 +13,13 @@ class TypeFactoryCreatorProvider(private val recursions: Recursions) : TypeFacto
             return TypeFactory.Provides(type, dependency)
         }
         return pass(context)
+    }
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(100)
+        fun source(): TypeFactoryCreatorSource = TypeFactoryCreatorSource { state ->
+            TypeFactoryCreatorProvider(state.recursions)
+        }
     }
 }

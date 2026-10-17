@@ -2,6 +2,9 @@ package spike.compiler.graph
 
 import spike.compiler.diagnostic.DiagnosticException
 import spike.compiler.diagnostic.DiagnosticRepeatedArgument
+import spike.BindTarget
+import spike.Include
+import spike.compiler.Order
 
 class TypeFactoryCreatorAssisted(private val captors: List<ArgumentCaptor>) : TypeFactoryCreator {
     override suspend fun Minting.create(context: TypeFactoryCreator.Context): TypeFactory {
@@ -31,7 +34,13 @@ class TypeFactoryCreatorAssisted(private val captors: List<ArgumentCaptor>) : Ty
             typeArguments.size > 1
     }
 
-    private companion object {
-        val FunctionName = Regex("Function\\d+")
+    companion object {
+        private val FunctionName = Regex("Function\\d+")
+
+        @Include(bindTo = BindTarget.Map)
+        @Order(110)
+        fun source(captors: Set<ArgumentCaptor>): TypeFactoryCreatorSource = TypeFactoryCreatorSource {
+            TypeFactoryCreatorAssisted(captors.toList())
+        }
     }
 }

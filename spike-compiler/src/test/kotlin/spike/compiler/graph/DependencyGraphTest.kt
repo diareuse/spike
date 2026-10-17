@@ -208,11 +208,44 @@ class DependencyGraphTest {
             methods = emptyList(),
             role = if (module) GraphRole.Module else GraphRole.App,
         )
+        val root = GraphStore.Builder().apply(store).build()
+        val multibinding = MultiBindingStore.Builder().apply(multibind).build()
+        val state = GraphState(
+            entry,
+            root,
+            multibinding,
+            Recursions(),
+            TypeFactoryCreatorImportCollector(),
+            ImportedContributions(),
+            GraphWarnings(),
+        )
+        val captors = setOf(ArgumentCaptorSingleton(), ArgumentCaptorDeferred())
+        val segments = MultibindingSegments.default()
         return DependencyGraph.Factory(
             entry = entry,
-            root = GraphStore.Builder().apply(store).build(),
-            multibinding = MultiBindingStore.Builder().apply(multibind).build(),
+            root = root,
+            multibinding = multibinding,
             imports = emptySequence(),
+            state = state,
+            resolving = mapOf(
+                10 to TypeFactoryCreatorMemo.source(),
+                20 to TypeFactoryCreatorImportCollector.source(),
+                30 to TypeFactoryCreatorInput.source(),
+                40 to TypeFactoryCreatorUniqueBinding.source(),
+                50 to TypeFactoryCreatorArgument.source(),
+                60 to TypeFactoryCreatorAlias.source(),
+                70 to TypeFactoryCreatorConstructor.source(),
+                80 to TypeFactoryCreatorMethod.source(),
+                90 to TypeFactoryCreatorLazy.source(),
+                100 to TypeFactoryCreatorProvider.source(),
+                110 to TypeFactoryCreatorAssisted.source(captors),
+            ),
+            app = mapOf(
+                10 to TypeFactoryCreatorMultiBindMap.source(segments),
+                20 to TypeFactoryCreatorMultiBindCollection.setSource(segments),
+                30 to TypeFactoryCreatorMultiBindCollection.listSource(segments),
+                40 to TypeFactoryCreatorOptional.source(),
+            ),
         ).apply(imports).create()
     }
 

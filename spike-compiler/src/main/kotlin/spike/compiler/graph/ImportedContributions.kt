@@ -2,7 +2,9 @@ package spike.compiler.graph
 
 import spike.BindTarget
 import spike.compiler.diagnostic.Involved
+import spike.Include
 
+@Include
 class ImportedContributions {
 
     private val byName = LinkedHashMap<String, Entry>()

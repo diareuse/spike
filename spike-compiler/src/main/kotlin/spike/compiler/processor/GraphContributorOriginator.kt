@@ -28,6 +28,8 @@ import spike.compiler.graph.Member
 import spike.compiler.graph.Parameter
 import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
+import spike.compiler.graph.GraphStore
+import spike.compiler.graph.MultiBindingStore
 
 @OptIn(KspExperimental::class)
 abstract class GraphContributorOriginator : GraphContributor {
@@ -38,6 +40,8 @@ abstract class GraphContributorOriginator : GraphContributor {
     protected abstract val reporter: DiagnosticReporter
     protected abstract val warnings: WarningReporter
     protected abstract val stores: EntryPointStores
+    protected abstract val graphs:
+        (GraphEntryPoint, GraphStore, MultiBindingStore, Sequence<TypeFactory.Class>) -> DependencyGraph.Factory
 
     protected open fun verifyOrigin(declaration: KSClassDeclaration) = Unit
     protected open fun findFactory(entryPoint: KSClassDeclaration): GraphEntryPoint.Factory? = null
@@ -71,11 +75,11 @@ abstract class GraphContributorOriginator : GraphContributor {
             origin = entryPoint.asOrigin(),
         )
         val resolved = stores.of(context, entryPoint)
-        val graphFactory = DependencyGraph.Factory(
-            entry = entry,
-            root = resolved.root,
-            multibinding = resolved.multibinding,
-            imports = generated.asSequence()
+        val graphFactory = graphs(
+            entry,
+            resolved.root,
+            resolved.multibinding,
+            generated.asSequence()
                 .map {
                     val invocation = it.primaryConstructor!!.toInvocation()
                     val inputs = invocation.copy(

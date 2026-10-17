@@ -29,6 +29,10 @@ import spike.BindTarget
 import spike.Include
 import spike.compiler.Order
 import spike.compiler.generator.AppGraph
+import spike.compiler.graph.DependencyGraph
+import spike.compiler.graph.GraphStore
+import spike.compiler.graph.MultiBindingStore
+import spike.compiler.graph.TypeFactory
 
 @OptIn(KspExperimental::class)
 @Include
@@ -40,6 +44,8 @@ class GraphContributorEntryPoint(
     override val warnings: WarningReporter,
     override val contributions: ContributionImports,
     private val registry: SymbolRegistry,
+    override val graphs:
+        (GraphEntryPoint, GraphStore, MultiBindingStore, Sequence<TypeFactory.Class>) -> DependencyGraph.Factory,
     override val stores: EntryPointStores,
 ) : GraphContributorOriginator() {
 
