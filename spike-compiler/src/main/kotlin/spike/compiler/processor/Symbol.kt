@@ -145,7 +145,10 @@ fun KSType.toType(variance: Variance = Variance.INVARIANT): Type {
             this is KSTypeAlias || declaration is KSTypeAlias || arguments.isEmpty() -> rootType
             else -> Type.Parametrized(
                 envelope = rootType,
-                typeArguments = arguments.map { it.type!!.resolve().toType(it.variance) },
+                typeArguments = arguments.map { argument ->
+                    argument.type?.resolve()?.toType(argument.variance)
+                        ?: Type.WithVariance(null, Type.WithVariance.Variance.STAR)
+                },
                 nullable = rootType.nullable,
             )
         }

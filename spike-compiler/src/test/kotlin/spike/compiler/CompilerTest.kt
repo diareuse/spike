@@ -346,6 +346,9 @@ class CompilerTest : HarnessCompiler() {
         assertRuns("receiver_from_earlier_part")
 
     @Test
+    fun `a star-projected type can be bound and multibound`() = assertRuns("star_projected_binding")
+
+    @Test
     fun `a cached singleton does not build its arguments again`() = assertRuns("singleton_arguments_built_once")
 
     @Test
