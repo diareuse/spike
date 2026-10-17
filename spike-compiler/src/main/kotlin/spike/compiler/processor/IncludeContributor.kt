@@ -12,14 +12,11 @@ interface IncludeContributor {
 
     companion object {
         @Include
-        fun default(): IncludeContributor {
-            var out: IncludeContributor = IncludeContributorMain()
-            out = IncludeContributorOwner(out)
-            out = IncludeContributorBindAsRemoved(out)
-            out = IncludeContributorBackingField(out)
-            out = IncludeContributorBindTo(out)
-            out = IncludeContributorMultiplatform(out)
-            return out
+        fun default(
+            core: IncludeContributorMain,
+            decorators: Map<Int, IncludeContributorDecorator>,
+        ): IncludeContributor = decorators.toSortedMap().values.fold(core as IncludeContributor) { inner, decorator ->
+            decorator.decorate(inner)
         }
     }
 }

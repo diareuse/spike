@@ -10,6 +10,7 @@ import spike.Include
 import spike.compiler.graph.BuiltInTypes
 import spike.compiler.graph.Type
 import spike.compiler.processor.util.getAnnotationParameterOrDefault
+import spike.compiler.Order
 
 class IncludeContributorBindTo(
     private val origin: IncludeContributor,
@@ -48,5 +49,11 @@ class IncludeContributorBindTo(
         val bindTo: KSClassDeclaration = getAnnotationParameterOrDefault(Include::bindTo, null)
             ?: return BindTarget.None
         return BindTarget.valueOf(bindTo.simpleName.asString())
+    }
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(40)
+        fun decorator(): IncludeContributorDecorator = IncludeContributorDecorator(::IncludeContributorBindTo)
     }
 }

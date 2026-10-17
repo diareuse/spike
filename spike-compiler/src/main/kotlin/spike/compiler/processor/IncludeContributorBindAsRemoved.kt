@@ -9,6 +9,9 @@ import com.google.devtools.ksp.symbol.KSType
 import spike.compiler.diagnostic.DiagnosticException
 import spike.compiler.diagnostic.DiagnosticIncludeBindAs
 import spike.compiler.diagnostic.Fix
+import spike.BindTarget
+import spike.Include
+import spike.compiler.Order
 
 class IncludeContributorBindAsRemoved(
     private val origin: IncludeContributor,
@@ -80,7 +83,11 @@ class IncludeContributorBindAsRemoved(
         .map { it.rendered() }
         .toList()
 
-    private companion object {
-        val carried = setOf("spike.Qualifier", "spike.Key")
+    companion object {
+        private val carried = setOf("spike.Qualifier", "spike.Key")
+
+        @Include(bindTo = BindTarget.Map)
+        @Order(20)
+        fun decorator(): IncludeContributorDecorator = IncludeContributorDecorator(::IncludeContributorBindAsRemoved)
     }
 }

@@ -7,6 +7,9 @@ import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import spike.compiler.diagnostic.DiagnosticException
 import spike.compiler.diagnostic.DiagnosticIncludeOwner
+import spike.BindTarget
+import spike.Include
+import spike.compiler.Order
 
 class IncludeContributorOwner(
     private val origin: IncludeContributor,
@@ -30,5 +33,11 @@ class IncludeContributorOwner(
         throw DiagnosticException(
             DiagnosticIncludeOwner(kind, simpleName.asString(), owner.simpleName.asString(), asOrigin())
         )
+    }
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(10)
+        fun decorator(): IncludeContributorDecorator = IncludeContributorDecorator(::IncludeContributorOwner)
     }
 }

@@ -13,6 +13,7 @@ import spike.compiler.graph.Member
 import spike.compiler.graph.Parameter
 
 @OptIn(KspExperimental::class)
+@Include
 class IncludeContributorMain : IncludeContributor {
     override fun contribute(
         context: GraphContext,

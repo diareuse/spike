@@ -1,5 +1,8 @@
 package spike.compiler.diagnostic
 
+import spike.Include
+
+@Include
 class DiagnosticFormatText : DiagnosticFormat {
     override fun render(diagnostic: Diagnostic): String = buildString {
         append("[").append(diagnostic.code).append("] ").append(diagnostic.summary)
