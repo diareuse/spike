@@ -1,0 +1,4 @@
+Main.kt:9: [SPIKE-REPLACES-NOTHING] @Replaces(com.example.test.Clock) has nothing to replace: com.example.App has no binding of com.example.test.Clock
+  - class com.example.test.FakeClock (Main.kt:9)
+Why: A replacement stands in for a production binding; without one it would silently add a new binding instead.
+Fix: Replace a type that com.example.App binds, or drop @Replaces and keep this as a plain @Include.

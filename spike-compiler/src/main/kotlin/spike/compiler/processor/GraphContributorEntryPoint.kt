@@ -31,7 +31,8 @@ class GraphContributorEntryPoint(
     override val environment: SymbolProcessorEnvironment,
     override val logger: KSPLogger,
     override val contributions: ContributionImports,
-    private val registry: SymbolRegistry
+    private val registry: SymbolRegistry,
+    override val stores: EntryPointStores = EntryPointStoresLocal,
 ) : GraphContributorOriginator() {
 
     override fun getOrigins(resolver: Resolver) = registry.entryPoint(resolver)

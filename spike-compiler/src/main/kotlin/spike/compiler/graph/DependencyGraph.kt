@@ -74,6 +74,7 @@ class DependencyGraph private constructor(
                 inputs,
                 TypeFactoryCreatorUniqueBinding(),
                 TypeFactoryCreatorArgument(),
+                TypeFactoryCreatorAlias(),
                 TypeFactoryCreatorConstructor(),
                 TypeFactoryCreatorMethod(),
                 TypeFactoryCreatorLazy(),

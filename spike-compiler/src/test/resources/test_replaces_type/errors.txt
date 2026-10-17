@@ -1,0 +1,4 @@
+Main.kt:8: [SPIKE-REPLACES-TYPE] @Replaces(com.example.Repo) is on a binding of com.example.test.NotARepo, which is not a com.example.Repo
+  - class com.example.test.NotARepo (Main.kt:8)
+Why: Every consumer of com.example.Repo receives the replacement, so it must be a com.example.Repo.
+Fix: Make com.example.test.NotARepo implement or extend com.example.Repo, or replace the type it does provide.

@@ -186,6 +186,26 @@ class CompilerTest : HarnessCompiler() {
         assertProcessingFails("assisted_provider_argument", "SPIKE-ARGUMENT-CAPTURED")
 
     @Test
+    fun `a test entry point extending a production one resolves the production bindings`() =
+        assertRuns("test_entry_point")
+
+    @Test
+    fun `a Replaces binding stands in for the production binding in a test entry point only`() =
+        assertRuns("test_replaces")
+
+    @Test
+    fun `a Replaces function returning the replaced type stands in for the production binding`() =
+        assertRuns("test_replaces_function")
+
+    @Test
+    fun `a replacement that is not of the replaced type fails`() =
+        assertProcessingFails("test_replaces_type", "SPIKE-REPLACES-TYPE")
+
+    @Test
+    fun `replacing a type without a production binding fails`() =
+        assertProcessingFails("test_replaces_nothing", "SPIKE-REPLACES-NOTHING")
+
+    @Test
     fun `a cached singleton does not build its arguments again`() = assertRuns("singleton_arguments_built_once")
 
     @Test

@@ -6,12 +6,19 @@ data class GraphStore(
     val constructors: List<Constructor> = emptyList(),
     val factories: List<Factory> = emptyList(),
     val arguments: List<Argument> = emptyList(),
+    val aliases: List<Alias> = emptyList(),
 ) {
 
     operator fun plus(other: GraphStore) = GraphStore(
         constructors = constructors + other.constructors,
         factories = factories + other.factories,
         arguments = arguments + other.arguments,
+        aliases = aliases + other.aliases,
+    )
+
+    fun without(type: Type) = copy(
+        constructors = constructors.filterNot { it.type == type },
+        factories = factories.filterNot { it.type == type },
     )
 
     private val constructorsByType by lazy(LazyThreadSafetyMode.NONE) { constructors.groupBy { it.type } }
@@ -23,10 +30,13 @@ data class GraphStore(
 
     fun argumentOf(type: Type): Argument? = arguments.firstOrNull { it.type == type }
 
+    fun aliasOf(type: Type): Alias? = aliases.firstOrNull { it.type == type }
+
     fun bindingsOf(type: Type): List<Binding> = buildList {
         constructorsByType[type]?.let(::addAll)
         factoriesByType[type]?.let(::addAll)
         addAll(arguments.filter { it.type == type })
+        addAll(aliases.filter { it.type == type })
     }.distinct()
 
     fun overriddenBy(definition: GraphStore): GraphStore {
@@ -35,6 +45,7 @@ data class GraphStore(
             constructors = constructors.filterNot { it.type in types },
             factories = factories.filterNot { it.type in types },
             arguments = arguments,
+            aliases = aliases,
         )
     }
 

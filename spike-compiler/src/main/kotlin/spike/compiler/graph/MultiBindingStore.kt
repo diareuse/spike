@@ -6,6 +6,17 @@ data class MultiBindingStore(
     val map: Map<Type, Map<Key, GraphStore>>,
 ) {
 
+    operator fun plus(other: MultiBindingStore) = MultiBindingStore(
+        set = set.merged(other.set),
+        list = list.merged(other.list),
+        map = (map.keys + other.map.keys).associateWith { type ->
+            map[type].orEmpty().merged(other.map[type].orEmpty())
+        },
+    )
+
+    private fun <K> Map<K, GraphStore>.merged(other: Map<K, GraphStore>): Map<K, GraphStore> =
+        (keys + other.keys).associateWith { key -> (this[key] ?: GraphStore()) + (other[key] ?: GraphStore()) }
+
     class Builder {
 
         private val setBindings = mutableMapOf<Type, GraphStore.Builder>()

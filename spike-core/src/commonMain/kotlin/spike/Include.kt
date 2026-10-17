@@ -3,7 +3,7 @@ package spike
 import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.BINARY)
 public annotation class Include(
     @Deprecated(
         message = "bindAs was removed. Bind with an @Include property or function, " +
@@ -14,6 +14,6 @@ public annotation class Include(
     val bindTo: BindTarget = BindTarget.None
 ) {
     @Target(AnnotationTarget.CONSTRUCTOR)
-    @Retention(AnnotationRetention.SOURCE)
+    @Retention(AnnotationRetention.BINARY)
     public annotation class Constructor
 }

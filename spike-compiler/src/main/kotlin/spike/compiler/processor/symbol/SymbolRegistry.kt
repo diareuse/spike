@@ -16,6 +16,9 @@ class SymbolRegistry {
         .getSymbolsWithAnnotation("spike.lifecycle.viewmodel.SpikeViewModel")
         .filterIsInstance<KSClassDeclaration>()
 
+    fun replaces(resolver: Resolver) = resolver
+        .getSymbolsWithAnnotation("spike.test.Replaces")
+
     fun include(resolver: Resolver) = resolver
         .getSymbolsWithAnnotation<Include>()
 

@@ -43,7 +43,7 @@ fun fixtureLibraries(name: String, vararg notations: Any) = configurations.creat
     dependencies.addAll(notations.map { project.dependencies.create(it) })
 }
 
-val fixtureKotlin = fixtureLibraries("fixtureKotlin", project(":spike-core"), "org.jetbrains.kotlin:kotlin-stdlib:${libs.versions.kotlin.get()}")
+val fixtureKotlin = fixtureLibraries("fixtureKotlin", project(":spike-core"), project(":spike-test"), "org.jetbrains.kotlin:kotlin-stdlib:${libs.versions.kotlin.get()}")
 val fixtureAndroidx = fixtureLibraries(
     "fixtureAndroidx",
     project(":spike-core"),

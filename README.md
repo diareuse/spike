@@ -180,6 +180,36 @@ fun main() {
 }
 ```
 
+### 5. Replace Bindings in Tests
+
+Add `spike-test` to your test dependencies and run the compiler on your tests too:
+
+```kotlin
+dependencies {
+    testImplementation("io.github.diareuse:spike-test:$spike")
+    kspTest("io.github.diareuse:spike-compiler:$spike")
+}
+```
+
+A test entry point that extends a production entry point gets the production graph, and `@Replaces`
+swaps a production binding for a fake:
+
+```kotlin
+@Include
+@Replaces(Repository::class)
+class FakeRepository : Repository
+
+@EntryPoint
+interface TestCoffeeShop : CoffeeShop {
+    companion object
+}
+
+val shop = TestCoffeeShop() // every Repository is now FakeRepository
+```
+
+The replacement must be a `Repository`, and the production graph must bind `Repository`; otherwise the
+build fails. Production entry points are unaffected.
+
 ## License
 
 Spike is licensed under the [Mozilla Public License 2.0](LICENSE). Changes to Spike's own files must be

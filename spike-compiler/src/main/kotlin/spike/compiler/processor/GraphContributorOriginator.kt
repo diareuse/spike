@@ -35,6 +35,7 @@ abstract class GraphContributorOriginator : GraphContributor {
     protected abstract val contributions: ContributionImports
     protected abstract val environment: SymbolProcessorEnvironment
     protected abstract val logger: KSPLogger
+    protected open val stores: EntryPointStores = EntryPointStoresLocal
 
     protected open fun verifyOrigin(declaration: KSClassDeclaration) = Unit
     protected open fun findFactory(entryPoint: KSClassDeclaration): GraphEntryPoint.Factory? = null
@@ -67,10 +68,11 @@ abstract class GraphContributorOriginator : GraphContributor {
             role = if (entryPoint.isAnnotationPresent(Export::class)) GraphRole.Module else GraphRole.App,
             origin = entryPoint.asOrigin(),
         )
+        val resolved = stores.of(context, entryPoint)
         val graphFactory = DependencyGraph.Factory(
             entry = entry,
-            root = context.builder.build(),
-            multibinding = context.multibind.build(),
+            root = resolved.root,
+            multibinding = resolved.multibinding,
             imports = generated.asSequence()
                 .map {
                     val invocation = it.primaryConstructor!!.toInvocation()

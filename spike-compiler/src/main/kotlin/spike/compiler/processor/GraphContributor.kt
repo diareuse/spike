@@ -28,7 +28,23 @@ fun interface GraphContributor {
                     environment = environment,
                     logger = environment.logger,
                     contributions = ContributionImportsGenerated(),
-                    registry = registry
+                    registry = registry,
+                    stores = EntryPointStoresDerived(
+                        delegate = EntryPointStoresLocal,
+                        production = ProductionGraph(
+                            IndexedDeclarations(
+                                mapOf(
+                                    EntryPointIndex.CLASS to IndexLookupClass(),
+                                    EntryPointIndex.FUNCTION to IndexLookupFunction(),
+                                    EntryPointIndex.PROPERTY to IndexLookupProperty(),
+                                ),
+                            ),
+                            IncludeVisitor(include),
+                        ),
+                        registry = registry,
+                        replacements = ReplacementReader(ProvidedTypeVisitor()),
+                        check = ReplacementCheckAll(listOf(ReplacementCheckAssignable(), ReplacementCheckBound())),
+                    ),
                 ).timed("EntryPoint", environment.logger),
                 GraphContributorExport(
                     generator = generator.create(true),
@@ -36,7 +52,8 @@ fun interface GraphContributor {
                     logger = environment.logger,
                     contributions = ContributionImportsGenerated(),
                     registry = registry
-                ).timed("Export", environment.logger)
+                ).timed("Export", environment.logger),
+                GraphContributorIndex(registry, environment).timed("Index", environment.logger),
             )
         )
 
