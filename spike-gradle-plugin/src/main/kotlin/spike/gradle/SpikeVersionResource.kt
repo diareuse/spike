@@ -1,7 +1,9 @@
 package spike.gradle
 
+import spike.Include
 import java.util.Properties
 
+@Include
 internal class SpikeVersionResource : SpikeVersion {
     override fun value(): String {
         val properties = Properties()
