@@ -23,6 +23,7 @@ import spike.compiler.generator.DependencyGraphGenerator
 import spike.compiler.graph.GraphEntryPoint
 import spike.compiler.graph.Member
 import spike.compiler.graph.Parameter
+import spike.compiler.graph.SingletonOwnership
 import spike.compiler.processor.symbol.SymbolRegistry
 
 @OptIn(KspExperimental::class)
@@ -81,7 +82,11 @@ class GraphContributorEntryPoint(
         val factoryType = factory.toType(false)
         return GraphEntryPoint.Factory(
             origin = func.asOrigin(),
-            sharesSingletons = factory.isAnnotationPresent(EntryPoint.Factory.SharesSingletons::class),
+            ownership = if (factory.isAnnotationPresent(EntryPoint.Factory.SharesSingletons::class)) {
+                SingletonOwnership.SharedByFactory
+            } else {
+                SingletonOwnership.PerEntryPoint
+            },
             type = factoryType,
             method = Member.Method(
                 packageName = func.packageName.asString(),

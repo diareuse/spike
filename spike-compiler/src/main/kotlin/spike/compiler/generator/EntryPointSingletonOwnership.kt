@@ -4,6 +4,7 @@ import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import spike.compiler.graph.GraphEntryPoint
+import spike.compiler.graph.SingletonOwnership
 import spike.factory.SingletonHolder
 
 sealed interface EntryPointSingletonOwnership {
@@ -28,7 +29,11 @@ sealed interface EntryPointSingletonOwnership {
     }
 
     companion object {
-        fun of(factory: GraphEntryPoint.Factory): EntryPointSingletonOwnership =
-            if (factory.sharesSingletons) SharedByFactory else PerEntryPoint
+        private val byOwnership: Map<SingletonOwnership, EntryPointSingletonOwnership> = mapOf(
+            SingletonOwnership.PerEntryPoint to PerEntryPoint,
+            SingletonOwnership.SharedByFactory to SharedByFactory,
+        )
+
+        fun of(factory: GraphEntryPoint.Factory): EntryPointSingletonOwnership = byOwnership.getValue(factory.ownership)
     }
 }

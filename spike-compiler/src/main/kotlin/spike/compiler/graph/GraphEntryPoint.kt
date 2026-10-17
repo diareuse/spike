@@ -31,7 +31,7 @@ data class GraphEntryPoint private constructor(
     data class Factory(
         val type: Type,
         val method: Member.Method,
-        val sharesSingletons: Boolean = false,
+        val ownership: SingletonOwnership = SingletonOwnership.PerEntryPoint,
         val origin: Origin? = null,
     )
 

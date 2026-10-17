@@ -92,7 +92,7 @@ class DependencyGraph private constructor(
                 createTypeFactory(it.returns, creators)
             }
             val contributions = entry.role.contributions { exportContributions(creators) }
-            SharedSingletonInputCheck(root).check(entry, methods + properties)
+            entry.factory.ownership.inputCheck(root).check(entry, methods + properties)
             val imports = imports.toList()
             val unresolved = entry.role.unresolved(importCollector.imports.toList())
             if (unresolved.isNotEmpty()) throw DiagnosticException(unresolved.map { it.missing() })

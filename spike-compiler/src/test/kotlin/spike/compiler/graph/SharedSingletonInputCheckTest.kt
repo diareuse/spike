@@ -59,7 +59,7 @@ class SharedSingletonInputCheckTest {
     fun `entry points that do not share singletons are not checked`() {
         val singleton = node("Cache", input, singleton = true)
 
-        check(listOf(singleton), sharesSingletons = false)
+        check(listOf(singleton), ownership = SingletonOwnership.PerEntryPoint)
     }
 
     @Test
@@ -93,13 +93,14 @@ class SharedSingletonInputCheckTest {
         assertContains(error.message!!, "@Singleton test.Cache depends on test.Handle")
     }
 
-    private fun check(roots: List<TypeFactory>, sharesSingletons: Boolean = true) {
+    private fun check(roots: List<TypeFactory>, ownership: SingletonOwnership = SingletonOwnership.SharedByFactory) {
         val factory = GraphEntryPoint.Factory(
             type = factoryType,
             method = Member.Method("test", "create", entryType, factoryType),
-            sharesSingletons = sharesSingletons,
+            ownership = ownership,
         )
-        SharedSingletonInputCheck().check(GraphEntryPoint(entryType, factory, emptyList(), emptyList(), GraphRole.App), roots)
+        val entry = GraphEntryPoint(entryType, factory, emptyList(), emptyList(), GraphRole.App)
+        ownership.inputCheck(GraphStore()).check(entry, roots)
     }
 
     private fun chain(depth: Int, bottom: TypeFactory): TypeFactory {

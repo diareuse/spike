@@ -5,9 +5,8 @@ import spike.compiler.diagnostic.DiagnosticSingletonInput
 import spike.compiler.diagnostic.Involved
 import java.util.IdentityHashMap
 
-class SharedSingletonInputCheck(private val bindings: GraphStore = GraphStore()) {
-    fun check(entry: GraphEntryPoint, roots: List<TypeFactory>) {
-        if (!entry.factory.sharesSingletons) return
+class SharedSingletonInputCheck(private val bindings: GraphStore = GraphStore()) : SingletonInputCheck {
+    override fun check(entry: GraphEntryPoint, roots: List<TypeFactory>) {
         var previous: Map<TypeFactory, TypeFactory.Property?> = emptyMap()
         do {
             val inputs = IdentityHashMap<TypeFactory, TypeFactory.Property?>()
