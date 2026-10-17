@@ -220,6 +220,9 @@ class CompilerTest : HarnessCompiler() {
         assertProcessingFails("assisted_cycle_argument", "SPIKE-ARGUMENT-CAPTURED")
 
     @Test
+    fun `a qualified generic binding keeps its type arguments`() = assertRuns("qualified_generic")
+
+    @Test
     fun `a cached singleton does not build its arguments again`() = assertRuns("singleton_arguments_built_once")
 
     @Test
