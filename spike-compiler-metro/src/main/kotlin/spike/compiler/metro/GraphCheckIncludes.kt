@@ -1,8 +1,10 @@
 package spike.compiler.metro
 
+import spike.Include
 import spike.compiler.conversion.ConversionCheck
 import spike.compiler.conversion.ConversionProblem
 
+@Include
 class GraphCheckIncludes : ConversionCheck<MetroGraph> {
     override fun check(subject: MetroGraph): ConversionProblem? {
         if (subject.inputs.none(MetroNames.Includes::annotates)) return null

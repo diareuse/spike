@@ -1,6 +1,5 @@
 package spike.compiler.metro
 
-import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
@@ -9,15 +8,17 @@ import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.joinToCode
 import com.squareup.kotlinpoet.ksp.toClassName
 import com.squareup.kotlinpoet.ksp.toTypeName
+import spike.Include
 import spike.compiler.conversion.IncludeFunction
 import spike.compiler.conversion.ParameterConversion
+import spike.compiler.conversion.SpikeNames
 
 /**
  * Implements an @AssistedFactory by forwarding its function to the `(arguments) -> T` function type that Spike
  * builds for assisted injection.
  */
+@Include
 class IncludeFunctionAssistedFactory(
-    private val include: ClassName,
     private val parameters: ParameterConversion,
 ) : IncludeFunction<MetroAssistedFactory> {
     override fun of(subject: MetroAssistedFactory): FunSpec {
@@ -38,7 +39,7 @@ class IncludeFunctionAssistedFactory(
             .build()
         return FunSpec.builder("assisted" + factoryName.simpleNames.joinToString(""))
             .returns(factoryName)
-            .addAnnotation(include)
+            .addAnnotation(SpikeNames.Include)
             .addParameter("build", LambdaTypeName.get(parameters = specs, returnType = returns))
             .addStatement("return %L", implementation)
             .build()
