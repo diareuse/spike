@@ -342,6 +342,10 @@ class CompilerTest : HarnessCompiler() {
         assertRuns("multibinding_composite")
 
     @Test
+    fun `an extension binding whose receiver is built in an earlier program part compiles`() =
+        assertRuns("receiver_from_earlier_part")
+
+    @Test
     fun `a cached singleton does not build its arguments again`() = assertRuns("singleton_arguments_built_once")
 
     @Test
