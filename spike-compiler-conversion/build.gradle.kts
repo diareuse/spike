@@ -11,6 +11,7 @@ kotlin {
 }
 
 dependencies {
+    api(project(":spike-core"))
     implementation(libs.google.ksp.api)
     implementation(libs.squareup.kotlinpoet)
     implementation(libs.squareup.kotlinpoet.ksp)
