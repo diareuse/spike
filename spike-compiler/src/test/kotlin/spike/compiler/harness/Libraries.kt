@@ -8,7 +8,8 @@ enum class Libraries(private val property: String) {
     Jsr("spike.fixture.jsr"),
     Dagger("spike.fixture.dagger"),
     KotlinInject("spike.fixture.kotlininject"),
-    Metro("spike.fixture.metro");
+    Metro("spike.fixture.metro"),
+    Koin("spike.fixture.koin");
 
     fun files(): List<File> = checkNotNull(System.getProperty(property)) {
         "System property $property is missing. Run the tests through Gradle, " +

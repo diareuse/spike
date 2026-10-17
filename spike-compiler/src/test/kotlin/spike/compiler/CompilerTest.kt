@@ -4,6 +4,7 @@ import spike.compiler.harness.HarnessCompiler
 import spike.compiler.harness.Libraries.Androidx
 import spike.compiler.harness.Libraries.Dagger
 import spike.compiler.harness.Libraries.Jsr
+import spike.compiler.harness.Libraries.Koin
 import spike.compiler.harness.Libraries.KotlinInject
 import spike.compiler.harness.Libraries.Metro
 import org.junit.jupiter.api.Timeout
@@ -311,6 +312,10 @@ class CompilerTest : HarnessCompiler() {
         "SPIKE-METRO-INCLUDES",
         libraries = Metro,
     )
+
+    @Test
+    fun `Spike and Koin share dependencies in both directions through spike-compiler-koin`() =
+        assertRuns("koin_interop", Koin)
 
     @Test
     fun `a private Inject constructor is reported by spike-compiler-jsr`() =
