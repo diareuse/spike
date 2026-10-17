@@ -3,6 +3,9 @@ package spike.compiler.graph
 import spike.compiler.diagnostic.DiagnosticDuplicateMapKey
 import spike.compiler.diagnostic.DiagnosticException
 import spike.compiler.diagnostic.DiagnosticMapKeyType
+import spike.BindTarget
+import spike.Include
+import spike.compiler.Order
 
 class TypeFactoryCreatorMultiBindMap(
     private val multibinding: MultiBindingStore,
@@ -76,5 +79,13 @@ class TypeFactoryCreatorMultiBindMap(
             else -> this
         }
         else -> this
+    }
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(10)
+        fun source(segments: MultibindingSegments): AppCreatorSource = AppCreatorSource { state ->
+            TypeFactoryCreatorMultiBindMap(state.multibinding, state.imported, segments)
+        }
     }
 }

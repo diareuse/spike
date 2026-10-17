@@ -1,6 +1,7 @@
 package spike.compiler.graph
 
 import spike.BindTarget
+import spike.Include
 import spike.compiler.diagnostic.Diagnostic
 import spike.compiler.diagnostic.DiagnosticException
 import spike.compiler.diagnostic.DiagnosticMissingBinding
@@ -37,17 +38,18 @@ class DependencyGraph private constructor(
             yield(c.factory)
     }
 
+    @Include
     class Factory(
         private val entry: GraphEntryPoint,
         private val root: GraphStore,
         private val multibinding: MultiBindingStore,
         private val imports: Sequence<TypeFactory.Class>,
+        private val state: GraphState,
+        private val resolving: Map<Int, TypeFactoryCreatorSource>,
+        private val app: Map<Int, AppCreatorSource>,
     ) {
-
-        private val imported = ImportedContributions()
-
-        private val inputs =
-            TypeFactoryCreatorInput(root, Involved("entry point ${entry.type.displayName}", entry.origin))
+        private val imported get() = state.imported
+        private val inputs get() = state.inputs
 
         init {
             val factory = entry.factory
@@ -68,23 +70,11 @@ class DependencyGraph private constructor(
         }
 
         fun create(): DependencyGraph {
-            val importCollector = TypeFactoryCreatorImportCollector()
-            val recursions = Recursions()
-            val warnings = mutableListOf<Diagnostic>()
-            val resolving = listOf(
-                TypeFactoryCreatorMemo(recursions),
-                importCollector,
-                inputs,
-                TypeFactoryCreatorUniqueBinding(),
-                TypeFactoryCreatorArgument(),
-                TypeFactoryCreatorAlias(),
-                TypeFactoryCreatorConstructor(),
-                TypeFactoryCreatorMethod(),
-                TypeFactoryCreatorLazy(recursions),
-                TypeFactoryCreatorProvider(recursions),
-                TypeFactoryCreatorAssisted(listOf(ArgumentCaptorSingleton(), ArgumentCaptorDeferred())),
+            val importCollector = state.imports
+            val creators = entry.role.creators(
+                resolving.toSortedMap().values.map { it.of(state) },
+                app.toSortedMap().values.map { it.of(state) },
             )
-            val creators = entry.role.creators(resolving, multibinding, imported, inputs, warnings)
             val methods = entry.methods.map {
                 createTypeFactory(it.returns, creators)
             }
@@ -103,7 +93,7 @@ class DependencyGraph private constructor(
                 imports = imports,
                 importFactories = importCollector.imports.toList(),
                 contributions = contributions,
-                warnings = warnings.toList(),
+                warnings = state.warnings.all,
             )
         }
 

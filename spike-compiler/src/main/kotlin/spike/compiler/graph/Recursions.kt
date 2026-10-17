@@ -1,5 +1,8 @@
 package spike.compiler.graph
 
+import spike.Include
+
+@Include
 class Recursions {
     private val pending = HashMap<Type, MutableList<TypeFactory.Recursion>>()
 

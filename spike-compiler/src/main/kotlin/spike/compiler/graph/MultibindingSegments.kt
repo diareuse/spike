@@ -1,5 +1,7 @@
 package spike.compiler.graph
 
+import spike.Include
+
 /**
  * Splits a multibinding with more than [size] entries into a concatenation of smaller ones, so that no generated
  * method that builds it grows past what the JIT compiles.
@@ -20,5 +22,12 @@ class MultibindingSegments(private val size: Int) {
             TypeFactory.MultibindsCollection(collection.type, chunk, collection.collectionType)
         }
         return TypeFactory.Concatenation(collection.type, parts)
+    }
+
+    companion object {
+        private const val SIZE = 100
+
+        @Include
+        fun default(): MultibindingSegments = MultibindingSegments(SIZE)
     }
 }

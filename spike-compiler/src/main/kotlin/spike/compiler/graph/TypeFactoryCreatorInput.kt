@@ -5,6 +5,9 @@ import spike.compiler.diagnostic.DiagnosticInputConflict
 import spike.compiler.diagnostic.DiagnosticRepeatedInput
 import spike.compiler.diagnostic.Involved
 import spike.compiler.diagnostic.Origin
+import spike.BindTarget
+import spike.Include
+import spike.compiler.Order
 
 class TypeFactoryCreatorInput(
     private val root: GraphStore,
@@ -43,5 +46,11 @@ class TypeFactoryCreatorInput(
 
     private class Input(val factory: TypeFactory, description: String, origin: Origin?) {
         val involved = Involved(description, origin)
+    }
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(30)
+        fun source(): TypeFactoryCreatorSource = TypeFactoryCreatorSource { state -> state.inputs }
     }
 }

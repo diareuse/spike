@@ -1,6 +1,8 @@
 package spike.compiler.graph
 
 import spike.BindTarget
+import spike.Include
+import spike.compiler.Order
 
 class TypeFactoryCreatorMultiBindCollection(
     private val multibinding: Map<Type, GraphStore>,
@@ -41,6 +43,31 @@ class TypeFactoryCreatorMultiBindCollection(
         )
         return if (spreads.isEmpty()) collection else TypeFactory.Concatenation(type, listOf(collection) + spreads)
     }
-}
 
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(20)
+        fun setSource(segments: MultibindingSegments): AppCreatorSource = AppCreatorSource { state ->
+            TypeFactoryCreatorMultiBindCollection(
+                state.multibinding.set,
+                state.imported,
+                BuiltInTypes.Set,
+                BindTarget.Set,
+                segments,
+            )
+        }
+
+        @Include(bindTo = BindTarget.Map)
+        @Order(30)
+        fun listSource(segments: MultibindingSegments): AppCreatorSource = AppCreatorSource { state ->
+            TypeFactoryCreatorMultiBindCollection(
+                state.multibinding.list,
+                state.imported,
+                BuiltInTypes.List,
+                BindTarget.List,
+                segments,
+            )
+        }
+    }
+}
 private val Elements = Qualifier(Type.Simple("spike", "Elements", false), emptyList())

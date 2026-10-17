@@ -11,6 +11,11 @@ import spike.BindTarget
 import spike.Include
 import spike.compiler.Order
 import spike.compiler.generator.ExportGraph
+import spike.compiler.graph.DependencyGraph
+import spike.compiler.graph.GraphEntryPoint
+import spike.compiler.graph.GraphStore
+import spike.compiler.graph.MultiBindingStore
+import spike.compiler.graph.TypeFactory
 
 @Include
 class GraphContributorExport(
@@ -21,6 +26,8 @@ class GraphContributorExport(
     override val warnings: WarningReporter,
     override val contributions: ContributionImports,
     private val registry: SymbolRegistry,
+    override val graphs:
+        (GraphEntryPoint, GraphStore, MultiBindingStore, Sequence<TypeFactory.Class>) -> DependencyGraph.Factory,
     override val stores: EntryPointStoresLocal,
 ) : GraphContributorOriginator() {
     override fun getOrigins(resolver: Resolver) = registry.export(resolver)
