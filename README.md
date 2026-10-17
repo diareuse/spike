@@ -6,6 +6,21 @@ Spike is a Kotlin Multiplatform dependency injection compositor that ensures com
 [![Static Badge](https://img.shields.io/badge/changelog-691337)](CHANGELOG.md)
 [![GitHub Tag](https://img.shields.io/github/v/tag/diareuse/spike)](https://github.com/diareuse/spike/releases)
 
+### Gradle plugin
+
+Apply the plugin next to your Kotlin plugin. It applies KSP and adds the Spike runtime and compiler to every
+target, including each target of a Kotlin Multiplatform project:
+
+```kotlin
+plugins {
+    kotlin("multiplatform") // or kotlin("jvm"), or the Android Kotlin plugin
+    id("io.github.diareuse.spike") version "<see 'tag' above>"
+}
+```
+
+Integrations such as `spike-androidx` are still added as regular dependencies. The manual setup below does the
+same thing by hand.
+
 ### `gradle/libs.versions.toml`
 
 ```toml

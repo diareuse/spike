@@ -35,11 +35,14 @@ class FixtureProject(private val name: String, template: String?) {
 
     private fun writeSettings() {
         val spikeRoot = File("..").canonicalPath
+        val usesPlugin = directory.walk().any { it.name == "build.gradle.kts" && SpikePlugin in it.readText() }
+        val pluginBuild = if (usesPlugin) "includeBuild(\"$spikeRoot\")" else ""
         val settings = directory.resolve("settings.gradle.kts")
         val declared = if (settings.exists()) settings.readText() else ""
         settings.writeText(
             """
             pluginManagement {
+                $pluginBuild
                 repositories {
                     gradlePluginPortal()
                     mavenCentral()
@@ -75,4 +78,7 @@ class FixtureProject(private val name: String, template: String?) {
         )
     }
 
+    private companion object {
+        const val SpikePlugin = "id(\"io.github.diareuse.spike\")"
+    }
 }

@@ -20,6 +20,14 @@ class GradleBuildTest : HarnessGradle() {
         assertRebuildsAfterEdit("incremental_edit", "src/main/Screen.kt", "\"first\"", "\"second\"")
 
     @Test
+    fun `the Gradle plugin sets up a JVM project in one line`() =
+        assertBuilds("gradle_plugin_jvm", tasks = listOf(":run"))
+
+    @Test
+    fun `the Gradle plugin sets up every target of a multiplatform project`() =
+        assertBuilds("gradle_plugin_multiplatform", tasks = listOf(":compileKotlinJs", ":jvmRun"))
+
+    @Test
     fun `exports are taken into account`() = assertMatchesGolden(
         "multi_module",
         template = "multi_module",
