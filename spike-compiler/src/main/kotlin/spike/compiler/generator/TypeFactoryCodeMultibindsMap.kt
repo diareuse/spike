@@ -4,7 +4,10 @@ import com.squareup.kotlinpoet.CodeBlock
 import spike.compiler.generator.code.addMap
 import spike.compiler.generator.code.mapEntries
 import spike.compiler.graph.TypeFactory
+import spike.BindTarget
+import spike.Include
 
+@Include
 class TypeFactoryCodeMultibindsMap : TypeFactoryCode<TypeFactory.MultibindsMap> {
     context(context: FileGeneratorContext, step: LinearStep, references: LinearReferences)
     override fun write(body: CodeBlock.Builder, factory: TypeFactory.MultibindsMap) {
@@ -12,5 +15,12 @@ class TypeFactoryCodeMultibindsMap : TypeFactoryCode<TypeFactory.MultibindsMap> 
         body.addMap(key = factory.type.typeArguments[0], value = value) {
             mapEntries(factory.keyValues.entries, value)
         }.addStatement("")
+    }
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @TypeFactoryVariant(TypeFactory.MultibindsMap::class)
+        val TypeFactoryCodeMultibindsMap.asCode: TypeFactoryCode<*>
+            get() = this
     }
 }
