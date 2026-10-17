@@ -2,7 +2,9 @@ package spike.compiler.dagger
 
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.ksp.toClassName
+import spike.Include
 
+@Include
 class BindingCallStatic : BindingCall {
     override fun prefix(binding: DaggerBinding) = "provides"
 

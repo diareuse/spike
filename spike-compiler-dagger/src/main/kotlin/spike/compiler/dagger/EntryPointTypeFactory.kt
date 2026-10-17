@@ -10,6 +10,10 @@ import com.squareup.kotlinpoet.ksp.toClassName
 import spike.compiler.conversion.EntryPointType
 import spike.compiler.conversion.ParameterConversion
 import spike.compiler.conversion.SpikeNames
+import spike.BindTarget
+import spike.Include
+import spike.compiler.conversion.Order
+import spike.compiler.conversion.EntryPointTypeDecorator
 
 class EntryPointTypeFactory(
     private val parameters: ParameterConversion,
@@ -34,5 +38,12 @@ class EntryPointTypeFactory(
                     .build()
             )
             .build()
+    }
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(20)
+        fun decorator(parameters: ParameterConversion): EntryPointTypeDecorator<DaggerComponent> =
+            EntryPointTypeDecorator { EntryPointTypeFactory(parameters, it) }
     }
 }

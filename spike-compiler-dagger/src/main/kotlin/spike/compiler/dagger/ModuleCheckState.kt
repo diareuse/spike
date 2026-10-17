@@ -2,7 +2,11 @@ package spike.compiler.dagger
 
 import spike.compiler.conversion.ConversionCheck
 import spike.compiler.conversion.ConversionProblem
+import spike.Include
+import spike.BindTarget
+import spike.compiler.conversion.Order
 
+@Include
 class ModuleCheckState : ConversionCheck<DaggerModule> {
     override fun check(subject: DaggerModule): ConversionProblem? {
         val needsInstance = subject.bindings.any { binding ->
@@ -15,5 +19,12 @@ class ModuleCheckState : ConversionCheck<DaggerModule> {
             "Spike cannot construct a module with constructor parameters; move its @Provides into a companion object.",
             subject.declaration,
         )
+    }
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(20)
+        val ModuleCheckState.asCheck: ConversionCheck<DaggerModule>
+            get() = this
     }
 }

@@ -2,7 +2,11 @@ package spike.compiler.dagger
 
 import spike.compiler.conversion.ConversionCheck
 import spike.compiler.conversion.ConversionProblem
+import spike.Include
+import spike.BindTarget
+import spike.compiler.conversion.Order
 
+@Include
 class BindingCheckReceiver : ConversionCheck<DaggerBinding> {
     override fun check(subject: DaggerBinding): ConversionProblem? {
         if (subject.function.extensionReceiver == null) return null
@@ -11,5 +15,12 @@ class BindingCheckReceiver : ConversionCheck<DaggerBinding> {
             "A @Provides extension function cannot be converted; take the receiver as a parameter instead.",
             subject.function,
         )
+    }
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(20)
+        val BindingCheckReceiver.asCheck: ConversionCheck<DaggerBinding>
+            get() = this
     }
 }
