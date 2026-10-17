@@ -92,6 +92,8 @@ respective documentation for more details:
   Dagger modules, multibindings and components to Spike while migrating.
 * [Spike for kotlin-inject](spike-compiler-kotlin-inject/readme.md) (`spike-compiler-kotlin-inject`) - Convert
   kotlin-inject declarations and components to Spike while migrating.
+* [Spike for Metro](spike-compiler-metro/readme.md) (`spike-compiler-metro`, `spike-metro`) - Convert Metro
+  declarations and dependency graphs to Spike while migrating.
 * [Spike JSR-330](spike-compiler-jsr/readme.md) (`spike-compiler-jsr`, `spike-jsr`) - Use classes with
   javax or jakarta `@Inject` constructors in a Spike graph without editing them.
 

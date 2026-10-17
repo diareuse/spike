@@ -29,6 +29,7 @@ dependencies {
     testImplementation(project(":spike-compiler-jsr"))
     testImplementation(project(":spike-compiler-dagger"))
     testImplementation(project(":spike-compiler-kotlin-inject"))
+    testImplementation(project(":spike-compiler-metro"))
     testImplementation(gradleTestKit())
     testImplementation(libs.google.ksp.standalone)
     testImplementation(libs.google.ksp.common.deps)
@@ -82,15 +83,24 @@ val fixtureKotlinInject = fixtureLibraries(
     libs.kotlin.inject.runtime.get(),
 )
 
+val fixtureMetro = fixtureLibraries(
+    "fixtureMetro",
+    project(":spike-core"),
+    project(":spike-metro"),
+    "org.jetbrains.kotlin:kotlin-stdlib:${libs.versions.kotlin.get()}",
+    libs.metro.runtime.get(),
+)
+
 tasks.test {
-    inputs.files(fixtureKotlin, fixtureAndroidx, fixtureJsr, fixtureDagger, fixtureKotlinInject).withPropertyName("fixtureLibraries")
+    inputs.files(fixtureKotlin, fixtureAndroidx, fixtureJsr, fixtureDagger, fixtureKotlinInject, fixtureMetro).withPropertyName("fixtureLibraries")
     jvmArgumentProviders += CommandLineArgumentProvider {
         listOf(
             "-Dspike.fixture.kotlin=${fixtureKotlin.asPath}",
             "-Dspike.fixture.androidx=${fixtureAndroidx.asPath}",
             "-Dspike.fixture.jsr=${fixtureJsr.asPath}",
             "-Dspike.fixture.dagger=${fixtureDagger.asPath}",
-            "-Dspike.fixture.kotlininject=${fixtureKotlinInject.asPath}"
+            "-Dspike.fixture.kotlininject=${fixtureKotlinInject.asPath}",
+            "-Dspike.fixture.metro=${fixtureMetro.asPath}"
         )
     }
 }

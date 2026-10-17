@@ -5,6 +5,7 @@ import spike.compiler.harness.Libraries.Androidx
 import spike.compiler.harness.Libraries.Dagger
 import spike.compiler.harness.Libraries.Jsr
 import spike.compiler.harness.Libraries.KotlinInject
+import spike.compiler.harness.Libraries.Metro
 import org.junit.jupiter.api.Timeout
 import kotlin.test.Test
 
@@ -282,6 +283,33 @@ class CompilerTest : HarnessCompiler() {
         "SPIKE-KI-STATEFUL",
         "SPIKE-KI-UNSUPPORTED",
         libraries = KotlinInject,
+    )
+
+    @Test
+    fun `Metro declarations and graphs become a Spike graph through spike-compiler-metro`() =
+        assertRuns("metro_graph", Metro)
+
+    @Test
+    fun `Metro declarations that cannot be converted are reported`() = assertProcessingFails(
+        "metro_unsupported",
+        "SPIKE-METRO-CONTRIBUTION",
+        "SPIKE-METRO-EXTENSION",
+        "SPIKE-METRO-GRAPH-PROVIDES",
+        "SPIKE-METRO-PROVIDER",
+        "SPIKE-METRO-OPTIONAL",
+        libraries = Metro,
+    )
+
+    @Test
+    fun `Metro declarations Spike cannot call or key are reported`() = assertProcessingFails(
+        "metro_rejected",
+        "SPIKE-METRO-VISIBILITY",
+        "SPIKE-METRO-GENERIC",
+        "SPIKE-METRO-QUALIFIER",
+        "SPIKE-METRO-STATEFUL",
+        "SPIKE-METRO-UNSUPPORTED",
+        "SPIKE-METRO-INCLUDES",
+        libraries = Metro,
     )
 
     @Test

@@ -5,5 +5,5 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 
 class SymbolSourceAnnotated(private val names: AnnotationNames) : SymbolSource {
     override fun symbols(resolver: Resolver): List<KSAnnotated> =
-        names.all.flatMap { resolver.getSymbolsWithAnnotation(it) }
+        names.all.flatMap { resolver.getSymbolsWithAnnotation(it) }.distinct()
 }

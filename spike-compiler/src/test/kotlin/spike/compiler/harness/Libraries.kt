@@ -7,7 +7,8 @@ enum class Libraries(private val property: String) {
     Androidx("spike.fixture.androidx"),
     Jsr("spike.fixture.jsr"),
     Dagger("spike.fixture.dagger"),
-    KotlinInject("spike.fixture.kotlininject");
+    KotlinInject("spike.fixture.kotlininject"),
+    Metro("spike.fixture.metro");
 
     fun files(): List<File> = checkNotNull(System.getProperty(property)) {
         "System property $property is missing. Run the tests through Gradle, " +
