@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792097622485,
+  "lastUpdate": 1792356376805,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -3421,6 +3421,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "spike cold start",
             "value": 126950.12650000001,
+            "unit": "us"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "7ec2e72138ff41721b4438ff01aebee40d28f8d4",
+          "message": "ci(benchmark): report only the failure when the benchmark itself fails\n\nWhen benchmark.sh failed, the summary and the Baselines upload failed again on missing output files and hid the real error. Both now run only when there is something to report. comment-on-commit is not an input of github-action-benchmark; alerts comment through comment-on-alert.",
+          "timestamp": "2026-10-18T11:13:59+02:00",
+          "tree_id": "528f4d6455a6750876d3e53820d3ea2c31bb50d3",
+          "url": "https://github.com/diareuse/spike/commit/7ec2e72138ff41721b4438ff01aebee40d28f8d4"
+        },
+        "date": 1792356376292,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "spike clean build",
+            "value": 3154.96,
+            "unit": "ms"
+          },
+          {
+            "name": "spike ABI change",
+            "value": 1730.57,
+            "unit": "ms"
+          },
+          {
+            "name": "spike non-ABI change",
+            "value": 1741.77,
+            "unit": "ms"
+          },
+          {
+            "name": "spike resolve from graph",
+            "value": 2.662169353975807,
+            "unit": "us"
+          },
+          {
+            "name": "spike cold start",
+            "value": 163450.622,
+            "unit": "us"
+          },
+          {
+            "name": "spike open screen",
+            "value": 0.003228951835171615,
             "unit": "us"
           }
         ]
