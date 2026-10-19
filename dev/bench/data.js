@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792411684896,
+  "lastUpdate": 1792411687666,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -4496,6 +4496,282 @@ window.BENCHMARK_DATA = {
           {
             "name": "open screen",
             "value": 0.34825070862097807,
+            "unit": "us",
+            "extra": "koin"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "d2484e74c2f7c1dbfcd29e145503767019e40322",
+          "message": "perf(compiler): speed up generating and compiling the entry point index and program\n\nThe entry point index and the settle round made a 2000-node graph build\nmarkedly slower; the generated program itself was unchanged.\n\n- Pack the entry point index into one string element. A 2000-element array\n  annotation argument added about half a second to compiling the module that\n  declares the entry point; the names joined by newlines cost about 20 ms. The\n  annotation keeps its signature, so indexes written by earlier compilers, one\n  name per element, are still read.\n- Hand program parts to KotlinPoet as one nested block. KotlinPoet scans every\n  format part of a function body several times per rendering pass to decide\n  whether it can become an expression body; parts that cannot are now scanned\n  once and render identically.\n- Resolve the bound type of an include only when it is multibound.",
+          "timestamp": "2026-10-19T13:09:42+02:00",
+          "tree_id": "370a44ac5f6e91f839b69727d0209b6e50ab06a5",
+          "url": "https://github.com/diareuse/spike/commit/d2484e74c2f7c1dbfcd29e145503767019e40322"
+        },
+        "date": 1792411687354,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "clean build",
+            "value": 1682.235,
+            "unit": "ms",
+            "extra": "manual"
+          },
+          {
+            "name": "clean build",
+            "value": 3222.6800000000003,
+            "unit": "ms",
+            "extra": "spike"
+          },
+          {
+            "name": "clean build",
+            "value": 11988.145,
+            "unit": "ms",
+            "extra": "dagger"
+          },
+          {
+            "name": "clean build",
+            "value": 6126.485000000001,
+            "unit": "ms",
+            "extra": "metro"
+          },
+          {
+            "name": "clean build",
+            "value": 2585.33,
+            "unit": "ms",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "clean build",
+            "value": 3053.3,
+            "unit": "ms",
+            "extra": "koin"
+          },
+          {
+            "name": "ABI change",
+            "value": 529.37,
+            "unit": "ms",
+            "extra": "manual"
+          },
+          {
+            "name": "ABI change",
+            "value": 1852.62,
+            "unit": "ms",
+            "extra": "spike"
+          },
+          {
+            "name": "ABI change",
+            "value": 6520.495,
+            "unit": "ms",
+            "extra": "dagger"
+          },
+          {
+            "name": "ABI change",
+            "value": 6824.105,
+            "unit": "ms",
+            "extra": "metro"
+          },
+          {
+            "name": "ABI change",
+            "value": 1528.615,
+            "unit": "ms",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "ABI change",
+            "value": 658.86,
+            "unit": "ms",
+            "extra": "koin"
+          },
+          {
+            "name": "non-ABI change",
+            "value": 507.41999999999996,
+            "unit": "ms",
+            "extra": "manual"
+          },
+          {
+            "name": "non-ABI change",
+            "value": 1757.375,
+            "unit": "ms",
+            "extra": "spike"
+          },
+          {
+            "name": "non-ABI change",
+            "value": 6270.71,
+            "unit": "ms",
+            "extra": "dagger"
+          },
+          {
+            "name": "non-ABI change",
+            "value": 6761.12,
+            "unit": "ms",
+            "extra": "metro"
+          },
+          {
+            "name": "non-ABI change",
+            "value": 1462.085,
+            "unit": "ms",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "non-ABI change",
+            "value": 636.6800000000001,
+            "unit": "ms",
+            "extra": "koin"
+          },
+          {
+            "name": "create graph",
+            "value": 0.0014042687170765292,
+            "unit": "us",
+            "extra": "manual"
+          },
+          {
+            "name": "create graph",
+            "value": 0.002900534155585401,
+            "unit": "us",
+            "extra": "spike"
+          },
+          {
+            "name": "create graph",
+            "value": 0.0017509745083453365,
+            "unit": "us",
+            "extra": "dagger"
+          },
+          {
+            "name": "create graph",
+            "value": 0.00140566375776871,
+            "unit": "us",
+            "extra": "metro"
+          },
+          {
+            "name": "create graph",
+            "value": 0.0014059861198756742,
+            "unit": "us",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "create graph",
+            "value": 380.3605498430727,
+            "unit": "us",
+            "extra": "koin"
+          },
+          {
+            "name": "resolve from graph",
+            "value": 5.154381003630898,
+            "unit": "us",
+            "extra": "manual"
+          },
+          {
+            "name": "resolve from graph",
+            "value": 5.063784095686965,
+            "unit": "us",
+            "extra": "spike"
+          },
+          {
+            "name": "resolve from graph",
+            "value": 5.0996917317979396,
+            "unit": "us",
+            "extra": "dagger"
+          },
+          {
+            "name": "resolve from graph",
+            "value": 124.86610336440643,
+            "unit": "us",
+            "extra": "metro"
+          },
+          {
+            "name": "resolve from graph",
+            "value": 127.59958170445015,
+            "unit": "us",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "resolve from graph",
+            "value": 1515.0200552364463,
+            "unit": "us",
+            "extra": "koin"
+          },
+          {
+            "name": "cold start",
+            "value": 232022.15850000002,
+            "unit": "us",
+            "extra": "manual"
+          },
+          {
+            "name": "cold start",
+            "value": 236729.71500000003,
+            "unit": "us",
+            "extra": "spike"
+          },
+          {
+            "name": "cold start",
+            "value": 241744.1745,
+            "unit": "us",
+            "extra": "dagger"
+          },
+          {
+            "name": "cold start",
+            "value": 233993.182,
+            "unit": "us",
+            "extra": "metro"
+          },
+          {
+            "name": "cold start",
+            "value": 263339.4035,
+            "unit": "us",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "cold start",
+            "value": 632088.552,
+            "unit": "us",
+            "extra": "koin"
+          },
+          {
+            "name": "open screen",
+            "value": 0.003404118114757323,
+            "unit": "us",
+            "extra": "manual"
+          },
+          {
+            "name": "open screen",
+            "value": 0.004007155929138183,
+            "unit": "us",
+            "extra": "spike"
+          },
+          {
+            "name": "open screen",
+            "value": 0.0064945410213843695,
+            "unit": "us",
+            "extra": "dagger"
+          },
+          {
+            "name": "open screen",
+            "value": 0.00379095657102733,
+            "unit": "us",
+            "extra": "metro"
+          },
+          {
+            "name": "open screen",
+            "value": 0.00617456573884747,
+            "unit": "us",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "open screen",
+            "value": 0.45343218252985207,
             "unit": "us",
             "extra": "koin"
           }
