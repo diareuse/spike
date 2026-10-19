@@ -8,5 +8,5 @@ import kotlin.Suppress
 import spike.InternalSpikeApi
 import spike.factory.IncludedDeclarations
 
-@IncludedDeclarations(names = ["c:Cat", "f:inputParameterDog"])
+@IncludedDeclarations(names = ["c:Cat\nf:inputParameterDog"])
 public object PropertyEntryPoint

@@ -112,7 +112,10 @@ class LinearProgramGenerator(
             .addParameter("factory", context.dependencyFactoryClassName)
             .addParameters(values.map { it.parameter })
         if (part == layout.parts.lastIndex) function.returns(NullableAny)
-        return function.addCode(body.build()).build()
+        val code = body.build()
+        // One nested part spares KotlinPoet rescanning every part for an expression body this one cannot have.
+        val returnsFirst = steps.first().index == layout.root
+        return function.addCode(if (returnsFirst) code else CodeBlock.of("%L", code)).build()
     }
 
     private companion object {

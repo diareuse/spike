@@ -5,10 +5,8 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFile
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.joinToCode
 import com.squareup.kotlinpoet.ksp.addOriginatingKSFile
 import com.squareup.kotlinpoet.ksp.writeTo
 import spike.InternalSpikeApi
@@ -27,14 +25,14 @@ class GraphContributorIndex(
 ) : GraphContributor {
     override fun contribute(context: GraphContext) {
         val includes = registry.include(context.resolver).toList()
-        val names = includes.mapNotNull(EntryPointIndex::nameOf).sorted()
+        val names = includes.mapNotNull(EntryPointIndex::nameOf).sorted().joinToString(EntryPointIndex.SEPARATOR)
         val files = includes.mapNotNull { it.findKSFile() }.distinct()
         for (entryPoint in registry.entryPoint(context.resolver)) write(entryPoint, names, files)
     }
 
     private fun write(
         entryPoint: KSClassDeclaration,
-        names: List<String>,
+        names: String,
         files: List<KSFile>,
     ) {
         val name = entryPoint.qualifiedName?.asString() ?: return
@@ -42,7 +40,7 @@ class GraphContributorIndex(
         val type = TypeSpec.objectBuilder(className)
             .addAnnotation(
                 AnnotationSpec.builder(IncludedDeclarations::class)
-                    .addMember("names = [%L]", names.map { CodeBlock.of("%S", it) }.joinToCode())
+                    .addMember("names = [%S]", names)
                     .build()
             )
         for (file in files + listOfNotNull(entryPoint.findKSFile())) type.addOriginatingKSFile(file)

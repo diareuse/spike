@@ -9,6 +9,7 @@ object EntryPointIndex {
     const val CLASS = "c:"
     const val FUNCTION = "f:"
     const val PROPERTY = "p:"
+    const val SEPARATOR = "\n"
 
     fun classNameOf(entryPoint: String) = ClassName(PACKAGE, entryPoint.escapedName())
 

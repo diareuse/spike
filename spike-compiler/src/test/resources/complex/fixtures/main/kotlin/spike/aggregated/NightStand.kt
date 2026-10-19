@@ -8,5 +8,5 @@ import kotlin.Suppress
 import spike.InternalSpikeApi
 import spike.factory.IncludedDeclarations
 
-@IncludedDeclarations(names = ["c:AmazonFireSoundBar", "c:RemoteControl", "c:SamsungTelevision", "f:batteries", "p:asRemote", "p:asSoundSystem", "p:asTelevision"])
+@IncludedDeclarations(names = ["c:AmazonFireSoundBar\nc:RemoteControl\nc:SamsungTelevision\nf:batteries\np:asRemote\np:asSoundSystem\np:asTelevision"])
 public object NightStand

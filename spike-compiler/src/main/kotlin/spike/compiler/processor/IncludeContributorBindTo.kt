@@ -30,16 +30,15 @@ class IncludeContributorBindTo(
         crossinline contribute: (GraphContext, T) -> Unit,
     ) {
         val annotated = this
-        val bound = type()
         when (findBindToTarget()) {
             BindTarget.None -> contribute(context, annotated)
-            BindTarget.Set -> context.multibind.addToSet(bound.elementOf(BuiltInTypes.Set)) {
+            BindTarget.Set -> context.multibind.addToSet(type().elementOf(BuiltInTypes.Set)) {
                 contribute(context.copy(builder = this), annotated)
             }
-            BindTarget.List -> context.multibind.addToList(bound.elementOf(BuiltInTypes.List)) {
+            BindTarget.List -> context.multibind.addToList(type().elementOf(BuiltInTypes.List)) {
                 contribute(context.copy(builder = this), annotated)
             }
-            BindTarget.Map -> context.multibind.addToMap(bound, findKey()) {
+            BindTarget.Map -> context.multibind.addToMap(type(), findKey()) {
                 contribute(context.copy(builder = this), annotated)
             }
         }

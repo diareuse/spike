@@ -16,10 +16,12 @@ class IndexedDeclarations(private val lookups: Map<String, IndexLookup>) {
         val names = index.annotations
             .first { it.shortName.asString() == "IncludedDeclarations" }
             .arguments.single().value as List<*>
-        return names.filterIsInstance<String>().flatMap { indexed ->
-            val prefix = indexed.substringBefore(':') + ":"
-            val lookup = lookups[prefix] ?: return@flatMap emptyList()
-            lookup.find(resolver, resolver.getKSNameFromString(indexed.substringAfter(':')))
-        }
+        return names.filterIsInstance<String>()
+            .flatMap { it.split(EntryPointIndex.SEPARATOR) }
+            .flatMap { indexed ->
+                val prefix = indexed.substringBefore(':') + ":"
+                val lookup = lookups[prefix] ?: return@flatMap emptyList()
+                lookup.find(resolver, resolver.getKSNameFromString(indexed.substringAfter(':')))
+            }
     }
 }
