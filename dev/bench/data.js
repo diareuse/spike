@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792356379285,
+  "lastUpdate": 1792411684896,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -3475,6 +3475,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "spike open screen",
             "value": 0.003228951835171615,
+            "unit": "us"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "d2484e74c2f7c1dbfcd29e145503767019e40322",
+          "message": "perf(compiler): speed up generating and compiling the entry point index and program\n\nThe entry point index and the settle round made a 2000-node graph build\nmarkedly slower; the generated program itself was unchanged.\n\n- Pack the entry point index into one string element. A 2000-element array\n  annotation argument added about half a second to compiling the module that\n  declares the entry point; the names joined by newlines cost about 20 ms. The\n  annotation keeps its signature, so indexes written by earlier compilers, one\n  name per element, are still read.\n- Hand program parts to KotlinPoet as one nested block. KotlinPoet scans every\n  format part of a function body several times per rendering pass to decide\n  whether it can become an expression body; parts that cannot are now scanned\n  once and render identically.\n- Resolve the bound type of an include only when it is multibound.",
+          "timestamp": "2026-10-19T13:09:42+02:00",
+          "tree_id": "370a44ac5f6e91f839b69727d0209b6e50ab06a5",
+          "url": "https://github.com/diareuse/spike/commit/d2484e74c2f7c1dbfcd29e145503767019e40322"
+        },
+        "date": 1792411684336,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "spike clean build",
+            "value": 3222.6800000000003,
+            "unit": "ms"
+          },
+          {
+            "name": "spike ABI change",
+            "value": 1852.62,
+            "unit": "ms"
+          },
+          {
+            "name": "spike non-ABI change",
+            "value": 1757.375,
+            "unit": "ms"
+          },
+          {
+            "name": "spike resolve from graph",
+            "value": 5.063784095686965,
+            "unit": "us"
+          },
+          {
+            "name": "spike cold start",
+            "value": 236729.71500000003,
+            "unit": "us"
+          },
+          {
+            "name": "spike open screen",
+            "value": 0.004007155929138183,
             "unit": "us"
           }
         ]
