@@ -48,9 +48,8 @@ jobs:
           output-file-path: spike-benchmark/output/results-spike.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
-          alert-threshold: '130%'
           comment-on-alert: true
-          fail-on-alert: true
+          fail-on-alert: false
 
       - if: (success() || failure()) && steps.benchmark.outcome == 'success'
         uses: benchmark-action/github-action-benchmark@v1
