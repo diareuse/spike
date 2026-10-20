@@ -29,9 +29,9 @@ dependencies {
 }
 
 tasks.processResources {
-    val version = project.version.toString()
+    val version = providers.gradleProperty("VERSION_NAME").orElse(project.version.toString())
     inputs.property("version", version)
     filesMatching("spike-gradle-plugin.properties") {
-        expand("version" to version)
+        expand("version" to version.get())
     }
 }

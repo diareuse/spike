@@ -20,8 +20,13 @@ abstract class HarnessGradle {
         }
     }
 
-    protected fun assertBuilds(name: String, template: String? = null, tasks: List<String> = listOf(":run")) {
-        assertTasksSucceeded(FixtureProject(name, template).build(tasks), tasks)
+    protected fun assertBuilds(
+        name: String,
+        template: String? = null,
+        tasks: List<String> = listOf(":run"),
+        arguments: List<String> = emptyList()
+    ) {
+        assertTasksSucceeded(FixtureProject(name, template).build(tasks, arguments), tasks)
     }
 
     protected fun assertRebuildsAfterEdit(

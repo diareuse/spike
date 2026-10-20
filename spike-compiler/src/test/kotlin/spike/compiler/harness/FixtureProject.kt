@@ -17,7 +17,8 @@ class FixtureProject(private val name: String, template: String?) {
         writeSettings()
     }
 
-    fun build(tasks: List<String>): BuildResult = runner(tasks).build()
+    fun build(tasks: List<String>, arguments: List<String> = emptyList()): BuildResult =
+        runner(tasks + arguments).build()
 
     fun replace(path: String, oldText: String, newText: String) {
         val file = directory.resolve(path)

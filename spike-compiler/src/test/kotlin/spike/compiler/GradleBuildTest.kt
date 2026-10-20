@@ -28,6 +28,13 @@ class GradleBuildTest : HarnessGradle() {
         assertBuilds("gradle_plugin_multiplatform", tasks = listOf(":compileKotlinJs", ":jvmRun"))
 
     @Test
+    fun `the Gradle plugin adds Spike in the version it was published as`() = assertBuilds(
+        "gradle_plugin_version",
+        tasks = listOf(":assertSpikeVersion"),
+        arguments = listOf("-PVERSION_NAME=1.2.3")
+    )
+
+    @Test
     fun `exports are taken into account`() = assertMatchesGolden(
         "multi_module",
         template = "multi_module",
