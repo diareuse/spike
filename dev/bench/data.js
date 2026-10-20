@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1792411687666,
+  "lastUpdate": 1792484240587,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -3529,6 +3529,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "spike open screen",
             "value": 0.004007155929138183,
+            "unit": "us"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "6510ed3dbb275573a466ab3a009c8ef1f637def5",
+          "message": "chore(deps): bump compose from 1.12.1 to 1.12.2\n\nBumps `compose` from 1.12.1 to 1.12.2.\n\nUpdates `org.jetbrains.compose:org.jetbrains.compose.gradle.plugin` from 1.12.1 to 1.12.2\n- [Release notes](https://github.com/JetBrains/compose-multiplatform/releases)\n- [Changelog](https://github.com/JetBrains/compose-multiplatform/blob/master/CHANGELOG.md)\n- [Commits](https://github.com/JetBrains/compose-multiplatform/compare/v1.12.1...v1.12.2)\n\nUpdates `org.jetbrains.compose.runtime:runtime` from 1.12.1 to 1.12.2\n- [Release notes](https://github.com/JetBrains/compose-multiplatform/releases)\n- [Changelog](https://github.com/JetBrains/compose-multiplatform/blob/master/CHANGELOG.md)\n- [Commits](https://github.com/JetBrains/compose-multiplatform/compare/v1.12.1...v1.12.2)\n\n---\nupdated-dependencies:\n- dependency-name: org.jetbrains.compose:org.jetbrains.compose.gradle.plugin\n  dependency-version: 1.12.2\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: org.jetbrains.compose.runtime:runtime\n  dependency-version: 1.12.2\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-10-20T09:33:52+02:00",
+          "tree_id": "d78dec80b0085d34878a7a97a3ece0f3476afe81",
+          "url": "https://github.com/diareuse/spike/commit/6510ed3dbb275573a466ab3a009c8ef1f637def5"
+        },
+        "date": 1792484239541,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "spike clean build",
+            "value": 1988.185,
+            "unit": "ms"
+          },
+          {
+            "name": "spike ABI change",
+            "value": 1213.19,
+            "unit": "ms"
+          },
+          {
+            "name": "spike non-ABI change",
+            "value": 1241.285,
+            "unit": "ms"
+          },
+          {
+            "name": "spike resolve from graph",
+            "value": 4.524587335500103,
+            "unit": "us"
+          },
+          {
+            "name": "spike cold start",
+            "value": 120307.467,
+            "unit": "us"
+          },
+          {
+            "name": "spike open screen",
+            "value": 0.003256550895656697,
             "unit": "us"
           }
         ]
