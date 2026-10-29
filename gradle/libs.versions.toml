@@ -22,7 +22,7 @@ javax-inject = { module = "javax.inject:javax.inject", version = "1" }
 jakarta-inject = { module = "jakarta.inject:jakarta.inject-api", version = "2.0.1" }
 dagger = { module = "com.google.dagger:dagger", version = "2.60.1" }
 kotlin-inject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version = "0.9.0" }
-metro-runtime = { module = "dev.zacsweers.metro:runtime", version = "1.4.5" }
+metro-runtime = { module = "dev.zacsweers.metro:runtime", version = "1.5.0" }
 koin-core = { module = "io.insert-koin:koin-core", version = "4.2.2" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 google-ksp-api = { module = "com.google.devtools.ksp:symbol-processing-api", version.ref = "google-ksp" }
