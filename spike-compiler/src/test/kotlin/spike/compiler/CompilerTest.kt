@@ -321,6 +321,18 @@ class CompilerTest : HarnessCompiler() {
         )
 
     @Test
+    fun `an unresolved annotation on an Include class is reported by name`() =
+        assertProcessingFails("unresolved_class_annotation", "Main.kt:7: [SPIKE-UNRESOLVED-TYPE] Title")
+
+    @Test
+    fun `an unresolved class in a map key argument is reported at the key`() =
+        assertProcessingFails("unresolved_key_argument", "Main.kt:16: [SPIKE-UNRESOLVED-TYPE] Breed")
+
+    @Test
+    fun `an unresolved class in a Replaces argument is reported at the annotation`() =
+        assertProcessingFails("unresolved_replaces_argument", "Main.kt:10: [SPIKE-UNRESOLVED-TYPE] Repository")
+
+    @Test
     fun `an unresolved type in a constructor Spike does not call is left to the Kotlin compiler`() =
         assertCompilationFails("unresolved_unused_constructor", "unresolved reference 'Context'")
 

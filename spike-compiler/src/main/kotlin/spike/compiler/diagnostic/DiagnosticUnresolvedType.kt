@@ -1,9 +1,8 @@
 package spike.compiler.diagnostic
 
-class DiagnosticUnresolvedType(type: String, usedBy: Involved) : Diagnostic {
+class DiagnosticUnresolvedType(type: String, override val involved: List<Involved>) : Diagnostic {
     override val code = "SPIKE-UNRESOLVED-TYPE"
-    override val summary = "$type cannot be resolved, but ${usedBy.description} needs it"
-    override val involved = listOf(usedBy)
+    override val summary = "$type cannot be resolved, but ${involved.first().description} needs it"
     override val reason = "Spike waits for types other processors generate, but $type was still unresolved " +
         "when processing finished. A graph built from an unresolved type would be wired against a guess."
     override val fixes = listOf(

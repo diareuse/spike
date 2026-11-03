@@ -48,10 +48,11 @@ fun symbolProcessor(
     graph: SymbolProcessorGraph,
     environment: SymbolProcessorEnvironment,
     registry: SymbolRegistry,
+    signatures: SignatureTypes,
     unresolved: UnresolvedTypes,
     reporter: DiagnosticReporter,
 ): SymbolProcessor = SymbolProcessorSettled(
-    SymbolProcessorResolved(graph, registry, unresolved, reporter),
+    SymbolProcessorResolved(graph, registry, signatures, unresolved, reporter),
     environment,
     registry,
 )

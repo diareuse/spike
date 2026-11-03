@@ -1,15 +1,13 @@
 package spike.compiler.processor.symbol
 
-import com.google.devtools.ksp.symbol.KSAnnotated
 import spike.Include
-import spike.compiler.diagnostic.Diagnostic
 
 fun interface UnresolvedTypes {
-    fun of(symbols: List<KSAnnotated>): List<Diagnostic>
+    fun of(types: Sequence<SignatureType>): Sequence<UnresolvedReference>
 
     companion object {
         @Include
-        val UnresolvedTypesSignature.unresolved: UnresolvedTypes
+        val UnresolvedTypesError.unresolved: UnresolvedTypes
             get() = this
     }
 }
