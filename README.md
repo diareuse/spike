@@ -211,9 +211,10 @@ fun main() {
 
 ### 5. Replace Bindings in Tests
 
-Add `spike-test` to your test dependencies. The Gradle plugin already runs the compiler on your tests (`kspTest`,
-`kspAndroidTest`, `kspTestFixtures` and the test compilations of every multiplatform target); with the manual setup,
-add the compiler to the test configurations yourself:
+Add `spike-test` to your test dependencies. The Gradle plugin already runs the compiler on every compilation KSP
+serves: tests, test fixtures and custom test suites (`kspTest`, `kspTestFixtures`, `kspIntegrationTest`), the test
+compilations of every multiplatform target (`kspJvmTest`), and every Android source set KSP creates a configuration
+for. With the manual setup, add the compiler to the test configurations yourself:
 
 ```kotlin
 dependencies {

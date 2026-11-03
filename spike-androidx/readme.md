@@ -95,10 +95,10 @@ module unique even when two projects share a name (`:a:ui`, `:b:ui`). Without th
 
 A library module exports its ViewModels and never generates `ViewModelEntryPointImpl`. The plugin passes the option
 to every compilation except tests (test fixtures count as library code), and it runs Spike in the test compilations
-too, so the module's own tests still get a full `ViewModelEntryPointImpl`. The Android test configurations
-(`kspAndroidTest` and the test compilations of a multiplatform Android target) are wired by name and have no
-automated Android Gradle plugin test yet. Set by hand, the option applies to every compilation. A module that does not set it is treated as the app unless it declares an
-`@Export` interface.
+too, so the module's own tests still get a full `ViewModelEntryPointImpl`. On Android targets the plugin adds the
+compiler to every configuration KSP creates for an Android source set; that path has no automated Android Gradle
+plugin test yet. Set by hand, the option applies to every compilation. A module that does not set it is treated as
+the app unless it declares an `@Export` interface.
 
 All ViewModels share one set of `@Singleton` instances, so a `@Singleton` repository is the same object in every ViewModel. That set is separate from the singletons of any `@EntryPoint` you create yourself: each entry point instance owns its own. A `@Singleton` cannot depend on `SavedStateHandle`, because it would otherwise keep the handle of the first ViewModel; Spike reports this at compile time.
 

@@ -45,14 +45,15 @@ internal fun moduleId(compilations: KspCompilations, argument: (String) -> Spike
 
 @Include(bindTo = BindTarget.Map)
 @Order(20)
-internal fun multiplatform(artifacts: SpikeArtifacts): SpikeSetup = SpikeSetupMultiplatform(artifacts)
+internal fun multiplatform(artifacts: SpikeArtifacts, configurations: KspConfigurations): SpikeSetup =
+    SpikeSetupMultiplatform(artifacts, configurations)
 
 @Include(bindTo = BindTarget.Map)
 @Order(30)
-internal fun jvm(artifacts: SpikeArtifacts): SpikeSetup =
-    SpikeSetupSinglePlatform("org.jetbrains.kotlin.jvm", artifacts)
+internal fun jvm(artifacts: SpikeArtifacts, configurations: KspConfigurations): SpikeSetup =
+    SpikeSetupSinglePlatform("org.jetbrains.kotlin.jvm", artifacts, configurations)
 
 @Include(bindTo = BindTarget.Map)
 @Order(40)
-internal fun android(artifacts: SpikeArtifacts): SpikeSetup =
-    SpikeSetupSinglePlatform("org.jetbrains.kotlin.android", artifacts)
+internal fun android(artifacts: SpikeArtifacts, configurations: KspConfigurations): SpikeSetup =
+    SpikeSetupSinglePlatform("org.jetbrains.kotlin.android", artifacts, configurations)

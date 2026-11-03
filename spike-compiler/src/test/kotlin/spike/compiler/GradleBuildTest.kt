@@ -83,6 +83,10 @@ class GradleBuildTest : HarnessGradle() {
         assertBuilds("gradle_plugin_viewmodel_test_fixtures_viewmodel", tasks = listOf(":view:runTestMain"))
 
     @Test
+    fun `the Gradle plugin runs Spike in a custom JVM test suite`() =
+        assertBuilds("gradle_plugin_integration_test_suite", tasks = listOf(":runIntegrationMain"))
+
+    @Test
     fun `test fixtures of a library module keep the library role`() =
         assertBuilds("gradle_plugin_viewmodel_test_fixtures", tasks = listOf(":app:runTestMain"))
 
