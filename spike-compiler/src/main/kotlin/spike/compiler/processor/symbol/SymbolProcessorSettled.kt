@@ -5,6 +5,9 @@ import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
 import com.google.devtools.ksp.symbol.KSAnnotated
+import spike.BindTarget
+import spike.Include
+import spike.compiler.Order
 import spike.compiler.generator.findKSFile
 
 class SymbolProcessorSettled(
@@ -39,8 +42,13 @@ class SymbolProcessorSettled(
         return symbols.any { it.findKSFile() in newFiles }
     }
 
-    private companion object {
-        const val MarkerPackage = "spike.aggregated"
-        const val MaxWaitingRounds = 8
+    companion object {
+        private const val MarkerPackage = "spike.aggregated"
+        private const val MaxWaitingRounds = 8
+
+        @Include(bindTo = BindTarget.Map)
+        @Order(20)
+        fun decorator(environment: SymbolProcessorEnvironment, registry: SymbolRegistry) =
+            SymbolProcessorDecorator { SymbolProcessorSettled(it, environment, registry) }
     }
 }

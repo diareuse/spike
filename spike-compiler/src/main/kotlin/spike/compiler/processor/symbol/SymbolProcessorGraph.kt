@@ -46,13 +46,7 @@ class SymbolProcessorGraph(
 @Include
 fun symbolProcessor(
     graph: SymbolProcessorGraph,
-    environment: SymbolProcessorEnvironment,
-    registry: SymbolRegistry,
-    signatures: SignatureTypes,
-    unresolved: UnresolvedTypes,
-    reporter: DiagnosticReporter,
-): SymbolProcessor = SymbolProcessorSettled(
-    SymbolProcessorResolved(graph, registry, signatures, unresolved, reporter),
-    environment,
-    registry,
-)
+    decorators: Map<Int, SymbolProcessorDecorator>,
+): SymbolProcessor = decorators.toSortedMap().values.fold(graph as SymbolProcessor) { inner, decorator ->
+    decorator.decorate(inner)
+}

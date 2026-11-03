@@ -3,6 +3,9 @@ package spike.compiler.processor.symbol
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
+import spike.BindTarget
+import spike.Include
+import spike.compiler.Order
 import spike.compiler.diagnostic.DiagnosticUnresolvedType
 import spike.compiler.processor.DiagnosticReporter
 
@@ -36,4 +39,15 @@ class SymbolProcessorResolved(
 
     private fun unresolvedIn(symbols: List<KSAnnotated>) =
         unresolved.of(symbols.asSequence().flatMap(signatures::of))
+
+    companion object {
+        @Include(bindTo = BindTarget.Map)
+        @Order(10)
+        fun decorator(
+            registry: SymbolRegistry,
+            signatures: SignatureTypes,
+            unresolved: UnresolvedTypes,
+            reporter: DiagnosticReporter,
+        ) = SymbolProcessorDecorator { SymbolProcessorResolved(it, registry, signatures, unresolved, reporter) }
+    }
 }
