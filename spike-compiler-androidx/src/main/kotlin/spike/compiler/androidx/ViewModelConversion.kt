@@ -64,6 +64,7 @@ fun viewModelEntryPoint(environment: SymbolProcessorEnvironment, reporter: Probl
             SymbolSourceAnnotated(ViewModelNames.Export),
             SymbolProcessorModuleRole(
                 environment.options,
+                environment.logger,
                 library = SymbolProcessorViewModelExport(
                     SymbolSourceAnnotated(ViewModelNames.SpikeViewModel),
                     environment.codeGenerator,

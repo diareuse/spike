@@ -894,6 +894,14 @@ class CompilerTest : HarnessCompiler() {
         )
 
     @Test
+    fun `a spike library option other than true or false fails`() = assertProcessingFails(
+        "androidx_viewmodel_library_option_invalid",
+        "SPIKE-LIBRARY-OPTION",
+        "\"yes\"",
+        libraries = Androidx
+    )
+
+    @Test
     fun `a viewmodel declared only in a test compilation of the app fails`() = assertProcessingFails(
         "androidx_viewmodel_test_only",
         "SPIKE-VIEWMODEL-ENTRY-POINT",
