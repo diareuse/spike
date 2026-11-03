@@ -39,6 +39,10 @@ class GradleBuildTest : HarnessGradle() {
         assertBuilds("gradle_plugin_viewmodel_library", tasks = listOf(":app:run"))
 
     @Test
+    fun `a test source set reuses the app's ViewModel entry point and can replace its bindings`() =
+        assertBuilds("gradle_plugin_viewmodel_test_source_set", tasks = listOf(":runTestMain"))
+
+    @Test
     fun `exports are taken into account`() = assertMatchesGolden(
         "multi_module",
         template = "multi_module",

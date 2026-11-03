@@ -868,6 +868,18 @@ class CompilerTest : HarnessCompiler() {
         assertRuns("androidx_viewmodel_test_of_app_with_export", Androidx)
 
     @Test
+    fun `a viewmodel declared only in a test compilation of the app fails`() = assertProcessingFails(
+        "androidx_viewmodel_test_only",
+        "SPIKE-VIEWMODEL-ENTRY-POINT",
+        "test compilation",
+        libraries = Androidx
+    )
+
+    @Test
+    fun `the spike viewmodel package option moves the generated ViewModel entry point`() =
+        assertRuns("androidx_viewmodel_package", Androidx)
+
+    @Test
     fun `viewmodels share singletons of an exported library`() = assertRuns("androidx_viewmodel_export", Androidx)
 
     @Test
