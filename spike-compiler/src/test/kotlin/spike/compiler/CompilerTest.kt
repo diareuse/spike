@@ -338,7 +338,15 @@ class CompilerTest : HarnessCompiler() {
 
     @Test
     fun `EntryPoint members of an unresolved type are reported at the member`() =
-        assertProcessingFails("unresolved_entry_point_member", "Main.kt:4: [SPIKE-UNRESOLVED-TYPE] Settings")
+        assertProcessingFails(
+            "unresolved_entry_point_member",
+            "Main.kt:4: [SPIKE-UNRESOLVED-TYPE] Settings",
+            "Main.kt:5: [SPIKE-UNRESOLVED-TYPE] Theme",
+        )
+
+    @Test
+    fun `an Include property of an unresolved type is reported at the property`() =
+        assertProcessingFails("unresolved_include_property", "Main.kt:11: [SPIKE-UNRESOLVED-TYPE] Theme")
 
     @Test
     fun `Export members of an unresolved type are reported at the member`() =

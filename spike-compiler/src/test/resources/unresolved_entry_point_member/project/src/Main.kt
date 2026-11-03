@@ -2,6 +2,7 @@
 interface App {
     val screen: Screen
     fun settings(): Settings
+    val theme: Theme
     companion object
 }
 
