@@ -130,7 +130,7 @@ fun main() {
     check(ep.s127 === ep.s127 && ep.s127.book.title == "book")
     check(ep.s128 === ep.s128 && ep.s128.book.title == "book")
     check(ep.s129 === ep.s129 && ep.s129.book.title == "book")
-    check(Shelf().hub.let { it.carriage.book.title == "book" && it.line.book.title == "book" })
+    check(Shelf().newlineInsideCarriageReturnLast.let { it.carriage.book.title == "book" && it.line.book.title == "book" })
 }
 
 @spike.EntryPoint
@@ -265,7 +265,7 @@ interface Shelf {
     val s127: S127
     val s128: S128
     val s129: S129
-    val hub: Hub
+    val newlineInsideCarriageReturnLast: NewlineInsideCarriageReturnLast
 
     companion object
 }
@@ -796,4 +796,4 @@ class S128(val book: Book)
 class S129(val book: Book)
 
 @spike.Include
-class Hub(val carriage: S11, val line: S8)
+class NewlineInsideCarriageReturnLast(val carriage: S11, val line: S8)

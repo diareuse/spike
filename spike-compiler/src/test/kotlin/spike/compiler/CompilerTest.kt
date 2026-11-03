@@ -469,7 +469,7 @@ class CompilerTest : HarnessCompiler() {
     fun `a cached singleton does not build its arguments again`() = assertRuns("singleton_arguments_built_once")
 
     @Test
-    fun `singletons with ids that escape in string literals build their arguments`() =
+    fun `a guard table ending in a newline character keeps it at runtime`() =
         assertRuns("singleton_guard_table_characters")
 
     @Test
