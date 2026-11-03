@@ -18,12 +18,12 @@ fun interface EntryPointStores {
     class Stores(
         val root: GraphStore,
         val multibinding: MultiBindingStore,
-        val replacedExports: Set<Type> = emptySet(),
+        val replacedExports: Set<Type>,
     )
 }
 
 @Include
 class EntryPointStoresLocal : EntryPointStores {
     override fun of(context: GraphContext, entryPoint: KSClassDeclaration, exported: Set<Type>) =
-        EntryPointStores.Stores(context.builder.build(), context.multibind.build())
+        EntryPointStores.Stores(context.builder.build(), context.multibind.build(), emptySet())
 }
