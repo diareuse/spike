@@ -86,6 +86,11 @@ ksp {
 
 When `spike.library` is not set, a module without an `@Export` interface is treated as the app.
 
+The plugin decides by plugin id only. In an app module that applies neither plugin, for example a Kotlin
+Multiplatform module that builds the iOS or desktop app, set `arg("spike.library", "false")` in its `ksp` block.
+The option applies to every compilation of the module, so the test compilations of a library module do not
+generate `ViewModelEntryPointImpl` either.
+
 All ViewModels share one set of `@Singleton` instances, so a `@Singleton` repository is the same object in every ViewModel. That set is separate from the singletons of any `@EntryPoint` you create yourself: each entry point instance owns its own. A `@Singleton` cannot depend on `SavedStateHandle`, because it would otherwise keep the handle of the first ViewModel; Spike reports this at compile time.
 
 ## Compose Support
