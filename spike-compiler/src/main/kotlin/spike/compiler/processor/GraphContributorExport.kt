@@ -7,6 +7,7 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import spike.compiler.generator.DependencyGraphGenerator
 import spike.compiler.processor.symbol.SymbolRegistry
+import spike.compiler.processor.symbol.UnresolvedCompiled
 import spike.BindTarget
 import spike.Include
 import spike.compiler.Order
@@ -30,6 +31,7 @@ class GraphContributorExport(
         (GraphEntryPoint, GraphStore, MultiBindingStore, Sequence<TypeFactory.Class>) -> DependencyGraph.Factory,
     override val stores: EntryPointStoresLocal,
     override val uses: CompiledUsesReader,
+    override val compiledTypes: UnresolvedCompiled,
 ) : GraphContributorOriginator() {
     override fun getOrigins(resolver: Resolver) = registry.export(resolver)
 

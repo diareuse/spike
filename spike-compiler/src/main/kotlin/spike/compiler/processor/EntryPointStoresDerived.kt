@@ -34,7 +34,7 @@ class EntryPointStoresDerived(
     ): EntryPointStores.Stores {
         val local = delegate.of(context, entryPoint, exported, uses)
         val base = entryPoint.compiledBase() ?: return local
-        val graph = production.of(context.resolver, base)
+        val graph = production.of(context.resolver, base, entryPoint)
         var bindings = ProductionBindings(graph.builder.build(), exported, uses)
         val aliases = mutableListOf<Alias>()
         val diagnostics = DiagnosticCollector()

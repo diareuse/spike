@@ -333,6 +333,20 @@ class CompilerTest : HarnessCompiler() {
         assertProcessingFails("unresolved_replaces_argument", "Main.kt:10: [SPIKE-UNRESOLVED-TYPE] Repository")
 
     @Test
+    fun `a compiled production binding naming a type missing from the test classpath is reported at the test entry point`() =
+        assertProcessingFails(
+            "unresolved_compiled_production",
+            "Main.kt:6: [SPIKE-UNRESOLVED-TYPE] com.example.platform.Context cannot be resolved",
+        )
+
+    @Test
+    fun `a compiled export importing a type missing from the consumer classpath is reported at the entry point`() =
+        assertProcessingFails(
+            "unresolved_compiled_export",
+            "Main.kt:6: [SPIKE-UNRESOLVED-TYPE] com.example.platform.Context cannot be resolved",
+        )
+
+    @Test
     fun `an unresolved type in a constructor Spike does not call is left to the Kotlin compiler`() =
         assertCompilationFails("unresolved_unused_constructor", "unresolved reference 'Context'")
 

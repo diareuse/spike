@@ -32,6 +32,7 @@ import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
 import spike.compiler.graph.GraphStore
 import spike.compiler.graph.MultiBindingStore
+import spike.compiler.processor.symbol.UnresolvedCompiled
 
 @OptIn(KspExperimental::class)
 abstract class GraphContributorOriginator : GraphContributor {
@@ -43,6 +44,7 @@ abstract class GraphContributorOriginator : GraphContributor {
     protected abstract val warnings: WarningReporter
     protected abstract val stores: EntryPointStores
     protected abstract val uses: CompiledUsesReader
+    protected abstract val compiledTypes: UnresolvedCompiled
     protected abstract val graphs:
         (GraphEntryPoint, GraphStore, MultiBindingStore, Sequence<TypeFactory.Class>) -> DependencyGraph.Factory
 
@@ -69,6 +71,7 @@ abstract class GraphContributorOriginator : GraphContributor {
         compiled: List<CompiledUse>,
     ) {
         verifyOrigin(entryPoint)
+        compiledTypes.requireExports(generated, entryPoint)
         val factory = findFactory(entryPoint)
         val properties = findProperties(entryPoint).toMutableList()
         val virtualFactoryParameters = mutableListOf<Parameter>()

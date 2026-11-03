@@ -134,27 +134,30 @@ abstract class HarnessCompiler {
         val work = File("build/tmp/compilations").resolve(name).apply { deleteRecursively() }
         if (!project.resolve("app").isDirectory) {
             val main = SourceModule("main", project.resolve("src"), libraries.files(), work)
-            return listOf(FixtureModule(main, "main/kotlin"))
+            return listOf(FixtureModule("main", main, "main/kotlin"))
         }
         val modules = mutableListOf<FixtureModule>()
         for (name in ModuleOrder) {
             if (!project.resolve(name).isDirectory) continue
+            val visible = modules.filter { it.name != ImplementationModule || name == ImplementationConsumer }
             val source = SourceModule(
                 name = name,
                 sources = project.resolve("$name/src"),
-                libraries = libraries.files() + modules.map { it.source.classes },
+                libraries = libraries.files() + visible.map { it.source.classes },
                 workDirectory = work.resolve(name)
             )
-            modules += FixtureModule(source, "$name/main/kotlin")
+            modules += FixtureModule(name, source, "$name/main/kotlin")
         }
         return modules
     }
 
-    private class FixtureModule(val source: SourceModule, val golden: String)
+    private class FixtureModule(val name: String, val source: SourceModule, val golden: String)
 
     private companion object {
         const val HotSpotHugeMethodLimit = 8000
-        val ModuleOrder = listOf("library", "feature", "app", "test")
+        const val ImplementationModule = "implementation"
+        const val ImplementationConsumer = "library"
+        val ModuleOrder = listOf(ImplementationModule, "library", "feature", "app", "test")
     }
 
 }

@@ -9,13 +9,11 @@ import spike.compiler.diagnostic.Involved
 import spike.compiler.processor.asOrigin
 import spike.compiler.processor.described
 
-class UnresolvedReference(val type: String, private val node: KSNode) {
+class UnresolvedReference(val type: String, private val node: KSNode, private val owner: KSDeclaration) {
     val user: Involved
-        get() = Involved(declaration()?.usage() ?: type, located()?.asOrigin())
+        get() = Involved(owner.usage(), located()?.asOrigin())
 
     private fun located() = generateSequence(node) { it.parent }.firstOrNull { it.location is FileLocation }
-
-    private fun declaration() = generateSequence(node.parent) { it.parent }.firstNotNullOfOrNull { it as? KSDeclaration }
 
     private fun KSDeclaration.usage(): String {
         if (this !is KSFunctionDeclaration || !isConstructor()) return described

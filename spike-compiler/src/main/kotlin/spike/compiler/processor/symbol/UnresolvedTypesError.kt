@@ -9,7 +9,7 @@ class UnresolvedTypesError : UnresolvedTypes {
     override fun of(types: Sequence<SignatureType>): Sequence<UnresolvedReference> = types
         .mapNotNull { signature ->
             val name = signature.type.unresolvedName() ?: return@mapNotNull null
-            UnresolvedReference(signature.annotationName() ?: name, signature.node)
+            UnresolvedReference(signature.annotationName() ?: name, signature.node, signature.owner)
         }
 
     private fun KSType.unresolvedName(): String? {

@@ -7,6 +7,7 @@ import com.google.devtools.ksp.isAnnotationPresent
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
@@ -33,7 +34,7 @@ class SignatureTypesDeclaration :
     override fun visitPropertyDeclaration(property: KSPropertyDeclaration, data: Unit) = property.types()
 
     private fun KSClassDeclaration.types(): Sequence<SignatureType> =
-        annotated() + superTypes.resolved() +
+        annotated(this) + superTypes.resolved(this) +
             listOfNotNull(includedConstructorOrNull()).flatMap { it.types() } +
             abstractMembers() +
             factories().flatMap { factory -> factory.getDeclaredFunctions().flatMap { it.types() } }
@@ -49,17 +50,19 @@ class SignatureTypesDeclaration :
         .filter { it.isAnnotationPresent(EntryPoint.Factory::class) }
 
     private fun KSFunctionDeclaration.types(): Sequence<SignatureType> =
-        annotated() + listOfNotNull(extensionReceiver, returnType).asSequence().resolved() +
-            parameters.asSequence().flatMap { it.annotated() + sequenceOf(it.type).resolved() }
+        annotated(this) + listOfNotNull(extensionReceiver, returnType).asSequence().resolved(this) +
+            parameters.asSequence().flatMap { it.annotated(this) + sequenceOf(it.type).resolved(this) }
 
     private fun KSPropertyDeclaration.types(): Sequence<SignatureType> =
-        annotated() + listOfNotNull(extensionReceiver, type).asSequence().resolved()
+        annotated(this) + listOfNotNull(extensionReceiver, type).asSequence().resolved(this)
 
-    private fun KSAnnotated.annotated(): Sequence<SignatureType> = annotations.flatMap { annotation ->
-        sequenceOf(annotation.annotationType).resolved() + annotation.arguments.asSequence()
-            .mapNotNull { it.value as? KSType }
-            .map { SignatureType(annotation, it) }
-    }
+    private fun KSAnnotated.annotated(owner: KSDeclaration): Sequence<SignatureType> =
+        annotations.flatMap { annotation ->
+            sequenceOf(annotation.annotationType).resolved(owner) + annotation.arguments.asSequence()
+                .mapNotNull { it.value as? KSType }
+                .map { SignatureType(annotation, it, owner) }
+        }
 
-    private fun Sequence<KSTypeReference>.resolved() = map { SignatureType(it, it.resolve()) }
+    private fun Sequence<KSTypeReference>.resolved(owner: KSDeclaration) =
+        map { SignatureType(it, it.resolve(), owner) }
 }
