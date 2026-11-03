@@ -8,3 +8,10 @@ interface App {
 
     companion object
 }
+
+@spike.EntryPoint
+interface Settings {
+    val lib: Lib
+
+    companion object
+}

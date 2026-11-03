@@ -1,0 +1,6 @@
+Main.kt:9: [SPIKE-UNRESOLVED-TYPE] com.example.platform.Context cannot be resolved, but the compiled export com.example.Exported needs it
+  - compiled export com.example.Exported
+  - interface Screens (Main.kt:9)
+Why: com.example.platform.Context is not on this module's compile classpath, though a dependency's compiled binding names it. A graph built from an unresolved type would be wired against a guess.
+Fix: Add the dependency that declares com.example.platform.Context to this module.
+Fix: Or expose it from the dependency that names it, with api instead of implementation.

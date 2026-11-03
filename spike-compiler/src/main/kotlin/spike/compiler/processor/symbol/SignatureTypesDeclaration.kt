@@ -62,7 +62,4 @@ class SignatureTypesDeclaration :
                 .mapNotNull { it.value as? KSType }
                 .map { SignatureType(annotation, it, owner) }
         }
-
-    private fun Sequence<KSTypeReference>.resolved(owner: KSDeclaration) =
-        map { SignatureType(it, it.resolve(), owner) }
 }

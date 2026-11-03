@@ -1,7 +1,6 @@
 package spike.compiler.processor.symbol
 
 import com.google.devtools.ksp.symbol.KSAnnotated
-import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
 import spike.Include
 import spike.compiler.diagnostic.DiagnosticException
@@ -14,11 +13,7 @@ import spike.compiler.processor.described
 class UnresolvedCompiled(
     private val unresolved: UnresolvedTypes,
     private val declarations: SignatureTypes,
-    private val exports: SignatureTypesExport,
 ) {
-    fun requireExports(generated: List<KSClassDeclaration>, consumer: KSDeclaration) =
-        require(generated.asSequence().flatMap(exports::of), consumer)
-
     fun requireDeclarations(compiled: List<KSAnnotated>, consumer: KSDeclaration) =
         require(compiled.asSequence().flatMap(declarations::of), consumer)
 

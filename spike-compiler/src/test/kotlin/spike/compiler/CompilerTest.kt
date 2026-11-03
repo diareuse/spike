@@ -340,11 +340,16 @@ class CompilerTest : HarnessCompiler() {
         )
 
     @Test
-    fun `a compiled export importing a type missing from the consumer classpath is reported at the entry point`() =
-        assertProcessingFails(
-            "unresolved_compiled_export",
-            "Main.kt:6: [SPIKE-UNRESOLVED-TYPE] com.example.platform.Context cannot be resolved",
-        )
+    fun `a compiled export importing a type missing from the consumer classpath is reported once for every entry point`() =
+        assertProcessingFails("unresolved_compiled_export")
+
+    @Test
+    fun `a compiled export importing a type missing from the classpath of a consuming export is reported at the export`() =
+        assertProcessingFails("unresolved_compiled_export_consumer")
+
+    @Test
+    fun `a compiled export the consumer never uses may name a type missing from the consumer classpath`() =
+        assertRuns("unresolved_compiled_unused_export")
 
     @Test
     fun `an unresolved type in a constructor Spike does not call is left to the Kotlin compiler`() =
