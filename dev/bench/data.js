@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793714101310,
+  "lastUpdate": 1793714103082,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -6146,6 +6146,282 @@ window.BENCHMARK_DATA = {
           {
             "name": "open screen",
             "value": 0.4592247240339592,
+            "unit": "us",
+            "extra": "koin"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "13b41768d35002a5987bc4804c4a89e0efe1af08",
+          "message": "chore(deps): bump ktor from 3.6.0 to 3.6.1\n\nBumps `ktor` from 3.6.0 to 3.6.1.\n\nUpdates `io.ktor:ktor-server-core` from 3.6.0 to 3.6.1\n- [Release notes](https://github.com/ktorio/ktor/releases)\n- [Changelog](https://github.com/ktorio/ktor/blob/3.6.1/CHANGELOG.md)\n- [Commits](https://github.com/ktorio/ktor/compare/3.6.0...3.6.1)\n\nUpdates `io.ktor:ktor-client-java` from 3.6.0 to 3.6.1\n- [Release notes](https://github.com/ktorio/ktor/releases)\n- [Changelog](https://github.com/ktorio/ktor/blob/3.6.1/CHANGELOG.md)\n- [Commits](https://github.com/ktorio/ktor/compare/3.6.0...3.6.1)\n\nUpdates `io.ktor:ktor-server-test-host` from 3.6.0 to 3.6.1\n- [Release notes](https://github.com/ktorio/ktor/releases)\n- [Changelog](https://github.com/ktorio/ktor/blob/3.6.1/CHANGELOG.md)\n- [Commits](https://github.com/ktorio/ktor/compare/3.6.0...3.6.1)\n\n---\nupdated-dependencies:\n- dependency-name: io.ktor:ktor-server-core\n  dependency-version: 3.6.1\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: io.ktor:ktor-client-java\n  dependency-version: 3.6.1\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: io.ktor:ktor-server-test-host\n  dependency-version: 3.6.1\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-11-03T13:16:27+01:00",
+          "tree_id": "34689bb3702ad406199c0d258c0e8dfb509034eb",
+          "url": "https://github.com/diareuse/spike/commit/13b41768d35002a5987bc4804c4a89e0efe1af08"
+        },
+        "date": 1793714102855,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "clean build",
+            "value": 1090.725,
+            "unit": "ms",
+            "extra": "manual"
+          },
+          {
+            "name": "clean build",
+            "value": 1943.995,
+            "unit": "ms",
+            "extra": "spike"
+          },
+          {
+            "name": "clean build",
+            "value": 8328.825,
+            "unit": "ms",
+            "extra": "dagger"
+          },
+          {
+            "name": "clean build",
+            "value": 3851.23,
+            "unit": "ms",
+            "extra": "metro"
+          },
+          {
+            "name": "clean build",
+            "value": 1667.08,
+            "unit": "ms",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "clean build",
+            "value": 1894.1750000000002,
+            "unit": "ms",
+            "extra": "koin"
+          },
+          {
+            "name": "ABI change",
+            "value": 419.66999999999996,
+            "unit": "ms",
+            "extra": "manual"
+          },
+          {
+            "name": "ABI change",
+            "value": 1068.045,
+            "unit": "ms",
+            "extra": "spike"
+          },
+          {
+            "name": "ABI change",
+            "value": 4471.405,
+            "unit": "ms",
+            "extra": "dagger"
+          },
+          {
+            "name": "ABI change",
+            "value": 4115.83,
+            "unit": "ms",
+            "extra": "metro"
+          },
+          {
+            "name": "ABI change",
+            "value": 925.4200000000001,
+            "unit": "ms",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "ABI change",
+            "value": 529.675,
+            "unit": "ms",
+            "extra": "koin"
+          },
+          {
+            "name": "non-ABI change",
+            "value": 399.175,
+            "unit": "ms",
+            "extra": "manual"
+          },
+          {
+            "name": "non-ABI change",
+            "value": 1157.8600000000001,
+            "unit": "ms",
+            "extra": "spike"
+          },
+          {
+            "name": "non-ABI change",
+            "value": 4301.76,
+            "unit": "ms",
+            "extra": "dagger"
+          },
+          {
+            "name": "non-ABI change",
+            "value": 4224.145,
+            "unit": "ms",
+            "extra": "metro"
+          },
+          {
+            "name": "non-ABI change",
+            "value": 961.9200000000001,
+            "unit": "ms",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "non-ABI change",
+            "value": 523.605,
+            "unit": "ms",
+            "extra": "koin"
+          },
+          {
+            "name": "create graph",
+            "value": 0.0010808726479061268,
+            "unit": "us",
+            "extra": "manual"
+          },
+          {
+            "name": "create graph",
+            "value": 0.006672100774734119,
+            "unit": "us",
+            "extra": "spike"
+          },
+          {
+            "name": "create graph",
+            "value": 0.0010997049432854115,
+            "unit": "us",
+            "extra": "dagger"
+          },
+          {
+            "name": "create graph",
+            "value": 0.0010930640345962971,
+            "unit": "us",
+            "extra": "metro"
+          },
+          {
+            "name": "create graph",
+            "value": 0.001055313646273972,
+            "unit": "us",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "create graph",
+            "value": 279.26698456160386,
+            "unit": "us",
+            "extra": "koin"
+          },
+          {
+            "name": "resolve from graph",
+            "value": 5.033660694281668,
+            "unit": "us",
+            "extra": "manual"
+          },
+          {
+            "name": "resolve from graph",
+            "value": 3.964764945814302,
+            "unit": "us",
+            "extra": "spike"
+          },
+          {
+            "name": "resolve from graph",
+            "value": 4.924370365806887,
+            "unit": "us",
+            "extra": "dagger"
+          },
+          {
+            "name": "resolve from graph",
+            "value": 62.12784033527115,
+            "unit": "us",
+            "extra": "metro"
+          },
+          {
+            "name": "resolve from graph",
+            "value": 61.55551135627208,
+            "unit": "us",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "resolve from graph",
+            "value": 1587.5971413164914,
+            "unit": "us",
+            "extra": "koin"
+          },
+          {
+            "name": "cold start",
+            "value": 134524.4985,
+            "unit": "us",
+            "extra": "manual"
+          },
+          {
+            "name": "cold start",
+            "value": 127779.799,
+            "unit": "us",
+            "extra": "spike"
+          },
+          {
+            "name": "cold start",
+            "value": 128144.4795,
+            "unit": "us",
+            "extra": "dagger"
+          },
+          {
+            "name": "cold start",
+            "value": 135365.726,
+            "unit": "us",
+            "extra": "metro"
+          },
+          {
+            "name": "cold start",
+            "value": 150215.9145,
+            "unit": "us",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "cold start",
+            "value": 402481.93299999996,
+            "unit": "us",
+            "extra": "koin"
+          },
+          {
+            "name": "open screen",
+            "value": 0.003035438479566079,
+            "unit": "us",
+            "extra": "manual"
+          },
+          {
+            "name": "open screen",
+            "value": 0.0030708909365917796,
+            "unit": "us",
+            "extra": "spike"
+          },
+          {
+            "name": "open screen",
+            "value": 0.004856769984145826,
+            "unit": "us",
+            "extra": "dagger"
+          },
+          {
+            "name": "open screen",
+            "value": 0.003045036454927914,
+            "unit": "us",
+            "extra": "metro"
+          },
+          {
+            "name": "open screen",
+            "value": 0.004741300523063546,
+            "unit": "us",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "open screen",
+            "value": 0.29377454383147805,
             "unit": "us",
             "extra": "koin"
           }
