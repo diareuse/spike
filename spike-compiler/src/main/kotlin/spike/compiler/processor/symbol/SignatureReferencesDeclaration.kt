@@ -1,7 +1,6 @@
 package spike.compiler.processor.symbol
 
 import com.google.devtools.ksp.KspExperimental
-import com.google.devtools.ksp.getConstructors
 import com.google.devtools.ksp.getDeclaredFunctions
 import com.google.devtools.ksp.isAbstract
 import com.google.devtools.ksp.isAnnotationPresent
@@ -13,6 +12,7 @@ import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSTypeReference
 import spike.EntryPoint
 import spike.Include
+import spike.compiler.processor.includedConstructorOrNull
 
 @Include
 @OptIn(KspExperimental::class)
@@ -26,7 +26,7 @@ class SignatureReferencesDeclaration : SignatureReferences {
 
     private fun KSClassDeclaration.references(): Sequence<KSTypeReference> =
         annotationTypes() + superTypes +
-            getConstructors().flatMap { it.references() } +
+            listOfNotNull(includedConstructorOrNull()).flatMap { it.references() } +
             abstractMembers() +
             factories().flatMap { factory -> factory.getDeclaredFunctions().flatMap { it.references() } }
 

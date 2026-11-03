@@ -321,6 +321,10 @@ class CompilerTest : HarnessCompiler() {
         )
 
     @Test
+    fun `an unresolved type in a constructor Spike does not call is left to the Kotlin compiler`() =
+        assertCompilationFails("unresolved_unused_constructor", "unresolved reference 'Context'")
+
+    @Test
     fun `EntryPoint members of an unresolved type are reported at the member`() =
         assertProcessingFails("unresolved_entry_point_member", "Main.kt:4: [SPIKE-UNRESOLVED-TYPE] Settings")
 

@@ -12,21 +12,26 @@ import spike.compiler.diagnostic.DiagnosticIncludeNoConstructor
 import spike.compiler.diagnostic.Involved
 
 @OptIn(KspExperimental::class)
+fun KSClassDeclaration.includedConstructorOrNull(): KSFunctionDeclaration? {
+    val constructors = getConstructors().toList()
+    return constructors.singleOrNull()
+        ?: constructors.firstOrNull { it.isAnnotationPresent(Include.Constructor::class) }
+}
+
 fun KSClassDeclaration.includedConstructor(): KSFunctionDeclaration {
+    includedConstructorOrNull()?.let { return it }
     val constructors = getConstructors().toList()
     val name = simpleName.asString()
-    return when (constructors.size) {
-        0 -> throw DiagnosticException(DiagnosticIncludeNoConstructor(classKind.type, name, asOrigin()))
-        1 -> constructors.single()
-        else -> constructors.firstOrNull { it.isAnnotationPresent(Include.Constructor::class) }
-            ?: throw DiagnosticException(
-                DiagnosticIncludeConstructorAmbiguous(
-                    name = name,
-                    constructors = constructors.map {
-                        Involved("constructor $name(${it.parameters.rendered()})", it.asOrigin())
-                    },
-                    suggested = "constructor(${constructors.first().parameters.rendered()})",
-                )
-            )
+    if (constructors.isEmpty()) {
+        throw DiagnosticException(DiagnosticIncludeNoConstructor(classKind.type, name, asOrigin()))
     }
+    throw DiagnosticException(
+        DiagnosticIncludeConstructorAmbiguous(
+            name = name,
+            constructors = constructors.map {
+                Involved("constructor $name(${it.parameters.rendered()})", it.asOrigin())
+            },
+            suggested = "constructor(${constructors.first().parameters.rendered()})",
+        )
+    )
 }
