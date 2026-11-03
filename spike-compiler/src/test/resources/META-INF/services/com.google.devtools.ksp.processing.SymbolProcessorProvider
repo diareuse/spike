@@ -1,1 +1,2 @@
 spike.compiler.harness.GeneratedIncludeProcessorProvider
+spike.compiler.harness.LateIncludeProcessorProvider
