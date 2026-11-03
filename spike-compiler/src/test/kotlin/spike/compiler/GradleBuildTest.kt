@@ -43,6 +43,15 @@ class GradleBuildTest : HarnessGradle() {
         assertBuilds("gradle_plugin_viewmodel_library", tasks = listOf(":view:runTestMain"))
 
     @Test
+    fun `two app-role modules with the same project name fail as an ambiguous ViewModel entry point`() =
+        assertBuildFails(
+            "gradle_plugin_viewmodel_same_name",
+            listOf(":app:compileKotlin"),
+            "SPIKE-VIEWMODEL-ENTRY-POINT-AMBIGUOUS",
+            "Modules: project_a_ui, project_b_ui."
+        )
+
+    @Test
     fun `a plugin module that does not set spike library generates the ViewModel entry point`() =
         assertBuilds("gradle_plugin_viewmodel_default_app", tasks = listOf(":runMain"))
 

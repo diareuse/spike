@@ -3,6 +3,7 @@ package spike.compiler.harness
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.TaskOutcome
 import spike.compiler.assertion.assertContentEquals
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 
 abstract class HarnessGradle {
@@ -40,6 +41,11 @@ abstract class HarnessGradle {
         assertTasksSucceeded(project.build(tasks), tasks)
         project.replace(path, oldText, newText)
         assertTasksSucceeded(project.build(tasks), tasks)
+    }
+
+    protected fun assertBuildFails(name: String, tasks: List<String>, vararg messages: String) {
+        val output = FixtureProject(name, null).buildAndFail(tasks).output
+        for (message in messages) assertContains(output, message)
     }
 
     private fun assertTasksSucceeded(result: BuildResult, tasks: List<String>) {
