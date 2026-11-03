@@ -850,6 +850,7 @@ class CompilerTest : HarnessCompiler() {
         assertProcessingFails(
             "androidx_viewmodel_two_compiled_entry_points",
             "SPIKE-VIEWMODEL-ENTRY-POINT-AMBIGUOUS",
+            "Modules: first, second",
             libraries = Androidx
         )
 
@@ -878,6 +879,10 @@ class CompilerTest : HarnessCompiler() {
     @Test
     fun `the spike viewmodel package option moves the generated ViewModel entry point`() =
         assertRuns("androidx_viewmodel_package", Androidx)
+
+    @Test
+    fun `a library module with the spike library option and its own export contributes its ViewModels once`() =
+        assertRuns("androidx_viewmodel_library_role_export", Androidx)
 
     @Test
     fun `viewmodels share singletons of an exported library`() = assertRuns("androidx_viewmodel_export", Androidx)
