@@ -13,6 +13,7 @@ import spike.compiler.conversion.ProblemReporter
 @OptIn(KspExperimental::class)
 class SymbolProcessorRejectingUnreachedExports(
     private val entryPoint: String,
+    private val markers: EntryPointMarkers,
     private val reporter: ProblemReporter,
 ) : SymbolProcessor {
     override fun process(resolver: Resolver): List<KSAnnotated> {
@@ -27,18 +28,10 @@ class SymbolProcessorRejectingUnreachedExports(
             .filterIsInstance<KSClassDeclaration>()
             .filter(::contributesViewModels)
             .filter { it.qualifiedName?.asString() !in reached }
-        val module = compiledIn(resolver)
+        val module = markers.module(resolver)
         for (export in unreached) reporter.report(problem(compiled, module, exportOf(export)))
         return emptyList()
     }
-
-    private fun compiledIn(resolver: Resolver): String = resolver
-        .getDeclarationsFromPackage(entryPoint.substringBeforeLast('.'))
-        .filterIsInstance<KSClassDeclaration>()
-        .map { it.simpleName.asString() }
-        .filter { it.startsWith(ViewModelNames.EntryPointMarkerPrefix) }
-        .map { it.removePrefix(ViewModelNames.EntryPointMarkerPrefix) }
-        .firstOrNull() ?: "a dependency"
 
     private fun contributesViewModels(generated: KSClassDeclaration) = generated.getDeclaredFunctions().any { function ->
         function.annotations.any { it.shortName.asString() == ViewModelNames.ViewModelKey.simpleName }

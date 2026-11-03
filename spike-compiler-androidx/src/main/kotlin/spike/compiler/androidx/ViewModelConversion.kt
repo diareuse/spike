@@ -16,7 +16,6 @@ import spike.compiler.conversion.ProblemReporter
 import spike.compiler.conversion.ProblemReporterDistinct
 import spike.compiler.conversion.ProblemReporterLogger
 import spike.compiler.conversion.SymbolProcessorAll
-import spike.compiler.conversion.SymbolProcessorRejecting
 import spike.compiler.conversion.SymbolProcessorUnlessCompiled
 import spike.compiler.conversion.SymbolProcessorOnce
 import spike.compiler.conversion.SymbolProcessorRequiring
@@ -56,6 +55,7 @@ fun viewModelIncludes(function: IncludeFunctionViewModel, codeGenerator: CodeGen
 fun viewModelEntryPoint(environment: SymbolProcessorEnvironment, reporter: ProblemReporter): SymbolProcessor {
     val packageName = environment.options["spike.viewmodel.package"] ?: "spike.lifecycle.viewmodel"
     val name = "$packageName.${ViewModelNames.ViewModelEntryPointImpl}"
+    val markers = EntryPointMarkers(packageName)
     return SymbolProcessorEnabledBy(
         environment.options,
         "spike.viewmodel.enabled",
@@ -70,7 +70,7 @@ fun viewModelEntryPoint(environment: SymbolProcessorEnvironment, reporter: Probl
                 app = SymbolProcessorRequiring(
                     ViewModelNames.ViewModelEntryPoint,
                     SymbolProcessorUnlessAmbiguous(
-                        packageName,
+                        markers,
                         "SPIKE-VIEWMODEL-ENTRY-POINT-AMBIGUOUS",
                         "$name is compiled in more than one dependency, so which ViewModels this module sees " +
                             "depends on classpath order. Leave the entry point to the app: mark each library " +
@@ -81,17 +81,13 @@ fun viewModelEntryPoint(environment: SymbolProcessorEnvironment, reporter: Probl
                             name,
                             SymbolProcessorAll(
                                 listOf(
-                                    SymbolProcessorRejecting(
+                                    SymbolProcessorRejectingStrandedViewModels(
+                                        name,
                                         SymbolSourceAnnotated(ViewModelNames.SpikeViewModel),
-                                        "SPIKE-VIEWMODEL-ENTRY-POINT",
-                                        "$name is already compiled in a dependency, so this ViewModel reaches no " +
-                                            "entry point. If that dependency is a library, declare an @Export " +
-                                            "interface in it: it then leaves the entry point to this module and " +
-                                            "exports its ViewModels. If it is this module's main source set (a " +
-                                            "test compilation), move the ViewModel there.",
+                                        markers,
                                         reporter,
                                     ),
-                                    SymbolProcessorRejectingUnreachedExports(name, reporter),
+                                    SymbolProcessorRejectingUnreachedExports(name, markers, reporter),
                                 ),
                             ),
                             SymbolProcessorAll(

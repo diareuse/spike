@@ -837,6 +837,8 @@ class CompilerTest : HarnessCompiler() {
     fun `a viewmodel next to a dependency that generated the ViewModel entry point fails`() = assertProcessingFails(
         "androidx_viewmodel_unexported_library",
         "SPIKE-VIEWMODEL-ENTRY-POINT",
+        "compiled in library",
+        "mark it as one: spike { library = true }",
         "@Export",
         libraries = Androidx
     )
@@ -885,6 +887,7 @@ class CompilerTest : HarnessCompiler() {
     fun `a viewmodel declared only in a test compilation of the app fails`() = assertProcessingFails(
         "androidx_viewmodel_test_only",
         "SPIKE-VIEWMODEL-ENTRY-POINT",
+        "compiled in app",
         "test compilation",
         libraries = Androidx
     )
