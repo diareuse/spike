@@ -42,6 +42,7 @@ abstract class GraphContributorOriginator : GraphContributor {
     protected abstract val reporter: DiagnosticReporter
     protected abstract val warnings: WarningReporter
     protected abstract val stores: EntryPointStores
+    protected abstract val uses: CompiledUsesReader
     protected abstract val graphs:
         (GraphEntryPoint, GraphStore, MultiBindingStore, Sequence<TypeFactory.Class>) -> DependencyGraph.Factory
 
@@ -54,13 +55,19 @@ abstract class GraphContributorOriginator : GraphContributor {
         val generated = context.resolver.getDeclarationsFromPackage("spike.generated")
             .filterIsInstance<KSClassDeclaration>()
             .toList()
+        val compiled = uses.of(generated)
         for (entryPoint in getOrigins(context.resolver)) {
-            diagnostics.attempt { contribute(context, entryPoint, generated) }
+            diagnostics.attempt { contribute(context, entryPoint, generated, compiled) }
         }
         diagnostics.throwCollected()
     }
 
-    private fun contribute(context: GraphContext, entryPoint: KSClassDeclaration, generated: List<KSClassDeclaration>) {
+    private fun contribute(
+        context: GraphContext,
+        entryPoint: KSClassDeclaration,
+        generated: List<KSClassDeclaration>,
+        compiled: List<CompiledUse>,
+    ) {
         verifyOrigin(entryPoint)
         val factory = findFactory(entryPoint)
         val properties = findProperties(entryPoint).toMutableList()
@@ -77,7 +84,8 @@ abstract class GraphContributorOriginator : GraphContributor {
             origin = entryPoint.asOrigin(),
             visibility = if (entryPoint.isInternal()) EntryPointVisibility.Internal else EntryPointVisibility.Public,
         )
-        val resolved = stores.of(context, entryPoint, external.mapTo(mutableSetOf()) { it.first.type })
+        val exported = external.mapTo(mutableSetOf()) { it.first.type }
+        val resolved = stores.of(context, entryPoint, exported, compiled)
         val graphFactory = graphs(
             entry,
             resolved.root,

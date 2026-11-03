@@ -136,33 +136,25 @@ abstract class HarnessCompiler {
             val main = SourceModule("main", project.resolve("src"), libraries.files(), work)
             return listOf(FixtureModule(main, "main/kotlin"))
         }
-        val library = SourceModule(
-            name = "library",
-            sources = project.resolve("library/src"),
-            libraries = libraries.files(),
-            workDirectory = work.resolve("library")
-        )
-        val app = SourceModule(
-            name = "app",
-            sources = project.resolve("app/src"),
-            libraries = libraries.files() + library.classes,
-            workDirectory = work.resolve("app")
-        )
-        val modules = listOf(FixtureModule(library, "library/main/kotlin"), FixtureModule(app, "app/main/kotlin"))
-        if (!project.resolve("test").isDirectory) return modules
-        val test = SourceModule(
-            name = "test",
-            sources = project.resolve("test/src"),
-            libraries = libraries.files() + library.classes + app.classes,
-            workDirectory = work.resolve("test")
-        )
-        return modules + FixtureModule(test, "test/main/kotlin")
+        val modules = mutableListOf<FixtureModule>()
+        for (name in ModuleOrder) {
+            if (!project.resolve(name).isDirectory) continue
+            val source = SourceModule(
+                name = name,
+                sources = project.resolve("$name/src"),
+                libraries = libraries.files() + modules.map { it.source.classes },
+                workDirectory = work.resolve(name)
+            )
+            modules += FixtureModule(source, "$name/main/kotlin")
+        }
+        return modules
     }
 
     private class FixtureModule(val source: SourceModule, val golden: String)
 
     private companion object {
         const val HotSpotHugeMethodLimit = 8000
+        val ModuleOrder = listOf("library", "feature", "app", "test")
     }
 
 }

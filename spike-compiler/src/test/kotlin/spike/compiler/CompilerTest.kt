@@ -215,6 +215,53 @@ class CompilerTest : HarnessCompiler() {
         assertRuns("test_replaces_export_function")
 
     @Test
+    fun `replacing a type that the library's export graph consumes fails naming the exported binding`() =
+        assertProcessingFails(
+            "test_replaces_export_used_inside",
+            "SPIKE-REPLACES-INSIDE-EXPORT",
+            "com.example.data.Source",
+            "property repository of @Export com.example.data.DataExports",
+        )
+
+    @Test
+    fun `replacing a type that another module's export consumes fails naming the downstream export`() =
+        assertProcessingFails(
+            "test_replaces_export_used_downstream",
+            "SPIKE-REPLACES-INSIDE-EXPORT",
+            "com.example.data.Source",
+            "property welcome of @Export com.example.feature.WelcomeExports",
+        )
+
+    @Test
+    fun `replacing a type fails naming exported functions, assisted factories, cycles and contributions built with it`() =
+        assertProcessingFails(
+            "test_replaces_export_used_beneath",
+            "SPIKE-REPLACES-INSIDE-EXPORT",
+            "function loader of @Export com.example.data.DataExports",
+            "property repository of @Export com.example.data.DataExports",
+            "property parent of @Export com.example.data.DataExports",
+            "property child of @Export com.example.data.DataExports",
+            "com.example.data.plugin",
+        )
+
+    @Test
+    fun `replacing a type fails naming every export downstream of the exported binding built with it`() =
+        assertProcessingFails(
+            "test_replaces_export_used_chain",
+            "SPIKE-REPLACES-INSIDE-EXPORT",
+            "property repository of @Export com.example.data.DataExports",
+            "property welcome of @Export com.example.feature.WelcomeExports",
+        )
+
+    @Test
+    fun `a replacement of a type that an export imports from the consuming module reaches inside the export`() =
+        assertRuns("test_replaces_export_import")
+
+    @Test
+    fun `replacing the exported binding that consumes a replaced type too lets both stand in`() =
+        assertRuns("test_replaces_export_used_inside_replaced")
+
+    @Test
     fun `a replaced export next to another binding of its type fails naming both`() = assertProcessingFails(
         "test_replaces_export_and_include",
         "SPIKE-DUPLICATE-BINDING",

@@ -1,6 +1,7 @@
 package spike.compiler.processor
 
 import spike.compiler.graph.Constructor
+import spike.compiler.graph.ExportedUse
 import spike.compiler.graph.GraphStore
 import spike.compiler.graph.Invocation
 import spike.compiler.graph.Qualifier
@@ -17,10 +18,22 @@ class ProductionBindingsTest {
     private val screen = type("Screen")
     private val missing = type("Missing")
     private val namedSource = Type.Qualified(source, listOf(Qualifier(type("Named"), emptyList())))
+    private val repository = type("Repository")
+    private val exports = type("DataExports")
+    private val repositoryUsingSource = CompiledUse(
+        ExportedUse("property repository", repository.toString(), setOf(source.toString())),
+        exports,
+    )
+
+    private val welcomeUsingRepository = CompiledUse(
+        ExportedUse("property welcome", type("Welcome").toString(), setOf(repository.toString())),
+        type("WelcomeExports"),
+    )
 
     private val bindings = ProductionBindings(
         store = GraphStore(constructors = listOf(Constructor(screen, Invocation(emptyList(), false), false))),
         exported = setOf(source, clock),
+        uses = listOf(welcomeUsingRepository, repositoryUsingSource),
     )
 
     @Test
@@ -58,6 +71,27 @@ class ProductionBindingsTest {
 
         assertFalse(remaining.binds(screen))
         assertEquals(setOf(source, clock), remaining.exported)
+    }
+
+    @Test
+    fun `lists the exported bindings built with a type and every export downstream of them`() {
+        assertEquals(listOf(repositoryUsingSource, welcomeUsingRepository), bindings.usersOf(source))
+    }
+
+    @Test
+    fun `lists only the exported bindings downstream of a type that is used further down the chain`() {
+        assertEquals(listOf(welcomeUsingRepository), bindings.usersOf(repository))
+    }
+
+    @Test
+    fun `lists no exported binding for a type no export is built with`() {
+        assertEquals(emptyList(), bindings.usersOf(clock))
+    }
+
+    @Test
+    fun `without an exported binding's own type it no longer counts as a user`() {
+        assertEquals(emptyList(), bindings.without(repository).usersOf(source))
+        assertEquals(listOf(welcomeUsingRepository), bindings.without(repository).usersOf(repository))
     }
 
     private fun type(name: String) = Type.Simple("test", name, false)

@@ -47,6 +47,7 @@ class GraphContributorEntryPoint(
     override val graphs:
         (GraphEntryPoint, GraphStore, MultiBindingStore, Sequence<TypeFactory.Class>) -> DependencyGraph.Factory,
     override val stores: EntryPointStores,
+    override val uses: CompiledUsesReader,
 ) : GraphContributorOriginator() {
 
     override fun getOrigins(resolver: Resolver) = registry.entryPoint(resolver)

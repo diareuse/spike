@@ -7,7 +7,7 @@ import spike.compiler.graph.Type
 import spike.Include
 
 fun interface EntryPointStores {
-    fun of(context: GraphContext, entryPoint: KSClassDeclaration, exported: Set<Type>): Stores
+    fun of(context: GraphContext, entryPoint: KSClassDeclaration, exported: Set<Type>, uses: List<CompiledUse>): Stores
 
     companion object {
         @Include
@@ -24,6 +24,11 @@ fun interface EntryPointStores {
 
 @Include
 class EntryPointStoresLocal : EntryPointStores {
-    override fun of(context: GraphContext, entryPoint: KSClassDeclaration, exported: Set<Type>) =
+    override fun of(
+        context: GraphContext,
+        entryPoint: KSClassDeclaration,
+        exported: Set<Type>,
+        uses: List<CompiledUse>,
+    ) =
         EntryPointStores.Stores(context.builder.build(), context.multibind.build(), emptySet())
 }

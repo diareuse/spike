@@ -11,16 +11,24 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asClassName
+import com.squareup.kotlinpoet.joinToCode
+import spike.InternalSpikeApi
+import spike.compiler.graph.ExportedUse
 import spike.compiler.graph.GraphEntryPoint
 import spike.compiler.graph.Parameter
 import spike.compiler.graph.Type
 import spike.compiler.graph.TypeFactory
 import spike.factory.DependencyId
+import spike.factory.ExportedUses
 import spike.factory.SingletonHolder
 import spike.Include
 
+@OptIn(InternalSpikeApi::class)
 @Include
-class ExportGenerator(private val contributions: ContributionFunction) : Generator {
+class ExportGenerator(
+    private val contributions: ContributionFunction,
+    private val uses: ExportedUsesOf,
+) : Generator {
     override fun generate(context: FileGeneratorContext, collector: FileSpecCollector) {
         val graph = context.graph
         val resolver = context.resolver
@@ -64,6 +72,8 @@ class ExportGenerator(private val contributions: ContributionFunction) : Generat
         generateMethods(ep, type, resolver, context)
         generateProperties(ep, type, resolver, context)
         for (contribution in context.graph.contributions) type.addFunction(contributions.of(contribution, context))
+        val exportedUses = uses.of(graph)
+        if (exportedUses.isNotEmpty()) type.addAnnotation(exportedUsesAnnotation(exportedUses))
         val file = FileSpec.builder(epcn)
             .addType(type.build())
             .addAnnotation(
@@ -76,8 +86,18 @@ class ExportGenerator(private val contributions: ContributionFunction) : Generat
                     )
                     .build()
             )
+        if (exportedUses.isNotEmpty()) file.addAnnotation(
+            AnnotationSpec.builder(ClassName("kotlin", "OptIn"))
+                .useSiteTarget(AnnotationSpec.UseSiteTarget.FILE)
+                .addMember("%T::class", InternalSpikeApi::class)
+                .build()
+        )
         collector.emit(file.build())
     }
+
+    private fun exportedUsesAnnotation(exportedUses: List<ExportedUse>) = AnnotationSpec.builder(ExportedUses::class)
+        .addMember("entries = [%L]", exportedUses.map { CodeBlock.of("%S", it.encoded()) }.joinToCode())
+        .build()
 
     private fun generateMethods(
         ep: GraphEntryPoint,

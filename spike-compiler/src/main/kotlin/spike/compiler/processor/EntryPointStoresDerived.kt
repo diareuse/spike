@@ -23,25 +23,30 @@ class EntryPointStoresDerived(
     private val registry: SymbolRegistry,
     private val replacements: ReplacementReader,
     private val check: ReplacementCheck,
+    private val insideExport: ReplacementCheckInsideExport,
 ) : EntryPointStores {
 
     override fun of(
         context: GraphContext,
         entryPoint: KSClassDeclaration,
         exported: Set<Type>,
+        uses: List<CompiledUse>,
     ): EntryPointStores.Stores {
-        val local = delegate.of(context, entryPoint, exported)
+        val local = delegate.of(context, entryPoint, exported, uses)
         val base = entryPoint.compiledBase() ?: return local
         val graph = production.of(context.resolver, base)
-        var bindings = ProductionBindings(graph.builder.build(), exported)
+        var bindings = ProductionBindings(graph.builder.build(), exported, uses)
         val aliases = mutableListOf<Alias>()
         val diagnostics = DiagnosticCollector()
+        val replaced = mutableListOf<Replacement>()
         for (symbol in registry.replaces(context.resolver)) diagnostics.attempt {
             val replacement = replacements.of(symbol, base)
             check.check(replacement, bindings)
             bindings = bindings.without(replacement.replaced)
             replacement.alias?.let(aliases::add)
+            replaced += replacement
         }
+        for (replacement in replaced) diagnostics.attempt { insideExport.check(replacement, bindings) }
         diagnostics.throwCollected()
         return EntryPointStores.Stores(
             root = bindings.store + local.root + GraphStore(aliases = aliases),

@@ -1,0 +1,6 @@
+Main.kt:12: [SPIKE-REPLACES-INSIDE-EXPORT] @Replaces(com.example.data.Source) cannot reach inside a compiled @Export graph: property repository of @Export com.example.data.DataExports would keep the original com.example.data.Source
+  - class com.example.test.FakeSource (Main.kt:12)
+  - property repository of @Export com.example.data.DataExports
+Why: An @Export graph is compiled in its own module, so a replacement takes the place of com.example.data.Source only where the consuming module builds it; the exported bindings above were built with the original and the graph would not be wired as declared.
+Fix: Replace those exported bindings with @Replaces too, so the test graph builds them from the replacement.
+Fix: Or move the bindings that use com.example.data.Source out of the @Export module into the module that consumes them.
