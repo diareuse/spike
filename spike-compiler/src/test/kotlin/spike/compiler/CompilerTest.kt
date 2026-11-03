@@ -894,10 +894,11 @@ class CompilerTest : HarnessCompiler() {
         )
 
     @Test
-    fun `a spike library option other than true or false fails`() = assertProcessingFails(
+    fun `a spike library option other than true or false fails even in a module with an export`() = assertProcessingFails(
         "androidx_viewmodel_library_option_invalid",
         "SPIKE-LIBRARY-OPTION",
         "\"yes\"",
+        "spike { library } or ksp { arg(\"spike.library\", ...) }",
         libraries = Androidx
     )
 

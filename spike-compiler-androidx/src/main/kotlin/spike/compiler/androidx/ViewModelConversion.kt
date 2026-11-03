@@ -57,46 +57,49 @@ fun viewModelEntryPoint(environment: SymbolProcessorEnvironment, reporter: Probl
     val name = "$packageName.${ViewModelNames.ViewModelEntryPointImpl}"
     val markers = EntryPointMarkers(packageName)
     val identity = ModuleIdentity(environment.options)
-    return SymbolProcessorEnabledBy(
+    return SymbolProcessorValidLibraryOption(
         environment.options,
-        "spike.viewmodel.enabled",
-        SymbolProcessorUnlessExported(
-            SymbolSourceAnnotated(ViewModelNames.Export),
-            SymbolProcessorModuleRole(
-                environment.options,
-                environment.logger,
-                library = SymbolProcessorViewModelExport(
-                    SymbolSourceAnnotated(ViewModelNames.SpikeViewModel),
-                    environment.codeGenerator,
-                    identity,
-                ),
-                app = SymbolProcessorRequiring(
-                    ViewModelNames.ViewModelEntryPoint,
-                    SymbolProcessorUnlessAmbiguous(
-                        markers,
-                        "SPIKE-VIEWMODEL-ENTRY-POINT-AMBIGUOUS",
-                        "$name is compiled in more than one dependency, so which ViewModels this module sees " +
-                            "depends on classpath order. Leave the entry point to the app: mark each library " +
-                            "module with spike { library = true } (io.github.diareuse.spike Gradle plugin), the " +
-                            "KSP option spike.library=true, or an @Export interface in it.",
-                        reporter,
-                        SymbolProcessorUnlessCompiled(
-                            name,
-                            SymbolProcessorAll(
-                                listOf(
-                                    SymbolProcessorRejectingStrandedViewModels(
-                                        name,
-                                        SymbolSourceAnnotated(ViewModelNames.SpikeViewModel),
-                                        markers,
-                                        reporter,
+        environment.logger,
+        SymbolProcessorEnabledBy(
+            environment.options,
+            "spike.viewmodel.enabled",
+            SymbolProcessorUnlessExported(
+                SymbolSourceAnnotated(ViewModelNames.Export),
+                SymbolProcessorModuleRole(
+                    environment.options,
+                    library = SymbolProcessorViewModelExport(
+                        SymbolSourceAnnotated(ViewModelNames.SpikeViewModel),
+                        environment.codeGenerator,
+                        identity,
+                    ),
+                    app = SymbolProcessorRequiring(
+                        ViewModelNames.ViewModelEntryPoint,
+                        SymbolProcessorUnlessAmbiguous(
+                            markers,
+                            "SPIKE-VIEWMODEL-ENTRY-POINT-AMBIGUOUS",
+                            "$name is compiled in more than one dependency, so which ViewModels this module sees " +
+                                "depends on classpath order. Leave the entry point to the app: mark each library " +
+                                "module with spike { library = true } (io.github.diareuse.spike Gradle plugin), the " +
+                                "KSP option spike.library=true, or an @Export interface in it.",
+                            reporter,
+                            SymbolProcessorUnlessCompiled(
+                                name,
+                                SymbolProcessorAll(
+                                    listOf(
+                                        SymbolProcessorRejectingStrandedViewModels(
+                                            name,
+                                            SymbolSourceAnnotated(ViewModelNames.SpikeViewModel),
+                                            markers,
+                                            reporter,
+                                        ),
+                                        SymbolProcessorRejectingUnreachedExports(name, markers, reporter),
                                     ),
-                                    SymbolProcessorRejectingUnreachedExports(name, markers, reporter),
                                 ),
-                            ),
-                            SymbolProcessorAll(
-                                listOf(
-                                    SymbolProcessorViewModelEntryPoint(packageName, environment.codeGenerator),
-                                    SymbolProcessorViewModelEntryPointMarker(packageName, environment.codeGenerator, identity),
+                                SymbolProcessorAll(
+                                    listOf(
+                                        SymbolProcessorViewModelEntryPoint(packageName, environment.codeGenerator),
+                                        SymbolProcessorViewModelEntryPointMarker(packageName, environment.codeGenerator, identity),
+                                    ),
                                 ),
                             ),
                         ),
