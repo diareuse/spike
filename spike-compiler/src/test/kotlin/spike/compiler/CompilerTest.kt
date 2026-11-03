@@ -348,6 +348,14 @@ class CompilerTest : HarnessCompiler() {
         assertProcessingFails("unresolved_compiled_export_consumer")
 
     @Test
+    fun `a compiled binding may carry annotations missing from the consumer classpath`() =
+        assertRuns("compiled_foreign_annotation")
+
+    @Test
+    fun `a compiled map key naming a class missing from the consumer classpath is reported at the consumer`() =
+        assertProcessingFails("unresolved_compiled_key")
+
+    @Test
     fun `a compiled export the consumer never uses may name a type missing from the consumer classpath`() =
         assertRuns("unresolved_compiled_unused_export")
 

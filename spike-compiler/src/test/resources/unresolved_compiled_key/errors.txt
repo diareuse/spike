@@ -1,0 +1,6 @@
+Main.kt:6: [SPIKE-UNRESOLVED-TYPE] com.example.platform.Reason cannot be resolved, but the compiled function cat needs it
+  - compiled function cat
+  - interface TestApp (Main.kt:6)
+Why: com.example.platform.Reason is not on this module's compile classpath, though a dependency's compiled binding names it. A graph built from an unresolved type would be wired against a guess.
+Fix: Add the dependency that declares com.example.platform.Reason to this module.
+Fix: Or expose it from the dependency that names it, with api instead of implementation.
