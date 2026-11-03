@@ -1,18 +1,23 @@
 package spike.gradle
 
-import com.google.devtools.ksp.gradle.KspAATask
 import org.gradle.api.Project
 
 internal class SpikeSetupModuleId(
-    private val compilations: KspCompilations,
+    private val tasks: KspTasks,
     private val argument: (String) -> SpikeModuleArgument,
 ) : SpikeSetup {
     override fun apply(project: Project) {
-        project.tasks.withType(KspAATask::class.java).configureEach { task ->
-            val compilation = compilations.byTask(project)[task.name]?.name ?: MainCompilation
-            val module = if (compilation == MainCompilation) project.path else "${project.path}<$compilation>"
-            task.commandLineArgumentProviders.add(argument(module))
-        }
+        tasks.each(
+            project,
+            compiled = { compilation, task ->
+                val module = if (compilation.name == MainCompilation) project.path else "${project.path}<${compilation.name}>"
+                task.commandLineArgumentProviders.add(argument(module))
+            },
+            orphan = { task ->
+                project.logger.warn("Spike found no Kotlin compilation for ${task.path}; its module id is the task path.")
+                task.commandLineArgumentProviders.add(argument("${project.path}<${task.name}>"))
+            },
+        )
     }
 
     private companion object {

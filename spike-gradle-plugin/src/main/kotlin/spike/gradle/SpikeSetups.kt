@@ -34,14 +34,14 @@ internal fun extension(): SpikeSetup = SpikeSetupExtension()
 @Include(bindTo = BindTarget.Map)
 @Order(15)
 internal fun libraryRole(
-    compilations: KspCompilations,
+    tasks: KspTasks,
     argument: (Provider<Boolean>) -> SpikeLibraryArgument,
-): SpikeSetup = SpikeSetupLibraryRole(compilations, argument)
+): SpikeSetup = SpikeSetupLibraryRole(tasks, argument)
 
 @Include(bindTo = BindTarget.Map)
 @Order(16)
-internal fun moduleId(compilations: KspCompilations, argument: (String) -> SpikeModuleArgument): SpikeSetup =
-    SpikeSetupModuleId(compilations, argument)
+internal fun moduleId(tasks: KspTasks, argument: (String) -> SpikeModuleArgument): SpikeSetup =
+    SpikeSetupModuleId(tasks, argument)
 
 @Include(bindTo = BindTarget.Map)
 @Order(20)
