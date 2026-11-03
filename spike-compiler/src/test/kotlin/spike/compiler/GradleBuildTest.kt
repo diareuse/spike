@@ -93,8 +93,15 @@ class GradleBuildTest : HarnessGradle() {
     @Test
     fun `the Gradle plugin runs Spike in the unit and instrumented tests of an Android library`() = assertBuilds(
         "gradle_plugin_android_library",
-        tasks = listOf(":compileDebugUnitTestKotlin", ":compileDebugAndroidTestKotlin")
+        tasks = listOf(":compileFreeDebugUnitTestKotlin", ":compileFreeDebugAndroidTestKotlin")
     )
+
+    @Test
+    fun `the Gradle plugin adds the compiler to the KSP configurations of an Android flavor ending in main`() =
+        assertBuilds(
+            "gradle_plugin_android_library",
+            tasks = listOf(":compileDomainDebugUnitTestKotlin", ":assertFlavorKspConfigurations")
+        )
 
     @Test
     fun `the Gradle plugin runs Spike in the tests of a multiplatform Android target`() = assertBuilds(

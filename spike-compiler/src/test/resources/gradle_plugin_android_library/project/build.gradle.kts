@@ -15,6 +15,15 @@ android {
     defaultConfig {
         minSdk = 24
     }
+    flavorDimensions += "tier"
+    productFlavors {
+        create("domain") {
+            dimension = "tier"
+        }
+        create("free") {
+            dimension = "tier"
+        }
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -31,5 +40,14 @@ configurations.configureEach {
     resolutionStrategy.dependencySubstitution {
         substitute(module("io.github.diareuse:spike")).using(module("spike:spike-core:unspecified"))
         substitute(module("io.github.diareuse:spike-compiler")).using(module("spike.compiler:spike-compiler:unspecified"))
+    }
+}
+
+tasks.register("assertFlavorKspConfigurations") {
+    val missing = listOf("kspDomain", "kspTestDomain", "kspAndroidTestDomain").filter { name ->
+        configurations.findByName(name)?.dependencies?.none { it.name == "spike-compiler" } ?: true
+    }
+    doLast {
+        check(missing.isEmpty()) { "Spike's compiler is missing from $missing" }
     }
 }

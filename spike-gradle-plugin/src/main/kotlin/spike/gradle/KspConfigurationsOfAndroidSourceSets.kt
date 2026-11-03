@@ -20,7 +20,8 @@ internal class KspConfigurationsOfAndroidSourceSets(private val targets: KotlinT
     }
 
     private fun nameOf(target: String, sourceSet: String): String {
-        val part = if (sourceSet.endsWith(MainSourceSet, ignoreCase = true)) sourceSet.dropLast(MainSourceSet.length) else sourceSet
+        val main = if (target.isEmpty()) sourceSet == MainSourceSet else sourceSet.endsWith(MainSourceSet, ignoreCase = true)
+        val part = if (main) sourceSet.dropLast(MainSourceSet.length) else sourceSet
         return listOf("ksp", target, part).joinToString("") { it.replaceFirstChar(Char::uppercase) }
             .replaceFirstChar(Char::lowercase)
     }
