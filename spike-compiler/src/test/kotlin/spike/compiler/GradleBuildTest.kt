@@ -83,6 +83,14 @@ class GradleBuildTest : HarnessGradle() {
         assertBuilds("gradle_plugin_viewmodel_test_fixtures_viewmodel", tasks = listOf(":view:runTestMain"))
 
     @Test
+    fun `a project path that KSP cannot carry as an option fails naming the project`() =
+        assertBuildFails(
+            "gradle_plugin_module_id_equals",
+            listOf(":a=b:compileKotlin"),
+            "Spike cannot pass the module id :a=b to KSP"
+        )
+
+    @Test
     fun `the Gradle plugin runs Spike in a custom JVM test suite`() =
         assertBuilds("gradle_plugin_integration_test_suite", tasks = listOf(":runIntegrationMain"))
 
