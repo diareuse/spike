@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793714103082,
+  "lastUpdate": 1793742723303,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -3799,6 +3799,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "spike open screen",
             "value": 0.0030708909365917796,
+            "unit": "us"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "27daf1d403c01b3f31f4b046720bfdd4359a8413",
+          "message": "refactor(gradle): bind the KSP configuration sources as an ordered map",
+          "timestamp": "2026-11-03T20:45:10+01:00",
+          "tree_id": "442ca15a2fe227e96d8d9d6f8580d41850d93d5b",
+          "url": "https://github.com/diareuse/spike/commit/27daf1d403c01b3f31f4b046720bfdd4359a8413"
+        },
+        "date": 1793742718682,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "spike clean build",
+            "value": 3295.0299999999997,
+            "unit": "ms"
+          },
+          {
+            "name": "spike ABI change",
+            "value": 1907.925,
+            "unit": "ms"
+          },
+          {
+            "name": "spike non-ABI change",
+            "value": 1942.745,
+            "unit": "ms"
+          },
+          {
+            "name": "spike resolve from graph",
+            "value": 5.128515444723588,
+            "unit": "us"
+          },
+          {
+            "name": "spike cold start",
+            "value": 247329.4095,
+            "unit": "us"
+          },
+          {
+            "name": "spike open screen",
+            "value": 0.004066244542395694,
             "unit": "us"
           }
         ]
