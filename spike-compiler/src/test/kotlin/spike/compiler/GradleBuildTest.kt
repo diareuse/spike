@@ -42,4 +42,8 @@ class GradleBuildTest : HarnessGradle() {
         modules = listOf("app", "library")
     )
 
+    @Test
+    fun `an export depending on another module's export with imports builds and runs`() =
+        assertBuilds("export_depends_on_export", tasks = listOf(":app:run"))
+
 }

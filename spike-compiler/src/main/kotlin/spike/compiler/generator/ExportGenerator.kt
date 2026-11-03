@@ -107,7 +107,7 @@ class ExportGenerator(private val contributions: ContributionFunction) : Generat
         resolver: TypeResolver,
         context: FileGeneratorContext
     ) {
-        for (p in ep.properties) {
+        for (p in ep.properties.filterNot { it.synthetic }) {
             type.addProperty(
                 PropertySpec.builder(p.name, resolver.getTypeName(p.returns))
                     .addModifiers(KModifier.OVERRIDE)
