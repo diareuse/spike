@@ -5,6 +5,7 @@ import spike.compiler.conversion.AnnotationNames
 
 object ViewModelNames {
     const val ViewModelEntryPoint = "spike.lifecycle.viewmodel.ViewModelEntryPoint"
+    const val ViewModelEntryPointImpl = "ViewModelEntryPointImpl"
     val SpikeViewModel = AnnotationNames("spike.lifecycle.viewmodel.SpikeViewModel")
     val Export = AnnotationNames("spike.Export")
     val IncludeConstructor = AnnotationNames("spike.Include.Constructor")

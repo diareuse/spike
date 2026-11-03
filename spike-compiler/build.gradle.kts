@@ -53,6 +53,7 @@ val fixtureKotlin = fixtureLibraries("fixtureKotlin", project(":spike-core"), pr
 val fixtureAndroidx = fixtureLibraries(
     "fixtureAndroidx",
     project(":spike-core"),
+    project(":spike-test"),
     project(":spike-androidx"),
     "org.jetbrains.kotlin:kotlin-stdlib:${libs.versions.kotlin.get()}",
     libs.androidx.lifecycle.viewmodel.savedstate.get()

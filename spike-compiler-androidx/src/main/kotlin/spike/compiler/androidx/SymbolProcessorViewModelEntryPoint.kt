@@ -21,7 +21,7 @@ class SymbolProcessorViewModelEntryPoint(
     private val codeGenerator: CodeGenerator,
 ) : SymbolProcessor {
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        val name = ClassName(packageName, "ViewModelEntryPointImpl")
+        val name = ClassName(packageName, ViewModelNames.ViewModelEntryPointImpl)
         val entryPoint = ClassName.bestGuess(ViewModelNames.ViewModelEntryPoint)
         val factory = TypeSpec.interfaceBuilder(name.nestedClass("Factory"))
             .addSuperinterface(entryPoint.nestedClass("Factory"))

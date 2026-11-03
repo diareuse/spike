@@ -611,6 +611,18 @@ class CompilerTest : HarnessCompiler() {
         assertRuns("androidx_viewmodel_library", Androidx)
 
     @Test
+    fun `a test entry point extending a dependency's generated ViewModel entry point keeps its ViewModels`() =
+        assertRuns("androidx_viewmodel_test_replaces", Androidx)
+
+    @Test
+    fun `a viewmodel next to a dependency that generated the ViewModel entry point fails`() = assertProcessingFails(
+        "androidx_viewmodel_unexported_library",
+        "SPIKE-VIEWMODEL-ENTRY-POINT",
+        "@Export",
+        libraries = Androidx
+    )
+
+    @Test
     fun `viewmodels share singletons of an exported library`() = assertRuns("androidx_viewmodel_export", Androidx)
 
     @Test
