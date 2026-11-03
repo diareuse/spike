@@ -860,7 +860,19 @@ class CompilerTest : HarnessCompiler() {
             "androidx_viewmodel_compiled_entry_point_missing_export",
             "SPIKE-VIEWMODEL-ENTRY-POINT-INCOMPLETE",
             "com.example.exported.ExportedViews",
+            "compiled in unexported",
             "spike.library",
+            libraries = Androidx
+        )
+
+    @Test
+    fun `a test compilation seeing an exported fixture library the app's entry point misses names the app`() =
+        assertProcessingFails(
+            "androidx_viewmodel_test_fixture_export",
+            "SPIKE-VIEWMODEL-ENTRY-POINT-INCOMPLETE",
+            "com.example.fixture.FixtureViews",
+            "compiled in app",
+            "test compilation",
             libraries = Androidx
         )
 

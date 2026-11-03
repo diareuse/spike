@@ -27,9 +27,18 @@ class SymbolProcessorRejectingUnreachedExports(
             .filterIsInstance<KSClassDeclaration>()
             .filter(::contributesViewModels)
             .filter { it.qualifiedName?.asString() !in reached }
-        for (export in unreached) reporter.report(problem(compiled, exportOf(export)))
+        val module = compiledIn(resolver)
+        for (export in unreached) reporter.report(problem(compiled, module, exportOf(export)))
         return emptyList()
     }
+
+    private fun compiledIn(resolver: Resolver): String = resolver
+        .getDeclarationsFromPackage(entryPoint.substringBeforeLast('.'))
+        .filterIsInstance<KSClassDeclaration>()
+        .map { it.simpleName.asString() }
+        .filter { it.startsWith(ViewModelNames.EntryPointMarkerPrefix) }
+        .map { it.removePrefix(ViewModelNames.EntryPointMarkerPrefix) }
+        .firstOrNull() ?: "a dependency"
 
     private fun contributesViewModels(generated: KSClassDeclaration) = generated.getDeclaredFunctions().any { function ->
         function.annotations.any { it.shortName.asString() == ViewModelNames.ViewModelKey.simpleName }
@@ -39,11 +48,13 @@ class SymbolProcessorRejectingUnreachedExports(
         generated.superTypes.firstOrNull()?.resolve()?.declaration?.qualifiedName?.asString()
             ?: generated.qualifiedName?.asString().orEmpty()
 
-    private fun problem(compiled: KSClassDeclaration, export: String) = ConversionProblem(
+    private fun problem(compiled: KSClassDeclaration, module: String, export: String) = ConversionProblem(
         "SPIKE-VIEWMODEL-ENTRY-POINT-INCOMPLETE",
-        "$entryPoint is already compiled in a dependency that does not see $export, so the ViewModels exported " +
-            "by $export are missing from it. Mark that dependency as a library: apply the io.github.diareuse.spike " +
-            "Gradle plugin, set the KSP option spike.library=true in it, or declare an @Export interface in it.",
+        "$entryPoint is compiled in $module, which does not see $export, so the ViewModels exported by $export " +
+            "are missing from it. If $module is a library, mark it as one: spike { library = true } with the " +
+            "io.github.diareuse.spike Gradle plugin, the KSP option spike.library=true, or an @Export interface " +
+            "in it. If $module is this module's main source set (a test compilation), add the dependency that " +
+            "declares $export to the main source set too.",
         compiled,
     )
 
