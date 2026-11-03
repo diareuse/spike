@@ -59,18 +59,15 @@ fun viewModelEntryPoint(environment: SymbolProcessorEnvironment, reporter: Probl
     return SymbolProcessorEnabledBy(
         environment.options,
         "spike.viewmodel.enabled",
-        SymbolProcessorModuleRole(
-            environment.options,
-            library = SymbolProcessorUnlessExported(
-                SymbolSourceAnnotated(ViewModelNames.Export),
-                SymbolProcessorViewModelExport(
+        SymbolProcessorUnlessExported(
+            SymbolSourceAnnotated(ViewModelNames.Export),
+            SymbolProcessorModuleRole(
+                environment.options,
+                library = SymbolProcessorViewModelExport(
                     SymbolSourceAnnotated(ViewModelNames.SpikeViewModel),
                     environment.codeGenerator,
                 ),
-            ),
-            app = SymbolProcessorUnlessExported(
-                SymbolSourceAnnotated(ViewModelNames.Export),
-                SymbolProcessorRequiring(
+                app = SymbolProcessorRequiring(
                     ViewModelNames.ViewModelEntryPoint,
                     SymbolProcessorUnlessAmbiguous(
                         packageName,
