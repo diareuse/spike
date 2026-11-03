@@ -846,6 +846,14 @@ class CompilerTest : HarnessCompiler() {
         assertRuns("androidx_viewmodel_library_role", Androidx)
 
     @Test
+    fun `two dependencies that each compiled the ViewModel entry point fail naming the ambiguity`() =
+        assertProcessingFails(
+            "androidx_viewmodel_two_compiled_entry_points",
+            "SPIKE-VIEWMODEL-ENTRY-POINT-AMBIGUOUS",
+            libraries = Androidx
+        )
+
+    @Test
     fun `viewmodels share singletons of an exported library`() = assertRuns("androidx_viewmodel_export", Androidx)
 
     @Test

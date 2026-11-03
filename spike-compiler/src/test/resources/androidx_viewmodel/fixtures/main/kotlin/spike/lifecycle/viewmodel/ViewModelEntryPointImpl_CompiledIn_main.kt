@@ -1,0 +1,3 @@
+package spike.lifecycle.viewmodel
+
+internal object ViewModelEntryPointImpl_CompiledIn_main

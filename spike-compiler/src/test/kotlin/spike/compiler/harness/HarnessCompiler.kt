@@ -133,6 +133,8 @@ abstract class HarnessCompiler {
     private fun modules(name: String, libraries: Libraries): List<FixtureModule> {
         val project = testResources.resolve("$name/project")
         val work = File("build/tmp/compilations").resolve(name).apply { deleteRecursively() }
+        val declared = project.resolve("modules.txt")
+        if (declared.isFile) return declaredModules(project, work, declared, libraries)
         if (!project.resolve("app").isDirectory) {
             val main = SourceModule("main", project.resolve("src"), libraries.files(), work, options(project))
             return listOf(FixtureModule("main", main, "main/kotlin"))
@@ -151,6 +153,23 @@ abstract class HarnessCompiler {
             modules += FixtureModule(name, source, "$name/main/kotlin")
         }
         return modules
+    }
+
+    private fun declaredModules(project: File, work: File, declared: File, libraries: Libraries): List<FixtureModule> {
+        val classpaths = mutableMapOf<String, List<File>>()
+        return declared.readLines().filter(String::isNotBlank).map { line ->
+            val name = line.substringBefore(':').trim()
+            val dependencies = line.substringAfter(':', "").split(' ').filter(String::isNotBlank)
+            val module = SourceModule(
+                name = name,
+                sources = project.resolve("$name/src"),
+                libraries = libraries.files() + dependencies.flatMap(classpaths::getValue).distinct(),
+                workDirectory = work.resolve(name),
+                options = options(project.resolve(name))
+            )
+            classpaths[name] = dependencies.flatMap(classpaths::getValue) + module.classes
+            FixtureModule(name, module, "$name/main/kotlin")
+        }
     }
 
     private fun options(module: File): Map<String, String> {
