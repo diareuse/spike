@@ -3,6 +3,7 @@ package spike.compiler.harness
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import java.io.File
+import java.util.Properties
 
 class FixtureProject(private val name: String, template: String?) {
 
@@ -15,6 +16,7 @@ class FixtureProject(private val name: String, template: String?) {
         template?.let { testResources.resolve("templates/$it").copyRecursively(directory) }
         testResources.resolve("$name/project").copyRecursively(directory, overwrite = true)
         writeSettings()
+        writeAndroidSdk()
     }
 
     fun build(tasks: List<String>, arguments: List<String> = emptyList()): BuildResult =
@@ -35,6 +37,23 @@ class FixtureProject(private val name: String, template: String?) {
         .withProjectDir(directory)
         .forwardOutput()
         .withArguments(tasks + "--stacktrace")
+
+    private fun writeAndroidSdk() {
+        val usesAndroid = directory.walk().any { it.name == "build.gradle.kts" && AndroidPlugin in it.readText() }
+        if (!usesAndroid) return
+        val sdk = System.getenv("ANDROID_HOME")?.takeIf(String::isNotBlank) ?: rootSdk()
+        checkNotNull(sdk) {
+            "$name builds an Android project, but neither ANDROID_HOME nor sdk.dir in the Spike root local.properties " +
+                "points at an Android SDK."
+        }
+        directory.resolve("local.properties").writeText("sdk.dir=$sdk\n")
+    }
+
+    private fun rootSdk(): String? {
+        val file = File("..").resolve("local.properties")
+        if (!file.isFile) return null
+        return Properties().apply { file.reader().use(::load) }.getProperty("sdk.dir")
+    }
 
     private fun writeSettings() {
         val spikeRoot = File("..").canonicalPath
@@ -83,5 +102,6 @@ class FixtureProject(private val name: String, template: String?) {
 
     private companion object {
         const val SpikePlugin = "id(\"io.github.diareuse.spike\")"
+        const val AndroidPlugin = "libs.plugins.android."
     }
 }

@@ -25,6 +25,7 @@ dependencies {
     implementation(project(":spike-core"))
     ksp(libs.spike.compiler)
     compileOnly(libs.plugin.multiplatform)
+    compileOnly(libs.android.gradle.api)
     implementation(libs.com.google.devtools.ksp.gradle.plugin)
 }
 

@@ -57,3 +57,9 @@ internal fun jvm(artifacts: SpikeArtifacts, configurations: KspConfigurations): 
 @Order(40)
 internal fun android(artifacts: SpikeArtifacts, configurations: KspConfigurations): SpikeSetup =
     SpikeSetupSinglePlatform("org.jetbrains.kotlin.android", artifacts, configurations)
+
+@Include
+internal fun kspConfigurations(
+    kotlin: KspConfigurationsOfKotlinCompilations,
+    android: KspConfigurationsOfAndroidSourceSets,
+): KspConfigurations = KspConfigurationsAll(listOf(kotlin, android))

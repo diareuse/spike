@@ -91,6 +91,18 @@ class GradleBuildTest : HarnessGradle() {
         )
 
     @Test
+    fun `the Gradle plugin runs Spike in the unit and instrumented tests of an Android library`() = assertBuilds(
+        "gradle_plugin_android_library",
+        tasks = listOf(":compileDebugUnitTestKotlin", ":compileDebugAndroidTestKotlin")
+    )
+
+    @Test
+    fun `the Gradle plugin runs Spike in the tests of a multiplatform Android target`() = assertBuilds(
+        "gradle_plugin_multiplatform_android_target",
+        tasks = listOf(":compileDebugUnitTestKotlinAndroid", ":compileDebugAndroidTestKotlinAndroid")
+    )
+
+    @Test
     fun `the Gradle plugin runs Spike in a custom JVM test suite`() =
         assertBuilds("gradle_plugin_integration_test_suite", tasks = listOf(":runIntegrationMain"))
 
