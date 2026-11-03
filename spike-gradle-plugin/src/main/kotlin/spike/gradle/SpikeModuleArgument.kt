@@ -11,7 +11,7 @@ internal class SpikeModuleArgument(@get:Input val module: String) : CommandLineA
         if (module.any { it == '=' || it.isWhitespace() }) {
             throw GradleException(
                 "Spike cannot pass the module id $module to KSP, which splits processor options at '=' and " +
-                    "whitespace. Rename the project, or set the KSP option spike.module yourself."
+                    "whitespace. Rename the project."
             )
         }
     }

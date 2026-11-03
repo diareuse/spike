@@ -27,15 +27,17 @@ object ModuleName {
                 '_' -> append('_').also { index += 2 }
                 '0' -> append(':').also { index += 2 }
                 'u' -> {
-                    val code = name.substring(index + 2, minOf(index + 6, name.length)).takeIf { it.length == 4 }
-                        ?.toIntOrNull(16) ?: return null
-                    append(code.toChar())
+                    val hex = name.substring(index + 2, minOf(index + 6, name.length))
+                    if (hex.length != 4 || !hex.all(::isHexDigit)) return null
+                    append(hex.toInt(16).toChar())
                     index += 6
                 }
                 else -> return null
             }
         }
     }
+
+    private fun isHexDigit(char: Char) = char in '0'..'9' || char in 'a'..'f' || char in 'A'..'F'
 
     private fun Char.isAsciiLetterOrDigit() = this in 'a'..'z' || this in 'A'..'Z' || this in '0'..'9'
 }

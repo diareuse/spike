@@ -898,7 +898,7 @@ class CompilerTest : HarnessCompiler() {
         assertProcessingFails(
             "androidx_viewmodel_malformed_marker",
             "SPIKE-VIEWMODEL-ENTRY-POINT",
-            "compiled in bad_u,",
+            "compiled in bad_u-001,",
             libraries = Androidx
         )
 

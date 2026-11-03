@@ -87,7 +87,7 @@ class GradleBuildTest : HarnessGradle() {
         assertBuildFails(
             "gradle_plugin_module_id_equals",
             listOf(":a=b:compileKotlin"),
-            "Spike cannot pass the module id :a=b to KSP"
+            "Spike cannot pass the module id :a=b to KSP, which splits processor options at '=' and whitespace. Rename the project."
         )
 
     @Test

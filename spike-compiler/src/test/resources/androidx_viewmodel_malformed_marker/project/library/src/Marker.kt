@@ -1,3 +1,3 @@
 package spike.lifecycle.viewmodel
 
-internal object ViewModelEntryPointImpl_CompiledIn_bad_u
+internal object `ViewModelEntryPointImpl_CompiledIn_bad_u-001`
