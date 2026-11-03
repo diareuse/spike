@@ -284,6 +284,10 @@ class CompilerTest : HarnessCompiler() {
         )
 
     @Test
+    fun `a cycle through a compiled binding naming a hidden type is still reported as a cycle`() =
+        assertProcessingFails("unresolved_compiled_cycle", "SPIKE-DEPENDENCY-CYCLE")
+
+    @Test
     fun `a reached compiled binding naming a hidden type nothing binds reports the hidden type, not a missing binding`() =
         assertProcessingFails("unresolved_compiled_unbound")
 
