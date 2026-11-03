@@ -239,6 +239,14 @@ val shop = TestCoffeeShop() // every Repository is now FakeRepository
 The replacement must be a `Repository`, and the production graph must bind `Repository`; otherwise the
 build fails. Production entry points are unaffected.
 
+`@Replaces` also swaps a binding that another module provides through `@Export`, but only where your
+module builds it. An `@Export` graph is compiled in its own module, so the bindings inside it keep the
+original. If a library exports both `Source` and a `Repository` built from `Source`, replacing `Source`
+cannot reach the exported `Repository`; the build fails with `SPIKE-REPLACES-INSIDE-EXPORT`, naming every
+exported binding that would keep the original. Replace those bindings too, or move them out of the
+`@Export` module. Types the export takes from your module are built by your graph and do receive the
+replacement.
+
 ## License
 
 Spike is licensed under the [Mozilla Public License 2.0](LICENSE). Changes to Spike's own files must be
