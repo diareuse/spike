@@ -103,6 +103,10 @@ class GradleBuildTest : HarnessGradle() {
     )
 
     @Test
+    fun `the Gradle plugin applied before the Kotlin plugin still passes the library role`() =
+        assertBuilds("gradle_plugin_spike_before_kotlin", tasks = listOf(":app:run", ":view:runTestMain"))
+
+    @Test
     fun `the Gradle plugin runs Spike in a custom JVM test suite`() =
         assertBuilds("gradle_plugin_integration_test_suite", tasks = listOf(":runIntegrationMain"))
 
