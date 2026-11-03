@@ -842,6 +842,10 @@ class CompilerTest : HarnessCompiler() {
     )
 
     @Test
+    fun `a library module marked by the spike library option leaves the ViewModel entry point to the app`() =
+        assertRuns("androidx_viewmodel_library_role", Androidx)
+
+    @Test
     fun `viewmodels share singletons of an exported library`() = assertRuns("androidx_viewmodel_export", Androidx)
 
     @Test

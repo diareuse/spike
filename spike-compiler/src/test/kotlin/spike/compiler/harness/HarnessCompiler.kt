@@ -4,6 +4,7 @@ import spike.compiler.assertion.assertContentEquals
 import java.io.File
 import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
+import java.util.Properties
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -133,7 +134,7 @@ abstract class HarnessCompiler {
         val project = testResources.resolve("$name/project")
         val work = File("build/tmp/compilations").resolve(name).apply { deleteRecursively() }
         if (!project.resolve("app").isDirectory) {
-            val main = SourceModule("main", project.resolve("src"), libraries.files(), work)
+            val main = SourceModule("main", project.resolve("src"), libraries.files(), work, options(project))
             return listOf(FixtureModule("main", main, "main/kotlin"))
         }
         val modules = mutableListOf<FixtureModule>()
@@ -144,11 +145,19 @@ abstract class HarnessCompiler {
                 name = name,
                 sources = project.resolve("$name/src"),
                 libraries = libraries.files() + visible.map { it.source.classes },
-                workDirectory = work.resolve(name)
+                workDirectory = work.resolve(name),
+                options = options(project.resolve(name))
             )
             modules += FixtureModule(name, source, "$name/main/kotlin")
         }
         return modules
+    }
+
+    private fun options(module: File): Map<String, String> {
+        val file = module.resolve("ksp.properties")
+        if (!file.isFile) return emptyMap()
+        val properties = Properties().apply { file.reader().use(::load) }
+        return properties.stringPropertyNames().associateWith(properties::getProperty)
     }
 
     private class FixtureModule(val name: String, val source: SourceModule, val golden: String)

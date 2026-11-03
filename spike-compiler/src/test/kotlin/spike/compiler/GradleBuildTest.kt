@@ -35,6 +35,10 @@ class GradleBuildTest : HarnessGradle() {
     )
 
     @Test
+    fun `the Gradle plugin lets a library module's ViewModels reach the app's entry point without an export`() =
+        assertBuilds("gradle_plugin_viewmodel_library", tasks = listOf(":app:run"))
+
+    @Test
     fun `exports are taken into account`() = assertMatchesGolden(
         "multi_module",
         template = "multi_module",

@@ -58,22 +58,32 @@ fun viewModelEntryPoint(environment: SymbolProcessorEnvironment, reporter: Probl
     return SymbolProcessorEnabledBy(
         environment.options,
         "spike.viewmodel.enabled",
-        SymbolProcessorUnlessExported(
-            SymbolSourceAnnotated(ViewModelNames.Export),
-            SymbolProcessorRequiring(
-                ViewModelNames.ViewModelEntryPoint,
-                SymbolProcessorUnlessCompiled(
-                    name,
-                    SymbolProcessorRejecting(
-                        SymbolSourceAnnotated(ViewModelNames.SpikeViewModel),
-                        "SPIKE-VIEWMODEL-ENTRY-POINT",
-                        "$name is already compiled in a dependency, so this ViewModel reaches no entry point. " +
-                            "If that dependency is a library, declare an @Export interface in it: it then leaves " +
-                            "the entry point to this module and exports its ViewModels. If it is this module's " +
-                            "main source set (a test compilation), move the ViewModel there.",
-                        reporter,
+        SymbolProcessorModuleRole(
+            environment.options,
+            library = SymbolProcessorUnlessExported(
+                SymbolSourceAnnotated(ViewModelNames.Export),
+                SymbolProcessorViewModelExport(
+                    SymbolSourceAnnotated(ViewModelNames.SpikeViewModel),
+                    environment.codeGenerator,
+                ),
+            ),
+            app = SymbolProcessorUnlessExported(
+                SymbolSourceAnnotated(ViewModelNames.Export),
+                SymbolProcessorRequiring(
+                    ViewModelNames.ViewModelEntryPoint,
+                    SymbolProcessorUnlessCompiled(
+                        name,
+                        SymbolProcessorRejecting(
+                            SymbolSourceAnnotated(ViewModelNames.SpikeViewModel),
+                            "SPIKE-VIEWMODEL-ENTRY-POINT",
+                            "$name is already compiled in a dependency, so this ViewModel reaches no entry point. " +
+                                "If that dependency is a library, declare an @Export interface in it: it then " +
+                                "leaves the entry point to this module and exports its ViewModels. If it is this " +
+                                "module's main source set (a test compilation), move the ViewModel there.",
+                            reporter,
+                        ),
+                        SymbolProcessorViewModelEntryPoint(packageName, environment.codeGenerator),
                     ),
-                    SymbolProcessorViewModelEntryPoint(packageName, environment.codeGenerator),
                 ),
             ),
         ),

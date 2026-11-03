@@ -17,7 +17,8 @@ class SourceModule(
     private val name: String,
     private val sources: File,
     private val libraries: List<File>,
-    private val workDirectory: File
+    private val workDirectory: File,
+    private val options: Map<String, String> = emptyMap()
 ) {
 
     val generated: File = workDirectory.resolve("ksp")
@@ -65,6 +66,7 @@ class SourceModule(
         kotlinOutputDir = generatedSources
         javaOutputDir = generated.resolve("java")
         resourceOutputDir = generated.resolve("resources")
+        processorOptions = options
     }.build()
 
     class Error(val message: String, symbol: KSNode?) {

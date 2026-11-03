@@ -72,6 +72,20 @@ When `ViewModelProviderFactory` is used:
 `@SpikeViewModel` classes may also live in library modules that declare an `@Export` interface: those modules
 do not generate their own `ViewModelEntryPointImpl`, and the app's generated entry point includes their ViewModels.
 
+With the Gradle plugin (`io.github.diareuse.spike`) a library module needs no `@Export` interface for this. The
+plugin tells KSP whether a module is the app or a library through the `spike.library` option: a module that applies
+`com.android.application` or `application` is the app (`spike.library=false`), every other module is a library
+(`spike.library=true`). A library module exports its ViewModels and never generates `ViewModelEntryPointImpl`. Without
+the plugin, set the option in each library module by hand:
+
+```kotlin
+ksp {
+    arg("spike.library", "true")
+}
+```
+
+When `spike.library` is not set, a module without an `@Export` interface is treated as the app.
+
 All ViewModels share one set of `@Singleton` instances, so a `@Singleton` repository is the same object in every ViewModel. That set is separate from the singletons of any `@EntryPoint` you create yourself: each entry point instance owns its own. A `@Singleton` cannot depend on `SavedStateHandle`, because it would otherwise keep the handle of the first ViewModel; Spike reports this at compile time.
 
 ## Compose Support

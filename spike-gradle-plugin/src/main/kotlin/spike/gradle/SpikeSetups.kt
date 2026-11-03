@@ -27,6 +27,11 @@ internal fun setup(setups: Map<Int, SpikeSetup>): SpikeSetup = SpikeSetupAll(set
 internal fun ksp(): SpikeSetup = SpikeSetupKsp()
 
 @Include(bindTo = BindTarget.Map)
+@Order(15)
+internal fun moduleRole(): SpikeSetup =
+    SpikeSetupModuleRole(listOf("com.android.application", "application"))
+
+@Include(bindTo = BindTarget.Map)
 @Order(20)
 internal fun multiplatform(artifacts: SpikeArtifacts): SpikeSetup = SpikeSetupMultiplatform(artifacts)
 
