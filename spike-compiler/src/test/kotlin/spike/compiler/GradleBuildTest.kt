@@ -79,6 +79,10 @@ class GradleBuildTest : HarnessGradle() {
         )
 
     @Test
+    fun `ViewModels in a library's main and test fixtures both reach the library's own tests`() =
+        assertBuilds("gradle_plugin_viewmodel_test_fixtures_viewmodel", tasks = listOf(":view:runTestMain"))
+
+    @Test
     fun `test fixtures of a library module keep the library role`() =
         assertBuilds("gradle_plugin_viewmodel_test_fixtures", tasks = listOf(":app:runTestMain"))
 

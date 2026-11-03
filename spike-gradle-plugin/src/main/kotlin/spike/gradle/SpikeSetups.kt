@@ -1,7 +1,6 @@
 package spike.gradle
 
 import org.gradle.api.provider.Provider
-import org.gradle.process.CommandLineArgumentProvider
 import spike.BindTarget
 import spike.EntryPoint
 import spike.Include
@@ -34,12 +33,15 @@ internal fun extension(): SpikeSetup = SpikeSetupExtension()
 
 @Include(bindTo = BindTarget.Map)
 @Order(15)
-internal fun libraryRole(argument: (Provider<Boolean>) -> CommandLineArgumentProvider): SpikeSetup =
-    SpikeSetupLibraryRole(argument)
+internal fun libraryRole(
+    compilations: KspCompilations,
+    argument: (Provider<Boolean>) -> SpikeLibraryArgument,
+): SpikeSetup = SpikeSetupLibraryRole(compilations, argument)
 
 @Include(bindTo = BindTarget.Map)
 @Order(16)
-internal fun moduleId(): SpikeSetup = SpikeSetupModuleId()
+internal fun moduleId(compilations: KspCompilations, argument: (String) -> SpikeModuleArgument): SpikeSetup =
+    SpikeSetupModuleId(compilations, argument)
 
 @Include(bindTo = BindTarget.Map)
 @Order(20)
