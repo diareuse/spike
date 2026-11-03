@@ -24,7 +24,7 @@ class ProgramValueNeeded : ProgramValueSource {
         override fun declare(program: TypeSpec.Builder, resolve: FunSpec.Builder, body: CodeBlock.Builder) {
             program.addProperty(
                 PropertySpec.builder("guards", String::class, KModifier.PRIVATE, KModifier.CONST)
-                    .initializer("%S", table)
+                    .initializer("(%S)", table)
                     .build()
             )
             body.addStatement("val needed = factory._singletons.needed(guards)")

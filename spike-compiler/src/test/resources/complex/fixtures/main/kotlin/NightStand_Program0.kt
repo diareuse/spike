@@ -9,7 +9,7 @@ import kotlin.lazy
 import spike.factory.DependencyId
 
 internal object NightStand_Program0 {
-  private const val guards: String = "\u0002\u0002\u0000\u0002"
+  private const val guards: String = ("\u0002\u0002\u0000\u0002")
 
   public fun resolve(factory: NightStand_Factory): Any? {
     val needed = factory._singletons.needed(guards)

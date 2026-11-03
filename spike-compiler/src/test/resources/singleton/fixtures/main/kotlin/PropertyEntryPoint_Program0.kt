@@ -8,7 +8,7 @@ import spike.Provider
 import spike.factory.DependencyId
 
 internal object PropertyEntryPoint_Program0 {
-  private const val guards: String = "\u0002\u0002\u0000\u0001"
+  private const val guards: String = ("\u0002\u0002\u0000\u0001")
 
   public fun resolve(factory: PropertyEntryPoint_Factory): Any? {
     val needed = factory._singletons.needed(guards)

@@ -355,6 +355,10 @@ class CompilerTest : HarnessCompiler() {
     fun `a cached singleton does not build its arguments again`() = assertRuns("singleton_arguments_built_once")
 
     @Test
+    fun `singletons with ids that escape in string literals build their arguments`() =
+        assertRuns("singleton_guard_table_characters")
+
+    @Test
     fun `entry points created by one factory each get their own singletons`() = assertRuns("factory_singleton")
 
     @Test
