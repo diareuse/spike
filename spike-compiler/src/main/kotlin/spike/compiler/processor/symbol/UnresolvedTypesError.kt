@@ -3,6 +3,7 @@ package spike.compiler.processor.symbol
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSType
 import spike.Include
+import spike.compiler.graph.errorTypeName
 
 @Include
 class UnresolvedTypesError : UnresolvedTypes {
@@ -23,10 +24,7 @@ class UnresolvedTypesError : UnresolvedTypes {
 }
 
 private fun KSType.unresolvedName(): String? {
-    if (isError) return declaration.simpleName.asString().withoutErrorMarker()
+    if (isError) return declaration.simpleName.asString().let { errorTypeName(it) ?: it }
     return arguments.firstNotNullOfOrNull { it.type?.resolve()?.unresolvedName() }
 }
 
-fun String.withoutErrorMarker() = removeSurrounding(ErrorMarker, ">")
-
-private const val ErrorMarker = "<ERROR TYPE: "

@@ -284,6 +284,14 @@ class CompilerTest : HarnessCompiler() {
         )
 
     @Test
+    fun `a qualified hidden parameter nothing binds reports the hidden type, not a missing binding`() =
+        assertProcessingFails("unresolved_compiled_unbound_qualified")
+
+    @Test
+    fun `a generic parameter over a hidden type nothing binds reports the hidden type, not a missing binding`() =
+        assertProcessingFails("unresolved_compiled_unbound_generic")
+
+    @Test
     fun `a cycle through a compiled binding naming a hidden type is still reported as a cycle`() =
         assertProcessingFails("unresolved_compiled_cycle", "SPIKE-DEPENDENCY-CYCLE")
 

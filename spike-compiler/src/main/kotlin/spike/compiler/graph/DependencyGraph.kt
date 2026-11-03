@@ -129,7 +129,7 @@ class DependencyGraph private constructor(
         private fun TypeFactory.Imported.missing(): Diagnostic {
             val requester = requiredBy?.let { root.bindingsOf(it).firstOrNull() }
             val requiredBy = requester?.involved ?: Involved("entry point ${entry.type.displayName}", entry.origin)
-            return DiagnosticMissingBinding(type.displayName, type.simpleName, requiredBy)
+            return DiagnosticMissingBinding(type, requiredBy)
         }
 
         private fun createTypeFactory(type: Type, creators: List<TypeFactoryCreator>): TypeFactory {

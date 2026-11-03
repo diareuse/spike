@@ -4,6 +4,7 @@ import spike.Include
 import spike.compiler.diagnostic.Diagnostic
 import spike.compiler.diagnostic.DiagnosticMissingBinding
 import spike.compiler.diagnostic.Origin
+import spike.compiler.graph.unresolvedNames
 
 @Include
 class UnresolvedCausesMissingBinding : UnresolvedCauses {
@@ -20,7 +21,7 @@ class UnresolvedCausesMissingBinding : UnresolvedCauses {
 
     private fun Diagnostic.causes(unresolved: Map<Origin, List<UnresolvedCompiledType>>): List<UnresolvedCompiledType> {
         if (this !is DiagnosticMissingBinding) return emptyList()
-        val missing = subject.withoutErrorMarker()
-        return involved.mapNotNull { it.origin?.let(unresolved::get) }.flatten().filter { it.type == missing }
+        val missing = this.missing.unresolvedNames
+        return involved.mapNotNull { it.origin?.let(unresolved::get) }.flatten().filter { it.type in missing }
     }
 }

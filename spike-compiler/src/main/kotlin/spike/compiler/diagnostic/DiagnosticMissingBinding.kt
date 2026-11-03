@@ -1,6 +1,11 @@
 package spike.compiler.diagnostic
 
-class DiagnosticMissingBinding(val subject: String, simpleName: String, requiredBy: Involved) : Diagnostic {
+import spike.compiler.graph.Type
+import spike.compiler.graph.displayName
+
+class DiagnosticMissingBinding(val missing: Type, requiredBy: Involved) : Diagnostic {
+    private val subject = missing.displayName
+    private val simpleName = missing.simpleName
     override val code = "SPIKE-MISSING-BINDING"
     override val summary = "$subject has no binding, but ${requiredBy.description} needs it"
     override val involved = listOf(requiredBy)
