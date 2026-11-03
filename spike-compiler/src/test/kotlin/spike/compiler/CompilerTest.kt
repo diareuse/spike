@@ -851,6 +851,7 @@ class CompilerTest : HarnessCompiler() {
             "androidx_viewmodel_two_compiled_entry_points",
             "SPIKE-VIEWMODEL-ENTRY-POINT-AMBIGUOUS",
             "Modules: first, second",
+            "spike { library = true }",
             libraries = Androidx
         )
 

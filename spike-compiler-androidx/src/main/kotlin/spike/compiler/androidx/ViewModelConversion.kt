@@ -74,8 +74,8 @@ fun viewModelEntryPoint(environment: SymbolProcessorEnvironment, reporter: Probl
                         "SPIKE-VIEWMODEL-ENTRY-POINT-AMBIGUOUS",
                         "$name is compiled in more than one dependency, so which ViewModels this module sees " +
                             "depends on classpath order. Leave the entry point to the app: mark each library " +
-                            "module with the KSP option spike.library=true (the io.github.diareuse.spike Gradle " +
-                            "plugin sets it) or declare an @Export interface in it.",
+                            "module with spike { library = true } (io.github.diareuse.spike Gradle plugin), the " +
+                            "KSP option spike.library=true, or an @Export interface in it.",
                         reporter,
                         SymbolProcessorUnlessCompiled(
                             name,
