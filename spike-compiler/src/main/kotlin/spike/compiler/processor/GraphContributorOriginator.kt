@@ -37,6 +37,7 @@ import spike.compiler.diagnostic.Involved
 import spike.compiler.processor.symbol.UnresolvedCompiledType
 import spike.compiler.processor.symbol.UnresolvedExportImports
 import spike.compiler.processor.symbol.UnresolvedReached
+import spike.compiler.processor.symbol.unresolvedName
 
 @OptIn(KspExperimental::class)
 abstract class GraphContributorOriginator : GraphContributor {
@@ -63,7 +64,7 @@ abstract class GraphContributorOriginator : GraphContributor {
             .filterIsInstance<KSClassDeclaration>()
             .toList()
         val origins = getOrigins(context.resolver).toList()
-        requireImports(generated, origins)
+        diagnostics.addAll(exportImports.of(context.resolver, generated))
         val compiled = uses.of(generated)
         val unresolved = mutableMapOf<UnresolvedCompiledType, MutableList<KSClassDeclaration>>()
         for (entryPoint in origins) {
@@ -71,13 +72,6 @@ abstract class GraphContributorOriginator : GraphContributor {
         }
         diagnostics.attempt { requireReached(unresolved) }
         diagnostics.throwCollected()
-    }
-
-    private fun requireImports(generated: List<KSClassDeclaration>, origins: List<KSClassDeclaration>) {
-        val unresolved = exportImports.of(generated)
-        if (unresolved.isEmpty() || origins.isEmpty()) return
-        val consumers = origins.map { Involved(it.described, it.asOrigin()) }
-        throw DiagnosticException(unresolved.map { DiagnosticUnresolvedCompiled(it.type, it.compiled, consumers) })
     }
 
     private fun requireReached(unresolved: Map<UnresolvedCompiledType, List<KSClassDeclaration>>) {
@@ -121,8 +115,11 @@ abstract class GraphContributorOriginator : GraphContributor {
             generated.asSequence()
                 .map {
                     val invocation = it.primaryConstructor!!.toInvocation()
+                    val hidden = it.hiddenImports()
                     val inputs = invocation.copy(
-                        parameters = invocation.parameters.filterNot { p -> p.type == SingletonHolderType }
+                        parameters = invocation.parameters.filterNot { p ->
+                            p.type == SingletonHolderType || p.name in hidden
+                        }
                     )
                     TypeFactory.Class(it.toType(false), inputs, false, emptyList())
                 }
@@ -184,10 +181,11 @@ abstract class GraphContributorOriginator : GraphContributor {
                         )
                         yield(tf to exportedBy)
                     }
+                    val hidden = klass.hiddenImports()
                     for (p in klass.primaryConstructor?.parameters.orEmpty()) {
                         val type = p.type.resolve().toType()
                         val imported = properties.any { it.synthetic && it.returns == type }
-                        if (type == SingletonHolderType || imported) continue
+                        if (type == SingletonHolderType || imported || p.name?.asString() in hidden) continue
                         properties.add(Member.Property(type.packageName, p.name!!.asString(), type, synthetic = true))
                     }
                 }
@@ -195,6 +193,11 @@ abstract class GraphContributorOriginator : GraphContributor {
     }
 
     private fun KSDeclaration.name() = simpleName.asString()
+
+    private fun KSClassDeclaration.hiddenImports() = primaryConstructor?.parameters.orEmpty()
+        .filter { it.type.resolve().unresolvedName() != null }
+        .mapNotNull { it.name?.asString() }
+        .toSet()
 
     private fun findProperties(
         entryPoint: KSClassDeclaration

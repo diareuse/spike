@@ -11,6 +11,10 @@ class DiagnosticCollector {
         }
     }
 
+    fun addAll(collected: List<Diagnostic>) {
+        diagnostics += collected
+    }
+
     fun throwCollected() {
         if (diagnostics.isNotEmpty()) throw DiagnosticException(diagnostics.toList())
     }

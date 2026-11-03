@@ -1,14 +1,18 @@
 package spike.compiler.processor.symbol
 
+import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import spike.Include
+import spike.Singleton
+import spike.compiler.diagnostic.Diagnostic
 
 fun interface UnresolvedExportImports {
-    fun of(generated: List<KSClassDeclaration>): List<UnresolvedCompiledType>
+    fun of(resolver: Resolver, generated: List<KSClassDeclaration>): List<Diagnostic>
 
     companion object {
         @Include
-        val UnresolvedExportImportsConstructor.imports: UnresolvedExportImports
-            get() = this
+        @Singleton
+        fun imports(core: UnresolvedExportImportsConstructor): UnresolvedExportImports =
+            UnresolvedExportImportsOnce(core)
     }
 }

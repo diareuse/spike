@@ -357,6 +357,17 @@ class CompilerTest : HarnessCompiler() {
         assertProcessingFails("unresolved_compiled_export")
 
     @Test
+    fun `a module without entry points or exports ignores hidden imports of compiled exports`() =
+        assertRuns("unresolved_compiled_export_unconsumed")
+
+    @Test
+    fun `a hidden export import is reported once per module next to the other entry point errors`() =
+        assertProcessingFails(
+            "unresolved_compiled_export_mixed",
+            "SPIKE-MISSING-BINDING] kotlin.String has no binding",
+        )
+
+    @Test
     fun `a compiled export importing a type missing from the classpath of a consuming export is reported at the export`() =
         assertProcessingFails("unresolved_compiled_export_consumer")
 
