@@ -59,7 +59,15 @@ internal fun android(artifacts: SpikeArtifacts, configurations: KspConfiguration
     SpikeSetupSinglePlatform("org.jetbrains.kotlin.android", artifacts, configurations)
 
 @Include
-internal fun kspConfigurations(
-    kotlin: KspConfigurationsOfKotlinCompilations,
-    android: KspConfigurationsOfAndroidSourceSets,
-): KspConfigurations = KspConfigurationsAll(listOf(kotlin, android))
+internal fun kspConfigurations(configurations: Map<Int, KspConfigurations>): KspConfigurations =
+    KspConfigurationsAll(configurations.toSortedMap().values.toList())
+
+@Include(bindTo = BindTarget.Map)
+@Order(10)
+internal fun kotlinConfigurations(configurations: KspConfigurationsOfKotlinCompilations): KspConfigurations =
+    configurations
+
+@Include(bindTo = BindTarget.Map)
+@Order(20)
+internal fun androidConfigurations(configurations: KspConfigurationsOfAndroidSourceSets): KspConfigurations =
+    configurations
