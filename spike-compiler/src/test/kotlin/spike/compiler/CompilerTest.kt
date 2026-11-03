@@ -275,6 +275,15 @@ class CompilerTest : HarnessCompiler() {
         )
 
     @Test
+    fun `a hidden type in a reached compiled binding is reported next to unrelated missing and duplicate bindings`() =
+        assertProcessingFails(
+            "unresolved_compiled_with_other_errors",
+            "[SPIKE-UNRESOLVED-TYPE] com.example.platform.Context cannot be resolved",
+            "[SPIKE-MISSING-BINDING] com.example.Foo has no binding",
+            "SPIKE-DUPLICATE-BINDING",
+        )
+
+    @Test
     fun `a reached compiled binding naming a hidden type nothing binds reports the hidden type, not a missing binding`() =
         assertProcessingFails("unresolved_compiled_unbound")
 

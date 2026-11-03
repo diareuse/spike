@@ -23,8 +23,10 @@ class UnresolvedTypesError : UnresolvedTypes {
 }
 
 private fun KSType.unresolvedName(): String? {
-    if (isError) return declaration.simpleName.asString().removeSurrounding(ErrorMarker, ">")
+    if (isError) return declaration.simpleName.asString().withoutErrorMarker()
     return arguments.firstNotNullOfOrNull { it.type?.resolve()?.unresolvedName() }
 }
+
+fun String.withoutErrorMarker() = removeSurrounding(ErrorMarker, ">")
 
 private const val ErrorMarker = "<ERROR TYPE: "

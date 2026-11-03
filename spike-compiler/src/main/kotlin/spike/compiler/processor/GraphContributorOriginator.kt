@@ -66,8 +66,7 @@ abstract class GraphContributorOriginator : GraphContributor {
             .filterIsInstance<KSClassDeclaration>()
             .toList()
         val origins = getOrigins(context.resolver).toList()
-        var imports = ExportImports(emptyList(), emptyMap())
-        diagnostics.attempt { imports = exportImports.of(context.resolver, generated) }
+        val imports = exportImports.of(context.resolver, generated)
         diagnostics.addAll(imports.diagnostics)
         val compiled = uses.of(generated)
         val unresolved = mutableMapOf<UnresolvedCompiledType, MutableList<KSClassDeclaration>>()

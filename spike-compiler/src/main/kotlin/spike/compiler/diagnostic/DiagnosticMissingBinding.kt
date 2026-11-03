@@ -1,6 +1,6 @@
 package spike.compiler.diagnostic
 
-class DiagnosticMissingBinding(subject: String, simpleName: String, requiredBy: Involved) : Diagnostic {
+class DiagnosticMissingBinding(val subject: String, simpleName: String, requiredBy: Involved) : Diagnostic {
     override val code = "SPIKE-MISSING-BINDING"
     override val summary = "$subject has no binding, but ${requiredBy.description} needs it"
     override val involved = listOf(requiredBy)
