@@ -2,14 +2,13 @@ package spike.compiler.processor
 
 import spike.compiler.diagnostic.DiagnosticException
 import spike.compiler.diagnostic.DiagnosticReplacesType
-import spike.compiler.graph.GraphStore
 import spike.BindTarget
 import spike.Include
 import spike.compiler.Order
 
 @Include
 class ReplacementCheckAssignable : ReplacementCheck {
-    override fun check(replacement: Replacement, production: GraphStore) {
+    override fun check(replacement: Replacement, production: ProductionBindings) {
         val provided = replacement.providedType ?: return
         if (replacement.replacedType.isAssignableFrom(provided)) return
         throw DiagnosticException(

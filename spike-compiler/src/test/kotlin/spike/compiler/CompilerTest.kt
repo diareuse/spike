@@ -203,6 +203,18 @@ class CompilerTest : HarnessCompiler() {
         assertRuns("test_replaces_function")
 
     @Test
+    fun `a Replaces binding stands in for a library's exported binding while the other exports stay`() =
+        assertRuns("test_replaces_export")
+
+    @Test
+    fun `a replaced export next to another binding of its type fails naming both`() = assertProcessingFails(
+        "test_replaces_export_and_include",
+        "SPIKE-DUPLICATE-BINDING",
+        "function com.example.test.otherSource",
+        "replacement of com.example.data.Source by com.example.test.FakeSource"
+    )
+
+    @Test
     fun `a replacement that is not of the replaced type fails`() =
         assertProcessingFails("test_replaces_type", "SPIKE-REPLACES-TYPE")
 

@@ -66,7 +66,7 @@ abstract class GraphContributorOriginator : GraphContributor {
         val properties = findProperties(entryPoint).toMutableList()
         val virtualFactoryParameters = mutableListOf<Parameter>()
         val methods = findMethods(entryPoint).toMutableList()
-        val external = findExternal(generated, properties)
+        val external = findExternal(generated, properties).toList()
         val type = entryPoint.toType(false)
         val entry = GraphEntryPoint(
             type = type,
@@ -77,7 +77,7 @@ abstract class GraphContributorOriginator : GraphContributor {
             origin = entryPoint.asOrigin(),
             visibility = if (entryPoint.isInternal()) EntryPointVisibility.Internal else EntryPointVisibility.Public,
         )
-        val resolved = stores.of(context, entryPoint)
+        val resolved = stores.of(context, entryPoint, external.mapTo(mutableSetOf()) { it.first.type })
         val graphFactory = graphs(
             entry,
             resolved.root,
@@ -92,6 +92,7 @@ abstract class GraphContributorOriginator : GraphContributor {
                 }
         )
         for ((e, exportedBy) in external) {
+            if (e.type in resolved.replacedExports) continue
             graphFactory.putExternal(e, exportedBy)
         }
         for (contribution in contributions.of(generated)) {

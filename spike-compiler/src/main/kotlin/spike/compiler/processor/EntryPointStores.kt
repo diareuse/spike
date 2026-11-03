@@ -3,10 +3,11 @@ package spike.compiler.processor
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import spike.compiler.graph.GraphStore
 import spike.compiler.graph.MultiBindingStore
+import spike.compiler.graph.Type
 import spike.Include
 
 fun interface EntryPointStores {
-    fun of(context: GraphContext, entryPoint: KSClassDeclaration): Stores
+    fun of(context: GraphContext, entryPoint: KSClassDeclaration, exported: Set<Type>): Stores
 
     companion object {
         @Include
@@ -14,11 +15,15 @@ fun interface EntryPointStores {
             get() = this
     }
 
-    class Stores(val root: GraphStore, val multibinding: MultiBindingStore)
+    class Stores(
+        val root: GraphStore,
+        val multibinding: MultiBindingStore,
+        val replacedExports: Set<Type> = emptySet(),
+    )
 }
 
 @Include
 class EntryPointStoresLocal : EntryPointStores {
-    override fun of(context: GraphContext, entryPoint: KSClassDeclaration) =
+    override fun of(context: GraphContext, entryPoint: KSClassDeclaration, exported: Set<Type>) =
         EntryPointStores.Stores(context.builder.build(), context.multibind.build())
 }

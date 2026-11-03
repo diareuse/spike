@@ -2,15 +2,14 @@ package spike.compiler.processor
 
 import spike.compiler.diagnostic.DiagnosticException
 import spike.compiler.diagnostic.DiagnosticReplacesNothing
-import spike.compiler.graph.GraphStore
 import spike.BindTarget
 import spike.Include
 import spike.compiler.Order
 
 @Include
 class ReplacementCheckBound : ReplacementCheck {
-    override fun check(replacement: Replacement, production: GraphStore) {
-        if (replacement.providedType == null || production.bindingsOf(replacement.replaced).isNotEmpty()) return
+    override fun check(replacement: Replacement, production: ProductionBindings) {
+        if (replacement.providedType == null || production.binds(replacement.replaced)) return
         val base = replacement.base.qualifiedName!!.asString()
         throw DiagnosticException(DiagnosticReplacesNothing(replacement.replacedName, base, replacement.involved))
     }

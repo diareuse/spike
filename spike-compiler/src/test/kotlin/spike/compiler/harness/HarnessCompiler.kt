@@ -148,7 +148,15 @@ abstract class HarnessCompiler {
             libraries = libraries.files() + library.classes,
             workDirectory = work.resolve("app")
         )
-        return listOf(FixtureModule(library, "library/main/kotlin"), FixtureModule(app, "app/main/kotlin"))
+        val modules = listOf(FixtureModule(library, "library/main/kotlin"), FixtureModule(app, "app/main/kotlin"))
+        if (!project.resolve("test").isDirectory) return modules
+        val test = SourceModule(
+            name = "test",
+            sources = project.resolve("test/src"),
+            libraries = libraries.files() + library.classes + app.classes,
+            workDirectory = work.resolve("test")
+        )
+        return modules + FixtureModule(test, "test/main/kotlin")
     }
 
     private class FixtureModule(val source: SourceModule, val golden: String)
