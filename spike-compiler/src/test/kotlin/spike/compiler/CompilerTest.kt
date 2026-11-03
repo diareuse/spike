@@ -258,6 +258,14 @@ class CompilerTest : HarnessCompiler() {
         assertRuns("test_replaces_export_import")
 
     @Test
+    fun `replacing a type inside an export whose bindings name types hidden from the test still names the export`() =
+        assertProcessingFails("test_replaces_export_hiding_implementation")
+
+    @Test
+    fun `replacing a type in a production graph naming a type missing from the test classpath reports the missing type`() =
+        assertProcessingFails("test_replaces_unresolved_compiled")
+
+    @Test
     fun `replacing the exported binding that consumes a replaced type too lets both stand in`() =
         assertRuns("test_replaces_export_used_inside_replaced")
 
