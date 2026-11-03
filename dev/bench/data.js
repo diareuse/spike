@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793711517224,
+  "lastUpdate": 1793714101310,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -3745,6 +3745,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "spike open screen",
             "value": 0.00409415753851707,
+            "unit": "us"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "13b41768d35002a5987bc4804c4a89e0efe1af08",
+          "message": "chore(deps): bump ktor from 3.6.0 to 3.6.1\n\nBumps `ktor` from 3.6.0 to 3.6.1.\n\nUpdates `io.ktor:ktor-server-core` from 3.6.0 to 3.6.1\n- [Release notes](https://github.com/ktorio/ktor/releases)\n- [Changelog](https://github.com/ktorio/ktor/blob/3.6.1/CHANGELOG.md)\n- [Commits](https://github.com/ktorio/ktor/compare/3.6.0...3.6.1)\n\nUpdates `io.ktor:ktor-client-java` from 3.6.0 to 3.6.1\n- [Release notes](https://github.com/ktorio/ktor/releases)\n- [Changelog](https://github.com/ktorio/ktor/blob/3.6.1/CHANGELOG.md)\n- [Commits](https://github.com/ktorio/ktor/compare/3.6.0...3.6.1)\n\nUpdates `io.ktor:ktor-server-test-host` from 3.6.0 to 3.6.1\n- [Release notes](https://github.com/ktorio/ktor/releases)\n- [Changelog](https://github.com/ktorio/ktor/blob/3.6.1/CHANGELOG.md)\n- [Commits](https://github.com/ktorio/ktor/compare/3.6.0...3.6.1)\n\n---\nupdated-dependencies:\n- dependency-name: io.ktor:ktor-server-core\n  dependency-version: 3.6.1\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: io.ktor:ktor-client-java\n  dependency-version: 3.6.1\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: io.ktor:ktor-server-test-host\n  dependency-version: 3.6.1\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-11-03T13:16:27+01:00",
+          "tree_id": "34689bb3702ad406199c0d258c0e8dfb509034eb",
+          "url": "https://github.com/diareuse/spike/commit/13b41768d35002a5987bc4804c4a89e0efe1af08"
+        },
+        "date": 1793714100931,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "spike clean build",
+            "value": 1943.995,
+            "unit": "ms"
+          },
+          {
+            "name": "spike ABI change",
+            "value": 1068.045,
+            "unit": "ms"
+          },
+          {
+            "name": "spike non-ABI change",
+            "value": 1157.8600000000001,
+            "unit": "ms"
+          },
+          {
+            "name": "spike resolve from graph",
+            "value": 3.964764945814302,
+            "unit": "us"
+          },
+          {
+            "name": "spike cold start",
+            "value": 127779.799,
+            "unit": "us"
+          },
+          {
+            "name": "spike open screen",
+            "value": 0.0030708909365917796,
             "unit": "us"
           }
         ]
