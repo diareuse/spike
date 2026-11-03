@@ -5,7 +5,7 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import spike.Include
 
 fun interface ProductionGraph {
-    fun of(resolver: Resolver, base: KSClassDeclaration, consumer: KSClassDeclaration): GraphContext
+    fun of(resolver: Resolver, base: KSClassDeclaration): CompiledGraph
 
     companion object {
         @Include

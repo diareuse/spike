@@ -5,6 +5,7 @@ import spike.compiler.graph.DependencyGraph
 import spike.compiler.graph.ExportedContribution
 import spike.compiler.graph.ExportedUse
 import spike.compiler.graph.TypeFactory
+import spike.compiler.graph.beneath
 import java.util.Collections
 import java.util.IdentityHashMap
 
@@ -23,20 +24,14 @@ class ExportedUsesOf {
 
     private fun builtBelow(root: TypeFactory): Set<String> {
         val visited = Collections.newSetFromMap(IdentityHashMap<TypeFactory, Boolean>())
-        val pending = ArrayDeque(root.beneath())
+        val pending = ArrayDeque(root.beneath)
         val types = mutableSetOf<String>()
         while (pending.isNotEmpty()) {
             val factory = pending.removeLast()
             if (!visited.add(factory)) continue
             if (factory is TypeFactory.Callable || factory is TypeFactory.External) types += factory.type.toString()
-            pending.addAll(factory.beneath())
+            pending.addAll(factory.beneath)
         }
         return types
-    }
-
-    private fun TypeFactory.beneath(): List<TypeFactory> = when (this) {
-        is TypeFactory.Assisted -> reached + factory
-        is TypeFactory.Recursion -> listOfNotNull(target)
-        else -> reached
     }
 }

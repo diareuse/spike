@@ -258,8 +258,16 @@ class CompilerTest : HarnessCompiler() {
         assertRuns("test_replaces_export_import")
 
     @Test
-    fun `replacing a type inside an export whose bindings name types hidden from the test still names the export`() =
+    fun `replacing a type an export uses inside fails as reaching inside the export even when the export names hidden types`() =
         assertProcessingFails("test_replaces_export_hiding_implementation")
+
+    @Test
+    fun `a replaced compiled binding naming a type missing from the test classpath runs`() =
+        assertRuns("test_replaces_hidden_compiled_binding")
+
+    @Test
+    fun `an unreachable compiled binding naming a type missing from the test classpath runs`() =
+        assertRuns("unreachable_hidden_compiled_binding")
 
     @Test
     fun `replacing a type in a production graph naming a type missing from the test classpath reports the missing type`() =
@@ -341,11 +349,8 @@ class CompilerTest : HarnessCompiler() {
         assertProcessingFails("unresolved_replaces_argument", "Main.kt:10: [SPIKE-UNRESOLVED-TYPE] Repository")
 
     @Test
-    fun `a compiled production binding naming a type missing from the test classpath is reported at the test entry point`() =
-        assertProcessingFails(
-            "unresolved_compiled_production",
-            "Main.kt:6: [SPIKE-UNRESOLVED-TYPE] com.example.platform.Context cannot be resolved",
-        )
+    fun `a reached compiled production binding naming a type missing from the test classpath is reported once for every test entry point`() =
+        assertProcessingFails("unresolved_compiled_production")
 
     @Test
     fun `a compiled export importing a type missing from the consumer classpath is reported once for every entry point`() =

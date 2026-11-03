@@ -7,10 +7,10 @@ import spike.Include
 import spike.compiler.Order
 
 class ProductionGraphMemo(private val delegate: ProductionGraph) : ProductionGraph {
-    private val graphs = mutableMapOf<String?, GraphContext>()
+    private val graphs = mutableMapOf<String?, CompiledGraph>()
 
-    override fun of(resolver: Resolver, base: KSClassDeclaration, consumer: KSClassDeclaration): GraphContext =
-        graphs.getOrPut(base.qualifiedName?.asString()) { delegate.of(resolver, base, consumer) }
+    override fun of(resolver: Resolver, base: KSClassDeclaration): CompiledGraph =
+        graphs.getOrPut(base.qualifiedName?.asString()) { delegate.of(resolver, base) }
 
     companion object {
         @Include(bindTo = BindTarget.Map)

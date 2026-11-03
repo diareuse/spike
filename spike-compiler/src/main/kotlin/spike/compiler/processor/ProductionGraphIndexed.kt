@@ -15,13 +15,13 @@ class ProductionGraphIndexed(
     private val declarations: IndexedDeclarations,
     private val include: IncludeVisitor,
 ) : ProductionGraph {
-    override fun of(resolver: Resolver, base: KSClassDeclaration, consumer: KSClassDeclaration): GraphContext {
+    override fun of(resolver: Resolver, base: KSClassDeclaration): CompiledGraph {
         val production = GraphContext(GraphStore.Builder(), MultiBindingStore.Builder(), resolver)
         val diagnostics = DiagnosticCollector()
         for (declaration in declarations.of(resolver, base)) {
             diagnostics.attempt { declaration.accept(include, production) }
         }
         diagnostics.throwCollected()
-        return production
+        return CompiledGraph(production)
     }
 }

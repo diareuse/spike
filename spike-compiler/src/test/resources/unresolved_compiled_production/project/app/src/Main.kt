@@ -6,3 +6,8 @@ import com.example.App
 interface TestApp : App {
     companion object
 }
+
+@spike.EntryPoint
+interface OtherTestApp : App {
+    companion object
+}

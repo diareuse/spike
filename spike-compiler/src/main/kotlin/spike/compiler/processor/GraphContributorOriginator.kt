@@ -34,7 +34,9 @@ import spike.compiler.graph.GraphStore
 import spike.compiler.graph.MultiBindingStore
 import spike.compiler.diagnostic.DiagnosticUnresolvedCompiled
 import spike.compiler.diagnostic.Involved
+import spike.compiler.processor.symbol.UnresolvedCompiledType
 import spike.compiler.processor.symbol.UnresolvedExportImports
+import spike.compiler.processor.symbol.UnresolvedReached
 
 @OptIn(KspExperimental::class)
 abstract class GraphContributorOriginator : GraphContributor {
@@ -47,6 +49,7 @@ abstract class GraphContributorOriginator : GraphContributor {
     protected abstract val stores: EntryPointStores
     protected abstract val uses: CompiledUsesReader
     protected abstract val exportImports: UnresolvedExportImports
+    protected abstract val reached: UnresolvedReached
     protected abstract val graphs:
         (GraphEntryPoint, GraphStore, MultiBindingStore, Sequence<TypeFactory.Class>) -> DependencyGraph.Factory
 
@@ -62,9 +65,11 @@ abstract class GraphContributorOriginator : GraphContributor {
         val origins = getOrigins(context.resolver).toList()
         requireImports(generated, origins)
         val compiled = uses.of(generated)
+        val unresolved = mutableMapOf<UnresolvedCompiledType, MutableList<KSClassDeclaration>>()
         for (entryPoint in origins) {
-            diagnostics.attempt { contribute(context, entryPoint, generated, compiled) }
+            diagnostics.attempt { contribute(context, entryPoint, generated, compiled, unresolved) }
         }
+        diagnostics.attempt { requireReached(unresolved) }
         diagnostics.throwCollected()
     }
 
@@ -75,11 +80,21 @@ abstract class GraphContributorOriginator : GraphContributor {
         throw DiagnosticException(unresolved.map { DiagnosticUnresolvedCompiled(it.type, it.compiled, consumers) })
     }
 
+    private fun requireReached(unresolved: Map<UnresolvedCompiledType, List<KSClassDeclaration>>) {
+        if (unresolved.isEmpty()) return
+        throw DiagnosticException(
+            unresolved.map { (type, consumers) ->
+                DiagnosticUnresolvedCompiled(type.type, type.compiled, consumers.map { Involved(it.described, it.asOrigin()) })
+            }
+        )
+    }
+
     private fun contribute(
         context: GraphContext,
         entryPoint: KSClassDeclaration,
         generated: List<KSClassDeclaration>,
         compiled: List<CompiledUse>,
+        unresolved: MutableMap<UnresolvedCompiledType, MutableList<KSClassDeclaration>>,
     ) {
         verifyOrigin(entryPoint)
         val factory = findFactory(entryPoint)
@@ -125,6 +140,7 @@ abstract class GraphContributorOriginator : GraphContributor {
             )
         }
         val graph = graphFactory.create()
+        for (type in reached.of(graph, resolved.unresolved)) unresolved.getOrPut(type) { mutableListOf() } += entryPoint
         graph.warnings.forEach(warnings::warn)
         generator.generate(graph, context.originatingFiles + entryPoint.requireKSFile()) { spec ->
             spec.writeTo(environment.codeGenerator, true)

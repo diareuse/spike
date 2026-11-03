@@ -1,41 +1,50 @@
 package spike.compiler.processor
 
 import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import spike.BindTarget
 import spike.Include
 import spike.compiler.Order
-import spike.compiler.diagnostic.DiagnosticException
-import spike.compiler.diagnostic.DiagnosticUnresolvedCompiled
-import spike.compiler.diagnostic.Involved
+import spike.compiler.graph.Binding
 import spike.compiler.processor.symbol.CompiledSignatureTypes
+import spike.compiler.processor.symbol.UnresolvedCompiledType
 import spike.compiler.processor.symbol.UnresolvedTypes
 
 class ProductionGraphResolved(
     private val delegate: ProductionGraph,
-    private val declarations: IndexedDeclarations,
     private val signatures: CompiledSignatureTypes,
     private val unresolved: UnresolvedTypes,
 ) : ProductionGraph {
-    override fun of(resolver: Resolver, base: KSClassDeclaration, consumer: KSClassDeclaration): GraphContext {
-        val types = declarations.of(resolver, base).asSequence().flatMap(signatures::of)
-        val consumers = listOf(Involved(consumer.described, consumer.asOrigin()))
-        val diagnostics = unresolved.of(types)
-            .map { it.type to it.user.description }
-            .distinct()
-            .map { (type, compiled) -> DiagnosticUnresolvedCompiled(type, compiled, consumers) }
-            .toList()
-        if (diagnostics.isNotEmpty()) throw DiagnosticException(diagnostics)
-        return delegate.of(resolver, base, consumer)
+    override fun of(resolver: Resolver, base: KSClassDeclaration): CompiledGraph {
+        val graph = delegate.of(resolver, base)
+        val types = graph.context.bindings()
+            .mapNotNull { binding -> binding.declaration()?.let { binding to unresolvedIn(it) } }
+            .filter { (_, types) -> types.isNotEmpty() }
+            .toMap()
+        return CompiledGraph(graph.context, types)
+    }
+
+    private fun unresolvedIn(declaration: KSAnnotated) = unresolved.of(signatures.of(declaration))
+        .map { UnresolvedCompiledType(it.type, it.user.description) }
+        .distinct()
+        .toList()
+
+    private fun Binding.declaration() = (origin as? OriginNode)?.node as? KSAnnotated
+
+    private fun GraphContext.bindings(): Sequence<Binding> {
+        val multibinding = multibind.build()
+        val stores = sequenceOf(builder.build()) + multibinding.set.values + multibinding.list.values +
+            multibinding.map.values.flatMap { it.values }
+        return stores.flatMap { it.constructors + it.factories }
     }
 
     companion object {
         @Include(bindTo = BindTarget.Map)
         @Order(10)
         fun decorator(
-            declarations: IndexedDeclarations,
             signatures: CompiledSignatureTypes,
             unresolved: UnresolvedTypes,
-        ) = ProductionGraphDecorator { ProductionGraphResolved(it, declarations, signatures, unresolved) }
+        ) = ProductionGraphDecorator { ProductionGraphResolved(it, signatures, unresolved) }
     }
 }
