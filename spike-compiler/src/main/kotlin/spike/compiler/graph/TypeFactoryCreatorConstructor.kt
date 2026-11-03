@@ -12,6 +12,7 @@ class TypeFactoryCreatorConstructor : TypeFactoryCreator {
             invocation = constructor.invocation,
             singleton = constructor.singleton,
             dependencies = constructor.invocation.parameters.map { mint(context, it.type) },
+            origin = constructor.origin,
         )
     }
 

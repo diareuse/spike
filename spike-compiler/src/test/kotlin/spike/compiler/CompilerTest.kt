@@ -262,6 +262,23 @@ class CompilerTest : HarnessCompiler() {
         assertProcessingFails("test_replaces_export_hiding_implementation")
 
     @Test
+    fun `compiled bindings naming a hidden type are reported when reached through sets, spreads, maps, providers, lazies and function types`() =
+        assertProcessingFails(
+            "unresolved_compiled_reached",
+            "the compiled function context needs it",
+            "the compiled function entry needs it",
+            "the compiled function spread needs it",
+            "the compiled function mapped needs it",
+            "the compiled constructor of Provided needs it",
+            "the compiled constructor of Lazily needs it",
+            "the compiled constructor of Detail needs it",
+        )
+
+    @Test
+    fun `a reached compiled binding naming a hidden type nothing binds reports the hidden type, not a missing binding`() =
+        assertProcessingFails("unresolved_compiled_unbound")
+
+    @Test
     fun `a replaced compiled binding naming a type missing from the test classpath runs`() =
         assertRuns("test_replaces_hidden_compiled_binding")
 

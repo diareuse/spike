@@ -6,8 +6,12 @@ import spike.Include
 import spike.Singleton
 import spike.compiler.diagnostic.Diagnostic
 
+data class ExportImports(val diagnostics: List<Diagnostic>, val hidden: Map<String, Set<String>>) {
+    fun hiddenIn(export: KSClassDeclaration) = hidden[export.qualifiedName?.asString().orEmpty()].orEmpty()
+}
+
 fun interface UnresolvedExportImports {
-    fun of(resolver: Resolver, generated: List<KSClassDeclaration>): List<Diagnostic>
+    fun of(resolver: Resolver, generated: List<KSClassDeclaration>): ExportImports
 
     companion object {
         @Include

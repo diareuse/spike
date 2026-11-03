@@ -22,7 +22,7 @@ class UnresolvedTypesError : UnresolvedTypes {
     }
 }
 
-fun KSType.unresolvedName(): String? {
+private fun KSType.unresolvedName(): String? {
     if (isError) return declaration.simpleName.asString().removeSurrounding(ErrorMarker, ">")
     return arguments.firstNotNullOfOrNull { it.type?.resolve()?.unresolvedName() }
 }

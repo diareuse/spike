@@ -13,6 +13,7 @@ class TypeFactoryCreatorMethod : TypeFactoryCreator {
             invocation = factory.invocation,
             singleton = factory.singleton,
             dependencies = factory.invocation.parameters.map { mint(context, it.type) },
+            origin = factory.origin,
         )
     }
 

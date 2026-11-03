@@ -8,6 +8,7 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import spike.compiler.generator.DependencyGraphGenerator
 import spike.compiler.processor.symbol.SymbolRegistry
 import spike.compiler.processor.symbol.UnresolvedExportImports
+import spike.compiler.processor.symbol.UnresolvedCauses
 import spike.compiler.processor.symbol.UnresolvedReached
 import spike.BindTarget
 import spike.Include
@@ -34,6 +35,7 @@ class GraphContributorExport(
     override val uses: CompiledUsesReader,
     override val exportImports: UnresolvedExportImports,
     override val reached: UnresolvedReached,
+    override val causes: UnresolvedCauses,
 ) : GraphContributorOriginator() {
     override fun getOrigins(resolver: Resolver) = registry.export(resolver)
 

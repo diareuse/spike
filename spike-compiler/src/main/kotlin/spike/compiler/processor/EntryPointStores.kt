@@ -1,7 +1,7 @@
 package spike.compiler.processor
 
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import spike.compiler.graph.Binding
+import spike.compiler.diagnostic.Origin
 import spike.compiler.graph.GraphStore
 import spike.compiler.graph.MultiBindingStore
 import spike.compiler.graph.Type
@@ -21,7 +21,7 @@ fun interface EntryPointStores {
         val root: GraphStore,
         val multibinding: MultiBindingStore,
         val replacedExports: Set<Type>,
-        val unresolved: Map<Binding, List<UnresolvedCompiledType>> = emptyMap(),
+        val unresolved: Map<Origin, List<UnresolvedCompiledType>> = emptyMap(),
     )
 }
 

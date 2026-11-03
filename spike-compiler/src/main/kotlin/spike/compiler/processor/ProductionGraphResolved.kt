@@ -6,6 +6,7 @@ import com.google.devtools.ksp.symbol.KSClassDeclaration
 import spike.BindTarget
 import spike.Include
 import spike.compiler.Order
+import spike.compiler.diagnostic.Origin
 import spike.compiler.graph.Binding
 import spike.compiler.processor.symbol.CompiledSignatureTypes
 import spike.compiler.processor.symbol.UnresolvedCompiledType
@@ -19,9 +20,11 @@ class ProductionGraphResolved(
     override fun of(resolver: Resolver, base: KSClassDeclaration): CompiledGraph {
         val graph = delegate.of(resolver, base)
         val types = graph.context.bindings()
-            .mapNotNull { binding -> binding.declaration()?.let { binding to unresolvedIn(it) } }
+            .mapNotNull { it.origin as? OriginNode }
+            .distinct()
+            .mapNotNull { origin -> (origin.node as? KSAnnotated)?.let { origin to unresolvedIn(it) } }
             .filter { (_, types) -> types.isNotEmpty() }
-            .toMap()
+            .toMap<Origin, List<UnresolvedCompiledType>>()
         return CompiledGraph(graph.context, types)
     }
 
@@ -29,8 +32,6 @@ class ProductionGraphResolved(
         .map { UnresolvedCompiledType(it.type, it.user.description) }
         .distinct()
         .toList()
-
-    private fun Binding.declaration() = (origin as? OriginNode)?.node as? KSAnnotated
 
     private fun GraphContext.bindings(): Sequence<Binding> {
         val multibinding = multibind.build()

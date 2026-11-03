@@ -1,5 +1,6 @@
 package spike.compiler.graph
 
+import spike.compiler.diagnostic.Origin
 import java.util.Collections
 import java.util.IdentityHashMap
 import java.util.Objects
@@ -29,6 +30,7 @@ sealed interface TypeFactory {
         override val invocation: Invocation,
         override val singleton: Boolean,
         override val dependencies: List<TypeFactory>,
+        val origin: Origin? = null,
     ) : Structured,
         Callable {
         private val hash = Objects.hash(type, invocation, singleton, dependencies)
@@ -50,6 +52,7 @@ sealed interface TypeFactory {
         override val invocation: Invocation,
         override val singleton: Boolean,
         override val dependencies: List<TypeFactory>,
+        val origin: Origin? = null,
     ) : Structured,
         Callable {
         private val hash = Objects.hash(type, member, invocation, singleton, dependencies)

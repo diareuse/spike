@@ -26,6 +26,7 @@ import spike.compiler.graph.Parameter
 import spike.compiler.graph.SingletonOwnership
 import spike.compiler.processor.symbol.SymbolRegistry
 import spike.compiler.processor.symbol.UnresolvedExportImports
+import spike.compiler.processor.symbol.UnresolvedCauses
 import spike.compiler.processor.symbol.UnresolvedReached
 import spike.BindTarget
 import spike.Include
@@ -52,6 +53,7 @@ class GraphContributorEntryPoint(
     override val uses: CompiledUsesReader,
     override val exportImports: UnresolvedExportImports,
     override val reached: UnresolvedReached,
+    override val causes: UnresolvedCauses,
 ) : GraphContributorOriginator() {
 
     override fun getOrigins(resolver: Resolver) = registry.entryPoint(resolver)

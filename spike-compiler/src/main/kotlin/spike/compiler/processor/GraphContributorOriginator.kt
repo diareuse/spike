@@ -37,7 +37,8 @@ import spike.compiler.diagnostic.Involved
 import spike.compiler.processor.symbol.UnresolvedCompiledType
 import spike.compiler.processor.symbol.UnresolvedExportImports
 import spike.compiler.processor.symbol.UnresolvedReached
-import spike.compiler.processor.symbol.unresolvedName
+import spike.compiler.processor.symbol.ExportImports
+import spike.compiler.processor.symbol.UnresolvedCauses
 
 @OptIn(KspExperimental::class)
 abstract class GraphContributorOriginator : GraphContributor {
@@ -51,6 +52,7 @@ abstract class GraphContributorOriginator : GraphContributor {
     protected abstract val uses: CompiledUsesReader
     protected abstract val exportImports: UnresolvedExportImports
     protected abstract val reached: UnresolvedReached
+    protected abstract val causes: UnresolvedCauses
     protected abstract val graphs:
         (GraphEntryPoint, GraphStore, MultiBindingStore, Sequence<TypeFactory.Class>) -> DependencyGraph.Factory
 
@@ -64,11 +66,13 @@ abstract class GraphContributorOriginator : GraphContributor {
             .filterIsInstance<KSClassDeclaration>()
             .toList()
         val origins = getOrigins(context.resolver).toList()
-        diagnostics.addAll(exportImports.of(context.resolver, generated))
+        var imports = ExportImports(emptyList(), emptyMap())
+        diagnostics.attempt { imports = exportImports.of(context.resolver, generated) }
+        diagnostics.addAll(imports.diagnostics)
         val compiled = uses.of(generated)
         val unresolved = mutableMapOf<UnresolvedCompiledType, MutableList<KSClassDeclaration>>()
         for (entryPoint in origins) {
-            diagnostics.attempt { contribute(context, entryPoint, generated, compiled, unresolved) }
+            diagnostics.attempt { contribute(context, entryPoint, generated, imports, compiled, unresolved) }
         }
         diagnostics.attempt { requireReached(unresolved) }
         diagnostics.throwCollected()
@@ -87,6 +91,7 @@ abstract class GraphContributorOriginator : GraphContributor {
         context: GraphContext,
         entryPoint: KSClassDeclaration,
         generated: List<KSClassDeclaration>,
+        imports: ExportImports,
         compiled: List<CompiledUse>,
         unresolved: MutableMap<UnresolvedCompiledType, MutableList<KSClassDeclaration>>,
     ) {
@@ -95,7 +100,7 @@ abstract class GraphContributorOriginator : GraphContributor {
         val properties = findProperties(entryPoint).toMutableList()
         val virtualFactoryParameters = mutableListOf<Parameter>()
         val methods = findMethods(entryPoint).toMutableList()
-        val external = findExternal(generated, properties).toList()
+        val external = findExternal(generated, imports, properties).toList()
         val type = entryPoint.toType(false)
         val entry = GraphEntryPoint(
             type = type,
@@ -115,7 +120,7 @@ abstract class GraphContributorOriginator : GraphContributor {
             generated.asSequence()
                 .map {
                     val invocation = it.primaryConstructor!!.toInvocation()
-                    val hidden = it.hiddenImports()
+                    val hidden = imports.hiddenIn(it)
                     val inputs = invocation.copy(
                         parameters = invocation.parameters.filterNot { p ->
                             p.type == SingletonHolderType || p.name in hidden
@@ -136,7 +141,14 @@ abstract class GraphContributorOriginator : GraphContributor {
                 contribution.exportedBy,
             )
         }
-        val graph = graphFactory.create()
+        val graph = try {
+            graphFactory.create()
+        } catch (e: DiagnosticException) {
+            val failure = causes.of(e.diagnostics, resolved.unresolved)
+            for (type in failure.causes) unresolved.getOrPut(type) { mutableListOf() } += entryPoint
+            if (failure.others.isEmpty()) return
+            throw DiagnosticException(failure.others)
+        }
         for (type in reached.of(graph, resolved.unresolved)) unresolved.getOrPut(type) { mutableListOf() } += entryPoint
         graph.warnings.forEach(warnings::warn)
         generator.generate(graph, context.originatingFiles + entryPoint.requireKSFile()) { spec ->
@@ -146,6 +158,7 @@ abstract class GraphContributorOriginator : GraphContributor {
 
     private fun findExternal(
         generated: List<KSClassDeclaration>,
+        imports: ExportImports,
         properties: MutableList<Member.Property>
     ): Sequence<Pair<TypeFactory.External, Type>> {
         return generated.asSequence()
@@ -181,7 +194,7 @@ abstract class GraphContributorOriginator : GraphContributor {
                         )
                         yield(tf to exportedBy)
                     }
-                    val hidden = klass.hiddenImports()
+                    val hidden = imports.hiddenIn(klass)
                     for (p in klass.primaryConstructor?.parameters.orEmpty()) {
                         val type = p.type.resolve().toType()
                         val imported = properties.any { it.synthetic && it.returns == type }
@@ -193,11 +206,6 @@ abstract class GraphContributorOriginator : GraphContributor {
     }
 
     private fun KSDeclaration.name() = simpleName.asString()
-
-    private fun KSClassDeclaration.hiddenImports() = primaryConstructor?.parameters.orEmpty()
-        .filter { it.type.resolve().unresolvedName() != null }
-        .mapNotNull { it.name?.asString() }
-        .toSet()
 
     private fun findProperties(
         entryPoint: KSClassDeclaration

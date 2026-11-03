@@ -1,10 +1,8 @@
 package spike.compiler.processor.symbol
 
 import spike.Include
-import spike.compiler.graph.Binding
-import spike.compiler.graph.Constructor
+import spike.compiler.diagnostic.Origin
 import spike.compiler.graph.DependencyGraph
-import spike.compiler.graph.Factory
 import spike.compiler.graph.TypeFactory
 import spike.compiler.graph.beneath
 import java.util.Collections
@@ -14,15 +12,15 @@ import java.util.IdentityHashMap
 class UnresolvedReachedFactories : UnresolvedReached {
     override fun of(
         graph: DependencyGraph,
-        unresolved: Map<Binding, List<UnresolvedCompiledType>>,
+        unresolved: Map<Origin, List<UnresolvedCompiledType>>,
     ): List<UnresolvedCompiledType> {
         if (unresolved.isEmpty()) return emptyList()
-        return graph.reached().mapNotNull { it.binding()?.let(unresolved::get) }.flatten().distinct().toList()
+        return graph.reached().mapNotNull { it.origin()?.let(unresolved::get) }.flatten().distinct().toList()
     }
 
-    private fun TypeFactory.binding(): Binding? = when (this) {
-        is TypeFactory.Class -> Constructor(type, invocation, singleton)
-        is TypeFactory.Method -> Factory(type, member, invocation, singleton)
+    private fun TypeFactory.origin(): Origin? = when (this) {
+        is TypeFactory.Class -> origin
+        is TypeFactory.Method -> origin
         else -> null
     }
 
