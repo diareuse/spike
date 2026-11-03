@@ -894,6 +894,15 @@ class CompilerTest : HarnessCompiler() {
         )
 
     @Test
+    fun `a viewmodel next to an entry point with a malformed module marker names the marker as it is`() =
+        assertProcessingFails(
+            "androidx_viewmodel_malformed_marker",
+            "SPIKE-VIEWMODEL-ENTRY-POINT",
+            "compiled in bad_u,",
+            libraries = Androidx
+        )
+
+    @Test
     fun `a spike library option other than true or false fails even in a module with an export`() = assertProcessingFails(
         "androidx_viewmodel_library_option_invalid",
         "SPIKE-LIBRARY-OPTION",
