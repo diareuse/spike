@@ -854,6 +854,20 @@ class CompilerTest : HarnessCompiler() {
         )
 
     @Test
+    fun `a dependency's compiled ViewModel entry point missing another library's exported ViewModels fails`() =
+        assertProcessingFails(
+            "androidx_viewmodel_compiled_entry_point_missing_export",
+            "SPIKE-VIEWMODEL-ENTRY-POINT-INCOMPLETE",
+            "com.example.exported.ExportedViews",
+            "spike.library",
+            libraries = Androidx
+        )
+
+    @Test
+    fun `a test compilation reuses the app's compiled ViewModel entry point that reaches an exported library`() =
+        assertRuns("androidx_viewmodel_test_of_app_with_export", Androidx)
+
+    @Test
     fun `viewmodels share singletons of an exported library`() = assertRuns("androidx_viewmodel_export", Androidx)
 
     @Test

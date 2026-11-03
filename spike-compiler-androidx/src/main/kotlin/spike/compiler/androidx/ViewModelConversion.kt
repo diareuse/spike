@@ -81,15 +81,20 @@ fun viewModelEntryPoint(environment: SymbolProcessorEnvironment, reporter: Probl
                         reporter,
                         SymbolProcessorUnlessCompiled(
                             name,
-                            SymbolProcessorRejecting(
-                                SymbolSourceAnnotated(ViewModelNames.SpikeViewModel),
-                                "SPIKE-VIEWMODEL-ENTRY-POINT",
-                                "$name is already compiled in a dependency, so this ViewModel reaches no " +
-                                    "entry point. If that dependency is a library, declare an @Export " +
-                                    "interface in it: it then leaves the entry point to this module and " +
-                                    "exports its ViewModels. If it is this module's main source set (a " +
-                                    "test compilation), move the ViewModel there.",
-                                reporter,
+                            SymbolProcessorAll(
+                                listOf(
+                                    SymbolProcessorRejecting(
+                                        SymbolSourceAnnotated(ViewModelNames.SpikeViewModel),
+                                        "SPIKE-VIEWMODEL-ENTRY-POINT",
+                                        "$name is already compiled in a dependency, so this ViewModel reaches no " +
+                                            "entry point. If that dependency is a library, declare an @Export " +
+                                            "interface in it: it then leaves the entry point to this module and " +
+                                            "exports its ViewModels. If it is this module's main source set (a " +
+                                            "test compilation), move the ViewModel there.",
+                                        reporter,
+                                    ),
+                                    SymbolProcessorRejectingUnreachedExports(name, reporter),
+                                ),
                             ),
                             SymbolProcessorAll(
                                 listOf(
