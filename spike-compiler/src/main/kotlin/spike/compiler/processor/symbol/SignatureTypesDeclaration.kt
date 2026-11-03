@@ -8,22 +8,29 @@ import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
+import com.google.devtools.ksp.symbol.KSNode
 import com.google.devtools.ksp.symbol.KSPropertyDeclaration
 import com.google.devtools.ksp.symbol.KSType
 import com.google.devtools.ksp.symbol.KSTypeReference
+import com.google.devtools.ksp.visitor.KSDefaultVisitor
 import spike.EntryPoint
 import spike.Include
 import spike.compiler.processor.includedConstructorOrNull
 
 @Include
 @OptIn(KspExperimental::class)
-class SignatureTypesDeclaration : SignatureTypes {
-    override fun of(symbol: KSAnnotated): Sequence<SignatureType> = when (symbol) {
-        is KSClassDeclaration -> symbol.types()
-        is KSFunctionDeclaration -> symbol.types()
-        is KSPropertyDeclaration -> symbol.types()
-        else -> emptySequence()
-    }
+class SignatureTypesDeclaration :
+    KSDefaultVisitor<Unit, Sequence<SignatureType>>(enableNewFeatures = true),
+    SignatureTypes {
+    override fun of(symbol: KSAnnotated): Sequence<SignatureType> = symbol.accept(this, Unit)
+
+    override fun defaultHandler(node: KSNode, data: Unit) = emptySequence<SignatureType>()
+
+    override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) = classDeclaration.types()
+
+    override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) = function.types()
+
+    override fun visitPropertyDeclaration(property: KSPropertyDeclaration, data: Unit) = property.types()
 
     private fun KSClassDeclaration.types(): Sequence<SignatureType> =
         annotated() + superTypes.resolved() +
