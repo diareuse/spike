@@ -13,6 +13,7 @@ import spike.compiler.conversion.Order
 import spike.compiler.conversion.ParameterConversion
 import spike.compiler.conversion.ParameterConversionDirect
 import spike.compiler.conversion.ProblemReporter
+import spike.compiler.conversion.ProblemReporterDistinct
 import spike.compiler.conversion.ProblemReporterLogger
 import spike.compiler.conversion.SymbolProcessorAll
 import spike.compiler.conversion.SymbolProcessorRejecting
@@ -111,7 +112,7 @@ fun viewModelEntryPoint(environment: SymbolProcessorEnvironment, reporter: Probl
 }
 
 @Include
-fun viewModelReporter(logger: KSPLogger): ProblemReporter = ProblemReporterLogger(logger)
+fun viewModelReporter(logger: KSPLogger): ProblemReporter = ProblemReporterDistinct(ProblemReporterLogger(logger))
 
 @Include
 fun SymbolProcessorEnvironment.viewModelLogger(): KSPLogger = logger
