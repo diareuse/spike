@@ -1,0 +1,3 @@
+
+include(":view")
+include(":app")

@@ -61,6 +61,14 @@ class GradleBuildTest : HarnessGradle() {
         )
 
     @Test
+    fun `test fixtures of a library module keep the library role`() =
+        assertBuilds("gradle_plugin_viewmodel_test_fixtures", tasks = listOf(":app:runTestMain"))
+
+    @Test
+    fun `a multiplatform library module contributes ViewModels to the app and its own tests get a full entry point`() =
+        assertBuilds("gradle_plugin_viewmodel_multiplatform_library", tasks = listOf(":app:jvmRun", ":view:runTestMain"))
+
+    @Test
     fun `a plugin module that does not set spike library generates the ViewModel entry point`() =
         assertBuilds("gradle_plugin_viewmodel_default_app", tasks = listOf(":runMain"))
 
