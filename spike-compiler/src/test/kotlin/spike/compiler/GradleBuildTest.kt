@@ -48,7 +48,7 @@ class GradleBuildTest : HarnessGradle() {
             "gradle_plugin_viewmodel_same_name",
             listOf(":app:compileKotlin"),
             "SPIKE-VIEWMODEL-ENTRY-POINT-AMBIGUOUS",
-            "Modules: a_ui, b_ui."
+            "Modules: :a:ui, :b:ui."
         )
 
     @Test
@@ -57,7 +57,25 @@ class GradleBuildTest : HarnessGradle() {
             "gradle_plugin_viewmodel_same_name_js",
             listOf(":app:compileKotlinJs"),
             "SPIKE-VIEWMODEL-ENTRY-POINT-AMBIGUOUS",
-            "Modules: a_ui, b_ui."
+            "Modules: :a:ui, :b:ui."
+        )
+
+    @Test
+    fun `modules whose paths differ only in a dash or an underscore fail as an ambiguous ViewModel entry point`() =
+        assertBuildFails(
+            "gradle_plugin_viewmodel_dash_underscore",
+            listOf(":app:compileKotlin"),
+            "SPIKE-VIEWMODEL-ENTRY-POINT-AMBIGUOUS",
+            "Modules: :a-b, :a_b."
+        )
+
+    @Test
+    fun `modules whose paths differ only in where an underscore splits them fail as an ambiguous ViewModel entry point`() =
+        assertBuildFails(
+            "gradle_plugin_viewmodel_nested_underscore",
+            listOf(":app:compileKotlin"),
+            "SPIKE-VIEWMODEL-ENTRY-POINT-AMBIGUOUS",
+            "Modules: :a:b_c, :a_b:c."
         )
 
     @Test

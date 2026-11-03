@@ -13,7 +13,7 @@ class EntryPointMarkers(private val packageName: String) {
         .toList()
 
     fun modules(resolver: Resolver): List<String> =
-        compiled(resolver).map { it.simpleName.asString().removePrefix(ViewModelNames.EntryPointMarkerPrefix) }
+        compiled(resolver).map { ModuleName.decode(it.simpleName.asString().removePrefix(ViewModelNames.EntryPointMarkerPrefix)) }
 
     fun module(resolver: Resolver): CompiledModule = CompiledModule(modules(resolver).firstOrNull())
 }
