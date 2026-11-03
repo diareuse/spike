@@ -348,6 +348,10 @@ class CompilerTest : HarnessCompiler() {
         assertProcessingFails("unresolved_compiled_export_consumer")
 
     @Test
+    fun `two test entry points extending one production entry point both get its replaced graph`() =
+        assertRuns("test_two_derived_entry_points")
+
+    @Test
     fun `a compiled binding may carry annotations missing from the consumer classpath`() =
         assertRuns("compiled_foreign_annotation")
 
