@@ -884,6 +884,16 @@ class CompilerTest : HarnessCompiler() {
         assertRuns("androidx_viewmodel_test_of_app_with_export", Androidx)
 
     @Test
+    fun `a viewmodel next to an entry point compiled without a module marker fails without naming a module`() =
+        assertProcessingFails(
+            "androidx_viewmodel_markerless_entry_point",
+            "SPIKE-VIEWMODEL-ENTRY-POINT",
+            "compiled in a dependency,",
+            "If that dependency is a library",
+            libraries = Androidx
+        )
+
+    @Test
     fun `a viewmodel declared only in a test compilation of the app fails`() = assertProcessingFails(
         "androidx_viewmodel_test_only",
         "SPIKE-VIEWMODEL-ENTRY-POINT",

@@ -19,12 +19,13 @@ class SymbolProcessorRejectingStrandedViewModels(
         return emptyList()
     }
 
-    private fun problem(module: String, viewModel: KSAnnotated) = ConversionProblem(
+    private fun problem(module: CompiledModule, viewModel: KSAnnotated) = ConversionProblem(
         "SPIKE-VIEWMODEL-ENTRY-POINT",
-        "$entryPoint is already compiled in $module, so this ViewModel reaches no entry point. If $module is a " +
+        "$entryPoint is already compiled in ${module.origin}, so this ViewModel reaches no entry point. If " +
+            "${module.subject} is a " +
             "library, mark it as one: spike { library = true } with the io.github.diareuse.spike Gradle plugin, " +
             "the KSP option spike.library=true, or an @Export interface in it. It then leaves the entry point to " +
-            "this module and exports its ViewModels. If $module is this module's main source set (a test " +
+            "this module and exports its ViewModels. If ${module.subject} is this module's main source set (a test " +
             "compilation), move the ViewModel there.",
         viewModel,
     )

@@ -15,5 +15,5 @@ class EntryPointMarkers(private val packageName: String) {
     fun modules(resolver: Resolver): List<String> =
         compiled(resolver).map { it.simpleName.asString().removePrefix(ViewModelNames.EntryPointMarkerPrefix) }
 
-    fun module(resolver: Resolver): String = modules(resolver).firstOrNull() ?: "a dependency"
+    fun module(resolver: Resolver): CompiledModule = CompiledModule(modules(resolver).firstOrNull())
 }

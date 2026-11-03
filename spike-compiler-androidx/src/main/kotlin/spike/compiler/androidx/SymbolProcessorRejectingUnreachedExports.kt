@@ -41,12 +41,12 @@ class SymbolProcessorRejectingUnreachedExports(
         generated.superTypes.firstOrNull()?.resolve()?.declaration?.qualifiedName?.asString()
             ?: generated.qualifiedName?.asString().orEmpty()
 
-    private fun problem(compiled: KSClassDeclaration, module: String, export: String) = ConversionProblem(
+    private fun problem(compiled: KSClassDeclaration, module: CompiledModule, export: String) = ConversionProblem(
         "SPIKE-VIEWMODEL-ENTRY-POINT-INCOMPLETE",
-        "$entryPoint is compiled in $module, which does not see $export, so the ViewModels exported by $export " +
-            "are missing from it. If $module is a library, mark it as one: spike { library = true } with the " +
+        "$entryPoint is compiled in ${module.origin}, which does not see $export, so the ViewModels exported by $export " +
+            "are missing from it. If ${module.subject} is a library, mark it as one: spike { library = true } with the " +
             "io.github.diareuse.spike Gradle plugin, the KSP option spike.library=true, or an @Export interface " +
-            "in it. If $module is this module's main source set (a test compilation), add the dependency that " +
+            "in it. If ${module.subject} is this module's main source set (a test compilation), add the dependency that " +
             "declares $export to the main source set too.",
         compiled,
     )
