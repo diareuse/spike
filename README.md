@@ -19,6 +19,9 @@ plugins {
 }
 ```
 
+The plugin sets Spike up through the Kotlin plugin, so an Android module that uses the Android Gradle plugin's
+built-in Kotlin (AGP 9 without `org.jetbrains.kotlin.android`) is not set up yet; use the manual setup there.
+
 Integrations such as `spike-androidx` are still added as regular dependencies. The manual setup below does the
 same thing by hand.
 
