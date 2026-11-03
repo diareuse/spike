@@ -28,8 +28,7 @@ internal fun ksp(): SpikeSetup = SpikeSetupKsp()
 
 @Include(bindTo = BindTarget.Map)
 @Order(15)
-internal fun moduleRole(): SpikeSetup =
-    SpikeSetupModuleRole(listOf("com.android.application", "application"))
+internal fun libraryRole(): SpikeSetup = SpikeSetupLibraryRole()
 
 @Include(bindTo = BindTarget.Map)
 @Order(20)

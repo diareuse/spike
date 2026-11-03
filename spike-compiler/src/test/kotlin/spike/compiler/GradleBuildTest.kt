@@ -35,8 +35,16 @@ class GradleBuildTest : HarnessGradle() {
     )
 
     @Test
-    fun `the Gradle plugin lets a library module's ViewModels reach the app's entry point without an export`() =
+    fun `a module marked spike library contributes its ViewModels to the app's entry point without an export`() =
         assertBuilds("gradle_plugin_viewmodel_library", tasks = listOf(":app:run"))
+
+    @Test
+    fun `a library module's own test source set still gets a full ViewModel entry point`() =
+        assertBuilds("gradle_plugin_viewmodel_library", tasks = listOf(":view:runTestMain"))
+
+    @Test
+    fun `a plugin module that does not set spike library generates the ViewModel entry point`() =
+        assertBuilds("gradle_plugin_viewmodel_default_app", tasks = listOf(":runMain"))
 
     @Test
     fun `a test source set reuses the app's ViewModel entry point and can replace its bindings`() =
