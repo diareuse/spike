@@ -18,7 +18,7 @@ class SymbolProcessorResolved(
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
         if (resolved) return delegate.process(resolver)
-        val symbols = registry.all(resolver) + registry.replaces(resolver)
+        val symbols = registry.all(resolver)
         pending = unresolved.of(symbols)
         resolved = pending.isEmpty()
         return if (resolved) delegate.process(resolver) else symbols

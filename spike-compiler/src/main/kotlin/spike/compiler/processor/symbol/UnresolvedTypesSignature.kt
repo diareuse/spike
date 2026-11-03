@@ -1,7 +1,9 @@
 package spike.compiler.processor.symbol
 
 import com.google.devtools.ksp.isConstructor
+import com.google.devtools.ksp.symbol.FileLocation
 import com.google.devtools.ksp.symbol.KSAnnotated
+import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.google.devtools.ksp.symbol.KSNode
@@ -20,15 +22,22 @@ class UnresolvedTypesSignature(private val references: SignatureReferences) : Un
         .distinct()
         .mapNotNull { reference ->
             val name = reference.unresolvedName() ?: return@mapNotNull null
-            DiagnosticUnresolvedType(name, Involved(reference.user(), reference.asOrigin()))
+            DiagnosticUnresolvedType(name, Involved(reference.user(), reference.located().asOrigin()))
         }
         .toList()
 
     private fun KSTypeReference.unresolvedName(): String? {
         val type = resolve()
-        if (type.isError) return type.declaration.simpleName.asString().withoutErrorMarker()
+        if (type.isError) return annotationName() ?: type.declaration.simpleName.asString().withoutErrorMarker()
         return type.arguments.firstNotNullOfOrNull { it.type?.unresolvedName() }
     }
+
+    private fun KSTypeReference.annotationName(): String? {
+        val annotation = parent as? KSAnnotation ?: return null
+        return annotation.shortName.asString().takeUnless { it == UnknownName } ?: "an annotation"
+    }
+
+    private fun KSNode.located(): KSNode = if (location is FileLocation) this else parent?.located() ?: this
 
     private fun String.withoutErrorMarker() = removeSurrounding(ErrorMarker, ">")
 
@@ -45,5 +54,6 @@ class UnresolvedTypesSignature(private val references: SignatureReferences) : Un
 
     private companion object {
         const val ErrorMarker = "<ERROR TYPE: "
+        const val UnknownName = "<error>"
     }
 }

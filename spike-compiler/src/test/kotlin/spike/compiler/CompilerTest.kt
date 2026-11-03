@@ -258,8 +258,35 @@ class CompilerTest : HarnessCompiler() {
         assertProcessingFails("unresolved_include_parameter", "Main.kt:8: [SPIKE-UNRESOLVED-TYPE] Context")
 
     @Test
-    fun `an Include function parameter of an unresolved type argument is reported, even when a binding matches it`() =
-        assertProcessingFails("unresolved_include_function", "Main.kt:10: [SPIKE-UNRESOLVED-TYPE] Settings")
+    fun `an unresolved type argument is reported on both the binding and its consumer instead of matching by name`() =
+        assertProcessingFails(
+            "unresolved_include_function",
+            "Main.kt:10: [SPIKE-UNRESOLVED-TYPE] Settings",
+            "Main.kt:13: [SPIKE-UNRESOLVED-TYPE] Settings",
+        )
+
+    @Test
+    fun `EntryPoint members of an unresolved type are reported at the member`() =
+        assertProcessingFails("unresolved_entry_point_member", "Main.kt:4: [SPIKE-UNRESOLVED-TYPE] Settings")
+
+    @Test
+    fun `Export members of an unresolved type are reported at the member`() =
+        assertProcessingFails("unresolved_export_member", "Main.kt:4: [SPIKE-UNRESOLVED-TYPE] Settings")
+
+    @Test
+    fun `an unresolved qualifier annotation is reported instead of being dropped from the binding key`() =
+        assertProcessingFails(
+            "unresolved_qualifier",
+            "Main.kt:8: [SPIKE-UNRESOLVED-TYPE] an annotation cannot be resolved, but constructor of Screen needs it",
+        )
+
+    @Test
+    fun `an unresolved supertype of an Include class is reported`() =
+        assertProcessingFails("unresolved_supertype", "Main.kt:8: [SPIKE-UNRESOLVED-TYPE] Destination")
+
+    @Test
+    fun `an unresolved receiver of an Include function is reported`() =
+        assertProcessingFails("unresolved_receiver", "Main.kt:10: [SPIKE-UNRESOLVED-TYPE] Navigator")
 
     @Test
     fun `an EntryPoint Factory parameter of an unresolved type is reported at the parameter`() =
