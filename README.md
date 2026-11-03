@@ -236,7 +236,8 @@ interface TestCoffeeShop : CoffeeShop {
 val shop = TestCoffeeShop() // every Repository is now FakeRepository
 ```
 
-The replacement must be a `Repository`, and the production graph must bind `Repository`; otherwise the
+`@Replaces` goes on an `@Include` class, function or property; on its own it binds nothing. The
+replacement must be a `Repository`, and the production graph must bind `Repository`; otherwise the
 build fails. Production entry points are unaffected.
 
 `@Replaces` also swaps a binding that another module provides through `@Export`, but only where your
