@@ -56,6 +56,7 @@ fun viewModelEntryPoint(environment: SymbolProcessorEnvironment, reporter: Probl
     val packageName = environment.options["spike.viewmodel.package"] ?: "spike.lifecycle.viewmodel"
     val name = "$packageName.${ViewModelNames.ViewModelEntryPointImpl}"
     val markers = EntryPointMarkers(packageName)
+    val identity = ModuleIdentity(environment.options)
     return SymbolProcessorEnabledBy(
         environment.options,
         "spike.viewmodel.enabled",
@@ -66,6 +67,7 @@ fun viewModelEntryPoint(environment: SymbolProcessorEnvironment, reporter: Probl
                 library = SymbolProcessorViewModelExport(
                     SymbolSourceAnnotated(ViewModelNames.SpikeViewModel),
                     environment.codeGenerator,
+                    identity,
                 ),
                 app = SymbolProcessorRequiring(
                     ViewModelNames.ViewModelEntryPoint,
@@ -93,7 +95,7 @@ fun viewModelEntryPoint(environment: SymbolProcessorEnvironment, reporter: Probl
                             SymbolProcessorAll(
                                 listOf(
                                     SymbolProcessorViewModelEntryPoint(packageName, environment.codeGenerator),
-                                    SymbolProcessorViewModelEntryPointMarker(packageName, environment.codeGenerator),
+                                    SymbolProcessorViewModelEntryPointMarker(packageName, environment.codeGenerator, identity),
                                 ),
                             ),
                         ),

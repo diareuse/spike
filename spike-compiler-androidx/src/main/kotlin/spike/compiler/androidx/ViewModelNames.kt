@@ -7,6 +7,7 @@ object ViewModelNames {
     const val ViewModelEntryPoint = "spike.lifecycle.viewmodel.ViewModelEntryPoint"
     const val ViewModelEntryPointImpl = "ViewModelEntryPointImpl"
     const val LibraryOption = "spike.library"
+    const val ModuleOption = "spike.module"
     const val ViewModelExports = "SpikeViewModelExports"
     const val EntryPointMarkerPrefix = "ViewModelEntryPointImpl_CompiledIn_"
     val SpikeViewModel = AnnotationNames("spike.lifecycle.viewmodel.SpikeViewModel")

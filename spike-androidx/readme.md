@@ -89,6 +89,10 @@ ksp {
 }
 ```
 
+The plugin also passes the module's Gradle path as `spike.module`, which keeps the names Spike generates per
+module unique even when two projects share a name (`:a:ui`, `:b:ui`). Without the plugin, set
+`arg("spike.module", "a_ui")` in such modules; Spike otherwise uses the Kotlin module name.
+
 A library module exports its ViewModels and never generates `ViewModelEntryPointImpl`. The plugin passes the option
 to the main compilations only, so the module's own tests still get a full `ViewModelEntryPointImpl`; set by hand, the
 option applies to every compilation. A module that does not set it is treated as the app unless it declares an

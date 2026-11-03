@@ -48,7 +48,16 @@ class GradleBuildTest : HarnessGradle() {
             "gradle_plugin_viewmodel_same_name",
             listOf(":app:compileKotlin"),
             "SPIKE-VIEWMODEL-ENTRY-POINT-AMBIGUOUS",
-            "Modules: project_a_ui, project_b_ui."
+            "Modules: a_ui, b_ui."
+        )
+
+    @Test
+    fun `two app-role JS modules with the same project name fail as an ambiguous ViewModel entry point`() =
+        assertBuildFails(
+            "gradle_plugin_viewmodel_same_name_js",
+            listOf(":app:compileKotlinJs"),
+            "SPIKE-VIEWMODEL-ENTRY-POINT-AMBIGUOUS",
+            "Modules: a_ui, b_ui."
         )
 
     @Test

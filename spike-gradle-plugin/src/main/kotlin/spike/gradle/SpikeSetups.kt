@@ -31,6 +31,10 @@ internal fun ksp(): SpikeSetup = SpikeSetupKsp()
 internal fun libraryRole(): SpikeSetup = SpikeSetupLibraryRole()
 
 @Include(bindTo = BindTarget.Map)
+@Order(16)
+internal fun moduleId(): SpikeSetup = SpikeSetupModuleId()
+
+@Include(bindTo = BindTarget.Map)
 @Order(20)
 internal fun multiplatform(artifacts: SpikeArtifacts): SpikeSetup = SpikeSetupMultiplatform(artifacts)
 
