@@ -23,5 +23,4 @@ dependencies {
     api("io.github.diareuse:spike-androidx")
     api(libs.androidx.lifecycle.viewmodel.savedstate)
     testFixturesApi("io.github.diareuse:spike")
-    add("kspTestFixtures", "io.github.diareuse:spike-compiler")
 }

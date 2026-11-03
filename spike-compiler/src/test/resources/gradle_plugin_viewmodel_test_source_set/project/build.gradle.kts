@@ -28,7 +28,6 @@ dependencies {
     implementation("io.github.diareuse:spike-androidx")
     implementation(libs.androidx.lifecycle.viewmodel.savedstate)
     testImplementation("spike.test:spike-test:unspecified")
-    add("kspTest", "io.github.diareuse:spike-compiler")
 }
 
 configurations.configureEach {

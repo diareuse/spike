@@ -10,7 +10,7 @@ Spike is a Kotlin Multiplatform dependency injection compositor that ensures com
 ### Gradle plugin
 
 Apply the plugin next to your Kotlin plugin. It applies KSP and adds the Spike runtime and compiler to every
-target, including each target of a Kotlin Multiplatform project:
+target and its tests, including each target of a Kotlin Multiplatform project:
 
 ```kotlin
 plugins {
@@ -211,12 +211,14 @@ fun main() {
 
 ### 5. Replace Bindings in Tests
 
-Add `spike-test` to your test dependencies and run the compiler on your tests too:
+Add `spike-test` to your test dependencies. The Gradle plugin already runs the compiler on your tests (`kspTest`,
+`kspAndroidTest`, `kspTestFixtures` and the test compilations of every multiplatform target); with the manual setup,
+add the compiler to the test configurations yourself:
 
 ```kotlin
 dependencies {
     testImplementation("io.github.diareuse:spike-test:$spike")
-    kspTest("io.github.diareuse:spike-compiler:$spike")
+    kspTest("io.github.diareuse:spike-compiler:$spike") // manual setup only
 }
 ```
 

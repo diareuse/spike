@@ -17,10 +17,6 @@ kotlin {
     }
 }
 
-dependencies {
-    add("kspJvmTest", "io.github.diareuse:spike-compiler")
-}
-
 tasks.register<JavaExec>("runTestMain") {
     val test = kotlin.jvm().compilations.getByName("test")
     classpath = files(test.output.allOutputs, test.runtimeDependencyFiles)

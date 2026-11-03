@@ -10,6 +10,13 @@ internal class SpikeSetupSinglePlatform(
         project.pluginManager.withPlugin(kotlinPlugin) {
             project.dependencies.add("implementation", artifacts.runtime)
             project.dependencies.add("ksp", artifacts.compiler)
+            project.configurations.matching { it.name in TestConfigurations }.configureEach { configuration ->
+                project.dependencies.add(configuration.name, artifacts.compiler)
+            }
         }
+    }
+
+    private companion object {
+        val TestConfigurations = setOf("kspTest", "kspAndroidTest", "kspTestFixtures")
     }
 }

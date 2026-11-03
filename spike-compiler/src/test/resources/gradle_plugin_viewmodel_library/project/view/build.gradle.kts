@@ -21,7 +21,6 @@ kotlin {
 dependencies {
     api("io.github.diareuse:spike-androidx")
     api(libs.androidx.lifecycle.viewmodel.savedstate)
-    add("kspTest", "io.github.diareuse:spike-compiler")
 }
 
 tasks.register<JavaExec>("runTestMain") {

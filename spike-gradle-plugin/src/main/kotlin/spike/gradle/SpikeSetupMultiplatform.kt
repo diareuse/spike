@@ -13,11 +13,20 @@ internal class SpikeSetupMultiplatform(private val artifacts: SpikeArtifacts) : 
             }
             kotlin.targets.configureEach { target ->
                 if (target.platformType == KotlinPlatformType.common) return@configureEach
-                val configuration = "ksp" + target.name.replaceFirstChar(Char::uppercase)
-                project.configurations.matching { it.name == configuration }.configureEach {
-                    project.dependencies.add(configuration, artifacts.compiler)
+                target.compilations.configureEach { compilation ->
+                    val suffix = compilation.name.takeUnless { it == MainCompilation }.orEmpty()
+                    val configuration = "ksp" + target.name.capitalized() + suffix.capitalized()
+                    project.configurations.matching { it.name == configuration }.configureEach {
+                        project.dependencies.add(configuration, artifacts.compiler)
+                    }
                 }
             }
         }
+    }
+
+    private fun String.capitalized() = replaceFirstChar(Char::uppercase)
+
+    private companion object {
+        const val MainCompilation = "main"
     }
 }
