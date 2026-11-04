@@ -48,10 +48,7 @@ public class SingletonHolder {
 
     private fun create(id: Int, factory: () -> Any): Any =
         synchronized(lockOf(id)) {
-            stored(id) ?: factory().also { instance ->
-                store(id, instance)
-                release(id)
-            }
+            stored(id) ?: store(id, factory()).also { release(id) }
         }
 
     private fun lockOf(id: Int): SynchronizedObject =
@@ -61,9 +58,11 @@ public class SingletonHolder {
         synchronized(locksGuard) { locks.remove(id) }
     }
 
-    private fun store(id: Int, instance: Any) {
+    private fun store(id: Int, instance: Any): Any {
+        stored(id)?.let { return it }
         if (id in 0 until DENSE_IDS) dense.update { it.with(id, instance) }
         else sparse.update { it.orEmpty() + (id to instance) }
+        return instance
     }
 
     private fun Array<Any?>.with(id: Int, instance: Any): Array<Any?> =

@@ -101,6 +101,34 @@ class SingletonHolderTest {
     }
 
     @Test
+    fun `a factory requesting its own id gets one instance everywhere`() {
+        val holder = SingletonHolder()
+        var inner: Any? = null
+
+        val outer = holder.getOrPut(0) {
+            inner = holder.getOrPut(0) { Any() }
+            Any()
+        }
+
+        assertSame(inner, outer)
+        assertSame(inner, holder.getOrPut<Any>(0) { error("factory must not run again") })
+    }
+
+    @Test
+    fun `a factory requesting its own id beyond the dense limit gets one instance everywhere`() {
+        val holder = SingletonHolder()
+        var inner: Any? = null
+
+        val outer = holder.getOrPut(65536) {
+            inner = holder.getOrPut(65536) { Any() }
+            Any()
+        }
+
+        assertSame(inner, outer)
+        assertSame(inner, holder.getOrPut<Any>(65536) { error("factory must not run again") })
+    }
+
+    @Test
     fun `a scope with the same key is the same holder`() {
         val holder = SingletonHolder()
 
