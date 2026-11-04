@@ -129,6 +129,28 @@ class RoundOneGenerationTest {
     }
 
     @Test
+    fun `a broken prediction service file keeps Spike waiting and the build working`() {
+        val module = module("broken_service", "entrypoint")
+        IsolatedKsp(module, withConverters = false).use { ksp ->
+            ksp.addBrokenPredictionService(File("build/tmp/compilations/round_one_jars"))
+            ksp.run()
+            assertEquals(3, ksp.rounds)
+        }
+        assertContentEquals(resources.resolve("entrypoint/fixtures/main/kotlin"), module.generatedSources)
+    }
+
+    @Test
+    fun `Spike loaded beside KSP waits for a processor it cannot see below it`() {
+        val module = module("beside_ksp", "generated_include")
+        IsolatedKsp(module, withConverters = false, spikeBesideKsp = true).use { ksp ->
+            ksp.addProviderJar(File("build/tmp/compilations/round_one_jars"), GeneratedIncludeProcessorProvider::class)
+            ksp.run()
+            assertTrue(ksp.rounds > 2, "rounds ${ksp.rounds}")
+        }
+        assertTrue(module.compile().succeeded)
+    }
+
+    @Test
     fun `the ViewModel entry point on the classpath makes Spike wait even with no ViewModel declared`() {
         val module = module("viewmodel_entry_point", "entrypoint", Libraries.Androidx)
         IsolatedKsp(module, withConverters = false).use { ksp ->

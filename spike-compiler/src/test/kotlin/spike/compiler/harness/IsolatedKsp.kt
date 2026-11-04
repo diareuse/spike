@@ -19,12 +19,17 @@ import kotlin.reflect.KClass
  * Runs KSP the way its Gradle plugin does: KSP in one long-lived loader, and the processors in a loader that lives
  * for one run. A co-processor keeps weak references to what KSP hands it.
  */
-class IsolatedKsp(private val module: SourceModule, withConverters: Boolean = true) : AutoCloseable {
+class IsolatedKsp(
+    private val module: SourceModule,
+    withConverters: Boolean = true,
+    spikeBesideKsp: Boolean = false,
+) : AutoCloseable {
 
     private val classpath = System.getProperty("java.class.path").split(File.pathSeparator).map(::File)
     private var processors = classpath.filter { it.isFile && !belongsToKsp(it) }
         .filter { withConverters || Converters.none { name -> name in it.name } } +
         File(System.getProperty("spike.compiler.jar"))
+    private val ksp = if (spikeBesideKsp) besideKsp() else shared
     private val providerType = ksp.loadClass("com.google.devtools.ksp.processing.SymbolProcessorProvider")
     private val processorType = ksp.loadClass("com.google.devtools.ksp.processing.SymbolProcessor")
     private val handedProviders = mutableListOf<String>()
@@ -54,6 +59,22 @@ class IsolatedKsp(private val module: SourceModule, withConverters: Boolean = tr
         }
         addToProcessorClasspath(jar)
         if (!discoverable) handedProviders += type
+    }
+
+    fun addBrokenPredictionService(work: File) {
+        val jar = work.resolve("broken-prediction.jar").apply { parentFile.mkdirs() }
+        ZipOutputStream(jar.outputStream()).use { zip ->
+            zip.putNextEntry(ZipEntry("META-INF/services/spike.compiler.conversion.WritingPrediction"))
+            zip.write("does.not.Exist".toByteArray())
+            zip.closeEntry()
+        }
+        addToProcessorClasspath(jar)
+    }
+
+    private fun besideKsp(): URLClassLoader {
+        val files = classpath.filter(::belongsToKsp) + processors
+        processors = emptyList()
+        return URLClassLoader(files.map { it.toURI().toURL() }.toTypedArray(), ClassLoader.getPlatformClassLoader())
     }
 
     fun warmLoader(): ClassLoader {
@@ -130,7 +151,7 @@ class IsolatedKsp(private val module: SourceModule, withConverters: Boolean = tr
     override fun close() = Unit
 
     private companion object {
-        val ksp by lazy {
+        val shared by lazy {
             val jars = System.getProperty("java.class.path").split(File.pathSeparator).map(::File)
                 .filter { file -> KspJars.any { it in file.name } }
             URLClassLoader(jars.map { it.toURI().toURL() }.toTypedArray(), ClassLoader.getPlatformClassLoader())
