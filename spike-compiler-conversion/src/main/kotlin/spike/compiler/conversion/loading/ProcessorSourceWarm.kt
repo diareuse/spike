@@ -16,8 +16,9 @@ class ProcessorSourceWarm(
             ?: error("KSP loaded ${implementation.type.name} outside a URLClassLoader")
         val lease = loaders.lease(ProcessorClasspath(perRun.urLs.toList(), perRun.parent), environment)
         environment.logger.info(if (lease.reused) ReusedMessage else LoadedMessage)
+        val logger = KSPLoggerObserved(environment.logger)
         return try {
-            SymbolProcessorLeased(created(lease, environment), lease)
+            SymbolProcessorLeased(created(lease, environment.logging(logger)), lease, logger::failed)
         } catch (@Suppress("TooGenericExceptionCaught") e: Throwable) {
             lease.evict()
             throw e
