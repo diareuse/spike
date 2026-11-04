@@ -25,8 +25,8 @@ class WarmLoadersCountedTest {
 
     @Test
     fun `an unchanged classpath is leased the same loader`() {
-        val first = loaders.lease(classpath())
-        val second = loaders.lease(classpath())
+        val first = loaders.lease(classpath(), Any())
+        val second = loaders.lease(classpath(), Any())
         assertFalse(first.reused)
         assertTrue(second.reused)
         assertSame(first.loader, second.loader)
@@ -34,26 +34,26 @@ class WarmLoadersCountedTest {
 
     @Test
     fun `a jar whose content changed gets a new loader`() {
-        val first = loaders.lease(classpath())
+        val first = loaders.lease(classpath(), Any())
         changeJar()
-        val second = loaders.lease(classpath())
+        val second = loaders.lease(classpath(), Any())
         assertFalse(second.reused)
         assertNotSame(first.loader, second.loader)
     }
 
     @Test
     fun `a new parent gets a new loader so KSP's API types always match KSP`() {
-        val first = loaders.lease(classpath())
-        val second = loaders.lease(ProcessorClasspath(listOf(jar.toURI().toURL()), URLClassLoader(emptyArray(), parent)))
+        val first = loaders.lease(classpath(), Any())
+        val second = loaders.lease(ProcessorClasspath(listOf(jar.toURI().toURL()), URLClassLoader(emptyArray(), parent)), Any())
         assertFalse(second.reused)
         assertNotSame(first.loader, second.loader)
     }
 
     @Test
     fun `a replaced loader stays open until its last lease is released`() {
-        val first = loaders.lease(classpath())
+        val first = loaders.lease(classpath(), Any())
         changeJar()
-        loaders.lease(classpath())
+        loaders.lease(classpath(), Any())
         assertTrue(canLoad(first))
         first.release()
         assertFalse(canLoad(first))
@@ -61,17 +61,17 @@ class WarmLoadersCountedTest {
 
     @Test
     fun `the current loader stays open after every lease is released`() {
-        val lease = loaders.lease(classpath())
+        val lease = loaders.lease(classpath(), Any())
         lease.release()
         assertTrue(canLoad(lease))
     }
 
     @Test
     fun `an evicted loader is not leased again and closes with its last lease`() {
-        val failed = loaders.lease(classpath())
-        val other = loaders.lease(classpath())
+        val failed = loaders.lease(classpath(), Any())
+        val other = loaders.lease(classpath(), Any())
         failed.evict()
-        val next = loaders.lease(classpath())
+        val next = loaders.lease(classpath(), Any())
         assertFalse(next.reused)
         assertNotSame(failed.loader, next.loader)
         assertTrue(canLoad(other))
@@ -81,20 +81,70 @@ class WarmLoadersCountedTest {
 
     @Test
     fun `evicting twice does not close a loader another lease still holds`() {
-        val first = loaders.lease(classpath())
-        val second = loaders.lease(classpath())
-        val third = loaders.lease(classpath())
+        val first = loaders.lease(classpath(), Any())
+        val second = loaders.lease(classpath(), Any())
+        val third = loaders.lease(classpath(), Any())
         first.evict()
         second.evict()
         assertTrue(canLoad(third))
     }
 
     @Test
-    fun `releasing a lease twice counts once`() {
-        val first = loaders.lease(classpath())
-        val second = loaders.lease(classpath())
+    fun `the processors of one run hold the loader together`() {
+        val run = Any()
+        val first = loaders.lease(classpath(), run)
+        val sibling = loaders.lease(classpath(), run)
         changeJar()
-        loaders.lease(classpath())
+        loaders.lease(classpath(), Any())
+        first.release()
+        assertTrue(canLoad(sibling))
+        sibling.release()
+        assertFalse(canLoad(sibling))
+    }
+
+    @Test
+    fun `a run that ends in a crash lets go of the leases of all its processors`() {
+        val run = Any()
+        val crashed = loaders.lease(classpath(), run)
+        val sibling = loaders.lease(classpath(), run)
+        crashed.abandon()
+        assertFalse(canLoad(sibling))
+    }
+
+    @Test
+    fun `a crash in one run does not close a loader another run still uses`() {
+        val other = loaders.lease(classpath(), Any())
+        loaders.lease(classpath(), Any()).abandon()
+        assertTrue(canLoad(other))
+    }
+
+    @Test
+    fun `a sibling finishing after a crash does not count again`() {
+        val run = Any()
+        val other = loaders.lease(classpath(), Any())
+        val crashed = loaders.lease(classpath(), run)
+        val sibling = loaders.lease(classpath(), run)
+        crashed.abandon()
+        sibling.release()
+        assertTrue(canLoad(other))
+    }
+
+    @Test
+    fun `evicting for a processor that failed to start keeps the loader for its running sibling`() {
+        val run = Any()
+        val running = loaders.lease(classpath(), run)
+        loaders.lease(classpath(), run).evict()
+        assertTrue(canLoad(running))
+        running.release()
+        assertFalse(canLoad(running))
+    }
+
+    @Test
+    fun `releasing a lease twice counts once`() {
+        val first = loaders.lease(classpath(), Any())
+        val second = loaders.lease(classpath(), Any())
+        changeJar()
+        loaders.lease(classpath(), Any())
         first.release()
         first.release()
         assertTrue(canLoad(second))
@@ -103,7 +153,7 @@ class WarmLoadersCountedTest {
     @Test
     fun `a directory on the classpath cannot be leased because its size hides changed classes`() {
         val directory = Files.createTempDirectory("processor").toUri().toURL()
-        assertFailsWith<IllegalStateException> { loaders.lease(ProcessorClasspath(listOf(directory), parent)) }
+        assertFailsWith<IllegalStateException> { loaders.lease(ProcessorClasspath(listOf(directory), parent), Any()) }
     }
 
     @Test
@@ -113,7 +163,7 @@ class WarmLoadersCountedTest {
         val pool = Executors.newFixedThreadPool(8)
         val attempts = List(200) { index ->
             Callable {
-                val lease = platform.lease(ProcessorClasspath(listOf(jars[index % 3].toURI().toURL()), parent))
+                val lease = platform.lease(ProcessorClasspath(listOf(jars[index % 3].toURI().toURL()), parent), Any())
                 val open = canLoad(lease)
                 lease.release()
                 open
@@ -127,7 +177,7 @@ class WarmLoadersCountedTest {
     @Test
     fun `concurrent leases of one classpath share one loader`() {
         val pool = Executors.newFixedThreadPool(8)
-        val leases = pool.invokeAll(List(64) { Callable { loaders.lease(classpath()) } }).map { it.get() }
+        val leases = pool.invokeAll(List(64) { Callable { loaders.lease(classpath(), Any()) } }).map { it.get() }
         pool.shutdown()
         assertEquals(1, leases.map { it.loader }.distinct().size)
         assertEquals(1, leases.count { !it.reused })

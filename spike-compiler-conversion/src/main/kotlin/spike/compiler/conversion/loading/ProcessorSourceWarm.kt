@@ -14,7 +14,7 @@ class ProcessorSourceWarm(
     override fun processor(environment: SymbolProcessorEnvironment): SymbolProcessor {
         val perRun = implementation.type.classLoader as? URLClassLoader
             ?: error("KSP loaded ${implementation.type.name} outside a URLClassLoader")
-        val lease = loaders.lease(ProcessorClasspath(perRun.urLs.toList(), perRun.parent))
+        val lease = loaders.lease(ProcessorClasspath(perRun.urLs.toList(), perRun.parent), environment)
         environment.logger.info(if (lease.reused) ReusedMessage else LoadedMessage)
         return try {
             SymbolProcessorLeased(created(lease, environment), lease)

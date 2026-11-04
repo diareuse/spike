@@ -11,7 +11,7 @@ class SymbolProcessorLeased(
     override fun process(resolver: Resolver): List<KSAnnotated> = try {
         delegate.process(resolver)
     } catch (@Suppress("TooGenericExceptionCaught") e: Throwable) {
-        lease.evict()
+        lease.abandon()
         throw e
     }
 

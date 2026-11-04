@@ -17,7 +17,8 @@ class ProcessorClasspath(val urls: List<URL>, val parent: ClassLoader) {
 class WarmLease(
     val loader: ClassLoader,
     val reused: Boolean,
-    private val onEvict: () -> Unit = {},
+    private val onEvict: () -> Unit,
+    private val onAbandon: () -> Unit,
     private val onRelease: () -> Unit,
 ) {
     private val released = AtomicBoolean()
@@ -30,10 +31,14 @@ class WarmLease(
         onEvict()
         release()
     }
+
+    fun abandon() {
+        if (released.compareAndSet(false, true)) onAbandon()
+    }
 }
 
 fun interface WarmLoaders {
-    fun lease(classpath: ProcessorClasspath): WarmLease
+    fun lease(classpath: ProcessorClasspath, run: Any): WarmLease
 
     companion object {
         @Include

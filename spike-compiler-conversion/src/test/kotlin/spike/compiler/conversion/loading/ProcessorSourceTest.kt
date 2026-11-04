@@ -48,35 +48,38 @@ class ProcessorSourceTest {
     @Test
     fun `the lease is released once KSP finishes the processor`() {
         var released = 0
-        SymbolProcessorLeased(processor, WarmLease(javaClass.classLoader, false) { released++ }).finish()
+        SymbolProcessorLeased(processor, lease(onRelease = { released++ })).finish()
         assertEquals(1, released)
     }
 
     @Test
     fun `the lease is released when KSP reports an error`() {
         var released = false
-        SymbolProcessorLeased(processor, WarmLease(javaClass.classLoader, false) { released = true }).onError()
+        SymbolProcessorLeased(processor, lease(onRelease = { released = true })).onError()
         assertTrue(released)
     }
 
     @Test
     fun `a processor that throws evicts its loader so the next build does not repeat the failure`() {
-        var evicted = false
-        val lease = WarmLease(javaClass.classLoader, false, onEvict = { evicted = true }, onRelease = {})
+        var abandoned = false
+        val lease = lease(onAbandon = { abandoned = true })
         val throwing = object : SymbolProcessor {
             override fun process(resolver: Resolver) = throw NoClassDefFoundError("Could not initialize class")
         }
         assertFailsWith<NoClassDefFoundError> { SymbolProcessorLeased(throwing, lease).process(unused()) }
-        assertTrue(evicted)
+        assertTrue(abandoned)
     }
 
     @Test
     fun `an error reported by KSP evicts the loader because it may be the cause`() {
         var evicted = false
-        val lease = WarmLease(javaClass.classLoader, false, onEvict = { evicted = true }, onRelease = {})
+        val lease = lease(onEvict = { evicted = true })
         SymbolProcessorLeased(processor, lease).onError()
         assertTrue(evicted)
     }
+
+    private fun lease(onEvict: () -> Unit = {}, onAbandon: () -> Unit = {}, onRelease: () -> Unit = {}) =
+        WarmLease(javaClass.classLoader, false, onEvict, onAbandon, onRelease)
 
     private fun environment(vararg options: Pair<String, String>) = SymbolProcessorEnvironment(
         options = mapOf(*options),
