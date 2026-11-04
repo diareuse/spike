@@ -75,6 +75,12 @@ abstract class HarnessGradle {
         fun build(tasks: List<String> = listOf(":kspKotlin")): String =
             project.build(tasks, arguments + "--info").output
 
+        fun buildFails(tasks: List<String> = listOf(":kspKotlin")) {
+            project.buildAndFail(tasks)
+        }
+
+        fun generatedFiles(): List<String> = project.generatedSources("").walk().map { it.name }.toList()
+
         fun edit(path: String, oldText: String, newText: String) = project.replace(path, oldText, newText)
 
         fun changeCompilerJar() = project.changeCompilerJar()

@@ -49,16 +49,19 @@ class FixtureProject(private val name: String, template: String?) {
             ZipOutputStream(changed.outputStream()).use { target ->
                 for (entry in source.entries()) {
                     target.putNextEntry(ZipEntry(entry.name))
-                    source.getInputStream(entry).use { it.copyTo(target) }
+                    val bytes = source.getInputStream(entry).use { it.readBytes() }
+                    target.write(if (entry.name == MarkerClass) withChangedMarker(bytes) else bytes)
                     target.closeEntry()
                 }
-                target.putNextEntry(ZipEntry("spike-changed.txt"))
-                target.closeEntry()
             }
         }
         changed.copyTo(jar, overwrite = true)
         changed.delete()
     }
+
+    private fun withChangedMarker(classFile: ByteArray) = classFile.toString(Charsets.ISO_8859_1)
+        .replace("SpikeRound", "SpikeSwaps")
+        .toByteArray(Charsets.ISO_8859_1)
 
     fun generatedSources(module: String): File = directory.resolve(module).resolve("build/generated/ksp")
 
@@ -131,6 +134,7 @@ class FixtureProject(private val name: String, template: String?) {
 
     private companion object {
         const val CompilerJar = "compiler.jar"
+        const val MarkerClass = "spike/compiler/processor/symbol/SymbolProcessorSettled.class"
         const val SpikePlugin = "id(\"io.github.diareuse.spike\")"
         const val AndroidPlugin = "libs.plugins.android."
     }

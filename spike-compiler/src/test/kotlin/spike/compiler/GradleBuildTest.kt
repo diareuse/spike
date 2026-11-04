@@ -47,8 +47,20 @@ class GradleBuildTest : HarnessGradle() {
     fun `a changed compiler jar is loaded afresh instead of reusing the classes of the old one`() {
         val builds = warmBuilds("warm_loader")
         builds.build()
+        assertContains(builds.generatedFiles(), "SpikeRound1.kt")
         builds.changeCompilerJar()
         builds.edit("src/main/Main.kt", "\"first\"", "\"second\"")
+        assertContains(builds.build(), WarmMiss)
+        assertContains(builds.generatedFiles(), "SpikeSwaps1.kt")
+    }
+
+    @Test
+    fun `a build after a failed one starts from fresh compiler classes and succeeds`() {
+        val builds = warmBuilds("warm_loader")
+        builds.build()
+        builds.edit("src/main/Main.kt", "class Greeting {", "class Greeting(val missing: Long) {")
+        builds.buildFails()
+        builds.edit("src/main/Main.kt", "class Greeting(val missing: Long) {", "class Greeting {")
         assertContains(builds.build(), WarmMiss)
     }
 
