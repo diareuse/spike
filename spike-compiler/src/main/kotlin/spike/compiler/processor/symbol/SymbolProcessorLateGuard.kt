@@ -26,7 +26,7 @@ class SymbolProcessorLateGuard(
 
     private fun reportLate(resolver: Resolver) {
         val newFiles = resolver.getNewFiles().toSet()
-        val involved = registry.all(resolver)
+        val involved = (registry.all(resolver) + registry.replaces(resolver))
             .filter { it.findKSFile() in newFiles }
             .filterIsInstance<KSDeclaration>()
             .map { Involved(it.described, it.asOrigin()) }

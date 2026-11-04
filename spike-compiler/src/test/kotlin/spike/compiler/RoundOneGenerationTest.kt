@@ -3,6 +3,7 @@ package spike.compiler
 import spike.compiler.assertion.assertContentEquals
 import spike.compiler.harness.DeferringProcessorProvider
 import spike.compiler.harness.GeneratedIncludeProcessorProvider
+import spike.compiler.harness.GeneratedReplacementProcessorProvider
 import spike.compiler.harness.IsolatedKsp
 import spike.compiler.harness.LateIncludeProcessorProvider
 import spike.compiler.harness.Libraries
@@ -84,6 +85,21 @@ class RoundOneGenerationTest {
             val output = ksp.runFailing()
             assertContains(output, "SPIKE-GENERATED-AFTER-GRAPH")
             assertContains(output, "ClockInclude.kt")
+        }
+    }
+
+    @Test
+    fun `a replacement from a processor Spike could not discover fails instead of being silently lost`() {
+        val module = module("undiscovered_replacement", "generated_replacement_too_late")
+        IsolatedKsp(module, withConverters = false).use { ksp ->
+            ksp.addProviderJar(
+                File("build/tmp/compilations/round_one_jars"),
+                GeneratedReplacementProcessorProvider::class,
+                discoverable = false,
+            )
+            val output = ksp.runFailing()
+            assertContains(output, "SPIKE-GENERATED-AFTER-GRAPH")
+            assertContains(output, "ClockReplacement.kt")
         }
     }
 
