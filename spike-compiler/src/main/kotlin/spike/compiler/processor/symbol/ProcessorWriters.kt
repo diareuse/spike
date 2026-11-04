@@ -29,5 +29,19 @@ class ProcessorWritersGuarded(private val origin: ProcessorWriters) : ProcessorW
     }
 }
 
+class ProcessorWritersSeparated(
+    private val origin: ProcessorWriters,
+    private val own: ClassLoader,
+    private val api: ClassLoader,
+) : ProcessorWriters {
+    override fun mayWrite(resolver: Resolver) = own === api || origin.mayWrite(resolver)
+}
+
 @Include
-fun processorWriters(discovered: ProcessorWritersDiscovered): ProcessorWriters = ProcessorWritersGuarded(discovered)
+fun processorWriters(discovered: ProcessorWritersDiscovered): ProcessorWriters = ProcessorWritersGuarded(
+    ProcessorWritersSeparated(
+        origin = discovered,
+        own = discovered.javaClass.classLoader,
+        api = SymbolProcessorProvider::class.java.classLoader,
+    )
+)
