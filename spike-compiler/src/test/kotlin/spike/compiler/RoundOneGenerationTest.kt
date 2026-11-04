@@ -71,6 +71,19 @@ class RoundOneGenerationTest {
     }
 
     @Test
+    fun `an Include from a processor Spike could not discover fails instead of being silently left out`() {
+        val module = module("undiscovered", "generated_include_too_late")
+        IsolatedKsp(module, withConverters = false).use { ksp ->
+            ksp.addProviderJar(
+                File("build/tmp/compilations/round_one_jars"),
+                GeneratedIncludeProcessorProvider::class,
+                discoverable = false,
+            )
+            assertContains(ksp.runFailing(), "SPIKE-INCLUDE-AFTER-GRAPH")
+        }
+    }
+
+    @Test
     fun `the ViewModel converter makes Spike wait when the module uses ViewModels`() {
         val module = module("viewmodel", "androidx_viewmodel", Libraries.Androidx)
         IsolatedKsp(module, withConverters = false).use { ksp ->

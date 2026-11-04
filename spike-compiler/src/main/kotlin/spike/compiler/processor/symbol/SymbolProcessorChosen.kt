@@ -7,6 +7,7 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import spike.BindTarget
 import spike.Include
 import spike.compiler.Order
+import spike.compiler.processor.DiagnosticReporter
 
 class SymbolProcessorChosen(
     private val writers: ProcessorWriters,
@@ -35,14 +36,19 @@ class SymbolProcessorChosen(
     companion object {
         @Include(bindTo = BindTarget.Map)
         @Order(20)
-        fun decorator(writers: ProcessorWriters, marker: SettleMarker, registry: SymbolRegistry, logger: KSPLogger) =
-            SymbolProcessorDecorator {
-                SymbolProcessorChosen(
-                    writers = writers,
-                    immediate = SymbolProcessorImmediate(it, marker),
-                    settled = SymbolProcessorSettled(it, marker, registry),
-                    logger = logger,
-                )
-            }
+        fun decorator(
+            writers: ProcessorWriters,
+            marker: SettleMarker,
+            registry: SymbolRegistry,
+            reporter: DiagnosticReporter,
+            logger: KSPLogger,
+        ) = SymbolProcessorDecorator {
+            SymbolProcessorChosen(
+                writers = writers,
+                immediate = SymbolProcessorImmediate(it, marker, registry, reporter),
+                settled = SymbolProcessorSettled(it, marker, registry),
+                logger = logger,
+            )
+        }
     }
 }
