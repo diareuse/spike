@@ -24,6 +24,10 @@ class SourceModule(
     val generated: File = workDirectory.resolve("ksp")
     val generatedSources: File = generated.resolve("kotlin")
     val classes: File = workDirectory.resolve("classes")
+    val needsTestProcessor: Boolean
+        get() = sources.walk().any { it.isFile && "GeneratesInclude" in it.readText() }
+
+    fun copyIn(directory: String) = SourceModule(name, sources, libraries, workDirectory.resolve(directory), options)
 
     fun process(): Processing {
         val log = ProcessingLog()

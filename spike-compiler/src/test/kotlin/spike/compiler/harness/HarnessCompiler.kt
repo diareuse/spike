@@ -22,6 +22,7 @@ abstract class HarnessCompiler {
             assertCompiles(module.source)
         }
         runMain(modules, libraries)
+        assertFirstRoundMatches(modules, libraries)
     }
 
     protected fun assertRuns(name: String, libraries: Libraries = Libraries.Kotlin) {
@@ -31,6 +32,7 @@ abstract class HarnessCompiler {
             assertCompiles(module.source)
         }
         runMain(modules, libraries)
+        assertFirstRoundMatches(modules, libraries)
     }
 
     protected fun assertRunsWarning(name: String, vararg warnings: String) {
@@ -82,7 +84,29 @@ abstract class HarnessCompiler {
         }
         val errors = testResources.resolve("$name/errors.txt")
         if (errors.isFile) assertEquals(errors.readText().trimEnd(), processing.report.trimEnd())
+        if (runsInFirstRound(modules, libraries)) {
+            val output = IsolatedKsp(modules.last().source.copyIn(FirstRoundDirectory), withConverters = false)
+                .use { it.runFailing() }
+            assertContains(output, FirstRoundMessage)
+            for (message in messages) assertContains(output, message)
+            if (errors.isFile) errors.readLines().forEach { assertContains(output, it) }
+        }
     }
+
+    private fun assertFirstRoundMatches(modules: List<FixtureModule>, libraries: Libraries) {
+        if (!runsInFirstRound(modules, libraries)) return
+        for (module in modules) {
+            val firstRound = module.source.copyIn(FirstRoundDirectory)
+            assertContains(IsolatedKsp(firstRound, withConverters = false).use { it.run() }, FirstRoundMessage)
+            assertEquals(contentsOf(module.source.generatedSources), contentsOf(firstRound.generatedSources))
+        }
+    }
+
+    private fun runsInFirstRound(modules: List<FixtureModule>, libraries: Libraries) =
+        libraries == Libraries.Kotlin && modules.none { it.source.needsTestProcessor }
+
+    private fun contentsOf(directory: File) = directory.walk().filter { it.isFile }
+        .associate { it.relativeTo(directory).path to it.readText() }
 
     protected fun assertCompilationFails(
         name: String,
@@ -183,6 +207,8 @@ abstract class HarnessCompiler {
 
     private companion object {
         const val HotSpotHugeMethodLimit = 8000
+        const val FirstRoundDirectory = "first_round"
+        const val FirstRoundMessage = "Spike generated in the first KSP round"
         const val ImplementationModule = "implementation"
         const val ImplementationConsumer = "library"
         val ModuleOrder = listOf(ImplementationModule, "library", "feature", "app", "test")

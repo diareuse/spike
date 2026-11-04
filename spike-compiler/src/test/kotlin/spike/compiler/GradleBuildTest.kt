@@ -85,7 +85,9 @@ class GradleBuildTest : HarnessGradle() {
     @Test
     fun `a module nothing else writes to generates in the first round without the warm loader too`() {
         val builds = warmBuilds("warm_loader", listOf("-PspikeWarm=false"))
-        assertContains(builds.build(), FirstRound)
+        val output = builds.build(listOf(":run"))
+        assertContains(output, FirstRound)
+        assertContains(output, WarmOff)
     }
 
     @Test

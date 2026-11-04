@@ -4,6 +4,7 @@ import spike.compiler.assertion.assertContentEquals
 import spike.compiler.harness.DeferringProcessorProvider
 import spike.compiler.harness.GeneratedIncludeProcessorProvider
 import spike.compiler.harness.IsolatedKsp
+import spike.compiler.harness.LateIncludeProcessorProvider
 import spike.compiler.harness.Libraries
 import spike.compiler.harness.SilentProcessorProvider
 import spike.compiler.harness.SourceModule
@@ -111,6 +112,30 @@ class RoundOneGenerationTest {
             ksp.run()
         }
         assertContentEquals(resources.resolve("entrypoint/fixtures/main/kotlin"), module.generatedSources)
+    }
+
+    @Test
+    fun `a type a hidden processor generates late is still waited for`() {
+        val module = module("hidden_late", "late_generated_include")
+        IsolatedKsp(module, withConverters = false).use { ksp ->
+            ksp.addProviderJar(
+                File("build/tmp/compilations/round_one_jars"),
+                LateIncludeProcessorProvider::class,
+                discoverable = false,
+            )
+            ksp.run()
+        }
+        assertTrue(module.compile().succeeded)
+    }
+
+    @Test
+    fun `the ViewModel entry point on the classpath makes Spike wait even with no ViewModel declared`() {
+        val module = module("viewmodel_entry_point", "entrypoint", Libraries.Androidx)
+        IsolatedKsp(module, withConverters = false).use { ksp ->
+            ksp.run()
+            assertTrue(ksp.rounds > 2, "rounds ${ksp.rounds}")
+        }
+        assertContains(generatedBy(module).keys.joinToString(), "ViewModelEntryPointImpl")
     }
 
     @Test

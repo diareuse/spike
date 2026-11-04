@@ -22,10 +22,6 @@ import kotlin.reflect.KClass
 class IsolatedKsp(private val module: SourceModule, withConverters: Boolean = true) : AutoCloseable {
 
     private val classpath = System.getProperty("java.class.path").split(File.pathSeparator).map(::File)
-    private val ksp = URLClassLoader(
-        classpath.filter(::belongsToKsp).map { it.toURI().toURL() }.toTypedArray(),
-        ClassLoader.getPlatformClassLoader(),
-    )
     private var processors = classpath.filter { it.isFile && !belongsToKsp(it) }
         .filter { withConverters || Converters.none { name -> name in it.name } } +
         File(System.getProperty("spike.compiler.jar"))
@@ -131,9 +127,14 @@ class IsolatedKsp(private val module: SourceModule, withConverters: Boolean = tr
 
     private fun belongsToKsp(file: File) = KspJars.any { it in file.name }
 
-    override fun close() = ksp.close()
+    override fun close() = Unit
 
     private companion object {
+        val ksp by lazy {
+            val jars = System.getProperty("java.class.path").split(File.pathSeparator).map(::File)
+                .filter { file -> KspJars.any { it in file.name } }
+            URLClassLoader(jars.map { it.toURI().toURL() }.toTypedArray(), ClassLoader.getPlatformClassLoader())
+        }
         const val InfoLevel = 1
         val KspJars = listOf("symbol-processing", "kotlin-stdlib", "kotlinx-coroutines", "annotations-")
         val Converters = listOf("dagger", "jsr", "koin", "metro", "kotlin-inject")
