@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793742731115,
+  "lastUpdate": 1793812005512,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -3853,6 +3853,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "spike open screen",
             "value": 0.004066244542395694,
+            "unit": "us"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "ccfb4be54b5371d385a7cfef29a3d34d09c23abb",
+          "message": "fix(compiler): close a replaced warm loader once its last known run is done\n\nKSP calls neither finish nor onError after a processor throws, so a crash left a reference that never recovered and the replaced loader was never closed. Runs are now tracked weakly in place of the count: a retired loader closes when its last known run releases, and a run that crashed no longer blocks that once it is collected. If a crashed run was the last, the loader is unreachable and left to the collector, which closes its jars. No thread is involved, so nothing can keep a per-run loader reachable from outside it.",
+          "timestamp": "2026-11-04T16:25:00+01:00",
+          "tree_id": "947b002f508bd3cb8b03090a2331d3f6e6ad2d9e",
+          "url": "https://github.com/diareuse/spike/commit/ccfb4be54b5371d385a7cfef29a3d34d09c23abb"
+        },
+        "date": 1793812002782,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "spike clean build",
+            "value": 1572.84,
+            "unit": "ms"
+          },
+          {
+            "name": "spike ABI change",
+            "value": 872.595,
+            "unit": "ms"
+          },
+          {
+            "name": "spike non-ABI change",
+            "value": 865.665,
+            "unit": "ms"
+          },
+          {
+            "name": "spike resolve from graph",
+            "value": 2.280666702966685,
+            "unit": "us"
+          },
+          {
+            "name": "spike cold start",
+            "value": 120999.4565,
+            "unit": "us"
+          },
+          {
+            "name": "spike open screen",
+            "value": 0.00199426956781097,
             "unit": "us"
           }
         ]
