@@ -36,6 +36,8 @@ class IsolatedKsp(
     val handed = mutableListOf<WeakReference<Any>>()
     var rounds = 0
         private set
+    val perRunLoaders = mutableListOf<WeakReference<ClassLoader>>()
+    val perRunClasses = mutableListOf<WeakReference<Class<*>>>()
 
     fun addToProcessorClasspath(file: File) {
         processors = processors + file
@@ -84,17 +86,21 @@ class IsolatedKsp(
         return entry[1] as ClassLoader
     }
 
-    fun run(): String = execute().also { (code, output) -> check(code == 0) { "KSP failed: $output" } }.second
+    fun run(module: SourceModule = this.module): String =
+        execute(module).also { (code, output) -> check(code == 0) { "KSP failed: $output" } }.second
 
-    fun runFailing(): String = execute().also { (code, output) -> check(code != 0) { "KSP succeeded: $output" } }.second
+    fun runFailing(): String = execute(module).also { (code, output) -> check(code != 0) { "KSP succeeded: $output" } }.second
 
-    private fun execute(): Pair<Int, String> {
+    private fun execute(module: SourceModule): Pair<Int, String> {
         rounds = 0
         val config = ByteArrayOutputStream().also { bytes ->
             ObjectOutputStream(bytes).use { it.writeObject(module.kspConfig()) }
         }.toByteArray()
         val loader = URLClassLoader(processors.map { it.toURI().toURL() }.toTypedArray(), ksp)
-        val providers = ServiceLoader.load(providerType, loader).toList() + watchingProvider() +
+        perRunLoaders += WeakReference<ClassLoader>(loader)
+        val loaded = ServiceLoader.load(providerType, loader).toList()
+        loaded.mapTo(perRunClasses) { WeakReference(it.javaClass) }
+        val providers = loaded + watchingProvider() +
             handedProviders.map { loader.loadClass(it).getDeclaredConstructor().newInstance() }
         val runner = ksp.loadClass("com.google.devtools.ksp.impl.KSPLoader")
             .getMethod("loadAndRunKSP", ByteArray::class.java, List::class.java, Int::class.java)

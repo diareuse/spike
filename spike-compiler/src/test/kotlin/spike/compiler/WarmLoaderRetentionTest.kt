@@ -1,5 +1,6 @@
 package spike.compiler
 
+import spike.compiler.harness.CoProcessorJar
 import spike.compiler.harness.IsolatedKsp
 import spike.compiler.harness.Libraries
 import spike.compiler.harness.SourceModule
@@ -11,6 +12,7 @@ import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
@@ -57,6 +59,34 @@ class WarmLoaderRetentionTest {
         }
     }
 
+    @Test
+    fun `every per-run loader is collected after its run, the one that created the warm loader included`() {
+        val work = File("build/tmp/compilations/warm_loader_per_run").apply { deleteRecursively() }
+        val sources = File("src/test/resources/warm_loader/project/src/main")
+        IsolatedKsp(SourceModule("main", sources, Libraries.Kotlin.files(), work)).use { ksp ->
+            ksp.addToProcessorClasspath(CoProcessorJar.writeTo(work.resolve("co-processor.jar")))
+            val creating = ksp.run()
+            val warm = ksp.warmLoader()
+            ksp.run()
+            ksp.run()
+            assertContains(creating, "Spike loaded the compiler classes")
+            assertSame(warm, ksp.warmLoader())
+            assertEquals(emptyList(), survivors(ksp.perRunLoaders))
+        }
+    }
+
+    @Test
+    fun `a co-processor class of the run that created the warm loader is unloaded after it`() {
+        val work = File("build/tmp/compilations/warm_loader_co_processor").apply { deleteRecursively() }
+        val sources = File("src/test/resources/warm_loader/project/src/main")
+        IsolatedKsp(SourceModule("main", sources, Libraries.Kotlin.files(), work)).use { ksp ->
+            ksp.addToProcessorClasspath(CoProcessorJar.writeTo(work.resolve("co-processor.jar")))
+            assertContains(ksp.run(), "Spike loaded the compiler classes")
+            assertContains(ksp.perRunClasses.mapNotNull { it.get()?.name }, CoProcessorJar.ProviderName)
+            assertEquals(emptyList(), survivors(ksp.perRunClasses))
+        }
+    }
+
     private fun emptyJar(work: File) = work.resolve("empty.jar").apply {
         parentFile.mkdirs()
         ZipOutputStream(outputStream()).use { it.putNextEntry(ZipEntry("empty.txt")) }
@@ -71,12 +101,14 @@ class WarmLoaderRetentionTest {
         return false
     }
 
-    private fun survivorsOf(ksp: IsolatedKsp): List<Any> {
+    private fun survivorsOf(ksp: IsolatedKsp) = survivors(ksp.handed)
+
+    private fun <T : Any> survivors(references: List<WeakReference<out T>>): List<String> {
         val start = TimeSource.Monotonic.markNow()
         while (start.elapsedNow() < 10.seconds) {
             System.gc()
-            if (ksp.handed.all { it.get() == null }) return emptyList()
+            if (references.all { it.get() == null }) return emptyList()
         }
-        return ksp.handed.mapNotNull { it.get() }
+        return references.mapNotNull { it.get()?.toString() }
     }
 }

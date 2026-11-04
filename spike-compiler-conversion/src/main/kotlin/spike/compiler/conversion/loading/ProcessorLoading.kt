@@ -24,8 +24,9 @@ interface ProcessorLoading {
 fun SymbolProcessorEnvironment.logger(): KSPLogger = logger
 
 @Include
-fun warmLoaderOf(): (ProcessorClasspath) -> URLClassLoader =
-    { URLClassLoader(it.urls.toTypedArray(), it.parent) }
+fun warmLoaderOf(detached: WarmLoaderDetached, contexts: CallerContexts): (ProcessorClasspath) -> URLClassLoader = {
+    if (contexts.carried()) detached.loader(it) else URLClassLoader(it.urls.toTypedArray(), it.parent)
+}
 
 @Include
 fun processorSource(
