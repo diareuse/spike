@@ -22,6 +22,18 @@ class GradleBuildTest : HarnessGradle() {
         assertRebuildsAfterEdit("incremental_edit", "src/main/Screen.kt", "\"first\"", "\"second\"")
 
     @Test
+    fun `an incremental build after a binding gains a dependency regenerates the graph from every source`() =
+        assertRebuildsAfterEdit("incremental_graph_edit", "src/main/Screen.kt", "(val clock: Clock)", "(val clock: Clock, val title: Title)")
+
+    @Test
+    fun `an incremental build after an Include is removed drops it from the index`() =
+        assertIncludeLeavesIndexWhenRemoved("incremental_graph_edit", "src/main/Parts.kt", "@spike.Include\nclass Title", "c:Title")
+
+    @Test
+    fun `an incremental build after an entry point is removed deletes its generated files`() =
+        assertOutputsLeaveWhenEntryPointRemoved("incremental_graph_edit", "src/main/Extra.kt", "Extra_Factory.kt")
+
+    @Test
     fun `a second build in one daemon reuses the compiler classes of the first`() {
         val builds = warmBuilds("warm_loader")
         builds.build()

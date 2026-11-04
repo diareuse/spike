@@ -34,6 +34,10 @@ class FixtureProject(private val name: String, template: String?) {
         file.writeText(text.replace(oldText, newText))
     }
 
+    fun delete(path: String) {
+        check(directory.resolve(path).delete()) { "$path could not be deleted" }
+    }
+
     fun copyCompilerJar() {
         File(System.getProperty("spike.compiler.jar")).copyTo(directory.resolve(CompilerJar), overwrite = true)
     }

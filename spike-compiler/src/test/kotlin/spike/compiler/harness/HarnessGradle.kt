@@ -5,6 +5,7 @@ import org.gradle.testkit.runner.TaskOutcome
 import spike.compiler.assertion.assertContentEquals
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 abstract class HarnessGradle {
 
@@ -41,6 +42,26 @@ abstract class HarnessGradle {
         assertTasksSucceeded(project.build(tasks), tasks)
         project.replace(path, oldText, newText)
         assertTasksSucceeded(project.build(tasks), tasks)
+    }
+
+    protected fun assertIncludeLeavesIndexWhenRemoved(name: String, path: String, include: String, indexed: String) {
+        val project = FixtureProject(name, null)
+        val index = project.generatedSources("").walk().filter { it.name == "Application.kt" }
+        project.build(listOf(":run"))
+        assertContains(index.single().readText(), indexed)
+        project.replace(path, include, include.substringAfter("\n"))
+        project.build(listOf(":run"))
+        assertFalse(indexed in index.single().readText(), "$indexed stayed in the index")
+    }
+
+    protected fun assertOutputsLeaveWhenEntryPointRemoved(name: String, path: String, output: String) {
+        val project = FixtureProject(name, null)
+        val outputs = project.generatedSources("").walk().filter { it.name == output }
+        project.build(listOf(":run"))
+        assertEquals(1, outputs.count(), "$output was not generated")
+        project.delete(path)
+        project.build(listOf(":run"))
+        assertEquals(0, outputs.count(), "$output outlived its entry point")
     }
 
     protected fun warmBuilds(name: String, arguments: List<String> = emptyList()): WarmBuilds =
