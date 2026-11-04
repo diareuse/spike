@@ -13,7 +13,8 @@ public class SingletonHolder {
 
     private val dense: AtomicRef<Array<Any?>> = atomic(NoSingletons)
     private val sparse: AtomicRef<Map<Int, Any>?> = atomic(null)
-    private val locks: AtomicRef<Map<Int, SynchronizedObject>> = atomic(emptyMap())
+    private val locks = HashMap<Int, SynchronizedObject>()
+    private val locksGuard = SynchronizedObject()
     private val scopes: AtomicRef<Map<String, SingletonHolder>> = atomic(emptyMap())
 
     public fun scope(key: String): SingletonHolder = scopes.getOrInsert(key) { SingletonHolder() }
@@ -46,9 +47,19 @@ public class SingletonHolder {
     }
 
     private fun create(id: Int, factory: () -> Any): Any =
-        synchronized(locks.getOrInsert(id) { SynchronizedObject() }) {
-            stored(id) ?: factory().also { instance -> store(id, instance) }
+        synchronized(lockOf(id)) {
+            stored(id) ?: factory().also { instance ->
+                store(id, instance)
+                release(id)
+            }
         }
+
+    private fun lockOf(id: Int): SynchronizedObject =
+        synchronized(locksGuard) { locks.getOrPut(id) { SynchronizedObject() } }
+
+    private fun release(id: Int) {
+        synchronized(locksGuard) { locks.remove(id) }
+    }
 
     private fun store(id: Int, instance: Any) {
         if (id in 0 until DENSE_IDS) dense.update { it.with(id, instance) }
