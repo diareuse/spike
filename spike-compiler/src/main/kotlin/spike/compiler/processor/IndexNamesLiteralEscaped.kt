@@ -15,9 +15,7 @@ class IndexNamesLiteralEscaped : IndexNamesLiteral {
             "\"" to "\\\"",
             "$" to "\${'$'}",
             "\n" to "\\n",
-            "\r" to "\\r",
             "\t" to "\\t",
-            "\b" to "\\b",
             "·" to "\\u00b7",
             "♢" to "\\u2662",
         )

@@ -6,12 +6,15 @@ import java.net.URL
 import java.util.concurrent.atomic.AtomicBoolean
 
 class ProcessorClasspath(val urls: List<URL>, val parent: ClassLoader) {
+    private val files = urls.map { File(it.toURI()) }
+
+    init {
+        val directory = files.firstOrNull { !it.isFile }
+        check(directory == null) { "$directory is not a jar, so its size and time cannot show that its classes changed" }
+    }
+
     val key: String
-        get() = urls.joinToString("\n") { url ->
-            val file = File(url.toURI())
-            check(file.isFile) { "$file is not a jar, so its size and time cannot show that its classes changed" }
-            "${file.path}:${file.length()}:${file.lastModified()}"
-        }
+        get() = files.joinToString("\n") { "${it.path}:${it.length()}:${it.lastModified()}" }
 }
 
 class WarmLease(
