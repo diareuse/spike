@@ -8,11 +8,14 @@ data class FileGeneratorContext(
     val resolver: TypeResolver,
     val graph: DependencyGraph,
     val originatingFiles: List<KSFile>,
-    val ids: TypeFactoryIdHolder = TypeFactoryIdHolder()
+    val ids: TypeFactoryIdHolder = TypeFactoryIdHolder(),
+    val singletonIds: TypeFactoryIdHolder = TypeFactoryIdHolder(),
 ) {
     val imports = mutableSetOf<TypeFactory.Imported>()
     val dependencyFactoryClassName = resolver.peerClass(graph, "Factory")
     fun getDependencyId(factory: TypeFactory): Int {
         return ids.getOrAdd(factory)
     }
+    fun singletonIdOf(factory: TypeFactory.Callable): Int? =
+        if (factory.singleton) singletonIds.getOrAdd(factory) else null
 }

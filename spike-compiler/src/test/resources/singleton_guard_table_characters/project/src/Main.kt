@@ -796,4 +796,4 @@ class S128(val book: Book)
 class S129(val book: Book)
 
 @spike.Include
-class NewlineInsideCarriageReturnLast(val carriage: S11, val line: S8)
+class NewlineInsideCarriageReturnLast(val carriage: S12, val line: S9)

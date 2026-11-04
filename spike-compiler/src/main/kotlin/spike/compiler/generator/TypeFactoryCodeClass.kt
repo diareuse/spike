@@ -12,7 +12,7 @@ import spike.Include
 class TypeFactoryCodeClass : TypeFactoryCode<TypeFactory.Class> {
     context(context: FileGeneratorContext, step: LinearStep, references: LinearReferences)
     override fun write(body: CodeBlock.Builder, factory: TypeFactory.Class) {
-        body.addOptionalSingleton(context.getDependencyId(factory), factory.singleton) {
+        body.addOptionalSingleton(context.singletonIdOf(factory)) {
             addType(factory.type) {
                 body.addParameters(factory.invocation)
             }.addStatement("")

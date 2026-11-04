@@ -17,16 +17,16 @@ public class PropertyEntryPoint_Factory(
     get() = get(DependencyId(0))
 
   override val cats: List<Cat>
-    get() = get(DependencyId(3))
+    get() = get(DependencyId(1))
 
   override val uniqueCats: Set<Cat>
-    get() = get(DependencyId(6))
+    get() = get(DependencyId(2))
 
   @Suppress("UNCHECKED_CAST")
   public fun <T> `get`(id: DependencyId): T = when (id.id) {
     0 -> PropertyEntryPoint_Program0.resolve(this)
-    3 -> PropertyEntryPoint_Program1.resolve(this)
-    6 -> PropertyEntryPoint_Program2.resolve(this)
+    1 -> PropertyEntryPoint_Program1.resolve(this)
+    2 -> PropertyEntryPoint_Program2.resolve(this)
     else -> error("Invalid identifier $id")
   } as T
 }

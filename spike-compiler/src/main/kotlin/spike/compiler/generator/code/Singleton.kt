@@ -12,10 +12,9 @@ inline fun CodeBlock.Builder.addSingleton(index: Int, body: CodeBlock.Builder.()
 }
 
 inline fun CodeBlock.Builder.addOptionalSingleton(
-    index: Int,
-    singleton: Boolean,
+    index: Int?,
     body: CodeBlock.Builder.() -> Unit
 ) = apply {
-    if (singleton) addSingleton(index, body)
+    if (index != null) addSingleton(index, body)
     else body()
 }

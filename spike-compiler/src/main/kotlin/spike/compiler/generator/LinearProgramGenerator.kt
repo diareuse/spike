@@ -58,7 +58,7 @@ class LinearProgramGenerator(
     }
 
     private fun guardsOf(context: FileGeneratorContext) = LinearGuardsOf(GuardTableLimit) { step ->
-        (step.factory as? TypeFactory.Callable)?.takeIf { it.singleton }?.let(context::getDependencyId)
+        (step.factory as? TypeFactory.Callable)?.let(context::singletonIdOf)
     }
 
     private fun createResolve(
