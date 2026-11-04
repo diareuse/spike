@@ -7,6 +7,7 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import java.lang.reflect.Proxy
 import java.net.URLClassLoader
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -19,12 +20,18 @@ class ProcessorWritersTest {
     @Test
     fun `a failure while discovering processors counts as a processor that may write`() {
         val failing = ProcessorWriters { throw java.util.ServiceConfigurationError("broken service file") }
-        assertTrue(ProcessorWritersGuarded(failing).mayWrite(resolver))
+        var logged = ""
+        val logger = Proxy.newProxyInstance(javaClass.classLoader, arrayOf(KSPLogger::class.java)) { _, _, arguments ->
+            logged = arguments.first().toString()
+            Unit
+        } as KSPLogger
+        assertTrue(ProcessorWritersGuarded(failing, logger).mayWrite(resolver))
+        assertContains(logged, "broken service file")
     }
 
     @Test
     fun `a discovery that succeeds is believed`() {
-        assertFalse(ProcessorWritersGuarded { false }.mayWrite(resolver))
+        assertFalse(ProcessorWritersGuarded({ false }, unused<KSPLogger>()).mayWrite(resolver))
     }
 
     @Test

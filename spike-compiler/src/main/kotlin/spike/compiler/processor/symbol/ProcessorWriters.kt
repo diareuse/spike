@@ -1,5 +1,6 @@
 package spike.compiler.processor.symbol
 
+import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessorProvider
 import spike.Include
@@ -21,10 +22,14 @@ class ProcessorWritersDiscovered : ProcessorWriters {
     }
 }
 
-class ProcessorWritersGuarded(private val origin: ProcessorWriters) : ProcessorWriters {
+class ProcessorWritersGuarded(
+    private val origin: ProcessorWriters,
+    private val logger: KSPLogger,
+) : ProcessorWriters {
     override fun mayWrite(resolver: Resolver) = try {
         origin.mayWrite(resolver)
-    } catch (@Suppress("TooGenericExceptionCaught") _: Throwable) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Throwable) {
+        logger.info("Spike waits for other processors because it could not tell whether they write: $e")
         true
     }
 }
@@ -38,10 +43,12 @@ class ProcessorWritersSeparated(
 }
 
 @Include
-fun processorWriters(discovered: ProcessorWritersDiscovered): ProcessorWriters = ProcessorWritersGuarded(
-    ProcessorWritersSeparated(
-        origin = discovered,
-        own = discovered.javaClass.classLoader,
-        api = SymbolProcessorProvider::class.java.classLoader,
+fun processorWriters(discovered: ProcessorWritersDiscovered, logger: KSPLogger): ProcessorWriters =
+    ProcessorWritersGuarded(
+        ProcessorWritersSeparated(
+            origin = discovered,
+            own = discovered.javaClass.classLoader,
+            api = SymbolProcessorProvider::class.java.classLoader,
+        ),
+        logger,
     )
-)

@@ -45,7 +45,7 @@ class SymbolProcessorChosen(
         ) = SymbolProcessorDecorator {
             SymbolProcessorChosen(
                 writers = writers,
-                immediate = SymbolProcessorImmediate(it, marker, registry, reporter),
+                immediate = SymbolProcessorLateGuard(SymbolProcessorImmediate(it, marker, registry), registry, reporter),
                 settled = SymbolProcessorSettled(it, marker, registry),
                 logger = logger,
             )
