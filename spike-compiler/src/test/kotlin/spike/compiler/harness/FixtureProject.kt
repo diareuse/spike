@@ -134,7 +134,7 @@ class FixtureProject(private val name: String, template: String?) {
 
     private companion object {
         const val CompilerJar = "compiler.jar"
-        const val MarkerClass = "spike/compiler/processor/symbol/SymbolProcessorSettled.class"
+        const val MarkerClass = "spike/compiler/processor/symbol/SettleMarker.class"
         const val SpikePlugin = "id(\"io.github.diareuse.spike\")"
         const val AndroidPlugin = "libs.plugins.android."
     }

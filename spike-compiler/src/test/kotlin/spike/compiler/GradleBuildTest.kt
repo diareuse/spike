@@ -83,6 +83,20 @@ class GradleBuildTest : HarnessGradle() {
     }
 
     @Test
+    fun `a module nothing else writes to generates in the first round without the warm loader too`() {
+        val builds = warmBuilds("warm_loader", listOf("-PspikeWarm=false"))
+        assertContains(builds.build(), FirstRound)
+    }
+
+    @Test
+    fun `an incremental build of a module nothing else writes to still generates in the first round`() {
+        val builds = warmBuilds("warm_loader")
+        builds.build()
+        builds.edit("src/main/Main.kt", "\"first\"", "\"second\"")
+        assertContains(builds.build(), FirstRound)
+    }
+
+    @Test
     fun `parallel KSP tasks in one daemon share the compiler classes`() {
         val builds = warmBuilds("warm_loader_parallel", listOf("--parallel"))
         val tasks = listOf(":a:kspKotlin", ":b:kspKotlin")
@@ -223,6 +237,7 @@ class GradleBuildTest : HarnessGradle() {
     private companion object {
         const val WarmHit = "Spike reused compiler classes that were already loaded"
         const val WarmMiss = "Spike loaded the compiler classes for this classpath"
+        const val FirstRound = "Spike generated in the first KSP round"
         const val WarmFailed = "Spike could not keep its compiler classes loaded"
         const val WarmOff = "Spike keeps its compiler classes to this run"
     }
