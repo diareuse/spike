@@ -148,6 +148,7 @@ class IsolatedKsp(
 
     private fun belongsToKsp(file: File) = KspJars.any { it in file.name }
 
+    // KSP's loader outlives this instance: the warm slot holds it as a parent, and closing it would store a closed one.
     override fun close() = Unit
 
     private companion object {
