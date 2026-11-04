@@ -2,6 +2,7 @@ package spike.factory
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 import kotlin.test.assertNotSame
 import kotlin.test.assertSame
 
@@ -48,6 +49,35 @@ class SingletonHolderTest {
         val first = holder.getOrPut(Int.MAX_VALUE) { Any() }
 
         assertSame(first, holder.getOrPut<Any>(Int.MAX_VALUE) { error("factory must not run again") })
+    }
+
+    @Test
+    fun `keeps singletons on both sides of the dense id limit`() {
+        val holder = SingletonHolder()
+        val last = holder.getOrPut(65535) { Any() }
+        val beyond = holder.getOrPut(65536) { Any() }
+
+        assertNotSame(last, beyond)
+        assertSame(last, holder.getOrPut<Any>(65535) { error("last dense id was lost") })
+        assertSame(beyond, holder.getOrPut<Any>(65536) { error("first sparse id was lost") })
+    }
+
+    @Test
+    fun `keeps the last dense id written after a lower id`() {
+        val holder = SingletonHolder()
+        val low = holder.getOrPut(3) { Any() }
+        val last = holder.getOrPut(65535) { Any() }
+
+        assertSame(low, holder.getOrPut<Any>(3) { error("lower id was lost") })
+        assertSame(last, holder.getOrPut<Any>(65535) { error("last dense id was lost") })
+    }
+
+    @Test
+    fun `a singleton whose factory failed is built again on the next request`() {
+        val holder = SingletonHolder()
+        assertFailsWith<IllegalStateException> { holder.getOrPut<Any>(0) { error("first attempt") } }
+
+        assertEquals("second attempt", holder.getOrPut(0) { "second attempt" })
     }
 
     @Test

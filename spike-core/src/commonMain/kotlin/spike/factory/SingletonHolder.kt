@@ -6,10 +6,13 @@ import kotlinx.atomicfu.locks.SynchronizedObject
 import kotlinx.atomicfu.locks.synchronized
 import kotlinx.atomicfu.update
 
+private const val DENSE_IDS = 1 shl 16
+private val NoSingletons = arrayOfNulls<Any>(0)
+
 public class SingletonHolder {
 
-    private val dense: AtomicRef<Array<Any?>> = atomic(arrayOfNulls(0))
-    private val sparse: AtomicRef<Map<Int, Any>> = atomic(emptyMap())
+    private val dense: AtomicRef<Array<Any?>> = atomic(NoSingletons)
+    private val sparse: AtomicRef<Map<Int, Any>?> = atomic(null)
     private val locks: AtomicRef<Map<Int, SynchronizedObject>> = atomic(emptyMap())
     private val scopes: AtomicRef<Map<String, SingletonHolder>> = atomic(emptyMap())
 
@@ -39,7 +42,7 @@ public class SingletonHolder {
 
     private fun stored(id: Int): Any? {
         val values = dense.value
-        return if (id in values.indices) values[id] else sparse.value[id]
+        return if (id in values.indices) values[id] else sparse.value?.get(id)
     }
 
     private fun create(id: Int, factory: () -> Any): Any =
@@ -49,7 +52,7 @@ public class SingletonHolder {
 
     private fun store(id: Int, instance: Any) {
         if (id in 0 until DENSE_IDS) dense.update { it.with(id, instance) }
-        else sparse.update { it + (id to instance) }
+        else sparse.update { it.orEmpty() + (id to instance) }
     }
 
     private fun Array<Any?>.with(id: Int, instance: Any): Array<Any?> =
@@ -62,10 +65,6 @@ public class SingletonHolder {
             val created = create()
             if (compareAndSet(current, current + (key to created))) return created
         }
-    }
-
-    private companion object {
-        const val DENSE_IDS = 1 shl 16
     }
 
 }
