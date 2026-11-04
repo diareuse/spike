@@ -1,10 +1,8 @@
 package spike.compiler.conversion.loading
 
-import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
-import com.google.devtools.ksp.symbol.KSNode
 import spike.compiler.conversion.FakeSymbolProcessor
 import spike.compiler.conversion.unused
 import kotlin.test.Test
@@ -86,21 +84,4 @@ class ProcessorSourceTest {
         codeGenerator = unused(),
         logger = logger,
     )
-
-    private class RecordingLogger : KSPLogger {
-        val infos = mutableListOf<String>()
-        val warnings = mutableListOf<String>()
-
-        override fun logging(message: String, symbol: KSNode?) = Unit
-        override fun info(message: String, symbol: KSNode?) {
-            infos += message
-        }
-
-        override fun warn(message: String, symbol: KSNode?) {
-            warnings += message
-        }
-
-        override fun error(message: String, symbol: KSNode?) = Unit
-        override fun exception(e: Throwable) = Unit
-    }
 }
