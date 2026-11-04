@@ -22,10 +22,11 @@ import spike.compiler.Order
 class GraphContributorIndex(
     private val registry: SymbolRegistry,
     private val environment: SymbolProcessorEnvironment,
+    private val literal: IndexNamesLiteral,
 ) : GraphContributor {
     override fun contribute(context: GraphContext) {
         val includes = registry.include(context.resolver).toList()
-        val names = includes.mapNotNull(EntryPointIndex::nameOf).sorted().joinToString(EntryPointIndex.SEPARATOR)
+        val names = literal.of(includes.mapNotNull(EntryPointIndex::nameOf).sorted().joinToString(EntryPointIndex.SEPARATOR))
         val files = includes.mapNotNull { it.findKSFile() }.distinct()
         for (entryPoint in registry.entryPoint(context.resolver)) write(entryPoint, names, files)
     }
@@ -40,7 +41,7 @@ class GraphContributorIndex(
         val type = TypeSpec.objectBuilder(className)
             .addAnnotation(
                 AnnotationSpec.builder(IncludedDeclarations::class)
-                    .addMember("names = [%S]", names)
+                    .addMember("names = [%L]", names)
                     .build()
             )
         for (file in files + listOfNotNull(entryPoint.findKSFile())) type.addOriginatingKSFile(file)

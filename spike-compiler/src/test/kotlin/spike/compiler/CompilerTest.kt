@@ -363,6 +363,14 @@ class CompilerTest : HarnessCompiler() {
         assertRuns("late_generated_include")
 
     @Test
+    fun `an entry point index keeps names that need escaping in a Kotlin string`() =
+        assertMatchesGolden("index_escaped_names")
+
+    @Test
+    fun `a test compilation finds production bindings whose names need escaping through the compiled index`() =
+        assertRuns("index_round_trip")
+
+    @Test
     fun `an Include constructor parameter of an unresolved type is reported at the parameter`() =
         assertProcessingFails("unresolved_include_parameter", "Main.kt:8: [SPIKE-UNRESOLVED-TYPE] Context")
 
