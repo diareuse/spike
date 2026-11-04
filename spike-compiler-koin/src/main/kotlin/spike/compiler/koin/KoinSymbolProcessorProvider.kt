@@ -1,8 +1,5 @@
 package spike.compiler.koin
 
-import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
-import com.google.devtools.ksp.processing.SymbolProcessorProvider
+import spike.compiler.conversion.loading.SymbolProcessorProviderLoading
 
-class KoinSymbolProcessorProvider : SymbolProcessorProvider {
-    override fun create(environment: SymbolProcessorEnvironment) = KoinConversion(environment).processor
-}
+class KoinSymbolProcessorProvider : SymbolProcessorProviderLoading(KoinProcessorFactory::class.java)

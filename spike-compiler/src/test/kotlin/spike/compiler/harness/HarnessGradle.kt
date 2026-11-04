@@ -43,6 +43,22 @@ abstract class HarnessGradle {
         assertTasksSucceeded(project.build(tasks), tasks)
     }
 
+    protected fun warmBuilds(name: String, arguments: List<String> = emptyList()): WarmBuilds =
+        WarmBuilds(FixtureProject(name, null), arguments)
+
+    protected class WarmBuilds(private val project: FixtureProject, private val arguments: List<String>) {
+        init {
+            if (project.directory.resolve("build.gradle.kts").readText().contains("compiler.jar")) project.copyCompilerJar()
+        }
+
+        fun build(tasks: List<String> = listOf(":kspKotlin")): String =
+            project.build(tasks, arguments + "--info").output
+
+        fun edit(path: String, oldText: String, newText: String) = project.replace(path, oldText, newText)
+
+        fun changeCompilerJar() = project.changeCompilerJar()
+    }
+
     protected fun assertBuildFails(name: String, tasks: List<String>, vararg messages: String) {
         val output = FixtureProject(name, null).buildAndFail(tasks).output
         for (message in messages) assertContains(output, message)

@@ -1,8 +1,5 @@
 package spike.compiler.jsr
 
-import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
-import com.google.devtools.ksp.processing.SymbolProcessorProvider
+import spike.compiler.conversion.loading.SymbolProcessorProviderLoading
 
-class JsrSymbolProcessorProvider : SymbolProcessorProvider {
-    override fun create(environment: SymbolProcessorEnvironment) = JsrConversion(environment).processor
-}
+class JsrSymbolProcessorProvider : SymbolProcessorProviderLoading(JsrProcessorFactory::class.java)

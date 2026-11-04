@@ -1,8 +1,5 @@
 package spike.compiler.kotlininject
 
-import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
-import com.google.devtools.ksp.processing.SymbolProcessorProvider
+import spike.compiler.conversion.loading.SymbolProcessorProviderLoading
 
-class KotlinInjectSymbolProcessorProvider : SymbolProcessorProvider {
-    override fun create(environment: SymbolProcessorEnvironment) = KotlinInjectConversion(environment).processor
-}
+class KotlinInjectSymbolProcessorProvider : SymbolProcessorProviderLoading(KotlinInjectProcessorFactory::class.java)

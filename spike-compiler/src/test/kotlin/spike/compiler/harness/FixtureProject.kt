@@ -4,6 +4,9 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import java.io.File
 import java.util.Properties
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
+import java.util.zip.ZipOutputStream
 
 class FixtureProject(private val name: String, template: String?) {
 
@@ -29,6 +32,28 @@ class FixtureProject(private val name: String, template: String?) {
         val text = file.readText()
         check(oldText in text) { "$path does not contain $oldText" }
         file.writeText(text.replace(oldText, newText))
+    }
+
+    fun copyCompilerJar() {
+        File(System.getProperty("spike.compiler.jar")).copyTo(directory.resolve(CompilerJar), overwrite = true)
+    }
+
+    fun changeCompilerJar() {
+        val jar = directory.resolve(CompilerJar)
+        val changed = directory.resolve("$CompilerJar.changed")
+        ZipFile(jar).use { source ->
+            ZipOutputStream(changed.outputStream()).use { target ->
+                for (entry in source.entries()) {
+                    target.putNextEntry(ZipEntry(entry.name))
+                    source.getInputStream(entry).use { it.copyTo(target) }
+                    target.closeEntry()
+                }
+                target.putNextEntry(ZipEntry("spike-changed.txt"))
+                target.closeEntry()
+            }
+        }
+        changed.copyTo(jar, overwrite = true)
+        changed.delete()
     }
 
     fun generatedSources(module: String): File = directory.resolve(module).resolve("build/generated/ksp")
@@ -101,6 +126,7 @@ class FixtureProject(private val name: String, template: String?) {
     }
 
     private companion object {
+        const val CompilerJar = "compiler.jar"
         const val SpikePlugin = "id(\"io.github.diareuse.spike\")"
         const val AndroidPlugin = "libs.plugins.android."
     }

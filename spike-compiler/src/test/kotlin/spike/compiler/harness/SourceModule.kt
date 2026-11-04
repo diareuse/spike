@@ -49,7 +49,7 @@ class SourceModule(
         return Compilation(exitCode == ExitCode.OK, messages.toString())
     }
 
-    private fun kspConfig() = KSPJvmConfig.Builder().apply {
+    fun kspConfig() = KSPJvmConfig.Builder().apply {
         moduleName = name
         sourceRoots = listOf(sources)
         javaSourceRoots = emptyList()

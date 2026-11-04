@@ -1,8 +1,5 @@
 package spike.compiler.androidx
 
-import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
-import com.google.devtools.ksp.processing.SymbolProcessorProvider
+import spike.compiler.conversion.loading.SymbolProcessorProviderLoading
 
-class ViewModelSymbolProcessorProvider : SymbolProcessorProvider {
-    override fun create(environment: SymbolProcessorEnvironment) = ViewModelConversion(environment).processor
-}
+class ViewModelSymbolProcessorProvider : SymbolProcessorProviderLoading(ViewModelProcessorFactory::class.java)

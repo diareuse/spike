@@ -2,6 +2,8 @@ package spike.compiler
 
 import spike.compiler.harness.HarnessGradle
 import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertFalse
 
 class GradleBuildTest : HarnessGradle() {
 
@@ -18,6 +20,55 @@ class GradleBuildTest : HarnessGradle() {
     @Test
     fun `an incremental build after editing an unrelated file keeps the entry point factory`() =
         assertRebuildsAfterEdit("incremental_edit", "src/main/Screen.kt", "\"first\"", "\"second\"")
+
+    @Test
+    fun `a second build in one daemon reuses the compiler classes of the first`() {
+        val builds = warmBuilds("warm_loader")
+        builds.build()
+        builds.edit("src/main/Main.kt", "\"first\"", "\"second\"")
+        val output = builds.build()
+        assertContains(output, WarmHit)
+        assertFalse(WarmMiss in output, "Loaded the compiler classes again")
+    }
+
+    @Test
+    fun `a changed compiler jar is loaded afresh instead of reusing the classes of the old one`() {
+        val builds = warmBuilds("warm_loader")
+        builds.build()
+        builds.changeCompilerJar()
+        builds.edit("src/main/Main.kt", "\"first\"", "\"second\"")
+        assertContains(builds.build(), WarmMiss)
+    }
+
+    @Test
+    fun `the spike warm option set to false keeps the compiler classes to one run`() {
+        val builds = warmBuilds("warm_loader", listOf("-PspikeWarm=false"))
+        builds.build()
+        builds.edit("src/main/Main.kt", "\"first\"", "\"second\"")
+        val output = builds.build()
+        assertContains(output, WarmOff)
+        assertFalse(WarmHit in output, "Reused compiler classes although spike.warm is false")
+    }
+
+    @Test
+    fun `a directory on the processor classpath falls back to per-run classes and the build still works`() {
+        val builds = warmBuilds("warm_loader", listOf("-PspikeProcessorDirectory=processors"))
+        val output = builds.build(listOf(":run"))
+        assertContains(output, WarmFailed)
+        assertFalse(WarmHit in output, "Reused compiler classes from a classpath that cannot show changes")
+    }
+
+    @Test
+    fun `parallel KSP tasks in one daemon share the compiler classes`() {
+        val builds = warmBuilds("warm_loader_parallel", listOf("--parallel"))
+        val tasks = listOf(":a:kspKotlin", ":b:kspKotlin")
+        builds.build(tasks)
+        builds.edit("a/src/main/Main.kt", "class Greeting", "class Greeting {\n    val name = 1\n}")
+        builds.edit("b/src/main/Main.kt", "class Farewell", "class Farewell {\n    val name = 1\n}")
+        val output = builds.build(tasks)
+        assertContains(output, WarmHit)
+        assertFalse(WarmMiss in output, "Loaded the compiler classes again")
+    }
 
     @Test
     fun `the Gradle plugin sets up a JVM project in one line`() =
@@ -144,5 +195,12 @@ class GradleBuildTest : HarnessGradle() {
     @Test
     fun `an export depending on another module's export with imports builds and runs`() =
         assertBuilds("export_depends_on_export", tasks = listOf(":app:run"))
+
+    private companion object {
+        const val WarmHit = "Spike reused compiler classes that were already loaded"
+        const val WarmMiss = "Spike loaded the compiler classes for this classpath"
+        const val WarmFailed = "Spike could not keep its compiler classes loaded"
+        const val WarmOff = "Spike keeps its compiler classes to this run"
+    }
 
 }

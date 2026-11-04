@@ -1,11 +1,5 @@
 package spike.compiler
 
-import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
-import com.google.devtools.ksp.processing.SymbolProcessorProvider
+import spike.compiler.conversion.loading.SymbolProcessorProviderLoading
 
-class SpikeSymbolProcessorProvider : SymbolProcessorProvider {
-    override fun create(environment: SymbolProcessorEnvironment) = Spike.invoke(environment).run {
-        resolver.clear()
-        processor
-    }
-}
+class SpikeSymbolProcessorProvider : SymbolProcessorProviderLoading(SpikeProcessorFactory::class.java)

@@ -18,6 +18,7 @@ ksp {
 
 dependencies {
     implementation(project(":spike-core"))
+    implementation(project(":spike-compiler-conversion"))
     runtimeOnly(project(":spike-compiler-androidx"))
     implementation(libs.squareup.kotlinpoet)
     implementation(libs.squareup.kotlinpoet.ksp)
@@ -102,6 +103,8 @@ val fixtureKoin = fixtureLibraries(
 )
 
 tasks.test {
+    inputs.files(tasks.jar).withPropertyName("compilerJar")
+    systemProperty("spike.compiler.jar", tasks.jar.get().archiveFile.get().asFile.path)
     inputs.files(fixtureKotlin, fixtureAndroidx, fixtureJsr, fixtureDagger, fixtureKotlinInject, fixtureMetro, fixtureKoin).withPropertyName("fixtureLibraries")
     jvmArgumentProviders += CommandLineArgumentProvider {
         listOf(

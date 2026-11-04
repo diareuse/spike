@@ -1,8 +1,5 @@
 package spike.compiler.metro
 
-import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
-import com.google.devtools.ksp.processing.SymbolProcessorProvider
+import spike.compiler.conversion.loading.SymbolProcessorProviderLoading
 
-class MetroSymbolProcessorProvider : SymbolProcessorProvider {
-    override fun create(environment: SymbolProcessorEnvironment) = MetroConversion(environment).processor
-}
+class MetroSymbolProcessorProvider : SymbolProcessorProviderLoading(MetroProcessorFactory::class.java)

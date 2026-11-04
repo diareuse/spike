@@ -1,8 +1,5 @@
 package spike.compiler.dagger
 
-import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
-import com.google.devtools.ksp.processing.SymbolProcessorProvider
+import spike.compiler.conversion.loading.SymbolProcessorProviderLoading
 
-class DaggerSymbolProcessorProvider : SymbolProcessorProvider {
-    override fun create(environment: SymbolProcessorEnvironment) = DaggerConversion(environment).processor
-}
+class DaggerSymbolProcessorProvider : SymbolProcessorProviderLoading(DaggerProcessorFactory::class.java)
