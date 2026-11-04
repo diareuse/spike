@@ -32,6 +32,19 @@ class WarmLoaderRetentionTest {
     }
 
     @Test
+    fun `nothing KSP hands out outlives a run that generated in the first round`() {
+        val work = File("build/tmp/compilations/warm_loader_retention_first_round").apply { deleteRecursively() }
+        val sources = File("src/test/resources/warm_loader/project/src/main")
+        IsolatedKsp(SourceModule("main", sources, Libraries.Kotlin.files(), work), withConverters = false).use { ksp ->
+            ksp.run()
+            val output = ksp.run()
+            assertContains(output, "Spike generated in the first KSP round")
+            assertFalse("Spike loaded the compiler classes" in output, output)
+            assertEquals(emptyList(), survivorsOf(ksp))
+        }
+    }
+
+    @Test
     fun `a loader replaced by a new classpath is unloaded`() {
         val work = File("build/tmp/compilations/warm_loader_unloading").apply { deleteRecursively() }
         val sources = File("src/test/resources/warm_loader/project/src/main")

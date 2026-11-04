@@ -46,6 +46,10 @@ abstract class HarnessCompiler {
         }
         for (warning in warnings) assertContains(reported.joinToString("\n"), warning)
         runMain(modules, Libraries.Kotlin)
+        val firstRound = assertFirstRoundMatches(modules, Libraries.Kotlin)
+        if (runsInFirstRound(modules, Libraries.Kotlin)) {
+            for (warning in warnings) assertContains(firstRound, warning)
+        }
     }
 
     protected fun assertMethodsFitJit(name: String, libraries: Libraries = Libraries.Kotlin) {
@@ -93,12 +97,14 @@ abstract class HarnessCompiler {
         }
     }
 
-    private fun assertFirstRoundMatches(modules: List<FixtureModule>, libraries: Libraries) {
-        if (!runsInFirstRound(modules, libraries)) return
-        for (module in modules) {
+    private fun assertFirstRoundMatches(modules: List<FixtureModule>, libraries: Libraries): String {
+        if (!runsInFirstRound(modules, libraries)) return ""
+        return modules.joinToString("\n") { module ->
             val firstRound = module.source.copyIn(FirstRoundDirectory)
-            assertContains(IsolatedKsp(firstRound, withConverters = false).use { it.run() }, FirstRoundMessage)
+            val output = IsolatedKsp(firstRound, withConverters = false).use { it.run() }
+            assertContains(output, FirstRoundMessage)
             assertEquals(contentsOf(module.source.generatedSources), contentsOf(firstRound.generatedSources))
+            output
         }
     }
 
