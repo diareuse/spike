@@ -1,6 +1,7 @@
 package spike.compiler
 
 import spike.compiler.assertion.assertContentEquals
+import spike.compiler.harness.DeferringProcessorProvider
 import spike.compiler.harness.GeneratedIncludeProcessorProvider
 import spike.compiler.harness.IsolatedKsp
 import spike.compiler.harness.Libraries
@@ -79,8 +80,37 @@ class RoundOneGenerationTest {
                 GeneratedIncludeProcessorProvider::class,
                 discoverable = false,
             )
-            assertContains(ksp.runFailing(), "SPIKE-INCLUDE-AFTER-GRAPH")
+            val output = ksp.runFailing()
+            assertContains(output, "SPIKE-GENERATED-AFTER-GRAPH")
+            assertContains(output, "ClockInclude.kt")
         }
+    }
+
+    @Test
+    fun `source declarations another processor defers are not mistaken for generated ones`() {
+        val module = module("deferring", "entrypoint")
+        IsolatedKsp(module, withConverters = false).use { ksp ->
+            ksp.addProviderJar(
+                File("build/tmp/compilations/round_one_jars"),
+                DeferringProcessorProvider::class,
+                discoverable = false,
+            )
+            ksp.run()
+        }
+    }
+
+    @Test
+    fun `a silent processor Spike could not discover changes nothing`() {
+        val module = module("hidden_silent", "entrypoint")
+        IsolatedKsp(module, withConverters = false).use { ksp ->
+            ksp.addProviderJar(
+                File("build/tmp/compilations/round_one_jars"),
+                SilentProcessorProvider::class,
+                discoverable = false,
+            )
+            ksp.run()
+        }
+        assertContentEquals(resources.resolve("entrypoint/fixtures/main/kotlin"), module.generatedSources)
     }
 
     @Test
