@@ -170,6 +170,19 @@ class WarmLoadersCountedTest {
     }
 
     @Test
+    fun `failing to create a replacement leaves the stored loader open and counted`() {
+        val failing = WarmLoadersCounted(slot, logger) { throw IllegalStateException("no loader") }
+        val held = loaders.lease(classpath(), Any())
+        changeJar()
+        repeat(2) { assertFailsWith<IllegalStateException> { failing.lease(classpath(), Any()) } }
+        assertTrue(canLoad(held))
+        held.release()
+        assertTrue(canLoad(held))
+        loaders.lease(classpath(), Any())
+        assertFalse(canLoad(held))
+    }
+
+    @Test
     fun `releasing a lease twice counts once`() {
         val first = loaders.lease(classpath(), Any())
         val second = loaders.lease(classpath(), Any())

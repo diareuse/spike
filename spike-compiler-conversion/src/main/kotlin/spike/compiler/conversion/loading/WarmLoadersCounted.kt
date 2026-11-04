@@ -22,9 +22,10 @@ class WarmLoadersCounted(
                 reused = true
                 current.apply { join(run) }
             } else {
-                current?.let(::release)
                 val runs = Collections.synchronizedMap(WeakHashMap<Any, AtomicInteger>())
-                WarmLoaderEntry(key, loaderOf(classpath), AtomicInteger(1), runs).apply { join(run) }
+                val replacement = WarmLoaderEntry(key, loaderOf(classpath), AtomicInteger(1), runs).apply { join(run) }
+                current?.let(::release)
+                replacement
             }
         })
         return WarmLease(
