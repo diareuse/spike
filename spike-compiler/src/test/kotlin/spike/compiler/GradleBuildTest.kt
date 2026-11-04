@@ -3,6 +3,7 @@ package spike.compiler
 import spike.compiler.harness.HarnessGradle
 import kotlin.test.Test
 import kotlin.test.assertContains
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 class GradleBuildTest : HarnessGradle() {
@@ -96,6 +97,21 @@ class GradleBuildTest : HarnessGradle() {
         builds.build()
         builds.edit("src/main/Main.kt", "\"first\"", "\"second\"")
         assertContains(builds.build(), FirstRound)
+    }
+
+    @Test
+    fun `an incremental first-round build wires the same graph as a clean one`() {
+        val builds = warmBuilds("incremental_replaces")
+        val tasks = listOf(":test:run")
+        val clean = builds.build(tasks)
+        val generated = builds.generatedContents("test")
+        builds.edit("test/src/main/kotlin/Main.kt", "// edit", "val edited = 1")
+        val incremental = builds.build(tasks)
+        assertContains(clean, FirstRound)
+        assertContains(incremental, FirstRound)
+        assertContains(clean, "repo=real")
+        assertContains(incremental, "repo=real")
+        assertEquals(generated, builds.generatedContents("test"))
     }
 
     @Test

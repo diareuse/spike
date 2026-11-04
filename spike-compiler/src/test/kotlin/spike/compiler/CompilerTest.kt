@@ -363,6 +363,14 @@ class CompilerTest : HarnessCompiler() {
         assertRuns("late_generated_include")
 
     @Test
+    fun `a Replaces class without an Include leaves the production binding in place`() =
+        assertRuns("replaces_without_include")
+
+    @Test
+    fun `a Replaces property without an Include leaves the production binding in place`() =
+        assertRuns("replaces_without_include_property")
+
+    @Test
     fun `an entry point index keeps names that need escaping in a Kotlin string`() =
         assertMatchesGolden("index_escaped_names")
 

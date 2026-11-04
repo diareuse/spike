@@ -22,9 +22,14 @@ class SymbolProcessorImmediate(
     private var built = false
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        if (++round == 1) marker.write(round)
         if (built) reportLate(resolver)
-        return delegate.process(resolver).also { built = it.isEmpty() }
+        return delegate.process(forRound(resolver)).also { built = it.isEmpty() }
+    }
+
+    private fun forRound(resolver: Resolver): Resolver {
+        if (++round > 1) return resolver
+        marker.write(round)
+        return ResolverDeferredView(resolver, registry.all(resolver))
     }
 
     private fun reportLate(resolver: Resolver) {

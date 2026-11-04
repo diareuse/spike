@@ -120,6 +120,7 @@ class FixtureProject(private val name: String, template: String?) {
                 dependencySubstitution {
                     substitute(module("local.spike:spike-compiler")).using(project(":spike-compiler"))
                     substitute(module("local.spike:spike")).using(project(":spike-core"))
+                    substitute(module("local.spike:spike-test")).using(project(":spike-test"))
                     substitute(module("local.spike:spike-ktor")).using(project(":spike-ktor"))
                     substitute(module("local.spike:spike-androidx")).using(project(":spike-androidx"))
                     substitute(module("local.spike:spike-androidx-compose")).using(project(":spike-androidx-compose"))

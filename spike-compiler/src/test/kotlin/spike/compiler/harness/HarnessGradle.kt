@@ -79,6 +79,10 @@ abstract class HarnessGradle {
             project.buildAndFail(tasks)
         }
 
+        fun generatedContents(module: String): Map<String, String> = project.generatedSources(module).walk()
+            .filter { it.isFile && it.extension == "kt" }
+            .associate { it.name to it.readText() }
+
         fun generatedFiles(): List<String> = project.generatedSources("").walk().map { it.name }.toList()
 
         fun edit(path: String, oldText: String, newText: String) = project.replace(path, oldText, newText)
