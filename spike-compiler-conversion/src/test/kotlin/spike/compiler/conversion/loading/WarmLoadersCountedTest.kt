@@ -2,11 +2,13 @@ package spike.compiler.conversion.loading
 
 import java.io.File
 import java.io.IOException
+import java.lang.ref.WeakReference
 import java.net.URL
 import java.net.URLClassLoader
 import java.nio.file.Files
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicReference
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.test.Test
@@ -17,6 +19,8 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotSame
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.TimeSource
 
 class WarmLoadersCountedTest {
 
@@ -200,6 +204,68 @@ class WarmLoadersCountedTest {
     }
 
     @Test
+    fun `a replaced loader stays open while a crashed run may still be alive, and is unloaded once it is gone`() {
+        val crashed = AtomicReference(loaders.lease(classpath(), Any()))
+        val held = WeakReference(crashed.get().loader)
+        changeJar()
+        loaders.lease(classpath(), Any())
+        assertTrue(canLoad(crashed.get()))
+        crashed.set(null)
+        assertTrue(collected(held))
+    }
+
+    @Test
+    fun `a lease alone keeps its run alive, so its replaced loader stays open however often memory is reclaimed`() {
+        val held = loaders.lease(classpath(), Any())
+        val other = loaders.lease(classpath(), Any())
+        changeJar()
+        loaders.lease(classpath(), Any())
+        repeat(10) { System.gc() }
+        other.release()
+        assertTrue(canLoad(held))
+    }
+
+    @Test
+    fun `a crashed run that is gone no longer keeps a replaced loader from closing with its last release`() {
+        val crashedRun = AtomicReference(Any())
+        val crashed = AtomicReference(loaders.lease(classpath(), crashedRun.get()))
+        val gone = WeakReference(crashedRun.get())
+        val last = loaders.lease(classpath(), Any())
+        changeJar()
+        loaders.lease(classpath(), Any())
+        crashedRun.set(null)
+        crashed.set(null)
+        assertTrue(collected(gone))
+        last.release()
+        assertFalse(canLoad(last))
+    }
+
+    @Test
+    fun `a run crashing through Spike as the last run of an already replaced loader closes it at once`() {
+        val crashed = loaders.lease(classpath(), Any())
+        changeJar()
+        loaders.lease(classpath(), Any())
+        assertTrue(canLoad(crashed))
+        crashed.abandon()
+        assertFalse(canLoad(crashed))
+    }
+
+    @Test
+    fun `a crash reaching one loader lets go of the other loader its run was using`() {
+        val run = AtomicReference(Any())
+        val crashed = AtomicReference(loaders.lease(classpath(), run.get()))
+        changeJar()
+        val sibling = AtomicReference(loaders.lease(classpath(), run.get()))
+        val stranded = WeakReference(sibling.get().loader)
+        crashed.get().abandon()
+        loaders.lease(ProcessorClasspath(listOf(jar().toURI().toURL()), parent), Any())
+        run.set(null)
+        crashed.set(null)
+        sibling.set(null)
+        assertTrue(collected(stranded))
+    }
+
+    @Test
     fun `leasing, releasing and replacing race safely through the platform slot`() {
         val platform = WarmLoadersCounted(WarmLoaderSlotPlatform(), logger) { URLClassLoader(it.urls.toTypedArray(), it.parent) }
         val jars = List(3) { jar() }
@@ -224,6 +290,15 @@ class WarmLoadersCountedTest {
         pool.shutdown()
         assertEquals(1, leases.map { it.loader }.distinct().size)
         assertEquals(1, leases.count { !it.reused })
+    }
+
+    private fun collected(reference: WeakReference<*>): Boolean {
+        val start = TimeSource.Monotonic.markNow()
+        while (start.elapsedNow() < 10.seconds) {
+            System.gc()
+            if (reference.get() == null) return true
+        }
+        return false
     }
 
     private fun classpath() = ProcessorClasspath(listOf<URL>(jar.toURI().toURL()), parent)

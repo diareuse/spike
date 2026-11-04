@@ -1,7 +1,9 @@
 package spike.compiler.conversion.loading
 
 import spike.Include
+import java.lang.ref.WeakReference
 import java.net.URLClassLoader
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
@@ -10,10 +12,10 @@ import java.util.concurrent.atomic.AtomicInteger
 class WarmLoaderEntry(
     val key: String,
     val loader: URLClassLoader,
-    val references: AtomicInteger,
-    val runs: MutableMap<Any, AtomicInteger>,
+    val runs: MutableMap<WeakReference<Any>, AtomicInteger>,
+    val closable: AtomicBoolean,
 ) {
-    fun toStored(): List<Any> = listOf(key, loader, references, runs)
+    fun toStored(): List<Any> = listOf(key, loader, runs, closable)
 
     companion object {
         fun ofStored(stored: Any?): WarmLoaderEntry? {
@@ -22,8 +24,8 @@ class WarmLoaderEntry(
             return WarmLoaderEntry(
                 key = parts[0] as String,
                 loader = parts[1] as URLClassLoader,
-                references = parts[2] as AtomicInteger,
-                runs = parts[3] as MutableMap<Any, AtomicInteger>,
+                runs = parts[2] as MutableMap<WeakReference<Any>, AtomicInteger>,
+                closable = parts[3] as AtomicBoolean,
             )
         }
     }
