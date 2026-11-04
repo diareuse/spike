@@ -96,7 +96,7 @@ class LinearProgramGenerator(
             val type = declared.copy(nullable = declared.isNullable || guard != null)
             when {
                 index == layout.root -> body.add("return ")
-                local -> body.add("val v%L: %T = ", index, type)
+                local -> body.add(expression.local(index, type, step.factory))
                 else -> body.add("instances[%L] = ", slot)
             }
             if (guard != null) body.add("if (!needed[%L]) null else ", guard)

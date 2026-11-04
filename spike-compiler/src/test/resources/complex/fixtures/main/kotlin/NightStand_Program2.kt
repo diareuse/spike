@@ -12,7 +12,7 @@ internal object NightStand_Program2 {
   private fun part0(factory: NightStand_Factory): Any? {
     val v0: List<Battery> = batteries()
     val v1: Provider<Television> = Provider { factory.get<Television>(DependencyId(0)) }
-    val v2: RemoteControl = RemoteControl(v1, v0)
+    val v2 = RemoteControl(v1, v0)
     return v2.asRemote
   }
 }

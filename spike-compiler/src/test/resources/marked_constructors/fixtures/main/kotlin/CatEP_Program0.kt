@@ -7,7 +7,7 @@ internal object CatEP_Program0 {
   public fun resolve(factory: CatEP_Factory): Any? = part0(factory)
 
   private fun part0(factory: CatEP_Factory): Any? {
-    val v0: Life = Life()
+    val v0 = Life()
     return Cat(v0, v0, v0)
   }
 }

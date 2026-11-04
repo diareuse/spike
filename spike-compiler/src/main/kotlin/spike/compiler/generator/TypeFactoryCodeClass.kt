@@ -1,6 +1,8 @@
 package spike.compiler.generator
 
+import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
+import com.squareup.kotlinpoet.TypeName
 import spike.compiler.generator.code.addOptionalSingleton
 import spike.compiler.generator.code.addParameters
 import spike.compiler.generator.code.addType
@@ -17,6 +19,11 @@ class TypeFactoryCodeClass : TypeFactoryCode<TypeFactory.Class> {
                 body.addParameters(factory.invocation)
             }.addStatement("")
         }
+    }
+
+    override fun local(index: Int, type: TypeName, factory: TypeFactory.Class): CodeBlock {
+        if (factory.singleton || type !is ClassName || type.isNullable) return super.local(index, type, factory)
+        return CodeBlock.of("val v%L = ", index)
     }
 
     companion object {
