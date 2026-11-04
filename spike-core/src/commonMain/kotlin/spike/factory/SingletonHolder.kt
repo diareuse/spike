@@ -8,16 +8,15 @@ import kotlinx.atomicfu.update
 
 public class SingletonHolder {
 
-    private val backend: AtomicRef<Map<Int, Any>> = atomic(emptyMap())
+    private val dense: AtomicRef<Array<Any?>> = atomic(arrayOfNulls(0))
+    private val sparse: AtomicRef<Map<Int, Any>> = atomic(emptyMap())
     private val locks: AtomicRef<Map<Int, SynchronizedObject>> = atomic(emptyMap())
     private val scopes: AtomicRef<Map<String, SingletonHolder>> = atomic(emptyMap())
 
     public fun scope(key: String): SingletonHolder = scopes.getOrInsert(key) { SingletonHolder() }
 
     public fun <T : Any> getOrPut(id: Int, factory: () -> T): T {
-        val value = backend.value[id] ?: synchronized(locks.getOrInsert(id) { SynchronizedObject() }) {
-            backend.value[id] ?: factory().also { instance -> backend.update { it + (id to instance) } }
-        }
+        val value = stored(id) ?: create(id, factory)
         @Suppress("UNCHECKED_CAST")
         return value as T
     }
@@ -31,12 +30,30 @@ public class SingletonHolder {
                 val consumer = table[cursor++].code - 1
                 val singleton = table[cursor++].code - 1
                 val consumerRuns = consumer < 0 || needed[consumer]
-                val consumerBuilds = singleton < 0 || backend.value[singleton] == null
+                val consumerBuilds = singleton < 0 || stored(singleton) == null
                 if (consumerRuns && consumerBuilds) needed[step] = true
             }
         }
         return needed
     }
+
+    private fun stored(id: Int): Any? {
+        val values = dense.value
+        return if (id in values.indices) values[id] else sparse.value[id]
+    }
+
+    private fun create(id: Int, factory: () -> Any): Any =
+        synchronized(locks.getOrInsert(id) { SynchronizedObject() }) {
+            stored(id) ?: factory().also { instance -> store(id, instance) }
+        }
+
+    private fun store(id: Int, instance: Any) {
+        if (id in 0 until DENSE_IDS) dense.update { it.with(id, instance) }
+        else sparse.update { it + (id to instance) }
+    }
+
+    private fun Array<Any?>.with(id: Int, instance: Any): Array<Any?> =
+        copyOf(maxOf(size, id + 1)).also { it[id] = instance }
 
     private inline fun <K, V> AtomicRef<Map<K, V>>.getOrInsert(key: K, create: () -> V): V {
         while (true) {
@@ -45,6 +62,10 @@ public class SingletonHolder {
             val created = create()
             if (compareAndSet(current, current + (key to created))) return created
         }
+    }
+
+    private companion object {
+        const val DENSE_IDS = 1 shl 16
     }
 
 }

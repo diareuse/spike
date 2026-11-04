@@ -23,6 +23,27 @@ class SingletonHolderNeededTest {
     }
 
     @Test
+    fun `a step consumed by a singleton above every cached id is needed`() {
+        val holder = SingletonHolder()
+        holder.getOrPut(3) { "cached" }
+
+        val needed = holder.needed(table(1, 1, -1, 7))
+
+        assertContentEquals(booleanArrayOf(true), needed)
+    }
+
+    @Test
+    fun `a step consumed by a singleton between cached ids is needed`() {
+        val holder = SingletonHolder()
+        holder.getOrPut(3) { "cached" }
+        holder.getOrPut(9) { "cached" }
+
+        val needed = holder.needed(table(1, 1, -1, 7))
+
+        assertContentEquals(booleanArrayOf(true), needed)
+    }
+
+    @Test
     fun `a step consumed only by a step that is not needed is not needed`() {
         val holder = SingletonHolder()
         holder.getOrPut(7) { "cached" }

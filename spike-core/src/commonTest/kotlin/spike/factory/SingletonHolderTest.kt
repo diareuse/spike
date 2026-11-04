@@ -25,6 +25,42 @@ class SingletonHolderTest {
     }
 
     @Test
+    fun `keeps every instance when a lower id is stored after a higher one`() {
+        val holder = SingletonHolder()
+        val high = holder.getOrPut(9) { Any() }
+        val low = holder.getOrPut(2) { Any() }
+
+        assertSame(high, holder.getOrPut<Any>(9) { error("higher id was lost") })
+        assertSame(low, holder.getOrPut<Any>(2) { error("lower id was lost") })
+    }
+
+    @Test
+    fun `keeps a singleton under a negative id`() {
+        val holder = SingletonHolder()
+        val first = holder.getOrPut(-1) { Any() }
+
+        assertSame(first, holder.getOrPut<Any>(-1) { error("factory must not run again") })
+    }
+
+    @Test
+    fun `keeps a singleton under the largest id`() {
+        val holder = SingletonHolder()
+        val first = holder.getOrPut(Int.MAX_VALUE) { Any() }
+
+        assertSame(first, holder.getOrPut<Any>(Int.MAX_VALUE) { error("factory must not run again") })
+    }
+
+    @Test
+    fun `keeps singletons under ids far apart`() {
+        val holder = SingletonHolder()
+        val low = holder.getOrPut(1) { Any() }
+        val high = holder.getOrPut(1_000_000_000) { Any() }
+
+        assertSame(low, holder.getOrPut<Any>(1) { error("low id was lost") })
+        assertSame(high, holder.getOrPut<Any>(1_000_000_000) { error("high id was lost") })
+    }
+
+    @Test
     fun `a singleton factory may request another singleton from the same holder`() {
         val holder = SingletonHolder()
 
