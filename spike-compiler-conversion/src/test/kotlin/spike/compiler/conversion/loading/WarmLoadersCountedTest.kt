@@ -1,6 +1,7 @@
 package spike.compiler.conversion.loading
 
 import java.io.File
+import java.io.IOException
 import java.net.URL
 import java.net.URLClassLoader
 import java.nio.file.Files
@@ -9,6 +10,7 @@ import java.util.concurrent.Executors
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
@@ -19,7 +21,9 @@ import kotlin.test.assertTrue
 class WarmLoadersCountedTest {
 
     private val slot = FakeSlot()
-    private val loaders = WarmLoadersCounted(slot)
+    private val logger = RecordingLogger()
+    private val loaders = WarmLoadersCounted(slot, logger) { URLClassLoader(it.urls.toTypedArray(), it.parent) }
+    private val stubborn = WarmLoadersCounted(slot, logger) { LoaderThatFailsToClose(it) }
     private val parent = ClassLoader.getPlatformClassLoader()
     private val jar = jar()
 
@@ -140,6 +144,32 @@ class WarmLoadersCountedTest {
     }
 
     @Test
+    fun `a loader that fails to close does not fail the release and is logged`() {
+        val lease = stubborn.lease(classpath(), Any())
+        changeJar()
+        stubborn.lease(classpath(), Any())
+        lease.release()
+        assertContains(logger.infos.single(), "could not close")
+        assertEquals(emptyList(), logger.warnings)
+    }
+
+    @Test
+    fun `a loader that fails to close while being replaced leaves the new loader in the slot`() {
+        stubborn.lease(classpath(), Any()).release()
+        changeJar()
+        val replacing = stubborn.lease(classpath(), Any())
+        val next = stubborn.lease(classpath(), Any())
+        assertTrue(next.reused)
+        assertSame(replacing.loader, next.loader)
+    }
+
+    @Test
+    fun `abandoning a run does not fail when its loader fails to close`() {
+        stubborn.lease(classpath(), Any()).abandon()
+        assertFalse(stubborn.lease(classpath(), Any()).reused)
+    }
+
+    @Test
     fun `releasing a lease twice counts once`() {
         val first = loaders.lease(classpath(), Any())
         val second = loaders.lease(classpath(), Any())
@@ -158,7 +188,7 @@ class WarmLoadersCountedTest {
 
     @Test
     fun `leasing, releasing and replacing race safely through the platform slot`() {
-        val platform = WarmLoadersCounted(WarmLoaderSlotPlatform())
+        val platform = WarmLoadersCounted(WarmLoaderSlotPlatform(), logger) { URLClassLoader(it.urls.toTypedArray(), it.parent) }
         val jars = List(3) { jar() }
         val pool = Executors.newFixedThreadPool(8)
         val attempts = List(200) { index ->
@@ -199,6 +229,11 @@ class WarmLoadersCountedTest {
     private fun jar(): File = Files.createTempFile("processor", ".jar").toFile().apply {
         write(Resource)
         deleteOnExit()
+    }
+
+    private class LoaderThatFailsToClose(classpath: ProcessorClasspath) :
+        URLClassLoader(classpath.urls.toTypedArray(), classpath.parent) {
+        override fun close() = throw IOException("locked")
     }
 
     private class FakeSlot : WarmLoaderSlot {
