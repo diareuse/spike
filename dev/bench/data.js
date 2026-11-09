@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1793828749128,
+  "lastUpdate": 1794255948351,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -3961,6 +3961,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "spike open screen",
             "value": 0.0049462986767238966,
+            "unit": "us"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "b89eb6c36ec7c85fffb9f25ca0896d7cd85f3e62",
+          "message": "chore(deps): bump kotlin from 2.4.20 to 2.4.21\n\nBumps `kotlin` from 2.4.20 to 2.4.21.\n\nUpdates `org.jetbrains.kotlin:kotlin-compiler-embeddable` from 2.4.20 to 2.4.21\n- [Release notes](https://github.com/JetBrains/kotlin/releases)\n- [Changelog](https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md)\n- [Commits](https://github.com/JetBrains/kotlin/compare/v2.4.20...v2.4.21)\n\nUpdates `org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin` from 2.4.20 to 2.4.21\n- [Release notes](https://github.com/JetBrains/kotlin/releases)\n- [Changelog](https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md)\n- [Commits](https://github.com/JetBrains/kotlin/compare/v2.4.20...v2.4.21)\n\nUpdates `org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin` from 2.4.20 to 2.4.21\n- [Release notes](https://github.com/JetBrains/kotlin/releases)\n- [Changelog](https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md)\n- [Commits](https://github.com/JetBrains/kotlin/compare/v2.4.20...v2.4.21)\n\nUpdates `org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin` from 2.4.20 to 2.4.21\n- [Release notes](https://github.com/JetBrains/kotlin/releases)\n- [Changelog](https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md)\n- [Commits](https://github.com/JetBrains/kotlin/compare/v2.4.20...v2.4.21)\n\nUpdates `org.jetbrains.kotlin.multiplatform` from 2.4.20 to 2.4.21\n- [Release notes](https://github.com/JetBrains/kotlin/releases)\n- [Changelog](https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md)\n- [Commits](https://github.com/JetBrains/kotlin/compare/v2.4.20...v2.4.21)\n\nUpdates `org.jetbrains.kotlin.jvm` from 2.4.20 to 2.4.21\n- [Release notes](https://github.com/JetBrains/kotlin/releases)\n- [Changelog](https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md)\n- [Commits](https://github.com/JetBrains/kotlin/compare/v2.4.20...v2.4.21)\n\nUpdates `org.jetbrains.kotlin.android` from 2.4.20 to 2.4.21\n- [Release notes](https://github.com/JetBrains/kotlin/releases)\n- [Changelog](https://github.com/JetBrains/kotlin/blob/master/ChangeLog.md)\n- [Commits](https://github.com/JetBrains/kotlin/compare/v2.4.20...v2.4.21)\n\n---\nupdated-dependencies:\n- dependency-name: org.jetbrains.kotlin.android\n  dependency-version: 2.4.21\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: org.jetbrains.kotlin.jvm\n  dependency-version: 2.4.21\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: org.jetbrains.kotlin.jvm:org.jetbrains.kotlin.jvm.gradle.plugin\n  dependency-version: 2.4.21\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: org.jetbrains.kotlin.multiplatform\n  dependency-version: 2.4.21\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin\n  dependency-version: 2.4.21\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: org.jetbrains.kotlin.plugin.compose:org.jetbrains.kotlin.plugin.compose.gradle.plugin\n  dependency-version: 2.4.21\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: org.jetbrains.kotlin:kotlin-compiler-embeddable\n  dependency-version: 2.4.21\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-11-09T20:39:06+01:00",
+          "tree_id": "eb3c8b02018134e8c76968cdd8e68748b34b17cc",
+          "url": "https://github.com/diareuse/spike/commit/b89eb6c36ec7c85fffb9f25ca0896d7cd85f3e62"
+        },
+        "date": 1794255947183,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "spike clean build",
+            "value": 2036.895,
+            "unit": "ms"
+          },
+          {
+            "name": "spike ABI change",
+            "value": 1021.2950000000001,
+            "unit": "ms"
+          },
+          {
+            "name": "spike non-ABI change",
+            "value": 1119.6399999999999,
+            "unit": "ms"
+          },
+          {
+            "name": "spike resolve from graph",
+            "value": 2.6255463377465427,
+            "unit": "us"
+          },
+          {
+            "name": "spike cold start",
+            "value": 168135.521,
+            "unit": "us"
+          },
+          {
+            "name": "spike open screen",
+            "value": 0.0031153733016375936,
             "unit": "us"
           }
         ]
