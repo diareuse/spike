@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1794255950649,
+  "lastUpdate": 1794259307658,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -4015,6 +4015,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "spike open screen",
             "value": 0.0031153733016375936,
+            "unit": "us"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "e47fc9c8085f1a47d0ce8f78559d73a9a5886361",
+          "message": "chore(deps): bump dev.zacsweers.metro:runtime from 1.5.1 to 1.5.2\n\nBumps [dev.zacsweers.metro:runtime](https://github.com/ZacSweers/metro) from 1.5.1 to 1.5.2.\n- [Release notes](https://github.com/ZacSweers/metro/releases)\n- [Changelog](https://github.com/ZacSweers/metro/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/ZacSweers/metro/compare/1.5.1...1.5.2)\n\n---\nupdated-dependencies:\n- dependency-name: dev.zacsweers.metro:runtime\n  dependency-version: 1.5.2\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-11-09T20:39:12+01:00",
+          "tree_id": "8dce5fc0d2eda88fb11cd3627d07d8cf41e76507",
+          "url": "https://github.com/diareuse/spike/commit/e47fc9c8085f1a47d0ce8f78559d73a9a5886361"
+        },
+        "date": 1794259306876,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "spike clean build",
+            "value": 2812.3599999999997,
+            "unit": "ms"
+          },
+          {
+            "name": "spike ABI change",
+            "value": 1301.1399999999999,
+            "unit": "ms"
+          },
+          {
+            "name": "spike non-ABI change",
+            "value": 1324.6149999999998,
+            "unit": "ms"
+          },
+          {
+            "name": "spike resolve from graph",
+            "value": 5.135975169970223,
+            "unit": "us"
+          },
+          {
+            "name": "spike cold start",
+            "value": 248922.56949999998,
+            "unit": "us"
+          },
+          {
+            "name": "spike open screen",
+            "value": 0.0037793033388195695,
             "unit": "us"
           }
         ]
