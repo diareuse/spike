@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1794259307658,
+  "lastUpdate": 1794259310159,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -7796,6 +7796,282 @@ window.BENCHMARK_DATA = {
           {
             "name": "open screen",
             "value": 0.34874501804020575,
+            "unit": "us",
+            "extra": "koin"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "e47fc9c8085f1a47d0ce8f78559d73a9a5886361",
+          "message": "chore(deps): bump dev.zacsweers.metro:runtime from 1.5.1 to 1.5.2\n\nBumps [dev.zacsweers.metro:runtime](https://github.com/ZacSweers/metro) from 1.5.1 to 1.5.2.\n- [Release notes](https://github.com/ZacSweers/metro/releases)\n- [Changelog](https://github.com/ZacSweers/metro/blob/main/CHANGELOG.md)\n- [Commits](https://github.com/ZacSweers/metro/compare/1.5.1...1.5.2)\n\n---\nupdated-dependencies:\n- dependency-name: dev.zacsweers.metro:runtime\n  dependency-version: 1.5.2\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-11-09T20:39:12+01:00",
+          "tree_id": "8dce5fc0d2eda88fb11cd3627d07d8cf41e76507",
+          "url": "https://github.com/diareuse/spike/commit/e47fc9c8085f1a47d0ce8f78559d73a9a5886361"
+        },
+        "date": 1794259309746,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "clean build",
+            "value": 1728.1950000000002,
+            "unit": "ms",
+            "extra": "manual"
+          },
+          {
+            "name": "clean build",
+            "value": 2812.3599999999997,
+            "unit": "ms",
+            "extra": "spike"
+          },
+          {
+            "name": "clean build",
+            "value": 12225.725,
+            "unit": "ms",
+            "extra": "dagger"
+          },
+          {
+            "name": "clean build",
+            "value": 6108.495,
+            "unit": "ms",
+            "extra": "metro"
+          },
+          {
+            "name": "clean build",
+            "value": 2617.415,
+            "unit": "ms",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "clean build",
+            "value": 3019.19,
+            "unit": "ms",
+            "extra": "koin"
+          },
+          {
+            "name": "ABI change",
+            "value": 511.17,
+            "unit": "ms",
+            "extra": "manual"
+          },
+          {
+            "name": "ABI change",
+            "value": 1301.1399999999999,
+            "unit": "ms",
+            "extra": "spike"
+          },
+          {
+            "name": "ABI change",
+            "value": 6242.415,
+            "unit": "ms",
+            "extra": "dagger"
+          },
+          {
+            "name": "ABI change",
+            "value": 6961.639999999999,
+            "unit": "ms",
+            "extra": "metro"
+          },
+          {
+            "name": "ABI change",
+            "value": 1433.075,
+            "unit": "ms",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "ABI change",
+            "value": 670.285,
+            "unit": "ms",
+            "extra": "koin"
+          },
+          {
+            "name": "non-ABI change",
+            "value": 555.435,
+            "unit": "ms",
+            "extra": "manual"
+          },
+          {
+            "name": "non-ABI change",
+            "value": 1324.6149999999998,
+            "unit": "ms",
+            "extra": "spike"
+          },
+          {
+            "name": "non-ABI change",
+            "value": 6363.235000000001,
+            "unit": "ms",
+            "extra": "dagger"
+          },
+          {
+            "name": "non-ABI change",
+            "value": 6746.29,
+            "unit": "ms",
+            "extra": "metro"
+          },
+          {
+            "name": "non-ABI change",
+            "value": 1483.98,
+            "unit": "ms",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "non-ABI change",
+            "value": 723.1600000000001,
+            "unit": "ms",
+            "extra": "koin"
+          },
+          {
+            "name": "create graph",
+            "value": 0.0014353188315817363,
+            "unit": "us",
+            "extra": "manual"
+          },
+          {
+            "name": "create graph",
+            "value": 0.0014381448748567718,
+            "unit": "us",
+            "extra": "spike"
+          },
+          {
+            "name": "create graph",
+            "value": 0.0017748759381934407,
+            "unit": "us",
+            "extra": "dagger"
+          },
+          {
+            "name": "create graph",
+            "value": 0.0014353923807663036,
+            "unit": "us",
+            "extra": "metro"
+          },
+          {
+            "name": "create graph",
+            "value": 0.001431231022038713,
+            "unit": "us",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "create graph",
+            "value": 393.0925693516699,
+            "unit": "us",
+            "extra": "koin"
+          },
+          {
+            "name": "resolve from graph",
+            "value": 5.160846550298406,
+            "unit": "us",
+            "extra": "manual"
+          },
+          {
+            "name": "resolve from graph",
+            "value": 5.135975169970223,
+            "unit": "us",
+            "extra": "spike"
+          },
+          {
+            "name": "resolve from graph",
+            "value": 5.162216275087772,
+            "unit": "us",
+            "extra": "dagger"
+          },
+          {
+            "name": "resolve from graph",
+            "value": 123.53531577247387,
+            "unit": "us",
+            "extra": "metro"
+          },
+          {
+            "name": "resolve from graph",
+            "value": 126.84643705612866,
+            "unit": "us",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "resolve from graph",
+            "value": 1513.4621818356375,
+            "unit": "us",
+            "extra": "koin"
+          },
+          {
+            "name": "cold start",
+            "value": 240496.526,
+            "unit": "us",
+            "extra": "manual"
+          },
+          {
+            "name": "cold start",
+            "value": 248922.56949999998,
+            "unit": "us",
+            "extra": "spike"
+          },
+          {
+            "name": "cold start",
+            "value": 252730.19300000003,
+            "unit": "us",
+            "extra": "dagger"
+          },
+          {
+            "name": "cold start",
+            "value": 254558.803,
+            "unit": "us",
+            "extra": "metro"
+          },
+          {
+            "name": "cold start",
+            "value": 260596.04700000002,
+            "unit": "us",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "cold start",
+            "value": 672825.772,
+            "unit": "us",
+            "extra": "koin"
+          },
+          {
+            "name": "open screen",
+            "value": 0.0035342797754968364,
+            "unit": "us",
+            "extra": "manual"
+          },
+          {
+            "name": "open screen",
+            "value": 0.0037793033388195695,
+            "unit": "us",
+            "extra": "spike"
+          },
+          {
+            "name": "open screen",
+            "value": 0.0066289098557321124,
+            "unit": "us",
+            "extra": "dagger"
+          },
+          {
+            "name": "open screen",
+            "value": 0.0039041670491065084,
+            "unit": "us",
+            "extra": "metro"
+          },
+          {
+            "name": "open screen",
+            "value": 0.006205252189934588,
+            "unit": "us",
+            "extra": "kotlin-inject"
+          },
+          {
+            "name": "open screen",
+            "value": 0.45271006972373073,
             "unit": "us",
             "extra": "koin"
           }
