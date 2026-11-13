@@ -17,5 +17,4 @@ dependencies {
     implementation(libs.android.kotlin.multiplatform.library)
     implementation(libs.com.google.devtools.ksp.gradle.plugin)
     implementation(libs.com.vanniktech.maven.publish.gradle.plugin)
-    implementation(libs.dev.detekt.gradle.plugin)
 }
