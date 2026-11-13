@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1794259310159,
+  "lastUpdate": 1794603193684,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -4069,6 +4069,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "spike open screen",
             "value": 0.0037793033388195695,
+            "unit": "us"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "7d3caf39db60304a978aa4923178bdf6930ce710",
+          "message": "chore: remove detekt",
+          "timestamp": "2026-11-13T20:43:22+01:00",
+          "tree_id": "2e1b3f8a5ba25b617f06e5a568e13eb436519d76",
+          "url": "https://github.com/diareuse/spike/commit/7d3caf39db60304a978aa4923178bdf6930ce710"
+        },
+        "date": 1794603193101,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "spike clean build",
+            "value": 2685.63,
+            "unit": "ms"
+          },
+          {
+            "name": "spike ABI change",
+            "value": 1309.1599999999999,
+            "unit": "ms"
+          },
+          {
+            "name": "spike non-ABI change",
+            "value": 1361.475,
+            "unit": "ms"
+          },
+          {
+            "name": "spike resolve from graph",
+            "value": 5.130606761728759,
+            "unit": "us"
+          },
+          {
+            "name": "spike cold start",
+            "value": 235260.788,
+            "unit": "us"
+          },
+          {
+            "name": "spike open screen",
+            "value": 0.003763061144451154,
             "unit": "us"
           }
         ]
