@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1794603195638,
+  "lastUpdate": 1794606653165,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -4123,6 +4123,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "spike open screen",
             "value": 0.003763061144451154,
+            "unit": "us"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "df98b686231bd788a722551102a2f30f58b83a3a",
+          "message": "chore(deps): bump io.github.diareuse:spike-compiler\n\nBumps [io.github.diareuse:spike-compiler](https://github.com/diareuse/spike) from 1.0.0-alpha07 to 1.0.0-beta01.\n- [Release notes](https://github.com/diareuse/spike/releases)\n- [Changelog](https://github.com/diareuse/spike/blob/master/CHANGELOG.md)\n- [Commits](https://github.com/diareuse/spike/compare/1.0.0-alpha07...1.0.0-beta01)\n\n---\nupdated-dependencies:\n- dependency-name: io.github.diareuse:spike-compiler\n  dependency-version: 1.0.0-beta01\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-11-13T20:58:46+01:00",
+          "tree_id": "ca0812cf94887eb216cc82dd4d1126447927e886",
+          "url": "https://github.com/diareuse/spike/commit/df98b686231bd788a722551102a2f30f58b83a3a"
+        },
+        "date": 1794606652028,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "spike clean build",
+            "value": 2899.92,
+            "unit": "ms"
+          },
+          {
+            "name": "spike ABI change",
+            "value": 1455.935,
+            "unit": "ms"
+          },
+          {
+            "name": "spike non-ABI change",
+            "value": 1564.98,
+            "unit": "ms"
+          },
+          {
+            "name": "spike resolve from graph",
+            "value": 5.138296085537313,
+            "unit": "us"
+          },
+          {
+            "name": "spike cold start",
+            "value": 254728.724,
+            "unit": "us"
+          },
+          {
+            "name": "spike open screen",
+            "value": 0.0037632940385679556,
             "unit": "us"
           }
         ]
