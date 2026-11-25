@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795160174983,
+  "lastUpdate": 1795639272767,
   "repoUrl": "https://github.com/diareuse/spike",
   "entries": {
     "Benchmark": [
@@ -4231,6 +4231,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "spike open screen",
             "value": 0.005855298373854496,
+            "unit": "us"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "49699333+dependabot[bot]@users.noreply.github.com",
+            "name": "dependabot[bot]",
+            "username": "dependabot[bot]"
+          },
+          "committer": {
+            "email": "hello@depasquale.wiki",
+            "name": "Viktor De Pasquale",
+            "username": "diareuse"
+          },
+          "distinct": true,
+          "id": "b56d36a3c0930b68d713d13e677b62e15d387e5b",
+          "message": "chore(deps): bump agp from 9.5.2 to 9.5.3\n\nBumps `agp` from 9.5.2 to 9.5.3.\n\nUpdates `com.android.kotlin.multiplatform.library:com.android.kotlin.multiplatform.library.gradle.plugin` from 9.5.2 to 9.5.3\n\nUpdates `com.android.tools.build:gradle-api` from 9.5.2 to 9.5.3\n\nUpdates `com.android.library` from 9.5.2 to 9.5.3\n\n---\nupdated-dependencies:\n- dependency-name: com.android.kotlin.multiplatform.library:com.android.kotlin.multiplatform.library.gradle.plugin\n  dependency-version: 9.5.3\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: com.android.tools.build:gradle-api\n  dependency-version: 9.5.3\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n- dependency-name: com.android.library\n  dependency-version: 9.5.3\n  dependency-type: direct:production\n  update-type: version-update:semver-patch\n...\n\nSigned-off-by: dependabot[bot] <support@github.com>",
+          "timestamp": "2026-11-25T20:47:38+01:00",
+          "tree_id": "ef45e1a86b25c4a310a862f700181266b1be6676",
+          "url": "https://github.com/diareuse/spike/commit/b56d36a3c0930b68d713d13e677b62e15d387e5b"
+        },
+        "date": 1795639271667,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "spike clean build",
+            "value": 2354.535,
+            "unit": "ms"
+          },
+          {
+            "name": "spike ABI change",
+            "value": 1283.385,
+            "unit": "ms"
+          },
+          {
+            "name": "spike non-ABI change",
+            "value": 1301.185,
+            "unit": "ms"
+          },
+          {
+            "name": "spike resolve from graph",
+            "value": 3.3182732759406766,
+            "unit": "us"
+          },
+          {
+            "name": "spike cold start",
+            "value": 221000.8095,
+            "unit": "us"
+          },
+          {
+            "name": "spike open screen",
+            "value": 0.0040134138560982005,
             "unit": "us"
           }
         ]
